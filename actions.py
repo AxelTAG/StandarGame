@@ -29,7 +29,7 @@ def move(
     return "You can't move there.", x, y, hs
 
 
-# Sleep in bed.
+# Sleep to [morning, afternoon, evening, night].
 def sleep_in_bed(x: int, y: int, set_map: dict, hp, hpmax, actual_hs, opt: str) -> tuple[str, int, int, str]:
     if opt not in ["morning", "afternoon", "evening", "night"]:
         hs, d_moment = day_est(actual_hs, 0)
@@ -66,14 +66,13 @@ def use_boat(x: int, y: int, inventory: dict, set_map: dict) -> tuple[str, dict,
 
 # Land.
 def land(x: int, y: int, inventory: dict, set_map: dict, tl_map: list) -> tuple[str, dict, dict]:
-    try:
-        if "boat" in inventory.keys() and tl_map[x][y] not in ["sea", "river"]:
-            inventory["walk"] = True
-            del inventory["boat"]
-            set_map[(x, y)][0].append("boat")
-            set_map[(x, y)][1] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
-            return "You have land.", inventory, set_map
-        else:
-            return "You can't land here.", inventory, set_map
-    except KeyError:
+    if "boat" in inventory.keys() and tl_map[y][x] not in ["sea", "river"]:
+        inventory["walk"] = True
+        del inventory["boat"]
+        set_map[(x, y)][0].append("boat")
+        set_map[(x, y)][1] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+        return "You have land.", inventory, set_map
+    else:
         return "You can't land here.", inventory, set_map
+
+# Talk.

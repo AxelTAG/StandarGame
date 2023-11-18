@@ -3,7 +3,7 @@ import os
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import label_pixels, draw_move, tl_map_set, day_est
+from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt
 import globals
 from displays import disp_play, disp_sleep
 from actions import move, use_boat, land, sleep_in_bed
@@ -17,7 +17,7 @@ def draw():
     print("-+------------------+-")
 
 
-def save():
+def save(inv: dict, setting: dict):
     global player_map, map_set
     save_list = [
         NAME,
@@ -40,10 +40,7 @@ def save():
 
     np.savetxt("load_map.txt", player_map.reshape(-1, player_map.shape[-1]), fmt='%d', delimiter='\t')
 
-    with open('settings.txt', 'w') as file_txt:
-        for key, value in map_set.items():
-            line = f"{key}: {value}\n"
-            file_txt.write(line)
+    export_dict_to_txt({0: inventory, 1: map_set}, "cfg_save.txt")
 
 
 def heal(amount):
@@ -221,6 +218,7 @@ menu = True
 play = False
 rules = False
 
+# Play variables.
 fight = False
 standing = True
 buy = False
@@ -241,22 +239,20 @@ ATK = 3
 x = 0
 y = 0
 
-# Inventory variables.
-inventory = {"red_potions": 1, "elixirs": 0, "gold": 5, "walk": True}
-
 # Player map.
 player_map = np.zeros((32, 32, 4), dtype=np.uint8)
 player_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
 
+inventory = {}
+
 tile_map = label_pixels("world_map.png")
+
+map_set = tl_map_set(tile_map)
 
 y_len = len(tile_map)-1
 x_len = len(tile_map[0])-1
 
 bioms = globals.BIOMS
-
-map_set = tl_map_set(tile_map)
-map_set.update(globals.MAP_SETTING)
 
 e_list = ["goblin", "orc", "slime"]
 
@@ -322,8 +318,15 @@ while run:
                 menu = False
                 play = True
 
+                # Initial settings.
+                # Inventory variables.
+                inventory = {"red_potions": 1, "elixirs": 0, "gold": 5, "walk": True}
+                # Map settings.
+                map_set.update(globals.MAP_SETTING)
+
         # Load game choice.
         elif choice == "2":
+            # Load basics stats.
             try:
                 f = open("load.txt", "r")
                 load_list = f.readlines()
@@ -355,22 +358,19 @@ while run:
             except OSError:
                 print(" No loadable save file!")
                 input(" > ")
+
+            # Loading user map.
             try:
                 map_load = np.loadtxt("load_map.txt", delimiter='\t', dtype=int)
                 player_map = map_load.reshape((32, 32, 4))
             except OSError:
                 print(" No loadable save file!")
                 input(" > ")
-            try:
-                map_set = {}
-                with open('settings.txt', 'r') as load_file:
-                    lines = load_file.readlines()
-                    for line in lines:
-                        key, value = line.strip().split(': ')
-                        map_set[eval(key)] = eval(value)
-            except OSError:
-                print(" No loadable save file!")
-                input(" > ")
+
+            # Loading inventory and map settings.
+            load_setting = load_dict_from_txt("cfg_save.txt")
+            inventory.update(load_setting[0])
+            map_set.update(load_setting[1])
 
         elif choice == "3":
             rules = True
@@ -378,7 +378,7 @@ while run:
             quit()
 
     while play:
-        save()  # autosave
+        save(inventory, map_set)  # autosave
         clear()
 
         # Fight chances of moving.
@@ -427,7 +427,7 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save()
+                save(inventory, map_set)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 text, x, y, add_hs = move(x, y, x_len, y_len, inventory, tile_map, action[0])

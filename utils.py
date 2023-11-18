@@ -156,3 +156,46 @@ def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
     elif 18 <= hs < 22:
         return hs, "EVENING"
     return hs, "NIGHT"
+
+
+# Export dictionary to txt.
+def export_dict_to_txt(dictionary: dict, file_path: str) -> None:
+    try:
+        with open(file_path, 'w') as file:
+            for key, value in dictionary.items():
+                if isinstance(value, dict):
+                    file.write(f"{key}:\n")
+                    for subkey, subvalue in value.items():
+                        file.write(f"  {subkey}: {subvalue}\n")
+                else:
+                    file.write(f"{key}: {value}\n")
+    except OSError:
+        print(" No loadable save file!")
+        input(" > ")
+
+
+# Import dictionary from txt.
+def load_dict_from_txt(file_path: str) -> dict:
+    reloaded_dictionary = {}
+    current_key = None
+    try:
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+            for line in lines:
+                if ':' in line:
+                    key, value = line.strip().split(':', 1)
+                    if value == '':
+                        current_key = key
+                        reloaded_dictionary[eval(current_key)] = {}
+                    elif current_key:
+                        try:
+                            reloaded_dictionary[eval(current_key)][eval(key)] = eval(value)
+                        except NameError:
+                            reloaded_dictionary[eval(current_key)][key] = eval(value)
+                    else:
+                        reloaded_dictionary[key] = value
+    except OSError:
+        print(" No loadable save file!")
+        input(" > ")
+
+    return reloaded_dictionary

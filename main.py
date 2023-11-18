@@ -3,85 +3,10 @@ import os
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import label_pixels, draw_move, text_coord, text_ljust, text_2_col, tl_map_set, day_est
+from utils import label_pixels, draw_move, tl_map_set, day_est
 import globals
 from displays import disp_play, disp_sleep
 from actions import move, use_boat, land, sleep_in_bed
-
-
-# Game variables.
-run = True
-menu = True
-play = False
-rules = False
-
-key = False
-fight = False
-standing = True
-buy = False
-speak = False
-boss = False
-day_time = 6
-day_moment = "MORNING"
-add_hs = 0
-
-# Player variables.
-NAME = ""
-HP = 50
-HPMAX = 50
-LVL = 1
-EXP = 0
-EXPMAX = 10 * LVL
-ATK = 3
-x = 0
-y = 0
-
-# Inventory variables.
-inventory = {"red_potions": 1, "elixirs": 0, "gold": 5, "walk": True}
-
-# Player map.
-player_map = np.zeros((32, 32, 4), dtype=np.uint8)
-player_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
-
-tile_map = label_pixels("world_map.png")
-
-y_len = len(tile_map)-1
-x_len = len(tile_map[0])-1
-
-bioms = globals.BIOMS
-
-map_set = tl_map_set(tile_map)
-map_set.update(globals.MAP_SETTING)
-
-e_list = ["goblin", "orc", "slime"]
-
-mobs = {
-    "goblin": {
-        "hp": 15,
-        "at": 3,
-        "go": 8,
-        "exp": 3
-    },
-    "orc": {
-        "hp": 20,
-        "at": 6,
-        "go": 18,
-        "exp": 5,
-    },
-    "slime": {
-        "hp": 20,
-        "at": 2,
-        "go": 12,
-        "exp": 2
-    },
-    "dragon": {
-        "hp": 100,
-        "at": 8,
-        "go": 100
-    }
-}
-
-screen = "."
 
 
 def clear():
@@ -93,7 +18,7 @@ def draw():
 
 
 def save():
-    global player_map
+    global player_map, map_set
     save_list = [
         NAME,
         str(HP),
@@ -107,7 +32,6 @@ def save():
         str(inventory["gold"]),
         str(x),
         str(y),
-        str(key),
     ]
 
     with open("load.txt", "w") as file_txt:
@@ -115,6 +39,11 @@ def save():
             file_txt.write(item + "\n")
 
     np.savetxt("load_map.txt", player_map.reshape(-1, player_map.shape[-1]), fmt='%d', delimiter='\t')
+
+    with open('settings.txt', 'w') as file_txt:
+        for key, value in map_set.items():
+            line = f"{key}: {value}\n"
+            file_txt.write(line)
 
 
 def heal(amount):
@@ -265,7 +194,7 @@ def shop():
 
 
 def mayor():
-    global speak, key
+    global speak
 
     while speak:
         clear()
@@ -273,10 +202,8 @@ def mayor():
         print("Hello there, " + NAME + "!")
         if ATK < 10:
             print("You're not strong enough to face the dragon yet! Keep practicing and come back later!")
-            key = False
         else:
             print("You might want to take on the dragon now! Take this key but be careful with the beast!")
-            key = True
 
         draw()
         print("1 - LEAVE")
@@ -288,27 +215,54 @@ def mayor():
             speak = False
 
 
-def cave():
-    global boss, key, fight
+# Game variables.
+run = True
+menu = True
+play = False
+rules = False
 
-    while boss:
-        clear()
-        draw()
-        print("Here lies the cave of the dragon. What will you do?")
-        draw()
-        if key:
-            print("1 - USE KEY")
-        print("2 - TURN BACK")
-        draw()
+fight = False
+standing = True
+buy = False
+speak = False
+boss = False
+day_time = 6
+day_moment = "MORNING"
+add_hs = 0
 
-        choice_action = input("# ")
+# Player variables.
+NAME = ""
+HP = 50
+HPMAX = 50
+LVL = 1
+EXP = 0
+EXPMAX = 10 * LVL
+ATK = 3
+x = 0
+y = 0
 
-        if choice_action == "1":
-            if key:
-                fight = True
-                battle(["Dragon"], [100])
-        elif choice_action == "2":
-            boss = False
+# Inventory variables.
+inventory = {"red_potions": 1, "elixirs": 0, "gold": 5, "walk": True}
+
+# Player map.
+player_map = np.zeros((32, 32, 4), dtype=np.uint8)
+player_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
+
+tile_map = label_pixels("world_map.png")
+
+y_len = len(tile_map)-1
+x_len = len(tile_map[0])-1
+
+bioms = globals.BIOMS
+
+map_set = tl_map_set(tile_map)
+map_set.update(globals.MAP_SETTING)
+
+e_list = ["goblin", "orc", "slime"]
+
+mobs = globals.MOBS
+
+screen = "."
 
 
 # Main loop of the game.
@@ -373,7 +327,7 @@ while run:
             try:
                 f = open("load.txt", "r")
                 load_list = f.readlines()
-                if len(load_list) == 13:
+                if len(load_list) == 12:
                     NAME = load_list[0][:-1]
                     HP = int(load_list[1][:-1])
                     HPMAX = int(load_list[2][:-1])
@@ -386,7 +340,6 @@ while run:
                     inventory["gold"] = int(load_list[9][:-1])
                     x = int(load_list[10][:-1])
                     y = int(load_list[11][:-1])
-                    key = bool(load_list[12][:-1])
                     clear()
                     print(" ELINA THE DRAGON SLAYER")
                     print()
@@ -404,8 +357,17 @@ while run:
                 input(" > ")
             try:
                 map_load = np.loadtxt("load_map.txt", delimiter='\t', dtype=int)
-                print(map_load.shape)
                 player_map = map_load.reshape((32, 32, 4))
+            except OSError:
+                print(" No loadable save file!")
+                input(" > ")
+            try:
+                map_set = {}
+                with open('settings.txt', 'r') as load_file:
+                    lines = load_file.readlines()
+                    for line in lines:
+                        key, value = line.strip().split(': ')
+                        map_set[eval(key)] = eval(value)
             except OSError:
                 print(" No loadable save file!")
                 input(" > ")
@@ -499,7 +461,6 @@ while run:
                     mayor()
                 if tile_map[y][x] == "cave":
                     boss = True
-                    cave()
 
             elif action[0] == "map":  # Show map.
                 player_map[y][x] = globals.WHITE

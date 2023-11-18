@@ -177,6 +177,34 @@ BIOMS = {
         "c": (163, 73, 164, 255)},
     }
 
+# MOBS.
+MOBS = {
+    "goblin": {
+        "hp": 15,
+        "at": 3,
+        "go": 8,
+        "exp": 3
+    },
+    "orc": {
+        "hp": 20,
+        "at": 6,
+        "go": 18,
+        "exp": 5,
+    },
+    "slime": {
+        "hp": 20,
+        "at": 2,
+        "go": 12,
+        "exp": 2
+    },
+    "dragon": {
+        "hp": 100,
+        "at": 8,
+        "go": 100
+    }
+}
+
+
 # MAP SETTING format [x, y, objects, description].
 MAP_SETTING = {
     (0, 0): [["bed"], "Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "

@@ -1,6 +1,15 @@
 # Imports.
 from PIL import Image
+from itertools import zip_longest, cycle
 import globals
+import time
+import sys
+import os
+
+
+# Clear console function.
+def clear():
+    os.system("cls")
 
 
 # Functions that returns tile map of a image, depending de colors.
@@ -74,7 +83,7 @@ def tl_map_set(tl_map: list):
     for i in range(len(tl_map)):
         for j in range(len(tl_map[i])):
             key = (i, j)
-            value = [[], ""]
+            value = [[], "", []]
             dictionary[key] = value
 
     return dictionary
@@ -103,7 +112,7 @@ def draw_move(x, y, map_heigt, map_width, inventory, tl_map) -> list:
 
 
 # Function that left justify a text.
-def text_ljust(msg, width=20):
+def text_ljust(msg: str, width: int = 20) -> list:
     lines = msg.split('\n')
     text = []
 
@@ -127,7 +136,7 @@ def text_ljust(msg, width=20):
 
 
 # Function that puts two messages in two paralels columns.
-def text_2_col(msg1, msg2, width=20, ch=""):
+def text_2_col(msg1: str, msg2: str, width: int = 20, ch: str = "") -> list:
     lines1 = text_ljust(msg1, width)
     lines2 = text_ljust(msg2, width)
 
@@ -137,6 +146,12 @@ def text_2_col(msg1, msg2, width=20, ch=""):
     lines2 += [" " * width] * (max_lines - len(lines2))
 
     return [t1 + " " + str(ch) + " " + t2 for t1, t2 in zip(lines1, lines2)]
+
+
+# Function that concatenates two lists of str elements.
+def concatenate_lists(list1: list[str], list2: list[str]) -> list[str]:
+    concatenated_list = ["".join(pair) for pair in zip_longest(list1, list2, fillvalue="")]
+    return concatenated_list
 
 
 # Functions that returns coordinates as text separete by comma.
@@ -199,3 +214,20 @@ def load_dict_from_txt(file_path: str) -> dict:
         input(" > ")
 
     return reloaded_dictionary
+
+
+# Typewriter function.
+def typewriter(text: str, speed: float = 0.01) -> None:
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(speed)
+
+
+# Print patron in column function.
+def patron_print(elements, n):
+    patron = []
+    elements_cycle = cycle(elements)
+    for _ in range(n):
+        patron.append(next(elements_cycle))
+    return patron

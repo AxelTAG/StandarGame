@@ -3,21 +3,17 @@ import os
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt
+from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt, clear
 import globals
-from displays import disp_play, disp_sleep
-from actions import move, use_boat, land, sleep_in_bed
-
-
-def clear():
-    os.system("cls")
+from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait
+from actions import move, use_boat, land, sleep_in_bed, wait, talk
 
 
 def draw():
     print("-+------------------+-")
 
 
-def save(inv: dict, setting: dict):
+def save():
     global player_map, map_set
     save_list = [
         NAME,
@@ -190,27 +186,8 @@ def shop():
             buy = False
 
 
-def mayor():
-    global speak
-
-    while speak:
-        clear()
-        draw()
-        print("Hello there, " + NAME + "!")
-        if ATK < 10:
-            print("You're not strong enough to face the dragon yet! Keep practicing and come back later!")
-        else:
-            print("You might want to take on the dragon now! Take this key but be careful with the beast!")
-
-        draw()
-        print("1 - LEAVE")
-        draw()
-
-        choice_action = input("# ")
-
-        if choice_action == "1":
-            speak = False
-
+# Command line settings.
+# os.system(f"mode con: cols={globals.WIDTH} lines={globals.HEIGHT}")
 
 # Game variables.
 run = True
@@ -254,6 +231,8 @@ x_len = len(tile_map[0])-1
 
 bioms = globals.BIOMS
 
+npc = globals.NPC
+
 e_list = ["goblin", "orc", "slime"]
 
 mobs = globals.MOBS
@@ -266,8 +245,8 @@ while run:
     # Menu loop.
     while menu:
         clear()
-        print(" ELINA THE DRAGON SLAYER")
-        print()
+        disp_title()
+
         print(" < MENU >")
         print()
         print(" 1 - NEW GAME")
@@ -278,7 +257,9 @@ while run:
         # Rules.
         if rules:
             clear()
-            print(" ELINA THE DRAGON SLAYER")
+            disp_title()
+
+            print()
             print()
             print(" < RULES >")
             print()
@@ -300,9 +281,14 @@ while run:
                 L_LVL = int(file[3][:-1])
                 L_EXP = int(file[4][:-1])
                 L_EXPMAX = int(file[5][:-1])
-                print("There is already a game existing, do you want to delete it?")
+
+                disp_title()
+
+                print(" < NEW GAME >")
                 print()
-                print("NAME: " + str(L_NAME) + " / LVL: " + str(L_LVL))
+                print(" There is already a game existing, do you want to delete it?")
+                print()
+                print(" NAME: " + str(L_NAME) + " / LVL: " + str(L_LVL))
                 print()
                 print(" 1 - Yes")
                 print(" 2 - No")
@@ -344,8 +330,8 @@ while run:
                     x = int(load_list[10][:-1])
                     y = int(load_list[11][:-1])
                     clear()
-                    print(" ELINA THE DRAGON SLAYER")
-                    print()
+                    disp_title()
+
                     print(" < LOAD GAME >")
                     print()
                     print(" Welcome back, " + NAME + "!")
@@ -378,7 +364,7 @@ while run:
             quit()
 
     while play:
-        save(inventory, map_set)  # autosave
+        save()  # autosave
         clear()
 
         # Fight chances of moving.
@@ -412,14 +398,18 @@ while run:
             day_time, day_moment = day_est(day_time, add_hs)
             add_hs = 0
 
+            # Draw title.
+            #print(" < GAME >")
+            print()
+
             # Draw of general stats.
             disp_play(location, "NAIWAT", day_moment, loc_des, NAME, HP, HPMAX, LVL, EXP, EXPMAX, ATK,
                       inventory["red_potions"], inventory["elixirs"], inventory["gold"], x, y,
-                      draw_move(x, y, x_len, y_len, inventory, tile_map), [], screen, 22)
+                      draw_move(x, y, x_len, y_len, inventory, tile_map), [], screen, 36)
 
             # Input action.
             print()
-            action = input(" # ").lower().split()
+            action = input(" " * 2 + "# ").lower().split()
             if not action:
                 action = ["None"]
 
@@ -427,7 +417,7 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(inventory, map_set)
+                save()
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 text, x, y, add_hs = move(x, y, x_len, y_len, inventory, tile_map, action[0])
@@ -440,7 +430,7 @@ while run:
                     heal(30)
                 else:
                     print(" No potions!")
-                input(" > ")
+                input(" " * 4 + "> ")
                 standing = True
 
             elif action[0] == "6":  # Use elixir.
@@ -449,18 +439,8 @@ while run:
                     heal(50)
                 else:
                     print(" No elixirs!")
-                input("> ")
+                input(" " * 4 + "> ")
                 standing = True
-
-            elif action[0] == "7":
-                if tile_map[y][x] == "shop":
-                    buy = True
-                    shop()
-                if tile_map[y][x] == "mayor":
-                    speak = True
-                    mayor()
-                if tile_map[y][x] == "cave":
-                    boss = True
 
             elif action[0] == "map":  # Show map.
                 player_map[y][x] = globals.WHITE
@@ -490,12 +470,31 @@ while run:
                     screen, HP, day_time, day_moment = sleep_in_bed(x, y, map_set, HP, HPMAX, day_time, action[2])
                     standing = True
 
+            elif action[0] == "wait":  # Wait action.
+                if len(action) <= 2:
+                    screen = disp_wait()
+                    standing = True
+                else:
+                    screen, day_time, day_moment = wait(day_time, action[2])
+                    standing = False
+
             elif action == ["use", "boat"]:  # Use boat action.
                 screen, inventory, map_set = use_boat(x, y, inventory, map_set)
                 standing = True
 
-            elif action[0] == "land":
+            elif action[0] == "land":  # Land action.
                 screen, inventory, map_set = land(x, y, inventory, map_set, tile_map)
+
+            elif action[0] == "talk":  # Talk action.
+                if len(action) <= 2:
+                    screen = disp_talk(x, y, map_set)
+                    standing = True
+                elif " ".join(action[2:]) in map_set[(x, y)][2]:
+                    talk(action[2:], npc[" ".join(action[2:])][0])
+                    standing = True
+                else:
+                    screen = "Here no one is called " + " ".join(action[2:]) + "."
+                    standing = True
 
             else:
                 standing = True

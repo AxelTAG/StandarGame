@@ -1,6 +1,7 @@
 # Imports.
 import globals
-from utils import day_est
+from utils import day_est, typewriter, clear, text_ljust
+from displays import disp_title
 
 
 # Move function.
@@ -33,7 +34,7 @@ def move(
 def sleep_in_bed(x: int, y: int, set_map: dict, hp, hpmax, actual_hs, opt: str) -> tuple[str, int, int, str]:
     if opt not in ["morning", "afternoon", "evening", "night"]:
         hs, d_moment = day_est(actual_hs, 0)
-        return ".", hp, hs, d_moment
+        return "This is not posible.", hp, hs, d_moment
     else:
         if "bed" in set_map[(x, y)][0]:
             if opt == "morning":
@@ -75,4 +76,43 @@ def land(x: int, y: int, inventory: dict, set_map: dict, tl_map: list) -> tuple[
     else:
         return "You can't land here.", inventory, set_map
 
+
 # Talk.
+def talk(npc: list, msg: list[str], quest: list[list] = None, res: list[str] = None) -> None:
+    clear()
+    for line in msg:
+        clear()
+        disp_title()
+        print(" < GAME >")
+        print()
+        print(" " * 4 + " ".join(npc).title() + ":", end="\n ")
+        print()
+        lines = text_ljust(line, width=70)
+        for text in lines:
+            typewriter(" " * 4 + text)
+            print()
+
+        # if res is not None and i < len(res):
+        #     user_response = input(" " * 4 + "> " + res[i] + " ")
+        # else:
+        #     user_response = input(" " * 4 + "> ")
+
+
+# Wait action.
+def wait(actual_hs, opt: str) -> tuple[str, int, str]:
+    if opt not in ["morning", "afternoon", "evening", "night"]:
+        hs, d_moment = day_est(actual_hs, 0)
+        return "This is not posible.", actual_hs, d_moment
+    elif opt == "morning":
+        return "You wait until the morning.", 6, "MORNING"
+    elif opt == "afternoon":
+        return "You wait until the afternoon.", 12, "AFTERNOON"
+    elif opt == "evening":
+        return "You wait until the evening.", 18, "EVENING"
+    else:
+        return "You slept wait the night.", 22, "NIGHT"
+
+
+# Explore action.
+def explore(x: int, y: int, inventory: dict, set_map: dict, tl_map: list) -> tuple[str, dict, dict]:
+    pass

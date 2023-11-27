@@ -1,7 +1,17 @@
+# Command line settings.
+WIDTH = 92
+HEIGHT = 40
+
+# Patron.
+PATRON = [" / /\  ", "/ /\ \ ","\ \/ / ", " \/ /  ", " / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  "]
+
+# Colors.
 WHITE = (255, 255, 255, 255)
 
+# Day parts.
 DAY_PARTS = ("MORNING", "AFTERNOON", "EVENING", "NIGHT")
 
+# Bioms of map.
 BIOMS = {
     "canyon": {
         "t": "CANYON",
@@ -205,13 +215,36 @@ MOBS = {
 }
 
 
-# MAP SETTING format [x, y, objects, description].
+# MAP SETTING format [x, y, objects, description, npc].
 MAP_SETTING = {
     (0, 0): [["bed"], "Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
-                      "invites serenity amid nature's whispers."],
-    (2, 1): [["boat"], "Seaside with anchored boat, echoing waves and vibrant coastal life."],
-    (6, 2): [["boat"], "Seaside with anchored boat, echoing waves and vibrant coastal life."],
+                      "invites serenity amid nature's whispers.", []],
+    (2, 1): [["boat"], "Seaside with anchored boat, echoing waves and vibrant coastal life.", []],
+    (6, 2): [["boat"], "Seaside with anchored boat, echoing waves and vibrant coastal life.", ["captain zelian",
+                                                                                               "traveler seraph"]],
+    (9, 4): [["walk"], "Town Center: Mayor's office, bustling square, and a quaint temple create the heart of "
+                       "community life.", ["mayor"]],
     (10, 5): [["walk"], "Southern gateway, welcoming gates, cobblestone paths, and a charming, serene atmosphere "
-                        "greet visitors."],
-    (15, 5): [["wings"], "Seaside with anchored boat, echoing waves and vibrant coastal life."],
+                        "greet visitors.", []],
+    (14, 5): [[], "Blocked valley passage, boulders from a recent landslide obstruct the way, as a diligent worker "
+                  "clears debris, striving to reopen this vital route amidst the rugged beauty of "
+                  "the scenic landscape.", ["worker gorrick"]],
+    (15, 5): [["wings"], "Nothing important here.", []]
+}
+
+
+# NPCs.
+NPC = {
+    "captain zelian": [["Ah, the sea, a fickle friend and fierce foe.", "Many a ship I've sailed, battling monsters "
+                        "and discovering uncharted isles. The ocean whispers secrets to those who listen.", "Legend "
+                        "speaks of a mystical realm beneath these waves, hidden from mortal eyes.", "One day, perhaps, "
+                        "the tides will reveal its mysteries to a brave soul like yourself, adventurer."]],
+    "mayor": [["Adventurer, our peaceful town of Tepia is under siege! Goblins from the northern highlands "
+               "attack relentlessly.", "We fear a sinister leader guides them."]],
+    "traveler seraph": [["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here mentioned some caves "
+                         "to the north that might lead us across.", "Aye, those caves are an option, but beware! "
+                         "Lately, they've become a haven for Goblins and other foul creatures.", "A perilous journey "
+                         "awaits, my friend. Tread carefully if you choose that path."]],
+    "worker gorrick": [["Hail, traveler! The path ahead is blocked, and only through my efforts can it be opened. Alas,"
+                        " it'll take time.", ]]
 }

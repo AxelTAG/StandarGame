@@ -1,5 +1,6 @@
 # Imports.
-from utils import text_2_col
+from utils import text_ljust, text_2_col, concatenate_lists, patron_print
+import globals
 
 # Constants.
 DIRECTIONS = {0: "1 - NORTH",  1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
@@ -18,6 +19,10 @@ def disp_play(
         loc: str, reg: str, time: str, des: str, name: str, hp: int, hpmax: int, lvl: int, exp: int, expmax: int,
         atk: int, item1: int, item2: int, gold: int, x: int, y: int, mdir: list, faction: list, screen_text: str,
         width: int) -> None:
+    print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
+    print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
+    print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
+    print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
     t_loc = "LOCATION: " + loc.upper()
     t_reg = "\n REGION: " + reg.upper()
     t_coord = "\n COORD: " + str(x) + " " + str(y)
@@ -37,30 +42,25 @@ def disp_play(
     text5 = "0 - SAVE AND QUIT"
     text6 = screen_text
 
-    for line in text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+"):
-        print(" " + line)
-
-    for line in text_2_col(text1, text2, width, "|"):
-        print(" " + line)
-
-    for line in text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+"):
-        print(" " + line)
-
-    for line in text_2_col(text3, text4, width, "|"):
-        print(" " + line)
-
-    for line in text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+"):
-        print(" " + line)
+    cmp_text = []
+    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "-")
+    cmp_text = cmp_text + text_2_col(text1, text2, width, "|")
+    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
+    cmp_text = cmp_text + text_2_col(text3, text4, width, "|")
+    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
 
     for i, status in enumerate(mdir):
         if status:
             text5 += "\n" + DIRECTIONS[i]
 
-    for line in text_2_col(text5, text6, width, "|"):
-        print(" " + line)
+    cmp_text = cmp_text + text_2_col(text5, text6, width, "|")
+    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "-")
 
-    for line in text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+"):
-        print(" " + line)
+    # cmp_text = concatenate_lists(cmp_text, side_text)
+    patron = patron_print(globals.PATRON, len(cmp_text))
+
+    for i, line in enumerate(cmp_text):
+        print(" " + patron[i] + line + "  " + patron[i])
 
 
 # Sleep options display.
@@ -69,3 +69,34 @@ def disp_sleep(x: int, y: int, set_map: dict) -> str:
         return "You want to sleep to:\n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Nigth"
     else:
         return "There is no bed here."
+
+
+# Wait options display.
+def disp_wait() -> str:
+    return "You want to wait to:\n- Wait to Morning\n- Wait to Afternoon\n- Wait to Evening\n- Wait to Nigth"
+
+
+# Talk npc options.
+def disp_talk(x: int, y: int, set_map: dict) -> str:
+    if set_map[(x, y)][2]:
+        msg = "You want to talk to:"
+        for i, npc in enumerate(set_map[(x, y)][2]):
+            msg += "\n - " + npc.title()
+        return msg
+    else:
+        return "No one is here."
+
+
+# Title display.
+def disp_title() -> None:
+    title = ["  ___  ____|___|_________     ____|_____ ___                     ",
+             " | ' ||    |   |___/___|_)        |__|__| ' |                    ",
+             "\n",
+             "  ___ ____ ____  ___  .-. _____       _  ________ ____/ ___ ____ ",
+             " (   )_/(_)__|_)(   )(   )___/_    (_/ )|    __|_)    \\| ' |_/(_)",
+             "  `-'            `|   `-'                                        "]
+    print()
+    for line in title:
+        print(line)
+    print()
+    print()

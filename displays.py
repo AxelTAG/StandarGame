@@ -65,7 +65,7 @@ def disp_play(
 
 # Sleep options display.
 def disp_sleep(x: int, y: int, set_map: dict) -> str:
-    if "bed" in set_map[(x, y)][0]:
+    if "bed" in set_map[str((x, y))]["items"]:
         return "You want to sleep to:\n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Nigth"
     else:
         return "There is no bed here."
@@ -78,13 +78,24 @@ def disp_wait() -> str:
 
 # Talk npc options.
 def disp_talk(x: int, y: int, set_map: dict) -> str:
-    if set_map[(x, y)][2]:
+    if set_map[str((x, y))]["npc"]:
         msg = "You want to talk to:"
-        for i, npc in enumerate(set_map[(x, y)][2]):
+        for i, npc in enumerate(set_map[str((x, y))]["npc"]):
             msg += "\n - " + npc.title()
         return msg
     else:
         return "No one is here."
+
+
+# Enter action.
+def disp_enter(x: int, y: int, set_map: dict) -> str:
+    if set_map[str((x, y))]["entries"]:
+        msg = "You want to enter to:"
+        for i, entrie in enumerate(set_map[str((x, y))]["entries"]):
+            msg += "\n - " + entrie.title()
+        return msg
+    else:
+        return "There aren't entries here."
 
 
 # Title display.

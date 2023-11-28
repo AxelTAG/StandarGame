@@ -82,8 +82,18 @@ def tl_map_set(tl_map: list):
     # Fill the dictionary
     for i in range(len(tl_map)):
         for j in range(len(tl_map[i])):
-            key = (i, j)
-            value = [[], "", []]
+            key = str((i, j))
+            value = {
+                    "t": None,
+                    "e": False,
+                    "e_list": [],
+                    "e_chance": [],
+                    "r": [],
+                    "d": None,
+                    "items": [],
+                    "npc": [],
+                    "entries": [],
+                    "c": None}
             dictionary[key] = value
 
     return dictionary
@@ -175,40 +185,80 @@ def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
 
 # Export dictionary to txt.
 def export_dict_to_txt(dictionary: dict, file_path: str) -> None:
+    def write_recursive(file, data, depth=0):
+        for key, value in data.items():
+            if isinstance(value, dict):
+                file.write(f"{'  ' * depth}{key}:\n")
+                write_recursive(file, value, depth + 1)
+            else:
+                file.write(f"{'  ' * depth}{key}: {value}\n")
+
     try:
-        with open(file_path, 'w') as file:
-            for key, value in dictionary.items():
-                if isinstance(value, dict):
-                    file.write(f"{key}:\n")
-                    for subkey, subvalue in value.items():
-                        file.write(f"  {subkey}: {subvalue}\n")
-                else:
-                    file.write(f"{key}: {value}\n")
+        with open(file_path, 'w') as doc:
+            write_recursive(doc, dictionary)
     except OSError:
-        print(" No loadable save file!")
+        print("Unable to save the file.")
         input(" > ")
+
+
+# Count spaces at first of a text.
+def count_first_spaces(string: str) -> int:
+    # Initialize a counter to keep track of the number of spaces
+    count = 0
+    # Iterate through each character in the input string
+    for char in string:
+        # Check if the character is a whitespace character
+        if char.isspace():
+            # Increment the counter if it's a space
+            count += 1
+        else:
+            # Exit the loop when a non-space character is encountered
+            break
+
+    # Return the final count of spaces at the beginning of the string
+    return count
+
+
+# Assign a value to a key of a dict.
+def assign_value_dict(dictionary: dict, keys: list, value) -> dict:
+    current_dict = dictionary
+
+    # Traverse the dictionary using keys[:-1] to reach the nested dictionary.
+    for key in keys[:-1]:
+        current_dict = current_dict[key]
+
+    # Assign the value to the last key in the list.
+    current_dict[keys[-1]] = value
+
+    # Return the original dictionary (which is now updated).
+    return dictionary
 
 
 # Import dictionary from txt.
 def load_dict_from_txt(file_path: str) -> dict:
     reloaded_dictionary = {}
-    current_key = None
+    current_key = []
     try:
         with open(file_path, 'r') as file:
             lines = file.readlines()
-            for line in lines:
-                if ':' in line:
-                    key, value = line.strip().split(':', 1)
-                    if value == '':
-                        current_key = key
-                        reloaded_dictionary[eval(current_key)] = {}
-                    elif current_key:
-                        try:
-                            reloaded_dictionary[eval(current_key)][eval(key)] = eval(value)
-                        except NameError:
-                            reloaded_dictionary[eval(current_key)][key] = eval(value)
-                    else:
-                        reloaded_dictionary[key] = value
+            for i, line in enumerate(lines):
+                if i != 0 and count_first_spaces(lines[i]) < count_first_spaces(lines[i - 1]):
+                    current_key.pop(-1)
+                key, value = line.strip().split(':', 1)
+                if value == '':
+                    current_key.append(key)
+                    reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, {})
+                else:
+                    try:
+                        value = eval(value)
+                    except SyntaxError:
+                        value = value.strip()
+                    except NameError:
+                        value = value.strip()
+                    current_key.append(key)
+                    reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, value)
+                    current_key.pop(-1)
+
     except OSError:
         print(" No loadable save file!")
         input(" > ")

@@ -2,6 +2,7 @@
 import globals
 from utils import day_est, typewriter, clear, text_ljust
 from displays import disp_title
+import random
 
 
 # Move function.
@@ -36,7 +37,7 @@ def sleep_in_bed(x: int, y: int, set_map: dict, hp, hpmax, actual_hs, opt: str) 
         hs, d_moment = day_est(actual_hs, 0)
         return "This is not posible.", hp, hs, d_moment
     else:
-        if "bed" in set_map[(x, y)][0]:
+        if "bed" in set_map[str((x, y))]["items"]:
             if opt == "morning":
                 return "You slept until the morning.", hpmax, 6, "MORNING"
             elif opt == "afternoon":
@@ -53,11 +54,11 @@ def sleep_in_bed(x: int, y: int, set_map: dict, hp, hpmax, actual_hs, opt: str) 
 # Use boat.
 def use_boat(x: int, y: int, inventory: dict, set_map: dict) -> tuple[str, dict, dict]:
     try:
-        if "boat" in set_map[(x, y)][0] and "boat" not in inventory.keys():
+        if "boat" in set_map[str((x, y))]["items"] and "boat" not in inventory.keys():
             inventory["boat"] = True
             del inventory["walk"]
-            set_map[(x, y)][0].remove("boat")
-            set_map[(x, y)][1] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
+            set_map[str((x, y))]["items"].remove("boat")
+            set_map[str((x, y))]["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
             return "You are in the boat", inventory, set_map
         else:
             return "There is no boat here.", inventory, set_map
@@ -70,8 +71,8 @@ def land(x: int, y: int, inventory: dict, set_map: dict, tl_map: list) -> tuple[
     if "boat" in inventory.keys() and tl_map[y][x] not in ["sea", "river"]:
         inventory["walk"] = True
         del inventory["boat"]
-        set_map[(x, y)][0].append("boat")
-        set_map[(x, y)][1] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+        set_map[str((x, y))]["items"].append("boat")
+        set_map[str((x, y))]["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
         return "You have land.", inventory, set_map
     else:
         return "You can't land here.", inventory, set_map
@@ -92,10 +93,7 @@ def talk(npc: list, msg: list[str], quest: list[list] = None, res: list[str] = N
             typewriter(" " * 4 + text)
             print()
 
-        # if res is not None and i < len(res):
-        #     user_response = input(" " * 4 + "> " + res[i] + " ")
-        # else:
-        #     user_response = input(" " * 4 + "> ")
+        input(" " * 4 + "> ")
 
 
 # Wait action.
@@ -111,6 +109,24 @@ def wait(actual_hs, opt: str) -> tuple[str, int, str]:
         return "You wait until the evening.", 18, "EVENING"
     else:
         return "You slept wait the night.", 22, "NIGHT"
+
+
+# Enter action.
+def enter(x: int, y: int, entrie: str):
+    if entrie == "cave":
+        if (x, y) == (13, 0):
+            if random.randint(1, 100) <= 50:
+                return "You have crossed the cave without any problems.", 19, 0, False
+            else:
+                return "You have crossed the cave.", 19, 0, True
+
+        if (x, y) == (19, 0):
+            if random.randint(1, 100) <= 50:
+                return "You have crossed the cave without any problems.", 13, 0, False
+            else:
+                return "You have crossed the cave.", 13, 0, True
+    else:
+        return "There is not a " + entrie + " here.", x, y, False
 
 
 # Explore action.

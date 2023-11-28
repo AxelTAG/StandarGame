@@ -215,21 +215,111 @@ MOBS = {
 }
 
 
-# MAP SETTING format [x, y, objects, description, npc].
+# MAP SETTING format dic[].
 MAP_SETTING = {
-    (0, 0): [["bed"], "Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
-                      "invites serenity amid nature's whispers.", []],
-    (2, 1): [["boat"], "Seaside with anchored boat, echoing waves and vibrant coastal life.", []],
-    (6, 2): [["boat"], "Seaside with anchored boat, echoing waves and vibrant coastal life.", ["captain zelian",
-                                                                                               "traveler seraph"]],
-    (9, 4): [["walk"], "Town Center: Mayor's office, bustling square, and a quaint temple create the heart of "
-                       "community life.", ["mayor"]],
-    (10, 5): [["walk"], "Southern gateway, welcoming gates, cobblestone paths, and a charming, serene atmosphere "
-                        "greet visitors.", []],
-    (14, 5): [[], "Blocked valley passage, boulders from a recent landslide obstruct the way, as a diligent worker "
-                  "clears debris, striving to reopen this vital route amidst the rugged beauty of "
-                  "the scenic landscape.", ["worker gorrick"]],
-    (15, 5): [["wings"], "Nothing important here.", []]
+    "(0, 0)": {
+        "t": "HUT",
+        "e": False,
+        "e_list": [""],
+        "e_chance": [0],
+        "r": ["walk"],
+        "d": "Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, invites serenity amid "
+             "nature's whispers.",
+        "items": ["bed"],
+        "npc": [],
+        "entries": [],
+        "c": (185, 122, 87, 255)},
+    "(2, 1)": {
+        "t": "COAST",
+        "e": True,
+        "e_list": ["slime"],
+        "e_chance": [30],
+        "r": ["walk"],
+        "d": "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary figure stands at the "
+             "water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves and "
+             "the boundless horizon stretching before them.",
+        "items": ["boat"],
+        "npc": [],
+        "entries": [],
+        "c": (239, 228, 176, 255)},
+    "(6, 2)": {
+        "t": "COAST",
+        "e": True,
+        "e_list": ["slime"],
+        "e_chance": [30],
+        "r": ["walk"],
+        "d": "Seaside with anchored boat, echoing waves and vibrant coastal life.",
+        "items": ["boat"],
+        "npc": ["captain zelian"],
+        "entries": [],
+        "c": (239, 228, 176, 255)},
+    "(9, 4)": {
+        "t": "TOWN CENTER",
+        "e": False,
+        "e_list": [],
+        "e_chance": [],
+        "r": ["walk"],
+        "d": "Village hub, Mayor's office, bustling square, and a quaint temple create the heart of community life.",
+        "items": [],
+        "npc": ["mayor thorian"],
+        "entries": [],
+        "c": (170, 105, 70, 255)},
+    "(10, 5)": {
+        "t": "SOUTHERN GATES",
+        "e": False,
+        "e_list": [],
+        "e_chance": [],
+        "r": ["walk"],
+        "d": "Southern gateway, welcoming gates, cobblestone paths, and a charming, serene atmosphere greet visitors.",
+        "items": [],
+        "npc": [],
+        "entries": [],
+        "c": (200, 191, 231, 255)},
+    "(13, 0)": {
+        "t": "HIGHLANDS",
+        "e": True,
+        "e_list": ["goblin", "orc"],
+        "e_chance": ["40", "90"],
+        "r": ["walk"],
+        "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
+        "items": [],
+        "npc": [],
+        "entries": ["cave"],
+        "c": (195, 195, 195, 255)},
+    "(14, 5)": {
+        "t": "VALLEY",
+        "e": True,
+        "e_list": ["slime"],
+        "e_chance": [30],
+        "r": ["walk"],
+        "d": "Blocked valley passage, boulders from a recent landslide obstruct the way, as a diligent worker clears "
+             "debris, striving to reopen this vital route amidst the rugged beauty of the scenic landscape.",
+        "items": [],
+        "npc": ["worker gorrick", "traveler seraph"],
+        "entries": [],
+        "c": (167, 167, 167, 255)},
+    "(15, 5)": {
+        "t": "ROCKS",
+        "e": True,
+        "e_list": ["slime"],
+        "e_chance": [30],
+        "r": ["wings"],
+        "d": "Nothing important here.",
+        "items": [],
+        "npc": [],
+        "entries": [],
+        "c": (85, 80, 85, 255)},
+    "(19, 0)": {
+        "t": "HIGHLANDS",
+        "e": True,
+        "e_list": ["goblin", "orc"],
+        "e_chance": ["40", "90"],
+        "r": ["walk"],
+        "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
+        "items": [],
+        "npc": [],
+        "entries": ["cave"],
+        "c": (195, 195, 195, 255)}
 }
 
 
@@ -239,8 +329,10 @@ NPC = {
                         "and discovering uncharted isles. The ocean whispers secrets to those who listen.", "Legend "
                         "speaks of a mystical realm beneath these waves, hidden from mortal eyes.", "One day, perhaps, "
                         "the tides will reveal its mysteries to a brave soul like yourself, adventurer."]],
-    "mayor": [["Adventurer, our peaceful town of Tepia is under siege! Goblins from the northern highlands "
-               "attack relentlessly.", "We fear a sinister leader guides them."]],
+    "mayor thorian": [["Greetings, traveler, to our humble abode! Epiiat is open to all seeking refuge.", "However, I "
+                       "must caution you—recently, the once-tranquil caves to the north have become infested with "
+                       "Goblins and other nefarious beings.", "We fear a sinister leader guides them.", "Be vigilant on "
+                       "your journey through our beloved town and beyond, and may the Goddesses guide your steps."]],
     "traveler seraph": [["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here mentioned some caves "
                          "to the north that might lead us across.", "Aye, those caves are an option, but beware! "
                          "Lately, they've become a haven for Goblins and other foul creatures.", "A perilous journey "

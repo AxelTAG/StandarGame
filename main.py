@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt, clear
 import globals
-from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait
-from actions import move, use_boat, land, sleep_in_bed, wait, talk
+from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter
+from actions import move, use_boat, land, sleep_in_bed, wait, talk, enter
 
 
 def draw():
@@ -304,11 +304,11 @@ while run:
                 menu = False
                 play = True
 
-                # Initial settings.
-                # Inventory variables.
-                inventory = {"red_potions": 1, "elixirs": 0, "gold": 5, "walk": True}
-                # Map settings.
-                map_set.update(globals.MAP_SETTING)
+            # Initial settings.
+            # Inventory variables.
+            inventory = {"red_potions": 1, "elixirs": 0, "gold": 5, "walk": True}
+            # Map settings.
+            map_set.update(globals.MAP_SETTING)
 
         # Load game choice.
         elif choice == "2":
@@ -355,16 +355,15 @@ while run:
 
             # Loading inventory and map settings.
             load_setting = load_dict_from_txt("cfg_save.txt")
-            inventory.update(load_setting[0])
-            map_set.update(load_setting[1])
-
+            inventory.update(load_setting["0"])
+            map_set.update(load_setting["1"])
         elif choice == "3":
             rules = True
         elif choice == "4":
             quit()
 
     while play:
-        save()  # autosave
+        #save()  # autosave
         clear()
 
         # Fight chances of moving.
@@ -389,8 +388,8 @@ while run:
                 location = bioms[tile_map[y][x]]["t"]
 
             # Location description setting.
-            if map_set[(x, y)][1]:
-                loc_des = map_set[(x, y)][1]
+            if map_set[str((x, y))]["d"]:
+                loc_des = map_set[str((x, y))]["d"]
             else:
                 loc_des = bioms[tile_map[y][x]]["d"]
 
@@ -489,12 +488,29 @@ while run:
                 if len(action) <= 2:
                     screen = disp_talk(x, y, map_set)
                     standing = True
-                elif " ".join(action[2:]) in map_set[(x, y)][2]:
+                elif " ".join(action[2:]) in map_set[str((x, y))]["npc"]:
                     talk(action[2:], npc[" ".join(action[2:])][0])
                     standing = True
                 else:
                     screen = "Here no one is called " + " ".join(action[2:]) + "."
                     standing = True
+
+            elif action[0] == "enter":  # Enter action.
+                if len(action) <= 2:
+                    screen = disp_enter(x, y, map_set)
+                    standing = True
+                elif " ".join(action[2:]) in map_set[str((x, y))]["entries"]:
+                    screen, x, y, fight = enter(x, y, " ".join(action[2:]))
+                    if fight:
+                        battle(["orc"], [100])
+                    standing = True
+                else:
+                    screen = "There is no " + " ".join(action[2:]) + "."
+                    standing = True
+
+            elif action[0] == "update":  # Admin action for update de game while devolping.
+                map_set.update(tl_map_set(tile_map))
+                map_set.update(globals.MAP_SETTING)
 
             else:
                 standing = True

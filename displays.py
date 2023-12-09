@@ -41,8 +41,8 @@ def disp_battle(user: dict, enemy: dict, text: str, inv: dict) -> None:
 
     # Text lines for text3.
     o_attack = "1 - ATTACK"
-    o_slot1 = "\n 2 - " + user["slot1"] + " [" + str(inv[user["slot1"].lower().replace(" ", "_")]) + "]"
-    o_slot2 = "\n 3 - " + user["slot2"] + " [" + str(inv[user["slot2"].lower().replace(" ", "_")]) + "]"
+    o_slot1 = "\n 2 - " + user["slot1"].upper() + " [" + str(inv[user["slot1"].lower().replace(" ", "_")]) + "]"
+    o_slot2 = "\n 3 - " + user["slot2"].upper() + " [" + str(inv[user["slot2"].lower().replace(" ", "_")]) + "]"
 
     text1 = u_name + u_hp + u_hpbar + u_atk
     text2 = e_name + e_hp + e_hpbar

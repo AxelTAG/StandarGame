@@ -94,9 +94,9 @@ map_set = tl_map_set(tile_map)
 y_len = len(tile_map)-1
 x_len = len(tile_map[0])-1
 
-bioms = globals.BIOMS
+bioms = globals.BIOMS.copy()
 npc = globals.NPC.copy()
-mobs = globals.MOBS
+mobs = globals.MOBS.copy()
 
 screen = "Nothing done yet."
 
@@ -228,9 +228,9 @@ while run:
                     y_len = len(tile_map) - 1
                     x_len = len(tile_map[0]) - 1
 
-                    bioms = globals.BIOMS
+                    bioms = globals.BIOMS.copy()
                     npc = globals.NPC.copy()
-                    mobs = globals.MOBS
+                    mobs = globals.MOBS.copy()
 
                     screen = "Nothing done yet."
                     
@@ -245,6 +245,7 @@ while run:
 
                 print(" < NEW GAME >")
                 print()
+
                 user_stats["name"] = ""
                 while not check_name(user_stats["name"]):
                     user_stats["name"] = input(" # What's your NAME, hero? ").title()
@@ -258,10 +259,18 @@ while run:
             map_set.update(globals.MAP_SETTING)
             # Location setting.
             map_set[str((x, y))]["t"] = user_stats["name"] + "'s Hut"
+            # Introduction setting.
+            npc["whispers"][0] = [user_stats["name"] + "...", user_stats["name"] + "...", "...your destiny awaits.",
+                                  "Follow the whispers of the wind, and come to me.", "Secrets untold and challenges "
+                                  "unknown lie ahead.", "Trust in the unseen path...", "... come to me."]
 
             # Introduction.
             if user_stats["name"]:
-                screen, inventory = talk(npc=npc["Whispers"], npc_name="Whispers", inventory=inventory)
+                screen, inventory = talk(npc=npc["whispers"], npc_name="Whispers", inventory=inventory)
+
+            # Dragon Firefrost setting.
+            npc["dragon firefrost"][0] = [user_stats["name"] + "...", "You finally come to me...", "Destiny calls "
+                                         "for a dance of fire and frost between us...", "Ready your blade..."]
 
         elif choice == "2":  # Load game choice.
             try:
@@ -557,7 +566,7 @@ while run:
                             player_map[y - 1][x] = bioms[tile_map[y - 1][x]]["c"]
                         if y != y_len - 1:
                             player_map[y + 1][x] = bioms[tile_map[y + 1][x]]["c"]
-                x, y, = 9, 4
+                x, y, = 11, 24
             else:
                 standing = True
 

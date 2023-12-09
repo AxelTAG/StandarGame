@@ -900,7 +900,7 @@ MAP_SETTING = {
 
 # NPCs.
 NPC = {
-    "Whispers": [["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind, and come to me.",
+    "whispers": [["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind, and come to me.",
                   "Secrets untold and challenges unknown lie ahead.", "Trust in the unseen path...", "... come to me."],
                  [], [], [0]],
     "captain zelian": [["Ah, the sea, a fickle friend and fierce foe.", "Many a ship I've sailed, battling monsters "

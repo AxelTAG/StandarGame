@@ -5,6 +5,7 @@ import globals
 import time
 import sys
 import os
+import hashlib
 
 
 # Clear console function.
@@ -29,17 +30,29 @@ def label_pixels(img_path: str):
         for x in range(width):
             # Get the color of the pixel at coordinates (x, y)
             color = img.getpixel((x, y))
-            if color == (1, 1, 1, 255):  # Cave.
+            if color == (54, 54, 54, 255):  # Canyon.
+                label = "canyon"
+            elif color == (1, 1, 1, 255):  # Cave.
                 label = "cave"
             elif color == (239, 228, 176, 255):  # Coast.
                 label = "coast"
+            elif color == (22, 118, 51, 255):  # Dark Forest.
+                label = "dark forest"
+            elif color == (148, 148, 148, 255):  # Death Valley.
+                label = "death valley"
+            elif color == (115, 231, 29, 255):  # Fields.
+                label = "fields"
             elif color == (34, 177, 76, 255):  # Forest.
                 label = "forest"
+            elif color == (120, 186, 252, 255):  # Frostvale.
+                label = "frostvale"
             elif color == (200, 191, 231, 255):  # Gates.
                 label = "gates"
             elif color == (195, 195, 195, 255):  # Highlands.
                 label = "highlands"
-            elif color == (185, 122, 87, 255):  # Elina's Hut.
+            elif color == (78, 185, 32, 255):  # Hills.
+                label = "hills"
+            elif color == (185, 122, 87, 255):  # Hut.
                 label = "hut"
             elif color == (201, 237, 92, 255):  # Island.
                 label = "island"
@@ -61,8 +74,8 @@ def label_pixels(img_path: str):
                 label = "town"
             elif color == (167, 167, 167, 255):  # Valley.
                 label = "valley"
-            elif color == (163, 73, 164, 255):  # Workers.
-                label = "workers"
+            elif color == (128, 255, 255, 255):  # Water.
+                label = "water"
             else:
                 label = "red"
 
@@ -75,7 +88,7 @@ def label_pixels(img_path: str):
 
 
 # Function that returns a dictionary from a list generated with label_pixels.
-def tl_map_set(tl_map: list):
+def tl_map_set(tl_map: list) -> dict:
     # Create empety dict.
     dictionary = {}
 
@@ -84,37 +97,37 @@ def tl_map_set(tl_map: list):
         for j in range(len(tl_map[i])):
             key = str((i, j))
             value = {
-                    "t": None,
-                    "e": False,
-                    "e_list": [],
-                    "e_chance": [],
-                    "r": [],
-                    "d": None,
+                    "t": globals.BIOMS[tl_map[j][i]]["t"],
+                    "e": globals.BIOMS[tl_map[j][i]]["e"],
+                    "e_list": globals.BIOMS[tl_map[j][i]]["e_list"],
+                    "e_chance": globals.BIOMS[tl_map[j][i]]["e_chance"],
+                    "r": globals.BIOMS[tl_map[j][i]]["r"],
+                    "d": globals.BIOMS[tl_map[j][i]]["d"],
                     "items": [],
                     "npc": [],
                     "entries": [],
-                    "c": None}
+                    "c": globals.BIOMS[tl_map[j][i]]["c"]}
             dictionary[key] = value
 
     return dictionary
 
 
 # Functions that simplifies moving options.
-def draw_move(x, y, map_heigt, map_width, inventory, tl_map) -> list:
+def draw_move(x: int, y: int, map_heigt: int, map_width: int, inventory: dict, tl_map: list, ms: dict) -> list:
     active_moves = [0, 0, 0, 0]
-    if y > 0 and all(req in [*inventory.keys()] for req in globals.BIOMS[tl_map[y - 1][x]]["r"]):
+    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]):
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             active_moves[0] = 1
 
-    if x < map_heigt and all(req in [*inventory.keys()] for req in globals.BIOMS[tl_map[y][x + 1]]["r"]):
+    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]):
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             active_moves[1] = 1
 
-    if y < map_width and all(req in [*inventory.keys()] for req in globals.BIOMS[tl_map[y + 1][x]]["r"]):
+    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]):
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             active_moves[2] = 1
 
-    if x > 0 and all(req in [*inventory.keys()] for req in globals.BIOMS[tl_map[y][x - 1]]["r"]):
+    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]):
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             active_moves[3] = 1
 
@@ -122,33 +135,36 @@ def draw_move(x, y, map_heigt, map_width, inventory, tl_map) -> list:
 
 
 # Function that left justify a text.
-def text_ljust(msg: str, width: int = 20) -> list:
+def text_ljust(msg: str, width: int = 20, adjust: bool = True) -> list:
     lines = msg.split('\n')
     text = []
 
-    for line in lines:
-        words = line.split()
-        current_line = words[0]
+    if adjust:
+        for line in lines:
+            words = line.split()
+            current_line = words[0]
 
-        for word in words[1:]:
-            if len(current_line) + len(word) + 1 <= width:
-                # Add word to text line.
-                current_line += ' ' + word
-            else:
-                # Justify the current line and start a new text line.
-                text.append(current_line.ljust(width))
-                current_line = word
+            for word in words[1:]:
+                if len(current_line) + len(word) + 1 <= width:
+                    # Add word to text line.
+                    current_line += ' ' + word
+                else:
+                    # Justify the current line and start a new text line.
+                    text.append(current_line.ljust(width))
+                    current_line = word
 
-        # Justify the last text line in the current paragraph.
-        text.append(current_line.ljust(width))
-
+            # Justify the last text line in the current paragraph.
+            text.append(current_line.ljust(width))
+    else:
+        for line in lines:
+            text.append(line.ljust(width))
     return text
 
 
 # Function that puts two messages in two paralels columns.
-def text_2_col(msg1: str, msg2: str, width: int = 20, ch: str = "") -> list:
-    lines1 = text_ljust(msg1, width)
-    lines2 = text_ljust(msg2, width)
+def text_2_col(msg1: str, msg2: str, width: int = 20, ch: str = "", adjust: bool = True) -> list:
+    lines1 = text_ljust(msg1, width, adjust)
+    lines2 = text_ljust(msg2, width, adjust)
 
     max_lines = max(len(lines1), len(lines2))
 
@@ -238,30 +254,25 @@ def assign_value_dict(dictionary: dict, keys: list, value) -> dict:
 def load_dict_from_txt(file_path: str) -> dict:
     reloaded_dictionary = {}
     current_key = []
-    try:
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-            for i, line in enumerate(lines):
-                if i != 0 and count_first_spaces(lines[i]) < count_first_spaces(lines[i - 1]):
-                    current_key.pop(-1)
-                key, value = line.strip().split(':', 1)
-                if value == '':
-                    current_key.append(key)
-                    reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, {})
-                else:
-                    try:
-                        value = eval(value)
-                    except SyntaxError:
-                        value = value.strip()
-                    except NameError:
-                        value = value.strip()
-                    current_key.append(key)
-                    reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, value)
-                    current_key.pop(-1)
-
-    except OSError:
-        print(" No loadable save file!")
-        input(" > ")
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        for i, line in enumerate(lines):
+            if i != 0 and count_first_spaces(lines[i]) < count_first_spaces(lines[i - 1]):
+                current_key.pop(-1)
+            key, value = line.strip().split(':', 1)
+            if value == '':
+                current_key.append(key)
+                reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, {})
+            else:
+                try:
+                    value = eval(value)
+                except SyntaxError:
+                    value = value.strip()
+                except NameError:
+                    value = value.strip()
+                current_key.append(key)
+                reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, value)
+                current_key.pop(-1)
 
     return reloaded_dictionary
 
@@ -281,3 +292,57 @@ def patron_print(elements, n):
     for _ in range(n):
         patron.append(next(elements_cycle))
     return patron
+
+
+# Validation of name.
+def check_name(text: str, max_length: int = 12):
+    # Check if text is empty.
+    if not text:
+        return False
+
+    # Check text length, white space, and numbers.
+    if len(text) > max_length or text.isspace() or any(char.isdigit() for char in text):
+        return False
+
+    # If it passes all checks, return True
+    return True
+
+
+# Hash generator of txt file.
+def get_hash(file_name, algorithm='sha256', block_size=65536):
+    hasher = hashlib.new(algorithm)
+    with open(file_name, 'rb') as file:
+        block = file.read(block_size)
+        while len(block) > 0:
+            hasher.update(block)
+            block = file.read(block_size)
+    return hasher.hexdigest()
+
+
+# Stat item extractor.
+def sum_item_stats(items: dict) -> dict:
+    total_stats = {"atk": 0, "def": 0, "pre": 0, "eva": 0}
+    items_equiped = {}
+    for value in items.values():
+        items_equiped[value] = globals.ITEMS_EQUIP[str(value)]
+
+    for item_key, item_stats in items_equiped.items():
+        for stat_key, stat_value in item_stats.items():
+            if stat_key != "body" and stat_value is not None:
+                total_stats[stat_key] += stat_value
+
+    return total_stats
+
+
+# Coast reset.
+def coast_reset(ms: dict, keys: list) -> dict:
+    for key, value in ms.items():
+        if value.get("t") == "COAST" and key in keys:
+            value["items"] = ["boat"]
+            value["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+        elif value.get("t") == "COAST":
+            try:
+                value["items"] = value["items"].remove("boat")
+            except ValueError:
+                pass
+    return ms

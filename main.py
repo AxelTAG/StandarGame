@@ -11,13 +11,11 @@ from actions import move, equip, use_boat, land, sleep_in_bed, wait, talk, enter
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
 import globals
+from inventory import Inventory
+from management import save
+from player import Player
 from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt, clear, \
     check_name, get_hash, sum_item_stats
-from management import save
-
-
-# Command line settings.
-os.system(f"mode con: cols={globals.WIDTH} lines={globals.HEIGHT}")
 
 # Game variables.
 run = True

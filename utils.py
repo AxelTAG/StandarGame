@@ -16,6 +16,7 @@ def clear():
     else:
         os.system("clear")
 
+
 # Functions that returns tile map of a image, depending de colors.
 def label_pixels(img_path: str):
     # Open the image.

@@ -1,26 +1,19 @@
 # Imports.
+# External imports.
 import os
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt, clear, \
-    check_name, get_hash, sum_item_stats
-import globals
-from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
-    disp_show_inventory, disp_drop, disp_look_around
+
+# Locals imports.
 from actions import move, equip, use_boat, land, sleep_in_bed, wait, talk, enter, explore, battle, heal, unequip, drop, \
     event_handler, use, check
-
-
-def save():
-    # Map drawing of user saving (export to txt).
-    np.savetxt("cfg_map.txt", player_map.reshape(-1, player_map.shape[-1]), fmt='%d', delimiter='\t')
-
-    # Inventory, user stats and map setting saving (export to txt).
-    user_stats["x"] = x
-    user_stats["y"] = y
-    export_dict_to_txt({0: inventory, 1: user_stats, 2: npc, 3: user_equip, 9: map_set}, "cfg_save.txt")
-    export_dict_to_txt({"hash": get_hash("cfg_save.txt")}, "cfg_hash.txt")
+from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
+    disp_show_inventory, disp_drop, disp_look_around
+import globals
+from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt, clear, \
+    check_name, get_hash, sum_item_stats
+from management import save
 
 
 # Command line settings.
@@ -82,14 +75,14 @@ x = user_stats["x"]
 y = user_stats["y"]
 
 # Player map.
-player_map = np.zeros((32, 32, 4), dtype=np.uint8)
-player_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
+user_map = np.zeros((32, 32, 4), dtype=np.uint8)
+user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
 
 # Inventory.
 inventory = {}
 
 # Global settings.
-tile_map = label_pixels("world_map.png")
+tile_map = label_pixels("rsc.png")
 map_set = tl_map_set(tile_map)
 y_len = len(tile_map)-1
 x_len = len(tile_map[0])-1
@@ -128,9 +121,10 @@ while run:
             print(" I'm the creator of this game and these are the rules.")
             print()
             print(" 1) Follow your path.")
-            print(" 2) Trace your path with: ""map"" and ""draw map""")
-            print(" 3) Many action are allowed try them to find your path.")
-            print(" 4) Remember: sleeping (""sleep"") in a bed, will charge your energy.")
+            print(" 2) Trace your path with: 'map' and 'draw map'.")
+            print(" 3) Many action are allowed ('use', 'enter', 'talk', 'explore', etc.) try them "
+                  "\n    to find your path.")
+            print(" 4) Remember: sleeping ('sleep to') in a bed, will charge your energy.")
             print()
             rules = False
             choice = ""
@@ -216,8 +210,8 @@ while run:
                     y = user_stats["y"]
 
                     # Player map.
-                    player_map = np.zeros((32, 32, 4), dtype=np.uint8)
-                    player_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
+                    user_map = np.zeros((32, 32, 4), dtype=np.uint8)
+                    user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
 
                     # Inventory.
                     inventory = {}
@@ -241,6 +235,7 @@ while run:
                     play = True
 
             except:
+                clear()
                 disp_title()
 
                 print(" < NEW GAME >")
@@ -281,7 +276,7 @@ while run:
 
                 # Loading user map.
                 map_load = np.loadtxt("cfg_map.txt", delimiter='\t', dtype=int)
-                player_map = map_load.reshape((32, 32, 4))
+                user_map = map_load.reshape((32, 32, 4))
 
                 # Loading inventory, user stats and map settings.
                 load_setting = load_dict_from_txt("cfg_save.txt")
@@ -317,7 +312,7 @@ while run:
             quit()
 
     while play:
-        save()  # Autosave
+        save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)  # Autosave.
         clear()
 
         # Fight chances of moving.
@@ -326,8 +321,7 @@ while run:
                 if random.randint(0, 100) < max(bioms[tile_map[y][x]]["e_chance"]):
                     enemy = random.choices(bioms[tile_map[y][x]]["e_list"], bioms[tile_map[y][x]]["e_chance"], k=1)[0]
                     user_stats, inventory, play, menu, win = battle(user_stats, mobs[enemy].copy(), inventory, map_set)
-                    x, y, = user_stats["x"], user_stats["y"]
-                    save()
+                    save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)
 
         # Lvl upgrade of user.
         if user_stats["exp"] >= user_stats["expmax"]:
@@ -339,7 +333,7 @@ while run:
             user_stats["b_def"] += 0.025
             user_stats["b_pre"] += 0.005
             user_stats["b_eva"] += 0.01
-            screen = "You have lvl up. ASSIGN Strength/Agility/Dexterity/Vitality. You can assign 3 points."
+            screen = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
             user_stats["hability_points"] += 3
 
         # Refreshing stats of user.
@@ -379,21 +373,20 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save()
+                save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
-                screen, x, y, add_hs = move(x, y, x_len, y_len, inventory, tile_map, action[0], map_set)
-                standing = False
+                screen, x, y, add_hs, standing = move(x, y, x_len, y_len, inventory, tile_map, action[0], map_set)
 
             elif action[0] in ["5", "6"]:  # Use object action.
                 if action[0] == "5":
                     fast_object = user_stats["slot1"]
                 if action[0] == "6":
                     fast_object = user_stats["slot2"]
-                screen, user_stats, inventory = use(user_stats, inventory, fast_object)
+                screen, user_stats, inventory, object_used = use(user_stats, inventory, fast_object)
                 standing = True
 
-            elif action[0] == "assign":  # Explore action:
+            elif action[0] == "assign":  # Assign action.
                 if len(action) < 2:
                     screen = disp_assign(user_stats)
                 elif user_stats["hability_points"]:
@@ -409,10 +402,10 @@ while run:
                         user_stats["b_res"] += 1
                         user_stats["hability_points"] -= 1
                         screen = "You have assigned a skill point to resistance."
-                    elif action[1] in ["dexterity", "dex"]:
-                        user_stats["b_dex"] += 1
-                        user_stats["hability_points"] -= 1
-                        screen = "You have assigned a skill point to dexterity."
+                    # elif action[1] in ["dexterity", "dex"]:
+                    #     user_stats["b_dex"] += 1
+                    #     user_stats["hability_points"] -= 1
+                    #     screen = "You have assigned a skill point to dexterity."
                     elif action[1] in ["vitality", "vit"]:
                         user_stats["b_vit"] += 1
                         user_stats["hability_points"] -= 1
@@ -427,23 +420,29 @@ while run:
                 screen = check(x, y, map_set, " ".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                player_map[y][x] = bioms[tile_map[y][x]]["c"]
+                user_map[y][x] = bioms[tile_map[y][x]]["c"]
                 if x != 0:
-                    player_map[y][x - 1] = bioms[tile_map[y][x - 1]]["c"]
+                    user_map[y][x - 1] = bioms[tile_map[y][x - 1]]["c"]
                 if x != x_len:
-                    player_map[y][x + 1] = bioms[tile_map[y][x + 1]]["c"]
+                    user_map[y][x + 1] = bioms[tile_map[y][x + 1]]["c"]
                 if y != 0:
-                    player_map[y - 1][x] = bioms[tile_map[y - 1][x]]["c"]
+                    user_map[y - 1][x] = bioms[tile_map[y - 1][x]]["c"]
                 if y != y_len:
-                    player_map[y + 1][x] = bioms[tile_map[y + 1][x]]["c"]
+                    user_map[y + 1][x] = bioms[tile_map[y + 1][x]]["c"]
                 screen = "You have explored the area and mapped it out."
+
+                if "telescope" in inventory.keys():
+                    # Explore a square instead of a cross
+                    for i in range(max(0, x - 1), min(x_len, x + 2)):
+                        for j in range(max(0, y - 1), min(y_len, y + 2)):
+                            user_map[j][i] = bioms[tile_map[j][i]]["c"]
 
             elif action[0] == "drop":  # Drop action.
                 if len(action) <= 2:
                     screen = disp_drop()
                     standing = True
                 else:
-                    screen, inventory = drop(inventory, " ".join(action[2:]), action[1])
+                    screen, inventory = drop(inventory, " ".join(action[2:]), int(action[1]))
 
             elif action[0] == "enter":  # Enter action.
                 if len(action) <= 2:
@@ -454,7 +453,7 @@ while run:
                     if fight:
                         user_stats, inventory, play, menu, win = battle(user_stats, mobs["orc"].copy(), inventory, map_set)
                         if not play:
-                            x, y, = user_stats["x"], user_stats["y"]
+                            save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)
                     standing = True
                 else:
                     screen = "There is no " + " ".join(action[2:]) + "."
@@ -483,12 +482,12 @@ while run:
                 screen = disp_look_around(user_stats, map_set)
 
             elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
-                player_map[y][x] = globals.WHITE
+                user_map[y][x] = globals.PINK
                 plt.figure(user_stats["name"] + "'s map")
-                plt.imshow(player_map)
+                plt.imshow(user_map)
                 plt.title("Map")
                 plt.show()
-                player_map[y][x] = globals.BIOMS[tile_map[y][x]]["c"]
+                user_map[y][x] = globals.BIOMS[tile_map[y][x]]["c"]
                 standing = True
 
             elif action[0] == "slot1":  # Selection slot1 action.
@@ -547,28 +546,11 @@ while run:
                     standing = False
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
-                npc = globals.NPC.copy()
-                tile_map = label_pixels("world_map.png")
-
-                map_set = tl_map_set(tile_map)
-                map_set.update(globals.MAP_SETTING.copy())
-                map_set[str((0, 0))]["t"] = user_stats["name"] + "'s Hut"
-                standing = True
+                inventory["scales"] = 4121996
                 screen = "Map updated."
-                for y in range(y_len):
-                    for x in range(x_len):
-                        player_map[y][x] = bioms[tile_map[y][x]]["c"]
-                        if x != 0:
-                            player_map[y][x - 1] = bioms[tile_map[y][x - 1]]["c"]
-                        if x != x_len - 1:
-                            player_map[y][x + 1] = bioms[tile_map[y][x + 1]]["c"]
-                        if y != 0:
-                            player_map[y - 1][x] = bioms[tile_map[y - 1][x]]["c"]
-                        if y != y_len - 1:
-                            player_map[y + 1][x] = bioms[tile_map[y + 1][x]]["c"]
-                x, y, = 11, 24
             else:
                 standing = True
 
             # Event handler.
-            user_stats, inventory, npc, map_set, play, menu = event_handler(user_stats, inventory, npc, action, map_set, mobs, play, menu)
+            user_stats, inventory, npc, map_set, play, menu = event_handler(user_stats, user_equip, user_map, inventory,
+                                                                            npc, map_set, mobs, x, y, play, menu)

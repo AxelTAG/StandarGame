@@ -9,7 +9,7 @@ DIRECTIONS = {0: "1 - NORTH",  1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
 # Assign display.
 def disp_assign(user: dict) -> str:
     return "Assign skill point (" + str(user["hability_points"]) + ") to:\n- Strength (STR)\n- Agility (AGI)" \
-                                                                   "\n- Resistance (RES)\n- Dexterity (DEX)"
+                                                                   "\n- Resistance (RES)"
 
 
 # Bar display
@@ -40,13 +40,14 @@ def disp_battle(user: dict, enemy: dict, text: str, inv: dict) -> None:
     e_hpbar = "\n " + "█" * int(25 * (enemy["hp"] / enemy["hpmax"])) + "-" * (25 - int(25 * (max(enemy["hp"], 0) / enemy["hpmax"]))) + "|"
 
     # Text lines for text3.
-    o_attack = "1 - ATTACK"
+    o_escape = "0 - ESCAPE"
+    o_attack = "\n1 - ATTACK"
     o_slot1 = "\n 2 - " + user["slot1"].upper() + " [" + str(inv[user["slot1"].lower().replace(" ", "_")]) + "]"
     o_slot2 = "\n 3 - " + user["slot2"].upper() + " [" + str(inv[user["slot2"].lower().replace(" ", "_")]) + "]"
 
     text1 = u_name + u_hp + u_hpbar + u_atk
     text2 = e_name + e_hp + e_hpbar
-    text3 = o_attack + o_slot1 + o_slot2
+    text3 = o_escape + o_attack + o_slot1 + o_slot2
     text4 = text
 
     cmp_text = []
@@ -132,14 +133,14 @@ def disp_play(
     t_str = "\n\n STRENGTH:   " + str(int(user["b_str"]))
     t_res = "\n RESISTANCE: " + str(int(user["b_res"]))
     t_agi = "\n AGILITY:    " + str(int(user["b_agi"]))
-    t_dex = "\n DEXTERITY:  " + str(int(user["b_dex"]))
+    # t_dex = "\n DEXTERITY:  " + str(int(user["b_dex"]))
     t_vit = "\n VITALITY:   " + str(int(user["b_vit"]))
 
     text1 = t_loc + t_reg + t_coord + t_time + "\n." * 3
     text2 = des
     text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + "\n." + t_gold
     text41 = prim_stats + t_atk + t_def + t_eva + t_pre
-    text42 = sec_stats + t_str + t_res + t_agi + t_dex + t_vit
+    text42 = sec_stats + t_str + t_res + t_agi + t_vit
     text4 = "\n".join(text_2_col(text41, text42, int(width / 2 - 2), "|", False))
     text5 = "0 - SAVE AND QUIT"
     text6 = screen_text
@@ -178,7 +179,7 @@ def disp_show_inventory(inv: dict):
 # Sleep options display.
 def disp_sleep(x: int, y: int, set_map: dict) -> str:
     if "bed" in set_map[str((x, y))]["items"]:
-        return "You want to sleep to:\n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Nigth"
+        return "You want to sleep to:\n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Night"
     else:
         return "There is no bed here."
 

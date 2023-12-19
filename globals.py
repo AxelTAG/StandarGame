@@ -1,4 +1,4 @@
-# Command line settings.
+﻿# Command line settings.
 WIDTH = 92
 HEIGHT = 32
 
@@ -7,6 +7,7 @@ PATRON = [" / /\  ", "/ /\ \ ","\ \/ / ", " \/ /  ", " / /\  ", "/ /\ \ ", "\ \/
 
 # Colors.
 WHITE = (255, 255, 255, 255)
+PINK = (255, 105, 180, 255)
 
 # Day parts.
 DAY_PARTS = ("MORNING", "AFTERNOON", "EVENING", "NIGHT")
@@ -16,7 +17,7 @@ BIOMS = {
     "canyon": {
         "t": "CANYON",
         "e": True,
-        "e_list": ["basilisk", "giant blind spider", "orcs", "spectrum"],
+        "e_list": ["basilisk", "giant blind spider", "orc", "spectrum"],
         "e_chance": [30, 50, 10, 30],
         "r": ["torch", "walk"],
         "d": "Shadowy canyon inhabited by fearsome creatures, dark depths, echoing roars, and lurking horrors",
@@ -58,8 +59,8 @@ BIOMS = {
     "fields": {
         "t": "FIELDS",
         "e": True,
-        "e_list": ["slime"],
-        "e_chance": [30],
+        "e_list": ["dryad", "slime"],
+        "e_chance": [15, 30],
         "r": ["walk"],
         "d": "Verdant fields, rolling emerald expanses dotted with wildflowers, where gentle breezes carry the sweet "
              "scent of blooming herbs and distant melodies from hidden creatures in the tall grass.",
@@ -352,6 +353,7 @@ ITEMS_SELL = {"axe": 150,
               "spear": 125,
               "spike_shield": 150,
               "sword": 150,
+              "telescope": 125,
               "torch": 10,
               "tower_shield": 150,
               "wood_shield": 20,
@@ -368,7 +370,10 @@ MOBS = {
         "def": 2,
         "eva": 0.4,
         "pre": 0.8,
-        "items": {"gold": 10, "red_potion": 1, "none": None},
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 40,
+        "items": {"gold": 15, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.7, 1],
         "exp": 4,
     },
@@ -380,33 +385,57 @@ MOBS = {
         "def": 8,
         "eva": 0.6,
         "pre": 0.7,
+        "c_coef": 1.7,
+        "c_chance": 20,
+        "esc": 20,
         "items": {"basilisk_fangs": 2, "none": None},
-        "dc_items": [0.5, 1],
+        "dc_items": [0.7, 1],
         "exp": 10
     },
     "climbing goblin": {
         "name": "Climbing Goblin",
         "hp": 35,
         "hpmax": 35,
-        "atk": 6,
+        "atk": 7,
         "def": 4,
         "eva": 0.3,
         "pre": 0.8,
-        "items": {"gold": 10, "red_potion": 1, "wood_shield": 1, "none": None},
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 40,
+        "items": {"gold": 20, "red_potion": 1, "wood_shield": 1, "none": None},
         "dc_items": [0.5, 0.6, 0.65, 1],
-        "exp": 4
+        "exp": 6
     },
     "dragon": {
         "name": "Dragon FrostFire",
-        "hp": 10,
-        "hpmax": 10,
+        "hp": 100,
+        "hpmax": 100,
         "atk": 15,
         "def": 10,
         "eva": 0.5,
         "pre": 0.9,
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 0,
         "items": {"scales": 4121996, "none": None},
         "dc_items": [0.9999, 1],
-        "exp": 0,
+        "exp": 250,
+    },
+    "dryad": {
+        "name": "Dragon FrostFire",
+        "hp": 20,
+        "hpmax": 1,
+        "atk": 7,
+        "def": 10,
+        "eva": 0.6,
+        "pre": 0.9,
+        "c_coef": 1.7,
+        "c_chance": 20,
+        "esc": 50,
+        "items": {"none": None},
+        "dc_items": [1],
+        "exp": 6,
     },
     "giant blind spider": {
         "name": "Giant Blind Spider",
@@ -416,9 +445,12 @@ MOBS = {
         "def": 5,
         "eva": 0.6,
         "pre": 0.8,
-        "items": {"giant_silk": 1, "red_potion": 1, "none": None},
-        "dc_items": [0.5, 0.8, 1],
-        "exp": 8
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 5,
+        "items": {"giant_silk": 1, "none": None},
+        "dc_items": [0.5, 1],
+        "exp": 10
     },
     "giant slime": {
         "name": "Giant Slime",
@@ -428,9 +460,12 @@ MOBS = {
         "def": 0,
         "eva": 0,
         "pre": 0.65,
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 50,
         "items": {"slime_balls": 2, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.7, 1],
-        "exp": 2
+        "exp": 3
     },
     "giant spider": {
         "name": "Giant Spider",
@@ -440,6 +475,9 @@ MOBS = {
         "def": 5,
         "eva": 0.3,
         "pre": 0.65,
+        "c_coef": 1.6,
+        "c_chance": 15,
+        "esc": 30,
         "items": {"giant_silk": 1, "red_potion": 1, "none": None},
         "dc_items": [0.6, 0.8, 1],
         "exp": 8
@@ -452,6 +490,9 @@ MOBS = {
         "def": 1,
         "eva": 0.3,
         "pre": 0.7,
+        "c_coef": 1.5,
+        "c_chance": 30,
+        "esc": 45,
         "items": {"gold": 5, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.55, 1],
         "exp": 3
@@ -461,11 +502,14 @@ MOBS = {
         "hp": 60,
         "hpmax": 60,
         "atk": 7,
-        "def": 2,
+        "def": 4,
         "eva": 0.5,
         "pre": 0.7,
-        "items": {"gold": 15, "red_potion": 1, "iron_shield": 1, "axe": 1, "none": None},
-        "dc_items": [0.8, 0.90, 0.95, 0.98, 1],
+        "c_coef": 1.5,
+        "c_chance": 30,
+        "esc": 35,
+        "items": {"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1, "none": None},
+        "dc_items": [0.8, 0.85, 0.90, 0.95, 1],
         "exp": 8
     },
     "litle slime": {
@@ -476,8 +520,11 @@ MOBS = {
         "def": 0,
         "eva": 0,
         "pre": 0.8,
-        "items": {"slime_balls": 1, "none": None},
-        "dc_items": [0.3, 1],
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 60,
+        "items": {"slime_balls": 1, "litle_red_potion": 1, "none": None},
+        "dc_items": [0.3, 0.45, 1],
         "exp": 1
     },
     "orc": {
@@ -488,7 +535,10 @@ MOBS = {
         "def": 5,
         "eva": 0.3,
         "pre": 0.7,
-        "items": {"gold": 15, "red_potion": 1, "none": None},
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 0,
+        "items": {"gold": 20, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.7, 1],
         "exp": 5,
     },
@@ -500,6 +550,9 @@ MOBS = {
         "def": 1,
         "eva": 0,
         "pre": 0.7,
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "esc": 50,
         "items": {"red_potion": 1, "slime_balls": 2, "none": None},
         "dc_items": [0.25, 0.45, 1],
         "exp": 2
@@ -512,6 +565,9 @@ MOBS = {
         "def": 0,
         "eva": 0,
         "pre": 1,
+        "c_coef": 1.7,
+        "c_chance": 20,
+        "esc": 100,
         "items": {"gold": 50, "none": None},
         "dc_items": [0.9, 1],
         "exp": 15
@@ -524,21 +580,27 @@ MOBS = {
         "def": 0,
         "eva": 0.8,
         "pre": 0.8,
+        "c_coef": 1.7,
+        "c_chance": 20,
+        "esc": 20,
         "items": {"none": None},
         "dc_items": [1],
-        "exp": 10
+        "exp": 12
     },
     "troll": {
         "name": "Troll",
         "hp": 50,
         "hpmax": 50,
-        "atk": 6,
-        "def": 2,
+        "atk": 7,
+        "def": 4,
         "eva": 0.2,
         "pre": 0.75,
+        "c_coef": 1.6,
+        "c_chance": 20,
+        "esc": 50,
         "items": {"gold": 15, "red_potion": 1, "bludgeon": 1, "none": None},
         "dc_items": [0.5, 0.6, 0.65, 1],
-        "exp": 4
+        "exp": 6
     }
 }
 
@@ -574,7 +636,7 @@ MAP_SETTING = {
         "e": True,
         "e_list": ["slime"],
         "e_chance": [30],
-        "r": ["walk"],
+        "r": [],
         "d": "Seaside with anchored boat, echoing waves and vibrant coastal life.",
         "items": ["boat"],
         "npc": [],
@@ -585,7 +647,7 @@ MAP_SETTING = {
         "e": True,
         "e_list": ["slime"],
         "e_chance": [30],
-        "r": ["walk"],
+        "r": [],
         "d": "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary figure stands at the "
              "water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves and "
              "the boundless horizon stretching before them.",
@@ -870,8 +932,20 @@ MAP_SETTING = {
         "npc": [],
         "entries": [],
         "c": (185, 122, 87, 255)},
+    "(26, 15)": {
+        "t": "AQUIRI'S PORTSIDE ENTRANCE" ,
+        "e": False,
+        "e_list": [],
+        "e_chance": [],
+        "r": ["walk"],
+        "d": "Aquiri's portside entrance: Bustling harbor welcomes ships with salty breezes. Weathered docks and "
+             "colorful boats set the scene for a lively maritime haven in this coastal village.",
+        "items": ["bed"],
+        "npc": ["merchant selena"],
+        "entries": [],
+        "c": (170, 105, 70, 255)},
     "(27, 14)": {
-        "t": "VILLAGE",
+        "t": "AQUIRI'S VILLAGE",
         "e": False,
         "e_list": [],
         "e_chance": [],
@@ -884,7 +958,7 @@ MAP_SETTING = {
         "entries": [],
         "c": (170, 105, 70, 255)},
     "(27, 15)": {
-        "t": "VILLAGE",
+        "t": "AQUIRI'S VILLAGE",
         "e": False,
         "e_list": [],
         "e_chance": [],
@@ -955,7 +1029,7 @@ NPC = {
                          "lighter with satisfaction!"],
                         [["buy", ["What do you want to buy?"]], ["sell", ["What do you want to sell?"]]],
                         [{"harpoon": 150, "hardened_leather_armor": 120, "red_potion": 10, "fishing_pole": 9999,
-                          "wood_shield": 50, "quit": 0}], [0, 0, 0]],
+                          "wood_shield": 50, "telescope": 200, "quit": 0}], [0, 0, 0]],
     "traveler elara": [["Greetings, seeker of paths! If you yearn to traverse the mighty mountain range that veils our"
                         " land, head eastward.", "Beyond the emerald canopy and whispering trees lies a hidden valley. "
                         "It weaves through the ancient peaks, offering passage to those who dare to journey.", "Take "

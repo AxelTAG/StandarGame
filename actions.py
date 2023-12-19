@@ -1,8 +1,13 @@
 # Imports.
-import globals
-from utils import day_est, typewriter, clear, text_ljust, coast_reset
-from displays import disp_battle, disp_talk, disp_talk_util, disp_title
+# External imports.
 import random
+import numpy as np
+
+# Internal imports.
+from displays import disp_battle, disp_talk, disp_talk_util, disp_title
+import globals
+from management import save
+from utils import day_est, typewriter, clear, text_ljust, coast_reset
 
 
 # Battle action.
@@ -16,9 +21,18 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
     while fight:
         disp_battle(user, enemy, screen, inventory)
         choice_action = input(" # ")  # User choice action.
+        object_used = True
         screen = "."  # Clearing text output screen.
 
-        if choice_action == "1":  # Attack option.
+        if choice_action == "0":  # Escape option.
+            escape = random.choices([True, False], [enemy["esc"], 100 - enemy["esc"]], k=1)
+            if escape[0]:
+                fight = False
+                screen = "You have escaped."
+            else:
+                screen = "You have not escaped."
+
+        elif choice_action == "1":  # Attack option.
             if user["pre"] * (1 - enemy["eva"]) > random.random():
                 USER_DMG = max(int(int(user["atk"]) - int(enemy["def"])), 0)
                 enemy["hp"] -= USER_DMG
@@ -31,12 +45,12 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
                 fast_object = user["slot1"]
             if choice_action == "3":
                 fast_object = user["slot2"]
-            screen, user_stats, inventory = use(user, inventory, fast_object)
+            screen, user_stats, inventory, object_used = use(user, inventory, fast_object)
 
         # Enemy attack.
-        if enemy["hp"] > 0 and choice_action in ["1", "2", "3"]:
-            if enemy["pre"] * (1 - user["eva"]) > random.random():
-                ENEMY_ATK = [[enemy["atk"], enemy["atk"] * 1.7], [80, 20]]
+        if enemy["hp"] > 0 and choice_action in ["0", "1", "2", "3"]:
+            if enemy["pre"] * (1 - user["eva"]) > random.random() and object_used:
+                ENEMY_ATK = [[enemy["atk"], enemy["atk"] * enemy["c_coef"]], [100 - enemy["c_chance"], enemy["c_chance"]]]
                 ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(user["def"])), 0)
                 user["hp"] -= ENEMY_DMG
                 screen += "\n " + enemy["name"] + " dealt " + str(ENEMY_DMG) + " damage to " + user["name"] + "."
@@ -50,6 +64,8 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
             screen += "\n " + enemy["name"] + " defeated " + user["name"] + "..."
             disp_battle(user, enemy, screen, inventory)
             input(" > ")
+
+            # Setting reinit.
             play = False
             menu = True
             user["hp"], user["x"], user["y"] = int(user["hpmax"]), user["x_cp"], user["y_cp"]
@@ -60,6 +76,7 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
             except KeyError:
                 pass
             coast_reset(ms=ms, keys=["(2, 1)", "(6, 2)"])
+
             print(" GAME OVER")
             input(" > ")
             return user, inventory, play, menu, 0
@@ -90,7 +107,7 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
 
 # Buy action.
 def buy(inv: dict, item: str, quantity: int, price: int) -> tuple[str, dict]:
-    if inv["gold"] >= price:
+    if inv["gold"] >= price * quantity:
         try:
             inv[item] += quantity
         except KeyError:
@@ -189,7 +206,8 @@ def equip(inv: dict, equiped: dict, item_name: str) -> tuple[str, dict, dict]:
 
 
 # Event handler.
-def event_handler(user: dict, inv: dict, npc: dict, action: list, ms: dict, mobs: dict, play: int, menu: int) -> tuple[dict, dict, dict, dict, int, int]:
+def event_handler(user_stats: dict, user_equip: dict, user_map: np.array, inv: dict, npc: dict, ms: dict, mobs: dict,
+                  x: int, y: int, play: int, menu: int) -> tuple[dict, dict, dict, dict, int, int]:
     if npc["fisherman marlin"][3][0] and not npc["guard lorian"][3][1]:
         npc["guard lorian"] = [["Halt, traveler! Hyrule City permits only those with proper credentials to pass these "
                                 "gates.", "State your business and present your identification, or you shall not "
@@ -201,7 +219,7 @@ def event_handler(user: dict, inv: dict, npc: dict, action: list, ms: dict, mobs
                                 ["Leave", ["..."]]],
                                [], [0, 0, 0]]
 
-        return user, inv, npc, ms, play, menu
+        return user_stats, inv, npc, ms, play, menu
 
     elif npc["guard lorian"][3][1] and not inv["message"]:
         npc["guard lorian"] = [["You've gained entry, but heed this counsel: Beyond the western outskirts lies "
@@ -213,24 +231,33 @@ def event_handler(user: dict, inv: dict, npc: dict, action: list, ms: dict, mobs
         inv["message"] = True
         inv["permission"] = True
 
-        return user, inv, npc, ms, play, menu
+        return user_stats, inv, npc, ms, play, menu
 
     elif npc["dragon firefrost"][3][0]:
-        user, inv, play, menu, win = battle(user, mobs["dragon"].copy(), inv, ms)
+        user_stats, inv, play, menu, win = battle(user_stats, mobs["dragon"].copy(), inv, ms)
         if win:
             npc["dragon firefrost"] = [["Impressive. Today, the winds of fate favor you.", "I yield. But heed my words,"
                                         " for when the stars align in a different cosmic dance, I shall await you "
                                         "once more.", "Until then, let the echoes of our encounter linger in the "
-                                        "mountain breeze. Farewell, Elina.", "Until our destinies entwine again."],
+                                        "mountain breeze. Farewell, " + user_stats["name"] + ".", "Until our destinies "
+                                         "entwine again."],
                                        [], [], [0]]
             screen, inv = talk(npc=npc["dragon firefrost"], npc_name="dragon firefrost", inventory=inv)
+            ms["(11, 24)"]["d"] = "Frozen valley, a pristine, snow-covered expanse where frost-kissed silence reigns." \
+                                  " Glistening ice formations adorn the landscape, creating an ethereal and " \
+                                  "serene winter tableau in nature's icy embrace."
             ms["(11, 24)"]["npc"] = []
             ms["(0, 0)"]["items"].append("origami flowers")
             npc["dragon firefrost"] = [[], [], [], [0]]
-        return user, inv, npc, ms, play, menu
+            return user_stats, inv, npc, ms, play, menu
+        else:
+            npc["dragon firefrost"][3] = [0]
+            save(user_stats, user_equip, user_map, inv, npc, ms, user_stats["x_cp"], user_stats["y"
+                                                                                                "_cp"])
+            return user_stats, inv, npc, ms, play, menu
 
     else:
-        return user, inv, npc, ms, play, menu
+        return user_stats, inv, npc, ms, play, menu
 
 
 # Explore action.
@@ -272,27 +299,27 @@ def land(x: int, y: int, inventory: dict, set_map: dict, tl_map: list) -> tuple[
 # Move function.
 def move(
         x: int, y: int, map_heigt: int, map_width: int, inventory: dict,
-        tl_map: list, mv: str, ms: dict) -> tuple[str, int, int, int]:
+        tl_map: list, mv: str, ms: dict) -> tuple[str, int, int, int, bool]:
     hs = 8
     # Move North.
     if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]) and mv == "1":
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
-            return "You moved North.", x, y - 1, hs
+            return "You moved North.", x, y - 1, hs, False
     # Move East.
     if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]) and mv == "2":
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
-            return "You moved East.", x + 1, y, hs
+            return "You moved East.", x + 1, y, hs, False
 
     # Move South.
     if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]) and mv == "3":
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
-            return "You moved South.", x, y + 1, hs
+            return "You moved South.", x, y + 1, hs, False
 
     # Move West.
     if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]) and mv == "4":
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
-            return "You moved West.", x - 1, y, hs
-    return "You can't move there.", x, y, hs
+            return "You moved West.", x - 1, y, hs, False
+    return "You can't move there.", x, y, hs, True
 
 
 # Sleep to [morning, afternoon, evening, night].
@@ -452,21 +479,23 @@ def talk(npc: dict, npc_name: str, inventory: dict = None) -> tuple[str, dict]:
 # Unequip action.
 def unequip(inv: dict, equiped: dict, item_name: str) -> tuple[str, dict, dict]:
     item = item_name.replace(" ", "_").lower()
+    item_name = item_name.replace("_", " ").title()
     if item in equiped.values():
         body_part = globals.ITEMS_EQUIP[item]["body"]
         equiped[body_part] = None
         try:
             inv[item] += 1
-            return "You have unequip " + item_name.title() + ".", equiped, inv
+            return "You have unequip " + item_name + ".", equiped, inv
         except KeyError:
             inv[item] = 1
-            return "You have unequip " + item_name.title() + ".", equiped, inv
+            return "You have unequip " + item_name + ".", equiped, inv
     else:
-        return "You don't have " + item_name.title() + " equipped.", equiped, inv
+        return "You don't have " + item_name + " equipped.", equiped, inv
 
 
 # Use action (general).
-def use(user: dict, inv: dict, obj: str):
+def use(user: dict, inv: dict, obj: str) -> tuple[str, dict, dict, bool]:
+    object_used = False
     item = obj.replace(" ", "_").lower()
     if inv[item] > 0:
         if "potion" in item:
@@ -480,11 +509,11 @@ def use(user: dict, inv: dict, obj: str):
                 text, user["hp"] = heal(user["name"], user["hp"], user["hpmax"], 10)
                 inv[item] -= 1
 
-            return text, user, inv
+            return text, user, inv, object_used
         else:
-            return "You can't use this item.", user, inv
+            return "You can't use this item.", user, inv, object_used
     else:
-        return "You have no more " + item.replace("_", " ").title() + ".", user, inv
+        return "You have no more " + item.replace("_", " ").title() + ".", user, inv, object_used
 
 
 # Use boat.

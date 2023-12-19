@@ -4,14 +4,17 @@ from itertools import zip_longest, cycle
 import globals
 import time
 import sys
+import platform
 import os
 import hashlib
 
 
 # Clear console function.
 def clear():
-    os.system("cls")
-
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
 
 # Functions that returns tile map of a image, depending de colors.
 def label_pixels(img_path: str):
@@ -341,8 +344,6 @@ def coast_reset(ms: dict, keys: list) -> dict:
             value["items"] = ["boat"]
             value["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
         elif value.get("t") == "COAST":
-            try:
-                value["items"] = value["items"].remove("boat")
-            except ValueError:
-                pass
+            value["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
+            value["items"] = []
     return ms

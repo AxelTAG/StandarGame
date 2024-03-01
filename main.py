@@ -1,20 +1,18 @@
 # Imports.
 # External imports.
-import os
 import random
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Locals imports.
-from actions import move, equip, use_boat, land, sleep_in_bed, wait, talk, enter, explore, battle, heal, unequip, drop, \
-    event_handler, use, check
+from actions import move, equip, use_boat, land, sleep_in_bed, wait, talk, enter, explore, battle, heal, unequip,\
+    drop, use, check
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
 import globals
-from inventory import Inventory
-from management import save
+from management import save, event_handler
 from player import Player
-from utils import label_pixels, draw_move, tl_map_set, day_est, export_dict_to_txt, load_dict_from_txt, clear, \
+from utils import import_player, label_pixels, draw_move, tl_map_set, day_est, load_dict_from_txt, clear, \
     check_name, get_hash, sum_item_stats
 
 # Game variables.
@@ -31,53 +29,16 @@ day_moment = "MORNING"
 add_hs = 0
 
 # Player variables.
-user_stats = {
-    "name": "",
-    "hp": 25,
-    "hpmax": 25,
-    "lvl": 1,
-    "exp": 0,
-    "expmax": 10,
-    "atk": 0,
-    "def": 0,
-    "eva": 0,
-    "pre": 0,
-    "b_hpmax": 25,
-    "b_atk": 2,
-    "b_def": 1,
-    "b_eva": 0,
-    "b_pre": 0.7,
-    "b_str": 0,
-    "b_agi": 0,
-    "b_vit": 0,
-    "b_res": 0,
-    "b_dex": 0,
-    "x": 0,
-    "y": 0,
-    "x_cp": 0,
-    "y_cp": 0,
-    "hability_points": 0,
-    "slot1": "Red Potion",
-    "slot2": "Litle Red Potion"
-}
+player = Player()
 
-user_equip = {
-    "head": None,
-    "chest": None,
-    "right_hand": None,
-    "left_hand": None,
-    "legs": None,
-}
+x = player.x  # X location.
+y = player.y  # Y location.
 
-x = user_stats["x"]
-y = user_stats["y"]
+inventory = player.inventory  # Inventory.
 
 # Player map.
 user_map = np.zeros((32, 32, 4), dtype=np.uint8)
 user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
-
-# Inventory.
-inventory = {}
 
 # Global settings.
 tile_map = label_pixels("rsc.png")
@@ -134,13 +95,13 @@ while run:
         if choice == "1":
             clear()
             try:
-                load_setting = load_dict_from_txt("cfg_save.txt")
-                L_NAME = load_setting["1"]["name"]
-                L_HP = int(load_setting["1"]["hp"])
-                L_HPMAX = int(load_setting["1"]["hpmax"])
-                L_LVL = int(load_setting["1"]["lvl"])
-                L_EXP = int(load_setting["1"]["exp"])
-                L_EXPMAX = int(load_setting["1"]["expmax"])
+                load_setting = import_player("cfg_save.pkl")
+                L_NAME = load_setting.name
+                L_HP = load_setting.hp
+                L_HPMAX = load_setting.hpmax
+                L_LVL = load_setting.lvl
+                L_EXP = load_setting.exp
+                L_EXPMAX = load_setting.expmax
 
                 disp_title()
 
@@ -166,53 +127,16 @@ while run:
                     add_hs = 0
 
                     # Player variables.
-                    user_stats = {
-                        "name": "",
-                        "hp": 25,
-                        "hpmax": 25,
-                        "lvl": 1,
-                        "exp": 0,
-                        "expmax": 10,
-                        "atk": 0,
-                        "def": 0,
-                        "eva": 0,
-                        "pre": 0,
-                        "b_hpmax": 25,
-                        "b_atk": 2,
-                        "b_def": 1,
-                        "b_eva": 0,
-                        "b_pre": 0.7,
-                        "b_str": 0,
-                        "b_agi": 0,
-                        "b_vit": 0,
-                        "b_res": 0,
-                        "b_dex": 0,
-                        "x": 0,
-                        "y": 0,
-                        "x_cp": 0,
-                        "y_cp": 0,
-                        "hability_points": 0,
-                        "slot1": "Red Potion",
-                        "slot2": "Litle Red Potion"
-                    }
+                    player = Player()
 
-                    user_equip = {
-                        "head": None,
-                        "chest": None,
-                        "right_hand": None,
-                        "left_hand": None,
-                        "legs": None,
-                    }
+                    x = player.x  # X location.
+                    y = player.y  # Y location.
 
-                    x = user_stats["x"]
-                    y = user_stats["y"]
+                    inventory = player.inventory  # Inventory.
 
                     # Player map.
                     user_map = np.zeros((32, 32, 4), dtype=np.uint8)
                     user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
-
-                    # Inventory.
-                    inventory = {}
 
                     # Global settings.
                     tile_map = label_pixels("world_map.png")
@@ -225,10 +149,9 @@ while run:
                     mobs = globals.MOBS.copy()
 
                     screen = "Nothing done yet."
-                    
-                    user_stats["name"] = ""
-                    while not check_name(user_stats["name"]):
-                        user_stats["name"] = input(" # What's your NAME, hero? ").title()
+
+                    while not check_name(player.name):
+                        player.name = input(" # What's your NAME, hero? ").title()
                     menu = False
                     play = True
 
@@ -239,31 +162,29 @@ while run:
                 print(" < NEW GAME >")
                 print()
 
-                user_stats["name"] = ""
-                while not check_name(user_stats["name"]):
-                    user_stats["name"] = input(" # What's your NAME, hero? ").title()
+                while not check_name(player.name):
+                    player.name = input(" # What's your NAME, hero? ").title()
                 menu = False
                 play = True
 
             # Initial settings.
-            # Inventory variables.
-            inventory = {"walk": True, "message": False, "red_potion": 1, "litle_red_potion": 2, "gold": 5}
             # Map settings.
             map_set.update(globals.MAP_SETTING)
             # Location setting.
-            map_set[str((x, y))]["t"] = user_stats["name"] + "'s Hut"
+            map_set[str((x, y))]["t"] = player.name + "'s Hut"
             # Introduction setting.
-            npc["whispers"][0] = [user_stats["name"] + "...", user_stats["name"] + "...", "...your destiny awaits.",
+            npc["whispers"][0] = [player.name + "...", player.name + "...", "...your destiny awaits.",
                                   "Follow the whispers of the wind, and come to me.", "Secrets untold and challenges "
                                   "unknown lie ahead.", "Trust in the unseen path...", "... come to me."]
 
+            # Dragon Firefrost setting.
+            npc["dragon firefrost"][0] = [player.name + "...", "You finally come to me...", "Destiny calls "
+                                         "for a dance of fire and frost between us...", "Ready your blade..."]
+
             # Introduction.
-            if user_stats["name"]:
+            if player.name:
                 screen, inventory = talk(npc=npc["whispers"], npc_name="Whispers", inventory=inventory)
 
-            # Dragon Firefrost setting.
-            npc["dragon firefrost"][0] = [user_stats["name"] + "...", "You finally come to me...", "Destiny calls "
-                                         "for a dance of fire and frost between us...", "Ready your blade..."]
 
         elif choice == "2":  # Load game choice.
             try:
@@ -277,24 +198,22 @@ while run:
                 user_map = map_load.reshape((32, 32, 4))
 
                 # Loading inventory, user stats and map settings.
+                player = import_player("cfg_save.pkl")
                 load_setting = load_dict_from_txt("cfg_save.txt")
                 load_hash = load_dict_from_txt("cfg_hash.txt")
-                if get_hash("cfg_save.txt") != load_hash["hash"]:
+                if get_hash("cfg_save.pkl") != load_hash["hash"]:
                     raise OSError
 
-                inventory.update(load_setting["0"])
-                user_stats.update(load_setting["1"])
                 npc.update(load_setting["2"])
-                user_equip.update(load_setting["3"])
                 map_set.update(load_setting["9"])
 
-                x = user_stats["x"]
-                y = user_stats["y"]
+                x = player.x
+                y = player.y
 
                 menu = False
                 play = True
 
-                print(" Welcome back " + user_stats["name"] + ".")
+                print(" Welcome back " + player.name + ".")
                 input(" > ")
 
             except OSError:
@@ -310,7 +229,9 @@ while run:
             quit()
 
     while play:
-        save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)  # Autosave.
+        player.x = x
+        player.y = y
+        save(player, user_map, npc, map_set)  # Autosave.
         clear()
 
         # Fight chances of moving.
@@ -318,29 +239,29 @@ while run:
             if map_set[str((x, y))]["e"]:
                 if random.randint(0, 100) < max(bioms[tile_map[y][x]]["e_chance"]):
                     enemy = random.choices(bioms[tile_map[y][x]]["e_list"], bioms[tile_map[y][x]]["e_chance"], k=1)[0]
-                    user_stats, inventory, play, menu, win = battle(user_stats, mobs[enemy].copy(), inventory, map_set)
-                    save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)
+                    play, menu, win = battle(player, mobs[enemy].copy(), map_set)
+                    save(player, user_map, npc, map_set)
 
         # Lvl upgrade of user.
-        if user_stats["exp"] >= user_stats["expmax"]:
-            user_stats["lvl"] += 1
-            user_stats["exp"] = 0
-            user_stats["expmax"] = 10 * user_stats["lvl"]
-            user_stats["b_hpmax"] += 2
-            user_stats["b_atk"] += 0.4
-            user_stats["b_def"] += 0.025
-            user_stats["b_pre"] += 0.005
-            user_stats["b_eva"] += 0.01
+        if player.exp >= player.expmax:
+            player.lvl += 1
+            player.exp = 0
+            player.expmax = 10 * player.lvl
+            player.b_hpmax += 2
+            player.b_attack += 0.4
+            player.b_defense += 0.025
+            player.b_precision += 0.005
+            player.b_evasion += 0.01
             screen = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
-            user_stats["hability_points"] += 3
+            player.st_points += 3
 
         # Refreshing stats of user.
-        items_stats = sum_item_stats(user_equip)
-        user_stats["hpmax"] = user_stats["b_hpmax"] + user_stats["b_vit"] * 2
-        user_stats["atk"] = user_stats["b_atk"] + int(user_stats["b_str"] * 0.4) + items_stats["atk"]
-        user_stats["def"] = user_stats["b_def"] + int(user_stats["b_res"] * 0.4) + items_stats["def"]
-        user_stats["eva"] = user_stats["b_eva"] + user_stats["b_agi"] * 0.01 + items_stats["eva"]
-        user_stats["pre"] = user_stats["b_pre"] + user_stats["b_agi"] * 0.005 + items_stats["pre"]
+        items_stats = sum_item_stats(player.equip)
+        player.hpmax = player.b_hpmax + player.vitality * 2
+        player.attack = player.b_attack + int(player.strength * 0.4) + items_stats["atk"]
+        player.defense = player.b_defense + int(player.resistance * 0.4) + items_stats["def"]
+        player.evasion = player.b_evasion + player.agility * 0.01 + items_stats["eva"]
+        player.precision = player.b_precision + player.agility * 0.005 + items_stats["pre"]
 
         if play:
             # Setting enviroment variables.
@@ -357,9 +278,8 @@ while run:
 
             # Draw of general stats.
             clear()
-            disp_play(user_stats, inventory, location, "NAIWAT", day_moment, loc_des, inventory["red_potion"], "Empty",
-                      x, y, draw_move(x, y, x_len, y_len, inventory, tile_map, map_set),
-                      [user_stats["slot1"], user_stats["slot2"]], screen, 36)
+            disp_play(player, location, "NAIWAT", day_moment, loc_des, x, y,
+                      draw_move(x, y, x_len, y_len, player, tile_map, map_set), screen, 36)
 
             # Input action.
             print()
@@ -371,44 +291,44 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)
+                save(player, user_map, npc, map_set)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
-                screen, x, y, add_hs, standing = move(x, y, x_len, y_len, inventory, tile_map, action[0], map_set)
+                screen, x, y, add_hs, standing = move(x, y, x_len, y_len, player, tile_map, action[0], map_set)
 
-            elif action[0] in ["5", "6"]:  # Use object action.
+            elif action[0] in ["5", "6"]:  # Fast use object action.
                 if action[0] == "5":
-                    fast_object = user_stats["slot1"]
+                    fast_object = player.slot1
                 if action[0] == "6":
-                    fast_object = user_stats["slot2"]
-                screen, user_stats, inventory, object_used = use(user_stats, inventory, fast_object)
+                    fast_object = player.slot2
+                screen, object_used = use(player, fast_object)
                 standing = True
 
             elif action[0] == "assign":  # Assign action.
                 if len(action) < 2:
-                    screen = disp_assign(user_stats)
-                elif user_stats["hability_points"]:
+                    screen = disp_assign(player.st_points)
+                elif player.st_points:
                     if action[1] in ["strength", "str"]:
-                        user_stats["b_str"] += 1
-                        user_stats["hability_points"] -= 1
+                        player.strength += 1
+                        player.st_points -= 1
                         screen = "You have assigned a skill point to strength."
                     elif action[1] in ["agility", "agi"]:
-                        user_stats["b_agi"] += 1
-                        user_stats["hability_points"] -= 1
+                        player.agility += 1
+                        player.st_points -= 1
                         screen = "You have assigned a skill point to agility."
                     elif action[1] in ["resistance", "res"]:
-                        user_stats["b_res"] += 1
-                        user_stats["hability_points"] -= 1
+                        player.resistance += 1
+                        player.st_points -= 1
                         screen = "You have assigned a skill point to resistance."
                     # elif action[1] in ["dexterity", "dex"]:
                     #     user_stats["b_dex"] += 1
                     #     user_stats["hability_points"] -= 1
                     #     screen = "You have assigned a skill point to dexterity."
                     elif action[1] in ["vitality", "vit"]:
-                        user_stats["b_vit"] += 1
-                        user_stats["hability_points"] -= 1
+                        player.vitality += 1
+                        player.st_points -= 1
                         screen = "You have assigned a skill point to vitality."
-                elif user_stats["hability_points"] == 0:
+                elif player.st_points == 0:
                     screen = "You have no more skill points left."
                 else:
                     "That is not posible."
@@ -429,7 +349,7 @@ while run:
                     user_map[y + 1][x] = bioms[tile_map[y + 1][x]]["c"]
                 screen = "You have explored the area and mapped it out."
 
-                if "telescope" in inventory.keys():
+                if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
                     # Explore a square instead of a cross
                     for i in range(max(0, x - 1), min(x_len, x + 2)):
                         for j in range(max(0, y - 1), min(y_len, y + 2)):
@@ -440,18 +360,18 @@ while run:
                     screen = disp_drop()
                     standing = True
                 else:
-                    screen, inventory = drop(inventory, " ".join(action[2:]), int(action[1]))
+                    screen, player = drop(player, " ".join(action[2:]), int(action[1]))
 
             elif action[0] == "enter":  # Enter action.
                 if len(action) <= 2:
                     screen = disp_enter(x, y, map_set)
                     standing = True
                 elif " ".join(action[2:]) in map_set[str((x, y))]["entries"]:
-                    screen, x, y, fight = enter(x, y, " ".join(action[2:]), inventory)
+                    screen, x, y, fight = enter(x, y, " ".join(action[2:]), player)
                     if fight:
-                        user_stats, inventory, play, menu, win = battle(user_stats, mobs["orc"].copy(), inventory, map_set)
+                        play, menu, win = battle(player, mobs["orc"].copy(), map_set)
                         if not play:
-                            save(user_stats, user_equip, user_map, inventory, npc, map_set, x, y)
+                            save(player, user_map, npc, map_set)
                     standing = True
                 else:
                     screen = "There is no " + " ".join(action[2:]) + "."
@@ -459,10 +379,10 @@ while run:
 
             elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                 if len(action) <= 1:
-                    screen = disp_equip(user_equip)
+                    screen = disp_equip(player.equip)
                     standing = True
                 else:
-                    screen, user_equip, inventory = equip(inventory, user_equip, " ".join(action[1:]))
+                    screen = equip(player, " ".join(action[1:]))
                     standing = True
 
             elif action[0] == "explore":  # Explore action:
@@ -470,18 +390,18 @@ while run:
                 standing = False
 
             elif action[0] == "land":  # Land action.
-                screen, inventory, map_set = land(x, y, inventory, map_set, tile_map)
+                screen, map_set = land(x, y, player, map_set, tile_map)
                 standing = False
 
             elif action[0] == "listen":  # Listen action.
                 screen = "You don't hear anything special."
 
             elif action == ["look", "around"]:  # Look around action.
-                screen = disp_look_around(user_stats, map_set)
+                screen = disp_look_around(player, map_set)
 
             elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
                 user_map[y][x] = globals.PINK
-                plt.figure(user_stats["name"] + "'s map")
+                plt.figure(player.name + "'s map")
                 plt.imshow(user_map)
                 plt.title("Map")
                 plt.show()
@@ -490,16 +410,18 @@ while run:
 
             elif action[0] == "slot1":  # Selection slot1 action.
                 item_select = "_".join(action[1:])
-                if item_select in globals.ITEMS_SELL and item_select in inventory.keys():
-                    user_stats["slot1"] = " ".join(action[1:]).title()
+                if item_select in globals.ITEMS_SELL and item_select in player.inventory.items.keys():
+                    player.slot1 = " ".join(action[1:]).title()
+                standing = True
 
             elif action[0] == "slot2":  # Selection slot1 action.
                 item_select = "_".join(action[1:])
-                if item_select in globals.ITEMS_SELL and item_select in inventory.keys():
-                    user_stats["slot2"] = " ".join(action[1:]).title()
+                if item_select in globals.ITEMS_SELL and item_select in player.inventory.items.keys():
+                    player.slot2 = " ".join(action[1:]).title()
+                standing = True
 
             elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
-                screen = disp_show_inventory(inventory)
+                screen = disp_show_inventory(player)
                 standing = True
 
             elif action[0] == "sleep":  # Sleep action.
@@ -507,8 +429,8 @@ while run:
                     screen = disp_sleep(x, y, map_set)
                     standing = True
                 else:
-                    screen, user_stats["hp"], day_time, day_moment = sleep_in_bed(x, y, map_set, user_stats["hp"], user_stats["hpmax"], day_time, action[2])
-                    user_stats["x_cp"], user_stats["y_cp"] = x, y
+                    screen, player.hp, day_time, day_moment = sleep_in_bed(x, y, map_set, player.hp, player.hpmax, day_time, action[2])
+                    player.x_cp, player.y_cp = x, y
                     standing = True
 
             elif action[0] == "talk":  # Talk action.
@@ -517,23 +439,27 @@ while run:
                     screen = disp_talk(x, y, map_set)
                     standing = True
                 elif npc_name in map_set[str((x, y))]["npc"]:
-                    screen, inventory = talk(npc=npc[npc_name], npc_name=npc_name, inventory=inventory)
+                    screen = talk(npc=npc[npc_name], npc_name=npc_name, player=player)
                     standing = True
                 else:
                     screen = "Here no one is called " + npc_name.title() + "."
                     standing = True
 
-            elif action == ["use", "boat"]:  # Use boat action.
-                screen, inventory, map_set = use_boat(x, y, inventory, map_set)
-                standing = True
-
             elif action[0] == "unequip":  # Unequip action.
                 if len(action) <= 1:
-                    screen = disp_equip(user_equip)
+                    screen = disp_equip(player.equip)
                     standing = True
                 else:
-                    screen, user_equip, inventory = unequip(inventory, user_equip, " ".join(action[1:]))
+                    screen = unequip(player, " ".join(action[1:]))
                     standing = True
+
+            elif action == ["use", "boat"]:  # Use boat action.
+                screen, map_set = use_boat(x, y, player, map_set)
+                standing = True
+
+            elif action[0] in ["use"]:  # Fast use object action.
+                screen, object_used = use(player, "_".join(action[1:]))
+                standing = True
 
             elif action[0] == "wait":  # Wait action.
                 if len(action) <= 2:
@@ -544,11 +470,14 @@ while run:
                     standing = False
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
-                inventory["scales"] = 4121996
+                #player.exp += 1000
+                map_set.update(globals.MAP_SETTING)
+                #npc.update(globals.NPC)
+                #player.events["message"] = False
+                #player.events["permission"] = False
                 screen = "Map updated."
             else:
                 standing = True
 
             # Event handler.
-            user_stats, inventory, npc, map_set, play, menu = event_handler(user_stats, user_equip, user_map, inventory,
-                                                                            npc, map_set, mobs, x, y, play, menu)
+            npc, map_set, play, menu = event_handler(player, user_map, npc, map_set, mobs, play, menu)

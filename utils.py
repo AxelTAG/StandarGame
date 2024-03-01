@@ -7,6 +7,23 @@ import sys
 import platform
 import os
 import hashlib
+import pickle
+from player import Player
+
+
+# Assign a value to a key of a dict.
+def assign_value_dict(dictionary: dict, keys: list, value) -> dict:
+    current_dict = dictionary
+
+    # Traverse the dictionary using keys[:-1] to reach the nested dictionary.
+    for key in keys[:-1]:
+        current_dict = current_dict[key]
+
+    # Assign the value to the last key in the list.
+    current_dict[keys[-1]] = value
+
+    # Return the original dictionary (which is now updated).
+    return dictionary
 
 
 # Clear console function.
@@ -15,6 +32,109 @@ def clear():
         os.system("cls")
     else:
         os.system("clear")
+
+
+# Coast reset.
+def coast_reset(ms: dict, keys: list) -> dict:
+    for key, value in ms.items():
+        if value.get("t") == "COAST" and key in keys:
+            value["items"] = ["boat"]
+            value["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+        elif value.get("t") == "COAST":
+            value["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
+            value["items"] = []
+    return ms
+
+
+# Function that concatenates two lists of str elements.
+def concatenate_lists(list1: list[str], list2: list[str]) -> list[str]:
+    concatenated_list = ["".join(pair) for pair in zip_longest(list1, list2, fillvalue="")]
+    return concatenated_list
+
+
+# Count spaces at first of a text.
+def count_first_spaces(string: str) -> int:
+    # Initialize a counter to keep track of the number of spaces
+    count = 0
+    # Iterate through each character in the input string
+    for char in string:
+        # Check if the character is a whitespace character
+        if char.isspace():
+            # Increment the counter if it's a space
+            count += 1
+        else:
+            # Exit the loop when a non-space character is encountered
+            break
+
+    # Return the final count of spaces at the beginning of the string
+    return count
+
+
+# Function that calculates the part of the day.
+def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
+    hs = (actual_hs + add_hs) % 24
+    if 0 <= hs < 6:
+        return hs, "NIGHT"
+    elif 6 <= hs < 12:
+        return hs, "MORNING"
+    elif 12 <= hs < 18:
+        return hs, "AFTERNOON"
+    elif 18 <= hs < 22:
+        return hs, "EVENING"
+    return hs, "NIGHT"
+
+
+# Functions that simplifies moving options.
+def draw_move(x: int, y: int, map_heigt: int, map_width: int, player: Player, tl_map: list, ms: dict) -> list:
+    inventory = player.inventory.items
+    active_moves = [0, 0, 0, 0]
+    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]) and player.status in ms[str((x, y - 1))]["s"]:
+        if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
+            active_moves[0] = 1
+
+    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]) and player.status in ms[str((x + 1, y))]["s"]:
+        if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
+            active_moves[1] = 1
+
+    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]) and player.status in ms[str((x, y + 1))]["s"]:
+        if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
+            active_moves[2] = 1
+
+    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]) and player.status in ms[str((x - 1, y))]["s"]:
+        if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
+            active_moves[3] = 1
+
+    return active_moves
+
+
+# Export dictionary to txt.
+def export_dict_to_txt(dictionary: dict, file_path: str) -> None:
+    def write_recursive(file, data, depth=0):
+        for key, value in data.items():
+            if isinstance(value, dict):
+                file.write(f"{'  ' * depth}{key}:\n")
+                write_recursive(file, value, depth + 1)
+            else:
+                file.write(f"{'  ' * depth}{key}: {value}\n")
+
+    try:
+        with open(file_path, 'w') as doc:
+            write_recursive(doc, dictionary)
+    except OSError:
+        print("Unable to save the file.")
+        input(" > ")
+
+
+# Export player function.
+def export_player(player, path: str) -> None:
+    with open(path, 'wb') as file:
+        pickle.dump(player, file)
+
+
+# Import player function.
+def import_player(path: str):
+    with open(path, 'rb') as archivo:
+        return pickle.load(archivo)
 
 
 # Functions that returns tile map of a image, depending de colors.
@@ -91,53 +211,6 @@ def label_pixels(img_path: str):
     return tl_map
 
 
-# Function that returns a dictionary from a list generated with label_pixels.
-def tl_map_set(tl_map: list) -> dict:
-    # Create empety dict.
-    dictionary = {}
-
-    # Fill the dictionary
-    for i in range(len(tl_map)):
-        for j in range(len(tl_map[i])):
-            key = str((i, j))
-            value = {
-                    "t": globals.BIOMS[tl_map[j][i]]["t"],
-                    "e": globals.BIOMS[tl_map[j][i]]["e"],
-                    "e_list": globals.BIOMS[tl_map[j][i]]["e_list"],
-                    "e_chance": globals.BIOMS[tl_map[j][i]]["e_chance"],
-                    "r": globals.BIOMS[tl_map[j][i]]["r"],
-                    "d": globals.BIOMS[tl_map[j][i]]["d"],
-                    "items": [],
-                    "npc": [],
-                    "entries": [],
-                    "c": globals.BIOMS[tl_map[j][i]]["c"]}
-            dictionary[key] = value
-
-    return dictionary
-
-
-# Functions that simplifies moving options.
-def draw_move(x: int, y: int, map_heigt: int, map_width: int, inventory: dict, tl_map: list, ms: dict) -> list:
-    active_moves = [0, 0, 0, 0]
-    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]):
-        if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
-            active_moves[0] = 1
-
-    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]):
-        if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
-            active_moves[1] = 1
-
-    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]):
-        if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
-            active_moves[2] = 1
-
-    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]):
-        if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
-            active_moves[3] = 1
-
-    return active_moves
-
-
 # Function that left justify a text.
 def text_ljust(msg: str, width: int = 20, adjust: bool = True) -> list:
     lines = msg.split('\n')
@@ -178,79 +251,34 @@ def text_2_col(msg1: str, msg2: str, width: int = 20, ch: str = "", adjust: bool
     return [t1 + " " + str(ch) + " " + t2 for t1, t2 in zip(lines1, lines2)]
 
 
-# Function that concatenates two lists of str elements.
-def concatenate_lists(list1: list[str], list2: list[str]) -> list[str]:
-    concatenated_list = ["".join(pair) for pair in zip_longest(list1, list2, fillvalue="")]
-    return concatenated_list
-
-
 # Functions that returns coordinates as text separete by comma.
 def text_coord(x, y) -> str:
     return str(x) + "," + str(y)
 
 
-# Function that calculates the part of the day.
-def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
-    hs = (actual_hs + add_hs) % 24
-    if 0 <= hs < 6:
-        return hs, "NIGHT"
-    elif 6 <= hs < 12:
-        return hs, "MORNING"
-    elif 12 <= hs < 18:
-        return hs, "AFTERNOON"
-    elif 18 <= hs < 22:
-        return hs, "EVENING"
-    return hs, "NIGHT"
+# Function that returns a dictionary from a list generated with label_pixels.
+def tl_map_set(tl_map: list) -> dict:
+    # Create empety dict.
+    dictionary = {}
 
+    # Fill the dictionary
+    for i in range(len(tl_map)):
+        for j in range(len(tl_map[i])):
+            key = str((i, j))
+            value = {
+                    "t": globals.BIOMS[tl_map[j][i]]["t"],
+                    "e": globals.BIOMS[tl_map[j][i]]["e"],
+                    "e_list": globals.BIOMS[tl_map[j][i]]["e_list"],
+                    "e_chance": globals.BIOMS[tl_map[j][i]]["e_chance"],
+                    "r": globals.BIOMS[tl_map[j][i]]["r"],
+                    "s": globals.BIOMS[tl_map[j][i]]["s"],
+                    "d": globals.BIOMS[tl_map[j][i]]["d"],
+                    "items": [],
+                    "npc": [],
+                    "entries": [],
+                    "c": globals.BIOMS[tl_map[j][i]]["c"]}
+            dictionary[key] = value
 
-# Export dictionary to txt.
-def export_dict_to_txt(dictionary: dict, file_path: str) -> None:
-    def write_recursive(file, data, depth=0):
-        for key, value in data.items():
-            if isinstance(value, dict):
-                file.write(f"{'  ' * depth}{key}:\n")
-                write_recursive(file, value, depth + 1)
-            else:
-                file.write(f"{'  ' * depth}{key}: {value}\n")
-
-    try:
-        with open(file_path, 'w') as doc:
-            write_recursive(doc, dictionary)
-    except OSError:
-        print("Unable to save the file.")
-        input(" > ")
-
-
-# Count spaces at first of a text.
-def count_first_spaces(string: str) -> int:
-    # Initialize a counter to keep track of the number of spaces
-    count = 0
-    # Iterate through each character in the input string
-    for char in string:
-        # Check if the character is a whitespace character
-        if char.isspace():
-            # Increment the counter if it's a space
-            count += 1
-        else:
-            # Exit the loop when a non-space character is encountered
-            break
-
-    # Return the final count of spaces at the beginning of the string
-    return count
-
-
-# Assign a value to a key of a dict.
-def assign_value_dict(dictionary: dict, keys: list, value) -> dict:
-    current_dict = dictionary
-
-    # Traverse the dictionary using keys[:-1] to reach the nested dictionary.
-    for key in keys[:-1]:
-        current_dict = current_dict[key]
-
-    # Assign the value to the last key in the list.
-    current_dict[keys[-1]] = value
-
-    # Return the original dictionary (which is now updated).
     return dictionary
 
 
@@ -336,15 +364,3 @@ def sum_item_stats(items: dict) -> dict:
                 total_stats[stat_key] += stat_value
 
     return total_stats
-
-
-# Coast reset.
-def coast_reset(ms: dict, keys: list) -> dict:
-    for key, value in ms.items():
-        if value.get("t") == "COAST" and key in keys:
-            value["items"] = ["boat"]
-            value["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
-        elif value.get("t") == "COAST":
-            value["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
-            value["items"] = []
-    return ms

@@ -1,17 +1,16 @@
 # Imports.
 # External imports.
 import random
-import numpy as np
 
 # Internal imports.
-from displays import disp_battle, disp_talk, disp_talk_util, disp_title
+from displays import disp_battle, disp_talk_util
 import globals
-from management import save
+from player import Player
 from utils import day_est, typewriter, clear, text_ljust, coast_reset
 
 
 # Battle action.
-def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
+def battle(player: Player(), enemy: dict, ms: dict):
 
     screen = "Defeat de enemy!"
     play = True
@@ -19,7 +18,7 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
     fight = True
 
     while fight:
-        disp_battle(user, enemy, screen, inventory)
+        disp_battle(player, enemy, screen)
         choice_action = input(" # ")  # User choice action.
         object_used = True
         screen = "."  # Clearing text output screen.
@@ -33,89 +32,90 @@ def battle(user: dict, enemy: dict, inventory: dict, ms: dict):
                 screen = "You have not escaped."
 
         elif choice_action == "1":  # Attack option.
-            if user["pre"] * (1 - enemy["eva"]) > random.random():
-                USER_DMG = max(int(int(user["atk"]) - int(enemy["def"])), 0)
+            if player.precision * (1 - enemy["eva"]) > random.random():
+                USER_DMG = max(int(int(player.attack) - int(enemy["def"])), 0)
                 enemy["hp"] -= USER_DMG
-                screen = " " + user["name"] + " dealt " + str(USER_DMG) + " damage to the " + enemy["name"] + "."
+                screen = " " + player.name + " dealt " + str(USER_DMG) + " damage to the " + enemy["name"] + "."
             else:
-                screen = " " + user["name"] + " fail the attack."
+                screen = " " + player.name + " fail the attack."
 
         elif choice_action in ["2", "3"]:  # Use object action.
             if choice_action == "2":
-                fast_object = user["slot1"]
+                fast_object = player.slot1
             if choice_action == "3":
-                fast_object = user["slot2"]
-            screen, user_stats, inventory, object_used = use(user, inventory, fast_object)
+                fast_object = player.slot2
+            screen, object_used = use(player, fast_object)
 
         # Enemy attack.
         if enemy["hp"] > 0 and choice_action in ["0", "1", "2", "3"]:
-            if enemy["pre"] * (1 - user["eva"]) > random.random() and object_used:
+            if enemy["pre"] * (1 - player.evasion) > random.random() and object_used:
                 ENEMY_ATK = [[enemy["atk"], enemy["atk"] * enemy["c_coef"]], [100 - enemy["c_chance"], enemy["c_chance"]]]
-                ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(user["def"])), 0)
-                user["hp"] -= ENEMY_DMG
-                screen += "\n " + enemy["name"] + " dealt " + str(ENEMY_DMG) + " damage to " + user["name"] + "."
+                ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(player.defense)), 0)
+                player.hp -= ENEMY_DMG
+                screen += "\n " + enemy["name"] + " dealt " + str(ENEMY_DMG) + " damage to " + player.name + "."
             else:
                 screen += "\n " + enemy["name"] + " fail the attack."
         input(" > ")
 
         # Logic of fight status or result.
-        if user["hp"] <= 0:
-            disp_battle(user, enemy, screen, inventory)
-            screen += "\n " + enemy["name"] + " defeated " + user["name"] + "..."
-            disp_battle(user, enemy, screen, inventory)
+        if player.hp <= 0:
+            disp_battle(player, enemy, screen)
+            screen += "\n " + enemy["name"] + " defeated " + player.name + "..."
+            disp_battle(player, enemy, screen)
             input(" > ")
 
             # Setting reinit.
             play = False
             menu = True
-            user["hp"], user["x"], user["y"] = int(user["hpmax"]), user["x_cp"], user["y_cp"]
-            inventory["walk"] = True
-            user["exp"] = 0
-            try:
-                del inventory["boat"]
-            except KeyError:
-                pass
+            player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
+            player.status = 0
+            player.exp = 0
             coast_reset(ms=ms, keys=["(2, 1)", "(6, 2)"])
 
             print(" GAME OVER")
             input(" > ")
-            return user, inventory, play, menu, 0
+            return play, menu, 0
 
         if enemy["hp"] <= 0:
             screen += "\n " + "You defeated the " + enemy["name"] + "!"
             fight = False
 
             # Drop items logic.
-            user["exp"] += enemy["exp"]
+            player.exp += enemy["exp"]
             if enemy["items"]:
                 drop_quantity = random.randint(1, len(enemy["items"])) - 1
                 drop = list(set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
 
                 for item in drop:
-                    if item != "none" and item in inventory.keys():
-                        inventory[item] += enemy["items"][item]
+                    if item == "gold":
+                        player.inventory.gold += enemy["items"][item]
+                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_", " ").title() + "."
+                    elif item != "none" and item in player.inventory.items.keys():
+                        player.inventory.items[item] += enemy["items"][item]
                         screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_", " ").title() + "."
                     elif item != "none":
-                        inventory[item] = enemy["items"][item]
+                        player.inventory.items[item] = enemy["items"][item]
 
             screen += "\n You have gained " + str(enemy["exp"]) + " experience."
 
-    disp_battle(user, enemy, screen, inventory)
+    disp_battle(player, enemy, screen)
     input(" > ")
-    return user, inventory, play, menu, 1
+    return play, menu, 1
 
 
 # Buy action.
-def buy(inv: dict, item: str, quantity: int, price: int) -> tuple[str, dict]:
-    if inv["gold"] >= price * quantity:
+def buy(player: Player(), item: str, quantity: int, price: int) -> str:
+    inventory = player.inventory
+    items = player.inventory.items
+    if inventory.gold >= price * quantity:
         try:
-            inv[item] += quantity
+            items[item] += quantity
         except KeyError:
-            inv[item] = quantity
-        inv["gold"] -= price * quantity
-        return "You buy " + str(quantity) + " " + item.replace("_", " ").title() + ".", inv
+            items[item] = quantity
+        inventory.gold -= price * quantity
+        return "You buy " + str(quantity) + " " + item.replace("_", " ").title() + "."
     else:
-        return "You don't have enough gold.", inv
+        return "You don't have enough gold."
 
 
 # Check action.
@@ -140,22 +140,23 @@ def check(x: int, y: int, ms: dict, item: str) -> str:
 
 
 # Drop action.
-def drop(inv: dict, item_name: str, quantity: int = 1) -> tuple[str, dict]:
+def drop(player: Player(), item_name: str, quantity: int = 1) -> tuple[str, dict]:
     item = item_name.replace(" ", "_")
+    items = player.inventory.items
     try:
-        if inv[item] >= int(quantity) and item not in ["red_potion", "walk"]:
-            inv[item] -= int(quantity)
-            if inv[item] <= 0:
-                del inv[item]
-            return "You drop " + str(quantity) + " " + item_name.title() + ".", inv
+        if items[item] >= int(quantity) and item not in ["red_potion", "walk"]:
+            items[item] -= int(quantity)
+            if items[item] <= 0:
+                del items[item]
+            return "You drop " + str(quantity) + " " + item_name.title() + ".", player
         else:
-            return "You don't have " + str(quantity) + " " + item_name.title() + ".", inv
+            return "You don't have " + str(quantity) + " " + item_name.title() + ".", player
     except KeyError:
-        return "You don't have " + item_name.title() + ".", inv
+        return "You don't have " + item_name.title() + ".", player
 
 
 # Enter action.
-def enter(x: int, y: int, entrie: str, inv: dict) -> tuple[str, int, int, bool]:
+def enter(x: int, y: int, entrie: str, player: Player()) -> tuple[str, int, int, bool]:
     if entrie == "castle":
         return "You cannot enter here.", x, y, False
 
@@ -164,7 +165,7 @@ def enter(x: int, y: int, entrie: str, inv: dict) -> tuple[str, int, int, bool]:
 
     elif entrie == "cave":
         if (x, y) == (13, 0):
-            if "torch" in inv.keys():
+            if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
                 if random.randint(0, 100) <= 10:
                     return "You have crossed the cave without any problems.", 19, 0, False
                 else:
@@ -173,7 +174,7 @@ def enter(x: int, y: int, entrie: str, inv: dict) -> tuple[str, int, int, bool]:
                 return "You need a torch to enter.", x, y, False
 
         if (x, y) == (19, 0):
-            if "torch" in inv.keys():
+            if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
                 if random.randint(0, 100) <= 10:
                     return "You have crossed the cave without any problems.", 13, 0, False
                 else:
@@ -189,75 +190,20 @@ def enter(x: int, y: int, entrie: str, inv: dict) -> tuple[str, int, int, bool]:
 
 
 # Equip action.
-def equip(inv: dict, equiped: dict, item_name: str) -> tuple[str, dict, dict]:
+def equip(player: Player(), item_name: str) -> str:
     item = item_name.replace(" ", "_").lower()
-    if item in inv.keys() and item in globals.ITEMS_EQUIP.keys():
+    if item in player.inventory.items.keys() and player.inventory.items[item] > 0 and item in globals.ITEMS_EQUIP.keys():
         body_part = globals.ITEMS_EQUIP[item]["body"]
-        if not equiped[body_part]:
-            equiped[body_part] = item
-            inv[item] -= 1
-            return "You have equip " + item_name.title() + ".", equiped, inv
+        if player.equip[body_part] == "None":
+            player.equip[body_part] = item
+            player.inventory.items[item] -= 1
+            return "You have equip " + item_name.title() + "."
         else:
-            return "You already have an item equipped. UNEQUIP " + equiped[body_part].title() + ".", equiped, inv
-    elif item not in inv.keys():
-        return "You don't have " + item_name.title() + ".", equiped, inv
+            return "You already have an item equipped. UNEQUIP " + player.equip[body_part].title() + "."
+    elif item not in player.inventory.items.keys() or player.inventory.items[item] < 1:
+        return "You don't have " + item_name.title() + "."
     elif item not in globals.ITEMS_EQUIP.keys():
-        return "You can't equip " + item_name.title() + ".", equiped, inv
-
-
-# Event handler.
-def event_handler(user_stats: dict, user_equip: dict, user_map: np.array, inv: dict, npc: dict, ms: dict, mobs: dict,
-                  x: int, y: int, play: int, menu: int) -> tuple[dict, dict, dict, dict, int, int]:
-    if npc["fisherman marlin"][3][0] and not npc["guard lorian"][3][1]:
-        npc["guard lorian"] = [["Halt, traveler! Hyrule City permits only those with proper credentials to pass these "
-                                "gates.", "State your business and present your identification, or you shall not "
-                                "venture beyond.", "The safety of our citizens is paramount, and we cannot afford to be "
-                                "lax in these trying times."],
-                               [["I have a message", ["Marlin, you say?", "Well, that old "
-                                "sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
-                                "fishing tales become too much for the villagers.", "Safe travels, adventurer."]],
-                                ["Leave", ["..."]]],
-                               [], [0, 0, 0]]
-
-        return user_stats, inv, npc, ms, play, menu
-
-    elif npc["guard lorian"][3][1] and not inv["message"]:
-        npc["guard lorian"] = [["You've gained entry, but heed this counsel: Beyond the western outskirts lies "
-                                "uncharted territories and lurking dangers.", "Arm yourself well, noble traveler. The "
-                                "path is treacherous, and a sturdy sword or enchanted bow may be your greatest allies.",
-                                "Antina City rests in relative peace, but the world beyond is unpredictable. "
-                                "Safe travels, and may your blade remain sharp against the shadows that may encroach "
-                                "upon your journey."], [], [], [0, True, 0]]
-        inv["message"] = True
-        inv["permission"] = True
-
-        return user_stats, inv, npc, ms, play, menu
-
-    elif npc["dragon firefrost"][3][0]:
-        user_stats, inv, play, menu, win = battle(user_stats, mobs["dragon"].copy(), inv, ms)
-        if win:
-            npc["dragon firefrost"] = [["Impressive. Today, the winds of fate favor you.", "I yield. But heed my words,"
-                                        " for when the stars align in a different cosmic dance, I shall await you "
-                                        "once more.", "Until then, let the echoes of our encounter linger in the "
-                                        "mountain breeze. Farewell, " + user_stats["name"] + ".", "Until our destinies "
-                                         "entwine again."],
-                                       [], [], [0]]
-            screen, inv = talk(npc=npc["dragon firefrost"], npc_name="dragon firefrost", inventory=inv)
-            ms["(11, 24)"]["d"] = "Frozen valley, a pristine, snow-covered expanse where frost-kissed silence reigns." \
-                                  " Glistening ice formations adorn the landscape, creating an ethereal and " \
-                                  "serene winter tableau in nature's icy embrace."
-            ms["(11, 24)"]["npc"] = []
-            ms["(0, 0)"]["items"].append("origami flowers")
-            npc["dragon firefrost"] = [[], [], [], [0]]
-            return user_stats, inv, npc, ms, play, menu
-        else:
-            npc["dragon firefrost"][3] = [0]
-            save(user_stats, user_equip, user_map, inv, npc, ms, user_stats["x_cp"], user_stats["y"
-                                                                                                "_cp"])
-            return user_stats, inv, npc, ms, play, menu
-
-    else:
-        return user_stats, inv, npc, ms, play, menu
+        return "You can't equip " + item_name.title() + "."
 
 
 # Explore action.
@@ -279,44 +225,44 @@ def heal(name: str, health: int, healthmax: int, amount: int) -> tuple[str, int]
 
 
 # Land.
-def land(x: int, y: int, inventory: dict, set_map: dict, tl_map: list) -> tuple[str, dict, dict]:
-    if "boat" in inventory.keys() and tl_map[y][x] not in ["sea", "river"]:
-        inventory["walk"] = True
-        del inventory["boat"]
+def land(x: int, y: int, player: Player(), set_map: dict, tl_map: list) -> tuple[str, dict]:
+    if player.status == 1 and tl_map[y][x] not in ["sea", "river"]:
+        player.status = 0
         set_map[str((x, y))]["items"].append("boat")
         try:
             set_map[str((x, y))]["d"] = globals.MAP_SETTING[str((x, y))]["d"]
         except KeyError:
             set_map[str((x, y))]["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
-        return "You have land.", inventory, set_map
+        return "You have land.", set_map
     else:
-        if "boat" in inventory.keys():
-            return "You can't land here.", inventory, set_map
+        if player.status == 1:
+            return "You can't land here.", set_map
         else:
-            return "You aren't in a boat.", inventory, set_map
+            return "You aren't in a boat.", set_map
 
 
 # Move function.
 def move(
-        x: int, y: int, map_heigt: int, map_width: int, inventory: dict,
+        x: int, y: int, map_heigt: int, map_width: int, player: Player(),
         tl_map: list, mv: str, ms: dict) -> tuple[str, int, int, int, bool]:
+    inventory = player.inventory.items
     hs = 8
     # Move North.
-    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]) and mv == "1":
+    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]) and player.status in ms[str((x, y - 1))]["s"] and mv == "1":
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             return "You moved North.", x, y - 1, hs, False
     # Move East.
-    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]) and mv == "2":
+    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]) and player.status in ms[str((x + 1, y))]["s"] and mv == "2":
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             return "You moved East.", x + 1, y, hs, False
 
     # Move South.
-    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]) and mv == "3":
+    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]) and player.status in ms[str((x, y + 1))]["s"] and mv == "3":
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             return "You moved South.", x, y + 1, hs, False
 
     # Move West.
-    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]) and mv == "4":
+    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]) and player.status in ms[str((x - 1, y))]["s"] and mv == "4":
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             return "You moved West.", x - 1, y, hs, False
     return "You can't move there.", x, y, hs, True
@@ -343,20 +289,22 @@ def sleep_in_bed(x: int, y: int, set_map: dict, hp, hpmax, actual_hs, opt: str) 
 
 
 # Sell action.
-def sell(inv: dict, item: str, quantity: int, price: int) -> tuple[str, dict]:
+def sell(player: Player(), item: str, quantity: int, price: int) -> str:
+    inventory = player.inventory
+    items = player.inventory.items
     try:
-        if inv[item] >= quantity:
-            inv[item] -= quantity
-            inv["gold"] += quantity * price
-            return "You sell " + str(quantity) + " " + item.replace("_", " ").title() + ". You earn " + str(quantity * price) + " gold.", inv
+        if items[item] >= quantity:
+            items[item] -= quantity
+            inventory.gold += quantity * price
+            return "You sell " + str(quantity) + " " + item.replace("_", " ").title() + ". You earn " + str(quantity * price) + " gold."
         else:
-            return "You don't have enough " + item.replace("_", " ").title() + ".", inv
+            return "You don't have enough " + item.replace("_", " ").title() + "."
     except KeyError:
-        return "You don't have enough " + item.replace("_", " ").title() + ".", inv
+        return "You don't have enough " + item.replace("_", " ").title() + "."
 
 
 # Talk.
-def talk(npc: dict, npc_name: str, inventory: dict = None) -> tuple[str, dict]:
+def talk(npc: dict, npc_name: str, player: Player()) -> str:
     clear()
     for line in npc[0]:
         disp_talk_util(npc_name)
@@ -407,24 +355,24 @@ def talk(npc: dict, npc_name: str, inventory: dict = None) -> tuple[str, dict]:
                     prices.append(value)
                     n += 1
                 print()
-                print(" " * 6 + "[GOLD: " + str(inventory["gold"]) + "]\n")
+                print(" " * 6 + "[GOLD: " + str(player.inventory.gold) + "]\n")
                 
                 while True:
                     try:
                         item = int(input(" " * 4 + "# ")) - 1
                         if 0 <= item < len(items):
                             if item == len(items) - 1:  # Quit condition.
-                                return "Nothing done.", inventory
+                                return "Nothing done."
                             print()
                             print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to buy?")
                             while True:
                                 try:
                                     quantity = int(input(" " * 4 + "# "))
-                                    return buy(inventory, items[item], quantity, prices[item])
+                                    return buy(player, items[item], quantity, prices[item])
                                 except ValueError:
                                     pass
                         else:
-                            return "Nothing done.", inventory
+                            return "Nothing done."
                     except ValueError:
                         pass
 
@@ -433,10 +381,10 @@ def talk(npc: dict, npc_name: str, inventory: dict = None) -> tuple[str, dict]:
                 items = []
                 prices = []
                 n = 0
-                for item, value in {key: globals.ITEMS_SELL[key] for key in set(inventory.keys()).intersection(set(globals.ITEMS_SELL.keys())) if inventory[key] > 0}.items():
+                for item, value in {key: globals.ITEMS_SELL[key] for key in set(player.inventory.items.keys()).intersection(set(globals.ITEMS_SELL.keys())) if player.inventory.items[key] > 0}.items():
                     if item != "quit":
                         line_text = text_ljust(str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.", 30)
-                        print(" " * 6 + line_text[0] + "[" + str(inventory[item]) + "]")
+                        print(" " * 6 + line_text[0] + "[" + str(player.inventory.items[item]) + "]")
                     else:
                         print(" " * 6 + str(n + 1) + ") " + item.replace("_", " "))
                     items.append(item)
@@ -445,82 +393,85 @@ def talk(npc: dict, npc_name: str, inventory: dict = None) -> tuple[str, dict]:
                 print(" " * 6 + str(n + 1) + ") Quit.")
                 items.append("quit")
                 print()
-                print(" " * 6 + "GOLD: " + str(inventory["gold"]) + ".\n")
+                print(" " * 6 + "GOLD: " + str(player.inventory.gold) + ".\n")
 
                 while True:
                     try:
                         item = int(input(" " * 4 + "# ")) - 1
                         if item == len(items) - 1:  # Quit condition.
-                            return "Nothing done.", inventory
+                            return "Nothing done."
                         if 0 <= item < len(items):
                             print()
                             print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to sell?")
                             while True:
                                 try:
                                     quantity = int(input(" " * 4 + "# "))
-                                    return sell(inventory, items[item], quantity, prices[item])
+                                    return sell(player, items[item], quantity, prices[item])
                                 except ValueError:
                                     pass
                         else:
-                            return "Nothing done.", inventory
+                            return "Nothing done."
                     except ValueError:
                         pass
 
             else:
-                return ".", inventory
+                return "."
 
         else:
-            return ".", inventory
+            return "."
 
     else:
-        return ".", inventory
+        return "."
 
 
 # Unequip action.
-def unequip(inv: dict, equiped: dict, item_name: str) -> tuple[str, dict, dict]:
+def unequip(player: Player(), item_name: str) -> str:
     item = item_name.replace(" ", "_").lower()
     item_name = item_name.replace("_", " ").title()
-    if item in equiped.values():
+    if item in player.equip.values():
         body_part = globals.ITEMS_EQUIP[item]["body"]
-        equiped[body_part] = None
+        player.equip[body_part] = "None"
         try:
-            inv[item] += 1
-            return "You have unequip " + item_name + ".", equiped, inv
+            player.inventory.items[item] += 1
+            return "You have unequip " + item_name + "."
         except KeyError:
-            inv[item] = 1
-            return "You have unequip " + item_name + ".", equiped, inv
+            player.inventory.items[item] = 1
+            return "You have unequip " + item_name + "."
     else:
-        return "You don't have " + item_name + " equipped.", equiped, inv
+        return "You don't have " + item_name + " equipped."
 
 
 # Use action (general).
-def use(user: dict, inv: dict, obj: str) -> tuple[str, dict, dict, bool]:
+def use(player: Player(), obj: str) -> tuple[str, bool]:
     object_used = False
     item = obj.replace(" ", "_").lower()
-    if inv[item] > 0:
+    if item == "gold":
+        return "You can't use " + item.replace("_", " ").title() + ".", object_used
+    if item not in player.inventory.items.keys():
+        return "You have no " + item.replace("_", " ").title() + ".", object_used
+    if player.inventory.items[item] > 0:
         if "potion" in item:
             if item == "giant_red_potion":
-                text, user["hp"] = heal(user["name"], user["hp"], user["hpmax"], 40)
-                inv[item] -= 1
+                text, player.hp = heal(player.name, player.hp, player.hpmax, 40)
+                player.inventory.items[item] -= 1
             elif item == "red_potion":
-                text, user["hp"] = heal(user["name"], user["hp"], user["hpmax"], 25)
-                inv[item] -= 1
+                text, player.hp = heal(player.name, player.hp, player.hpmax, 25)
+                player.inventory.items[item] -= 1
             elif item == "litle_red_potion":
-                text, user["hp"] = heal(user["name"], user["hp"], user["hpmax"], 10)
-                inv[item] -= 1
+                text, player.hp = heal(player.name, player.hp, player.hpmax, 10)
+                player.inventory.items[item] -= 1
 
-            return text, user, inv, object_used
+            return text, object_used
         else:
-            return "You can't use this item.", user, inv, object_used
+            return "You can't use this item.", object_used
     else:
-        return "You have no more " + item.replace("_", " ").title() + ".", user, inv, object_used
+        return "You have no more " + item.replace("_", " ").title() + ".", object_used
 
 
 # Use boat.
-def use_boat(x: int, y: int, inventory: dict, set_map: dict) -> tuple[str, dict, dict]:
-    if "boat" in set_map[str((x, y))]["items"] and "boat" not in inventory.keys():
-        inventory["boat"] = True
-        del inventory["walk"]
+def use_boat(x: int, y: int, player: Player(), set_map: dict) -> tuple[str, dict]:
+    if "boat" in set_map[str((x, y))]["items"] and player.status != 1:
+        player.status = 1
         set_map[str((x, y))]["items"].remove("boat")
         if str((x, y)) == "(6, 2)":
             set_map[str((x, y))]["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life. A " \
@@ -529,11 +480,11 @@ def use_boat(x: int, y: int, inventory: dict, set_map: dict) -> tuple[str, dict,
                                         "the boundless horizon stretching before them."
         else:
             set_map[str((x, y))]["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
-        return "You are in the boat.", inventory, set_map
-    elif "boat" in inventory.keys():
-        return "You are already in the boat.", inventory, set_map
+        return "You are in the boat.", set_map
+    elif player.status == 1:
+        return "You are already in the boat.", set_map
     else:
-        return "There is no boat here.", inventory, set_map
+        return "There is no boat here.", set_map
 
 
 # Wait action.

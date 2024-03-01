@@ -1,15 +1,12 @@
 # Imports.
-from utils import text_ljust, text_2_col, concatenate_lists, patron_print, clear
+from utils import clear, patron_print, text_2_col
 import globals
-
-# Constants.
-DIRECTIONS = {0: "1 - NORTH",  1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
+from player import Player
 
 
 # Assign display.
-def disp_assign(user: dict) -> str:
-    return "Assign skill point (" + str(user["hability_points"]) + ") to:\n- Strength (STR)\n- Agility (AGI)" \
-                                                                   "\n- Resistance (RES)"
+def disp_assign(st: int) -> str:
+    return "Assign skill point (" + str(st) + ") to:\n- Strength (STR)\n- Agility (AGI) \n- Resistance (RES) \n- Vitality (VIT)"
 
 
 # Bar display
@@ -21,7 +18,7 @@ def disp_bar(n: int = 18, disp: bool = True) -> str:
 
 
 # Battle display.
-def disp_battle(user: dict, enemy: dict, text: str, inv: dict) -> None:
+def disp_battle(player: Player(), enemy: dict, text: str) -> None:
     width = 36
     clear()
     disp_title()
@@ -29,10 +26,10 @@ def disp_battle(user: dict, enemy: dict, text: str, inv: dict) -> None:
     print()
 
     # Text lines for text1.
-    u_name = user["name"]
-    u_hp = "\n HP: " + str(int(user["hp"])) + " / " + str(user["hpmax"])
-    u_hpbar = "\n " + "█" * int(25 * (user["hp"] / user["hpmax"])) + "-" * (25 - int(25 * (max(user["hp"], 0) / user["hpmax"]))) + "|"
-    u_atk = "\n ATTACK: " + str(int(user["atk"]))
+    u_name = player.name
+    u_hp = "\n HP: " + str(int(player.hp)) + " / " + str(player.hpmax)
+    u_hpbar = "\n " + "█" * int(25 * (player.hp / player.hpmax)) + "-" * (25 - int(25 * (max(player.hp, 0) / player.hpmax))) + "|"
+    u_atk = "\n ATTACK: " + str(int(player.attack))
 
     # Text lines for text2.
     e_name = "ENEMY: " + enemy["name"]
@@ -42,8 +39,8 @@ def disp_battle(user: dict, enemy: dict, text: str, inv: dict) -> None:
     # Text lines for text3.
     o_escape = "0 - ESCAPE"
     o_attack = "\n1 - ATTACK"
-    o_slot1 = "\n 2 - " + user["slot1"].upper() + " [" + str(inv[user["slot1"].lower().replace(" ", "_")]) + "]"
-    o_slot2 = "\n 3 - " + user["slot2"].upper() + " [" + str(inv[user["slot2"].lower().replace(" ", "_")]) + "]"
+    o_slot1 = "\n 2 - " + player.slot1.upper() + " [" + str(player.inventory.items[player.slot1.lower().replace(" ", "_")]) + "]"
+    o_slot2 = "\n 3 - " + player.slot2.upper() + " [" + str(player.inventory.items[player.slot2.lower().replace(" ", "_")]) + "]"
 
     text1 = u_name + u_hp + u_hpbar + u_atk
     text2 = e_name + e_hp + e_hpbar
@@ -89,8 +86,8 @@ def disp_equip(equip: dict) -> str:
 
 
 # Look around action.
-def disp_look_around(user: dict, ms: dict) -> str:
-    items = ms[str((user["x"], user["y"]))]["items"]
+def disp_look_around(player: Player(), ms: dict) -> str:
+    items = ms[str((player.x, player.y))]["items"]
     if items:
         text = "You have looked around and found:"
         for item in items:
@@ -102,8 +99,8 @@ def disp_look_around(user: dict, ms: dict) -> str:
 
 # Play display.
 def disp_play(
-        user: dict, inventory: dict, loc: str, reg: str, time: str, des: str,
-        item1: int, item2: int, x: int, y: int, mdir: list, slots: list[str], screen_text: str, width: int) -> None:
+        player: Player(), loc: str, reg: str, time: str, des: str, x: int, y: int,
+        mdir: list, screen_text: str, width: int) -> None:
     print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
     print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
     print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
@@ -112,29 +109,29 @@ def disp_play(
     t_reg = "\n REGION: " + reg.upper()
     t_coord = "\n COORD: " + str(x) + " " + str(y)
     t_time = "\n TIME OF DAY: " + time.upper()
-    t_name = "NAME: " + user["name"].upper()
-    t_hp = "\nHP: " + str(int(user["hp"])) + "/" + str(user["hpmax"])
-    t_hpbar = "\n|" + "█" * int(20 * (user["hp"] / user["hpmax"])) + "-" * (20 - int(20 * (max(user["hp"], 0) / user["hpmax"]))) + "|"
-    t_lvl = "\nEXP: " + str(user["exp"]) + "/" + str(user["expmax"]) + " | LVL: " + str(user["lvl"])
-    t_expbar = "\n|" + "█" * int(11 * (user["exp"] / user["expmax"])) + "-" * (11 - int(11 * (max(user["exp"], 0) / user["expmax"]))) + "|"
-    t_gold = "\nGOLD: " + str(inventory["gold"])
-    t_item1 = "\n5 - " + slots[0].replace("_", " ").upper() + ": " + str(inventory[slots[0].lower().replace(" ", "_")])
-    t_item2 = "\n6 - " + slots[1].replace("_", " ").upper() + ": " + str(inventory[slots[1].lower().replace(" ", "_")])
+    t_name = "NAME: " + player.name.upper()
+    t_hp = "\nHP: " + str(int(player.hp)) + "/" + str(player.hpmax)
+    t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
+    t_lvl = "\nEXP: " + str(player.exp) + "/" + str(player.expmax) + " | LVL: " + str(player.lvl)
+    t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
+    t_gold = "\nGOLD: " + str(player.inventory.gold)
+    t_item1 = "\n5 - " + player.slot1.replace("_", " ").upper() + ": " + str(player.inventory.items[player.slot1.lower().replace(" ", "_")])
+    t_item2 = "\n6 - " + player.slot2.replace("_", " ").upper() + ": " + str(player.inventory.items[player.slot2.lower().replace(" ", "_")])
 
     # Text4.1 lines.
     prim_stats = "PRIM. STATS: "
-    t_atk = "\n\nATTACK:    " + str(int(user["atk"]))
-    t_def = "\nDEFENSE:   " + str(int(user["def"]))
-    t_eva = "\nEVASION:   " + str(int(user["eva"] * 100)) + "%"
-    t_pre = "\nPRECISION: " + str(int(user["pre"] * 100)) + "%"
+    t_atk = "\n\nATTACK:    " + str(int(player.attack))
+    t_def = "\nDEFENSE:   " + str(int(player.defense))
+    t_eva = "\nEVASION:   " + str(int(player.evasion * 100)) + "%"
+    t_pre = "\nPRECISION: " + str(int(player.precision * 100)) + "%"
 
     # Text4.2 lines.
     sec_stats = " SEC. STATS:"
-    t_str = "\n\n STRENGTH:   " + str(int(user["b_str"]))
-    t_res = "\n RESISTANCE: " + str(int(user["b_res"]))
-    t_agi = "\n AGILITY:    " + str(int(user["b_agi"]))
+    t_str = "\n\n STRENGTH:   " + str(int(player.strength))
+    t_res = "\n RESISTANCE: " + str(int(player.resistance))
+    t_agi = "\n AGILITY:    " + str(int(player.agility))
     # t_dex = "\n DEXTERITY:  " + str(int(user["b_dex"]))
-    t_vit = "\n VITALITY:   " + str(int(user["b_vit"]))
+    t_vit = "\n VITALITY:   " + str(int(player.vitality))
 
     text1 = t_loc + t_reg + t_coord + t_time + "\n." * 3
     text2 = des
@@ -154,7 +151,7 @@ def disp_play(
 
     for i, status in enumerate(mdir):
         if status:
-            text5 += "\n" + DIRECTIONS[i]
+            text5 += "\n" + globals.DIRECTIONS[i]
     text5 += t_item1 + t_item2
 
     cmp_text = cmp_text + text_2_col(text5, text6, width, "|")
@@ -168,11 +165,12 @@ def disp_play(
 
 
 # Show inventory display.
-def disp_show_inventory(inv: dict):
-    items = [(item, quantity) for item, quantity in inv.items() if item not in ["walk", "permission", "message"] and not inv[item] <= 0]
+def disp_show_inventory(player: Player()):
+    items = [(item, quantity) for item, quantity in player.inventory.items.items() if not player.inventory.items[item] <= 0]
     text = "INVENTORY:"
     for item, quantity in items:
         text += "\n - " + item.replace("_", " ").title() + ": " + str(quantity)
+    text += "\n - Gold: " + str(player.inventory.gold)
     return text
 
 

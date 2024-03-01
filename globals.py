@@ -5,6 +5,9 @@ HEIGHT = 32
 # Patron.
 PATRON = [" / /\  ", "/ /\ \ ","\ \/ / ", " \/ /  ", " / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  "]
 
+# Directions.
+DIRECTIONS = {0: "1 - NORTH",  1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
+
 # Colors.
 WHITE = (255, 255, 255, 255)
 PINK = (255, 105, 180, 255)
@@ -19,7 +22,8 @@ BIOMS = {
         "e": True,
         "e_list": ["basilisk", "giant blind spider", "orc", "spectrum"],
         "e_chance": [30, 50, 10, 30],
-        "r": ["torch", "walk"],
+        "r": ["torch"],
+        "s": [0],
         "d": "Shadowy canyon inhabited by fearsome creatures, dark depths, echoing roars, and lurking horrors",
         "c": (54, 54, 54, 255)},
     "cave": {
@@ -27,7 +31,8 @@ BIOMS = {
         "e": False,
         "e_list": ["goblin", "orcs"],
         "e_chance": [80, 50],
-        "r": ["torch", "walk"],
+        "r": ["torch"],
+        "s": [0],
         "d": "Nothing important.",
         "c": (1, 1, 1, 255)},
     "coast": {
@@ -36,6 +41,7 @@ BIOMS = {
         "e_list": ["litle slime", "slime"],
         "e_chance": [5, 30],
         "r": [],
+        "s": [0, 1],
         "d": "Seaside with swaying palm trees, echoing waves, and vibrant life.",
         "c": (239, 228, 176, 255)},
     "dark forest": {
@@ -43,7 +49,8 @@ BIOMS = {
         "e": True,
         "e_list": ["spectral foxshade", "giant spider"],
         "e_chance": [1, 30],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Shadowy forest of peril, twisted trees loom overhead, their gnarled branches casting eerie shadows. "
              "Giant spiders lurk among the dense undergrowth, adding a sinister layer to the foreboding darkness.",
         "c": (22, 118, 51, 255)},
@@ -52,7 +59,8 @@ BIOMS = {
         "e": True,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Dreadful dead valley, a chilling abyss where every step deepens the terror within. The air grows heavy,"
              " and eerie whispers intensify, inducing an unsettling unease as you delve further.",
         "c": (148, 148, 148, 255)},
@@ -61,7 +69,8 @@ BIOMS = {
         "e": True,
         "e_list": ["dryad", "slime"],
         "e_chance": [15, 30],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Verdant fields, rolling emerald expanses dotted with wildflowers, where gentle breezes carry the sweet "
              "scent of blooming herbs and distant melodies from hidden creatures in the tall grass.",
         "c": (115, 231, 29, 255)},
@@ -70,7 +79,8 @@ BIOMS = {
         "e": True,
         "e_list": ["bandit", "spectral foxshade"],
         "e_chance": [20, 1],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Thick trees, vibrant flora, wildlife, hidden trails, and lurking danger in this treacherous "
              "forest realm.",
         "c": (34, 177, 76, 255)},
@@ -79,7 +89,8 @@ BIOMS = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "A pristine, snow-covered expanse where frost-kissed silence reigns. Glistening ice formations adorn the "
              "landscape, creating an ethereal and serene winter tableau in nature's icy embrace.",
         "c": (120, 186, 252, 255)},
@@ -88,7 +99,8 @@ BIOMS = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Nothing important.",
         "c": (200, 191, 231, 255)},
     "highlands": {
@@ -96,7 +108,8 @@ BIOMS = {
         "e": True,
         "e_list": ["goblin"],
         "e_chance": [40],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
         "c": (195, 195, 195, 255)},
     "hills": {
@@ -104,7 +117,8 @@ BIOMS = {
         "e": True,
         "e_list": ["climbing goblin", "troll", "goblin war chief"],
         "e_chance": [30, 30, 5],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Undulating landscapes concealing lurking dangers. Treacherous creatures, hidden in the shadows, make "
              "these hills a realm of risk for those who dare to traverse their slopes.",
         "c": (78, 185, 32, 255)},
@@ -113,7 +127,8 @@ BIOMS = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Nothing important.",
         "c": (185, 122, 87, 255)},
     "island": {
@@ -121,7 +136,8 @@ BIOMS = {
         "e": True,
         "e_list": ["litle slime"],
         "e_chance": [30],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Island rainforest, dense foliage, vibrant biodiversity, and cascading waterfalls characterize this"
              " tropical haven of life and greenery.",
         "c": (201, 237, 92, 255)},
@@ -131,6 +147,7 @@ BIOMS = {
         "e_list": [""],
         "e_chance": [0],
         "r": ["climbing tools"],
+        "s": [0],
         "d": "Nothing important.",
         "c": (127, 127, 127, 255)},
     "plains": {
@@ -138,7 +155,8 @@ BIOMS = {
         "e": True,
         "e_list": ["giant slime", "goblin", "slime"],
         "e_chance": [20, 30, 30],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Gentle terrain, waving grasslands, and minimal elevation define this vast, "
              "open expanse of natural simplicity and beauty.",
         "c": (181, 230, 29, 255)},
@@ -147,7 +165,8 @@ BIOMS = {
         "e": True,
         "e_list": ["slime"],
         "e_chance": [30],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Elevated plateau, expansive views, flat summits, and resilient flora characterize this high-altitude, "
              "majestic landscape.",
         "c": (181, 230, 29, 255)},
@@ -157,6 +176,7 @@ BIOMS = {
         "e_list": [""],
         "e_chance": [0],
         "r": [],
+        "s": [0],
         "d": "Nothing important.",
         "c": (255, 0, 0, 255)},
     "river": {
@@ -164,7 +184,8 @@ BIOMS = {
         "e": True,
         "e_list": ["boat"],
         "e_chance": [0],
-        "r": ["boat"],
+        "r": [],
+        "s": [1],
         "d": "Nothing important.",
         "c": (0, 162, 232, 255)},
     "rocks": {
@@ -173,6 +194,7 @@ BIOMS = {
         "e_list": [""],
         "e_chance": [0],
         "r": ["wings"],
+        "s": [0],
         "d": "Nothing important.",
         "c": (85, 80, 85, 255)},
     "sea": {
@@ -180,7 +202,8 @@ BIOMS = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["boat"],
+        "r": [],
+        "s": [1],
         "d": "Nothing important.",
         "c": (63, 72, 204, 255)},
     "snow": {
@@ -188,7 +211,8 @@ BIOMS = {
         "e": True,
         "e_list": [],
         "e_chance": [0],
-        "r": ["walk", "snow clothing"],
+        "r": ["snow clothing"],
+        "s": [0],
         "d": "Nothing important.",
         "c": (250, 250, 250, 255)},
     "town": {
@@ -196,7 +220,8 @@ BIOMS = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Nothing important.",
         "c": (170, 105, 70, 255)},
     "valley": {
@@ -204,7 +229,8 @@ BIOMS = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Desolate, silent valley, cracked earth stretches between imposing cliffs, where an eerie stillness "
              "envelops the barren landscape, untouched by the whispers of wind or the rustle of life.",
         "c": (167, 167, 167, 255)},
@@ -213,7 +239,8 @@ BIOMS = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["boat"],
+        "r": [],
+        "s": [1],
         "d": "Quiet water.",
         "c": (128, 255, 255, 255)}
     }
@@ -409,8 +436,8 @@ MOBS = {
     },
     "dragon": {
         "name": "Dragon FrostFire",
-        "hp": 100,
-        "hpmax": 100,
+        "hp": 10,
+        "hpmax": 10,
         "atk": 15,
         "def": 10,
         "eva": 0.5,
@@ -419,13 +446,13 @@ MOBS = {
         "c_chance": 20,
         "esc": 0,
         "items": {"scales": 4121996, "none": None},
-        "dc_items": [0.9999, 1],
+        "dc_items": [0.9999999999, 1],
         "exp": 250,
     },
     "dryad": {
-        "name": "Dragon FrostFire",
+        "name": "Dryad",
         "hp": 20,
-        "hpmax": 1,
+        "hpmax": 20,
         "atk": 7,
         "def": 10,
         "eva": 0.6,
@@ -612,7 +639,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, invites serenity amid "
              "nature's whispers.",
         "items": ["bed"],
@@ -624,7 +652,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Isolated shelter amid dangers, where rustling leaves and distant howls suggest that safety within is "
              "uncertain at best.",
         "items": ["bed"],
@@ -637,6 +666,7 @@ MAP_SETTING = {
         "e_list": ["slime"],
         "e_chance": [30],
         "r": [],
+        "s": [0],
         "d": "Seaside with anchored boat, echoing waves and vibrant coastal life.",
         "items": ["boat"],
         "npc": [],
@@ -648,6 +678,7 @@ MAP_SETTING = {
         "e_list": ["slime"],
         "e_chance": [30],
         "r": [],
+        "s": [0, 1],
         "d": "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary figure stands at the "
              "water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves and "
              "the boundless horizon stretching before them.",
@@ -660,7 +691,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Northern village entrance, sturdy gates open to a cozy haven, framed by rolling hills and welcoming "
              "cottages.",
         "items": [],
@@ -672,7 +704,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Inn district, cozy tavern, lively marketplace, and quaint cottages surround the inviting inn, creating "
              "a charming and bustling neighborhood. A charismatic merchant hawks wares in the heart of this bustling "
              "community hub.",
@@ -685,7 +718,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding travelers through a "
              "bustling thoroughfare toward the heart of the enchanting city.",
         "items": [],
@@ -697,7 +731,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Village hub, Mayor's office, bustling square, and a quaint temple create the heart of community life.",
         "items": [],
         "npc": ["mayor thorian"],
@@ -708,7 +743,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Southern gateway, welcoming gates, cobblestone paths, and a charming, serene atmosphere greet visitors.",
         "items": [],
         "npc": ["traveler elara"],
@@ -719,7 +755,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Majestic spires pierce the sky, casting a divine aura over cobblestone squares. The sacred structure "
              "beckons pilgrims and whispers tales of ancient reverence",
         "items": [],
@@ -731,7 +768,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Antina's post-gate district, winding streets lead to residential quarters and training grounds. Stone "
              "structures bear the weight of history, weaving a tapestry of everyday life beyond the bustling entrance "
              "gates.",
@@ -744,7 +782,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Cobbled lanes weave among lively taverns and cozy inns, offering weary travelers respite. A symphony of"
              " laughter, music, and clinking tankards fills the air, creating an inviting atmosphere.",
         "items": ["bed"],
@@ -756,7 +795,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Antina's castle precinct, towering fortress crowned with turrets dominates the cityscape. Home to "
              "nobility and adorned with banners, the castle overlooks sprawling courtyards, embodying the seat "
              "of power in Antina.",
@@ -769,7 +809,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "A grand centerpiece adorned with intricate sculptures, where cascading waters mirror the city's "
              "vibrancy, inviting residents and visitors to linger in its refreshing ambiance.",
         "items": [],
@@ -781,7 +822,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Antina's medieval hub, majestic castle towers overlook bustling market squares, where knights, "
              "merchants, and mystics converge. Cobblestone streets wind through diverse districts, echoing with the "
              "city's vibrant heartbeat.",
@@ -794,7 +836,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene enclave where the city's "
              "heartbeat echoes in the everyday rhythms of its residents.",
         "items": [],
@@ -806,7 +849,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Frozen valley under the watchful gaze of a dragon, crystalized landscapes echo with the dragon's silent"
              " vigil, as icy winds and shimmering frost create an otherworldly ambiance.",
         "items": [],
@@ -818,7 +862,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene enclave where the city's "
              "heartbeat echoes in the everyday rhythms of its residents.",
         "items": [],
@@ -830,7 +875,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk", "permission"],
+        "r": ["permission"],
+        "s": [0],
         "d": "Antina's post-gate district, winding streets lead to residential quarters and training grounds. Stone "
              "structures bear the weight of history, weaving a tapestry of everyday life beyond the bustling entrance "
              "gates.",
@@ -843,7 +889,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Antina's arena district: Colossal stone coliseum stands amidst cheering crowds. Brave warriors clash "
              "within, seeking glory and honor, while merchants peddle wares to the fervent spectators, creating an "
              "electrifying atmosphere.",
@@ -856,18 +903,20 @@ MAP_SETTING = {
         "e": True,
         "e_list": ["goblin", "orc"],
         "e_chance": ["40", "90"],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
         "items": [],
         "npc": [],
-        "entries": ["cave"],
+        "entries": [],
         "c": (195, 195, 195, 255)},
     "(13, 17)": {
         "t": "EAST GATES",
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Eastern city-state entrance: Towering gates adorned with intricate carvings, guarded by vigilant "
              "sentinels, mark the grand entry to a thriving metropolis blending history and modernity.",
         "items": [],
@@ -879,7 +928,8 @@ MAP_SETTING = {
         "e": True,
         "e_list": ["slime"],
         "e_chance": [30],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Blocked valley passage, boulders from a recent landslide obstruct the way, as a diligent worker clears "
              "debris, striving to reopen this vital route amidst the rugged beauty of the scenic landscape.",
         "items": [],
@@ -892,6 +942,7 @@ MAP_SETTING = {
         "e_list": ["slime"],
         "e_chance": [30],
         "r": ["wings"],
+        "s": [0],
         "d": "Nothing important here.",
         "items": [],
         "npc": [],
@@ -902,7 +953,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the forest stands as a silent "
              "witness to nature's reclamation.",
         "items": ["bed"],
@@ -914,7 +966,8 @@ MAP_SETTING = {
         "e": True,
         "e_list": ["goblin", "orc"],
         "e_chance": ["40", "90"],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
         "items": [],
         "npc": [],
@@ -925,7 +978,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [""],
         "e_chance": [0],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the forest stands as a silent "
              "witness to nature's reclamation.",
         "items": ["bed"],
@@ -937,11 +991,12 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Aquiri's portside entrance: Bustling harbor welcomes ships with salty breezes. Weathered docks and "
              "colorful boats set the scene for a lively maritime haven in this coastal village.",
-        "items": ["bed"],
-        "npc": ["merchant selena"],
+        "items": [],
+        "npc": [],
         "entries": [],
         "c": (170, 105, 70, 255)},
     "(27, 14)": {
@@ -949,7 +1004,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Seaside fishing hamlet, colorful boats bob gently in the harbor, while weathered cottages line the shore "
              "of this picturesque coastal community. A lone fisherman casts his net into the glistening waters, "
              "capturing the essence of maritime tranquility.",
@@ -962,7 +1018,8 @@ MAP_SETTING = {
         "e": False,
         "e_list": [],
         "e_chance": [],
-        "r": ["walk"],
+        "r": [],
+        "s": [0],
         "d": "Seaside fishing hamlet, colorful boats bob gently in the harbor, while weathered cottages line the shore "
              "of this picturesque coastal community.",
         "items": ["bed"],

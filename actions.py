@@ -306,8 +306,10 @@ def sell(player: Player(), item: str, quantity: int, price: int) -> str:
 # Talk.
 def talk(npc: dict, npc_name: str, player: Player()) -> str:
     clear()
+    # First message of npc.
     for line in npc[0]:
         disp_talk_util(npc_name)
+
         lines = text_ljust(line, width=70)
         for text in lines:
             typewriter(" " * 4 + text)
@@ -316,112 +318,128 @@ def talk(npc: dict, npc_name: str, player: Player()) -> str:
         input(" " * 4 + "> ")
     npc[3][0] = True  # Turning True first message of NPC.
 
-    if npc[1]:
-        print()
-        for i, res in enumerate(npc[1]):
-            print(" " * 4 + str(i + 1), ") " + res[0].capitalize() + ".")
-        print()
-
-        while True:
-            try:
-                action_choice = int(input(" " * 4 + "# ")) - 1
-                if 0 <= action_choice <= len(npc[1]):
-                    npc[3][action_choice + 1] = True  # Turning True response message of NPC.
-                    break
-            except ValueError:
-                pass
-
-        for line in npc[1][action_choice][1]:
-            disp_talk_util(npc_name)
-            lines = text_ljust(line, width=70)
-            for text in lines:
-                typewriter(" " * 4 + text)
-                print()
-
-            input(" " * 4 + "> ")
-
-        if "merchant" in npc_name:
+    transactions = ""
+    while True:
+        # Answers for npc.
+        if npc[1]:
             print()
-            if npc[1][action_choice][0] == "buy":
-                items = []
-                prices = []
-                n = 0
-                for item, value in globals.NPC[npc_name][2][0].items():
-                    if item != "quit":
-                        print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.")
-                    else:
-                        print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title())
-                    items.append(item)
-                    prices.append(value)
-                    n += 1
-                print()
-                print(" " * 6 + "[GOLD: " + str(player.inventory.gold) + "]\n")
-                
-                while True:
-                    try:
-                        item = int(input(" " * 4 + "# ")) - 1
-                        if 0 <= item < len(items):
-                            if item == len(items) - 1:  # Quit condition.
+            for i, res in enumerate(npc[1]):
+                print(" " * 4 + str(i + 1), ") " + res[0].capitalize() + ".")
+            print(" " * 4 + str(i + 2), ") Quit.")
+            print()
+
+            while True:
+                try:
+                    action_choice = int(input(" " * 4 + "# ")) - 1
+                    if 0 <= action_choice <= len(npc[1]):
+                        if action_choice == len(npc[1]):
+                            if transactions:
+                                return transactions
+                            else:
                                 return "Nothing done."
-                            print()
-                            print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to buy?")
-                            while True:
-                                try:
-                                    quantity = int(input(" " * 4 + "# "))
-                                    return buy(player, items[item], quantity, prices[item])
-                                except ValueError:
-                                    pass
-                        else:
-                            return "Nothing done."
-                    except ValueError:
-                        pass
+                        npc[3][action_choice + 1] = True  # Turning True response message of NPC.
+                        break
+                except ValueError:
+                    pass
 
-            elif npc[1][action_choice][0] == "sell":
-                print()
-                items = []
-                prices = []
-                n = 0
-                for item, value in {key: globals.ITEMS_SELL[key] for key in set(player.inventory.items.keys()).intersection(set(globals.ITEMS_SELL.keys())) if player.inventory.items[key] > 0}.items():
-                    if item != "quit":
-                        line_text = text_ljust(str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.", 30)
-                        print(" " * 6 + line_text[0] + "[" + str(player.inventory.items[item]) + "]")
-                    else:
-                        print(" " * 6 + str(n + 1) + ") " + item.replace("_", " "))
-                    items.append(item)
-                    prices.append(value)
-                    n += 1
-                print(" " * 6 + str(n + 1) + ") Quit.")
-                items.append("quit")
-                print()
-                print(" " * 6 + "GOLD: " + str(player.inventory.gold) + ".\n")
+            # Second message of npc.
+            for line in npc[1][action_choice][1]:
+                disp_talk_util(npc_name)
 
-                while True:
-                    try:
-                        item = int(input(" " * 4 + "# ")) - 1
-                        if item == len(items) - 1:  # Quit condition.
-                            return "Nothing done."
-                        if 0 <= item < len(items):
-                            print()
-                            print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to sell?")
-                            while True:
-                                try:
-                                    quantity = int(input(" " * 4 + "# "))
-                                    return sell(player, items[item], quantity, prices[item])
-                                except ValueError:
-                                    pass
+                lines = text_ljust(line, width=70)
+                for text in lines:
+                    typewriter(" " * 4 + text)
+                    print()
+
+                input(" " * 4 + "> ")
+
+            # Talking with merchant.
+            if "merchant" in npc_name:
+                print()
+                if npc[1][action_choice][0] == "buy":
+                    items = []
+                    prices = []
+                    n = 0
+                    for item, value in globals.NPC[npc_name][2][0].items():
+                        if item != "quit":
+                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.")
                         else:
-                            return "Nothing done."
-                    except ValueError:
-                        pass
+                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title())
+                        items.append(item)
+                        prices.append(value)
+                        n += 1
+                    print()
+                    print(" " * 6 + "[GOLD: " + str(player.inventory.gold) + "]\n")
+
+                    while True:
+                        try:
+                            item = int(input(" " * 4 + "# ")) - 1
+                            if 0 <= item < len(items):
+                                if item >= len(items) - 1:  # Quit condition.
+                                    break
+                                print()
+                                print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to buy?")
+                                while True:
+                                    try:
+                                        quantity = int(input(" " * 4 + "# "))
+                                        transactions += buy(player, items[item], quantity, prices[item])
+                                        break
+                                    except ValueError:
+                                        break
+                                break
+                            else:
+                                break
+                        except ValueError:
+                            pass
+
+                elif npc[1][action_choice][0] == "sell":
+                    print()
+                    items = []
+                    prices = []
+                    n = 0
+                    for item, value in {key: globals.ITEMS_SELL[key] for key in set(player.inventory.items.keys()).intersection(set(globals.ITEMS_SELL.keys())) if player.inventory.items[key] > 0}.items():
+                        if item != "quit":
+                            line_text = text_ljust(str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.", 30)
+                            print(" " * 6 + line_text[0] + "[" + str(player.inventory.items[item]) + "]")
+                        else:
+                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " "))
+                        items.append(item)
+                        prices.append(value)
+                        n += 1
+                    print(" " * 6 + str(n + 1) + ") Quit.")
+                    items.append("quit")
+                    print()
+                    print(" " * 6 + "GOLD: " + str(player.inventory.gold) + ".\n")
+
+                    while True:
+                        try:
+                            item = int(input(" " * 4 + "# ")) - 1
+                            if 0 <= item < len(items):
+                                if item >= len(items) - 1:  # Quit condition.
+                                    break
+                                print()
+                                print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to sell?")
+                                while True:
+                                    try:
+                                        quantity = int(input(" " * 4 + "# "))
+                                        transactions += sell(player, items[item], quantity, prices[item])
+                                        break
+                                    except ValueError:
+                                        pass
+                                break
+                            else:
+                                break
+                        except ValueError:
+                            pass
+
+                else:
+                    return "Nothing done."
 
             else:
-                return "."
+                break
 
         else:
-            return "."
-
-    else:
-        return "."
+            return "You talked with " + npc_name.title() + "."  # Break if the npc has no second message.
 
 
 # Unequip action.

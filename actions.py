@@ -325,7 +325,7 @@ def talk(npc: dict, npc_name: str, player: Player()) -> str:
             print()
             for i, res in enumerate(npc[1]):
                 print(" " * 4 + str(i + 1), ") " + res[0].capitalize() + ".")
-            print(" " * 4 + str(i + 2), ") Quit.")
+            print(" " * 4 + str(i + 2), ") Leave.")
             print()
 
             while True:
@@ -436,7 +436,7 @@ def talk(npc: dict, npc_name: str, player: Player()) -> str:
                     return "Nothing done."
 
             else:
-                break
+                return  "You talked with " + npc_name.title() + "."
 
         else:
             return "You talked with " + npc_name.title() + "."  # Break if the npc has no second message.

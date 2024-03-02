@@ -472,10 +472,11 @@ while run:
             elif action[0] == "update":  # Admin action for update de game while devolping.
                 #player.exp += 1000
                 map_set.update(globals.MAP_SETTING)
-                #npc.update(globals.NPC)
-                #player.events["message"] = False
-                #player.events["permission"] = False
+                npc.update(globals.NPC)
+                player.events["message"] = False
+                player.events["permission"] = False
                 screen = "Map updated."
+                npc["fisherman marlin"][3][0] = True
             else:
                 standing = True
 

@@ -34,8 +34,7 @@ def event_handler(player: Player(), user_map: np.array, npc: dict, ms: dict, mob
                                 "lax in these trying times."],
                                [["I have a message", ["Marlin, you say?", "Well, that old "
                                 "sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
-                                "fishing tales become too much for the villagers.", "Safe travels, adventurer."]],
-                                ["Leave", ["..."]]],
+                                "fishing tales become too much for the villagers.", "Safe travels, adventurer."]]],
                                [], [0, 0, 0]]
 
         return npc, ms, play, menu

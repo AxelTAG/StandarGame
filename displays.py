@@ -1,5 +1,9 @@
 # Imports.
-from utils import clear, patron_print, text_2_col
+# External imports.
+import numpy as np
+
+# Locals imports.
+from utils import clear, get_label, patron_print, text_2_col
 import globals
 from player import Player
 
@@ -99,7 +103,7 @@ def disp_look_around(player: Player(), ms: dict) -> str:
 
 # Play display.
 def disp_play(
-        player: Player(), loc: str, reg: str, time: str, des: str, x: int, y: int,
+        player: Player(), loc: str, reg: str, time: str, des: str, x: int, y: int, user_map: np.array,
         mdir: list, screen_text: str, width: int) -> None:
     print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
     print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
@@ -150,8 +154,18 @@ def disp_play(
     cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
 
     for i, status in enumerate(mdir):
+        if i == 0:
+            x_pos, y_pos = x, y - 1
+        elif i == 1:
+            x_pos, y_pos = x + 1, y
+        elif i == 2:
+            x_pos, y_pos = x, y + 1
+        elif i == 3:
+            x_pos, y_pos = x - 1, y
+        else:
+            x_pos, y_pos = x, y
         if status:
-            text5 += "\n" + globals.DIRECTIONS[i]
+            text5 += "\n" + globals.DIRECTIONS[i] + " (" + get_label(x_pos, y_pos, user_map).upper() + ")"
     text5 += t_item1 + t_item2
 
     cmp_text = cmp_text + text_2_col(text5, text6, width, "|")

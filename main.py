@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Locals imports.
-from actions import move, equip, use_boat, land, sleep_in_bed, wait, talk, enter, explore, battle, heal, unequip,\
+from actions import move, equip, leave, use_boat, land, sleep_in_bed, wait, talk, enter, explore, battle, unequip,\
     drop, use, check
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
@@ -278,7 +278,7 @@ while run:
 
             # Draw of general stats.
             clear()
-            disp_play(player, location, "NAIWAT", day_moment, loc_des, x, y,
+            disp_play(player, location, "NAIWAT", day_moment, loc_des, x, y, user_map,
                       draw_move(x, y, x_len, y_len, player, tile_map, map_set), screen, 36)
 
             # Input action.
@@ -367,7 +367,7 @@ while run:
                     screen = disp_enter(x, y, map_set)
                     standing = True
                 elif " ".join(action[2:]) in map_set[str((x, y))]["entries"]:
-                    screen, x, y, fight = enter(x, y, " ".join(action[2:]), player)
+                    screen, x, y, fight = enter(x, y, " ".join(action[2:]), player, map_set)
                     if fight:
                         play, menu, win = battle(player, mobs["orc"].copy(), map_set)
                         if not play:
@@ -391,6 +391,10 @@ while run:
 
             elif action[0] == "land":  # Land action.
                 screen, map_set = land(x, y, player, map_set, tile_map)
+                standing = False
+
+            elif action[0] == "leave":  # Exit action:
+                screen, map_set = leave(x, y, map_set)
                 standing = False
 
             elif action[0] == "listen":  # Listen action.

@@ -156,37 +156,43 @@ def drop(player: Player(), item_name: str, quantity: int = 1) -> tuple[str, dict
 
 
 # Enter action.
-def enter(x: int, y: int, entrie: str, player: Player()) -> tuple[str, int, int, bool]:
+def enter(x: int, y: int, entrie: str, player: Player(), ms: dict) -> tuple[str, int, int, bool, dict]:
     if entrie == "castle":
-        return "You cannot enter here.", x, y, False
+        return "You cannot enter here.", x, y, False, ms
 
     if entrie == "cathedral":
-        return "You cannot enter here.", x, y, False
+        return "You cannot enter here.", x, y, False, ms
 
     elif entrie == "cave":
         if (x, y) == (13, 0):
             if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
                 if random.randint(0, 100) <= 10:
-                    return "You have crossed the cave without any problems.", 19, 0, False
+                    return "You have crossed the cave without any problems.", 19, 0, False, ms
                 else:
-                    return "You have crossed the cave.", 19, 0, True
+                    return "You have crossed the cave.", 19, 0, True, ms
             else:
-                return "You need a torch to enter.", x, y, False
+                return "You need a torch to enter.", x, y, False, ms
 
         if (x, y) == (19, 0):
             if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
                 if random.randint(0, 100) <= 10:
-                    return "You have crossed the cave without any problems.", 13, 0, False
+                    return "You have crossed the cave without any problems.", 13, 0, False, ms
                 else:
-                    return "You have crossed the cave.", 13, 0, True
+                    return "You have crossed the cave.", 13, 0, True, ms
             else:
-                return "You need a torch to enter.", x, y, False
+                return "You need a torch to enter.", x, y, False, ms
+
+    elif entrie == "hut":
+        player.outside = True
+        ms[str((x, y))]["items"] = ["bed"]
+
+        return "You are in the " + entrie.title() + ".", x, y, False, ms
 
     elif entrie == "inn":
         pass
 
     else:
-        return "There is not a " + entrie + " here.", x, y, False
+        return "There is not a " + entrie + " here.", x, y, False, ms
 
 
 # Equip action.
@@ -239,6 +245,11 @@ def land(x: int, y: int, player: Player(), set_map: dict, tl_map: list) -> tuple
             return "You can't land here.", set_map
         else:
             return "You aren't in a boat.", set_map
+
+
+# Exit action.
+def leave(x: int, y: int, ms: dict):
+    pass
 
 
 # Move function.

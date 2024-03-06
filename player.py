@@ -11,7 +11,8 @@ class Player:
                  b_attack: int = 2, b_defense: int = 1, b_evasion: int = 0, b_precision: int = 0.6, strength: int = 0,
                  agility: int = 0, vitality: int = 0, resistance: int = 0, dexterity: int = 0, x: int = 0, y: int = 0,
                  x_cp: int = 0, y_cp: int = int, st_points: int = 0, sk_points: int = 0, slot1: str = "Red Potion",
-                 slot2: str = "Litle Red Potion", equip=None, inventory: Inventory = Inventory(), status: int = 0):
+                 slot2: str = "Litle Red Potion", equip=None, inventory: Inventory = Inventory(), status: int = 0,
+                 outside: bool = False):
 
         if len(name) > 12:
             self.name = name
@@ -56,3 +57,4 @@ class Player:
         self.inventory = inventory
         self.status = status  # 0: walk, 1: surf.
         self.events = {"message": False}
+        self.outside = outside

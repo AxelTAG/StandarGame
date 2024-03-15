@@ -1,6 +1,7 @@
 ﻿# Imports.
 # Local imports.
 from biome import Biome
+from npc import Npc
 
 # Command line settings.
 WIDTH = 92
@@ -639,8 +640,18 @@ MOBS = {
     }
 }
 
+# NPCs types.
+NPC_TYPES = ["captain", "dragon", "fisherman", "guard", "innkeeper", "lord", "mayor", "merchant", "monk", "traveler",
+             "worker"]
+
 # NPCs.
 NPC = {
+    "whispers": Npc(name="whispers",
+                    npc_type="dragon",
+                    messages={0: ["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind,"
+                                  " and come to me.", "Secrets untold and challenges unknown lie ahead.",
+                                  "Trust in the unseen path...", "... come to me."]}),
+
     "whispers": [["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind, and come to me.",
                   "Secrets untold and challenges unknown lie ahead.", "Trust in the unseen path...", "... come to me."],
                  [], [], [0]],
@@ -749,3 +760,4 @@ NPC = {
                         " it'll take time.", ],
                        [], [], [0]]
 }
+

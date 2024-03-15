@@ -1,5 +1,7 @@
 # Imports.
 # External imports
+from datetime import timedelta
+
 # Local imports.
 from inventory import Inventory
 
@@ -10,9 +12,9 @@ class Player:
                  attack: int = 2, defense: int = 1, evasion: int = 0, precision: int = 60, b_hpmax: int = 25,
                  b_attack: int = 2, b_defense: int = 1, b_evasion: int = 0, b_precision: int = 0.6, strength: int = 0,
                  agility: int = 0, vitality: int = 0, resistance: int = 0, dexterity: int = 0, x: int = 0, y: int = 0,
-                 x_cp: int = 0, y_cp: int = int, st_points: int = 0, sk_points: int = 0, slot1: str = "Red Potion",
+                 x_cp: int = 0, y_cp: int = 0, st_points: int = 0, sk_points: int = 0, slot1: str = "Red Potion",
                  slot2: str = "Litle Red Potion", equip=None, inventory: Inventory = Inventory(), status: int = 0,
-                 outside: bool = False):
+                 outside: bool = False, place=None):
 
         if len(name) > 12:
             self.name = name
@@ -58,3 +60,8 @@ class Player:
         self.status = status  # 0: walk, 1: surf.
         self.events = {"message": False}
         self.outside = outside
+        self.time_played = timedelta(seconds=0)
+        self.place = place
+
+    def refresh_time_played(self, time_close, time_init):
+        self.time_played = time_close - time_init + self.time_played

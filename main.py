@@ -3,17 +3,18 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Locals imports.
-from actions import move, equip, leave, use_boat, land, sleep_in_bed, wait, talk, enter, explore, battle, unequip,\
-    drop, use, check
+from actions import drop, enter, equip, explore, leave, land, move, sleep_in_bed, wait, talk, battle, pick_up,\
+    unequip, use, use_boat, check
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
 import globals
-from management import save, event_handler
+from management import event_handler, init_map_setting, save
 from player import Player
-from utils import import_player, label_pixels, draw_move, tl_map_set, day_est, load_dict_from_txt, clear, \
-    check_name, get_hash, sum_item_stats
+from utils import coordstr, import_player, import_settings, label_pixels, load_map_set, draw_move, tl_map_set, day_est,\
+    load_dict_from_txt, clear, check_name, get_hash, sum_item_stats, export_dict_to_txt
 
 # Game variables.
 run = True
@@ -46,11 +47,10 @@ map_set = tl_map_set(tile_map)
 y_len = len(tile_map)-1
 x_len = len(tile_map[0])-1
 
-bioms = globals.BIOMS.copy()
 npc = globals.NPC.copy()
 mobs = globals.MOBS.copy()
 
-screen = "Nothing done yet."
+screen = random.choices(["Nothing done yet.", "Waiting for commands."], [50, 50], k=1)[0]
 
 
 # Main loop of the game.
@@ -139,12 +139,11 @@ while run:
                     user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
 
                     # Global settings.
-                    tile_map = label_pixels("world_map.png")
+                    tile_map = label_pixels("rsc.png")
                     map_set = tl_map_set(tile_map)
                     y_len = len(tile_map) - 1
                     x_len = len(tile_map[0]) - 1
 
-                    bioms = globals.BIOMS.copy()
                     npc = globals.NPC.copy()
                     mobs = globals.MOBS.copy()
 
@@ -169,9 +168,12 @@ while run:
 
             # Initial settings.
             # Map settings.
-            map_set.update(globals.MAP_SETTING)
+            init_map_setting(map_set)
+
             # Location setting.
-            map_set[str((x, y))]["t"] = player.name + "'s Hut"
+            map_set[coordstr(0, 0)].entries["hut"].name = player.name + "'s Hut"
+            player.place = map_set[coordstr(0, 0)].entries["hut"]
+
             # Introduction setting.
             npc["whispers"][0] = [player.name + "...", player.name + "...", "...your destiny awaits.",
                                   "Follow the whispers of the wind, and come to me.", "Secrets untold and challenges "
@@ -183,8 +185,7 @@ while run:
 
             # Introduction.
             if player.name:
-                screen, inventory = talk(npc=npc["whispers"], npc_name="Whispers", inventory=inventory)
-
+                screen = talk(npc=npc["whispers"], npc_name="Whispers", player=player)
 
         elif choice == "2":  # Load game choice.
             try:
@@ -199,16 +200,18 @@ while run:
 
                 # Loading inventory, user stats and map settings.
                 player = import_player("cfg_save.pkl")
-                load_setting = load_dict_from_txt("cfg_save.txt")
+                load_setting = import_settings("cfg_setting.pkl")
                 load_hash = load_dict_from_txt("cfg_hash.txt")
                 if get_hash("cfg_save.pkl") != load_hash["hash"]:
                     raise OSError
 
-                npc.update(load_setting["2"])
-                map_set.update(load_setting["9"])
+                load_map_set(map_set, load_setting["ms"])
+                npc.update(load_setting["npc"])
 
                 x = player.x
                 y = player.y
+                player.place = map_set[coordstr(x, y)]
+                player.outside = True
 
                 menu = False
                 play = True
@@ -228,19 +231,23 @@ while run:
         elif choice == "4":  # Quit option.
             quit()
 
+    time_init = datetime.now()
     while play:
         player.x = x
         player.y = y
-        save(player, user_map, npc, map_set)  # Autosave.
+        if player.outside:
+            player.place = map_set[coordstr(x, y)]
+        save(player, user_map, npc, map_set, time_init)  # Autosave.
+        time_init = datetime.now()
         clear()
 
         # Fight chances of moving.
         if not standing:
-            if map_set[str((x, y))]["e"]:
-                if random.randint(0, 100) < max(bioms[tile_map[y][x]]["e_chance"]):
-                    enemy = random.choices(bioms[tile_map[y][x]]["e_list"], bioms[tile_map[y][x]]["e_chance"], k=1)[0]
+            if player.place.fight:
+                if random.randint(0, 100) < max(player.place.mobs_chances):
+                    enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
                     play, menu, win = battle(player, mobs[enemy].copy(), map_set)
-                    save(player, user_map, npc, map_set)
+                    save(player, user_map, npc, map_set, time_init)
 
         # Lvl upgrade of user.
         if player.exp >= player.expmax:
@@ -265,12 +272,8 @@ while run:
 
         if play:
             # Setting enviroment variables.
-            location = map_set[str((x, y))]["t"] if map_set[str((x, y))]["t"] else bioms[tile_map[y][x]]["t"]
             # Location description setting.
-            if map_set[str((x, y))]["d"]:
-                loc_des = map_set[str((x, y))]["d"]
-            else:
-                loc_des = bioms[tile_map[y][x]]["d"]
+            location, loc_des = player.place.name, player.place.description
 
             # Day time and day moment.
             day_time, day_moment = day_est(day_time, add_hs)
@@ -291,17 +294,19 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(player, user_map, npc, map_set)
+                save(player, user_map, npc, map_set, time_init)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
-                screen, x, y, add_hs, standing = move(x, y, x_len, y_len, player, tile_map, action[0], map_set)
+                if player.outside:
+                    screen, x, y, add_hs, standing = move(x, y, x_len, y_len, player, tile_map, action[0], map_set)
+                else:
+                    screen = "You are in " + player.place.name.title().replace("'S", "'s")
 
             elif action[0] in ["5", "6"]:  # Fast use object action.
                 if action[0] == "5":
-                    fast_object = player.slot1
+                    screen, object_used = use(player, player.slot1)
                 if action[0] == "6":
-                    fast_object = player.slot2
-                screen, object_used = use(player, fast_object)
+                    screen, object_used = use(player, player.slot2)
                 standing = True
 
             elif action[0] == "assign":  # Assign action.
@@ -335,43 +340,50 @@ while run:
                 standing = True
 
             elif action[0] == "check":  # Check action.
-                screen = check(x, y, map_set, " ".join(action[1:]))
+                screen = check(player.place, " ".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                user_map[y][x] = bioms[tile_map[y][x]]["c"]
+                user_map[y][x] = player.place.color
                 if x != 0:
-                    user_map[y][x - 1] = bioms[tile_map[y][x - 1]]["c"]
+                    user_map[y][x - 1] = map_set[coordstr(x - 1, y)].color
                 if x != x_len:
-                    user_map[y][x + 1] = bioms[tile_map[y][x + 1]]["c"]
+                    user_map[y][x + 1] = map_set[coordstr(x + 1, y)].color
                 if y != 0:
-                    user_map[y - 1][x] = bioms[tile_map[y - 1][x]]["c"]
+                    user_map[y - 1][x] = map_set[coordstr(x, y - 1)].color
                 if y != y_len:
-                    user_map[y + 1][x] = bioms[tile_map[y + 1][x]]["c"]
+                    user_map[y + 1][x] = map_set[coordstr(x, y + 1)].color
                 screen = "You have explored the area and mapped it out."
 
                 if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
                     # Explore a square instead of a cross
                     for i in range(max(0, x - 1), min(x_len, x + 2)):
                         for j in range(max(0, y - 1), min(y_len, y + 2)):
-                            user_map[j][i] = bioms[tile_map[j][i]]["c"]
+                            user_map[j][i] = map_set[coordstr(i, j)].color
 
             elif action[0] == "drop":  # Drop action.
-                if len(action) <= 2:
-                    screen = disp_drop()
+                try:  # Converting input in proper clases and form.
+                    item_name = " ".join(action[2:])
+                    quantity = int(action[1])
+
+                    screen = drop(player, item_name, quantity)  # Doing drop action.
                     standing = True
-                else:
-                    screen, player = drop(player, " ".join(action[2:]), int(action[1]))
+
+                except ValueError:
+                    screen = disp_drop()  # Printing drop instructions.
+                except IndexError:
+                    screen = disp_drop()  # Printing drop instructions.
 
             elif action[0] == "enter":  # Enter action.
                 if len(action) <= 2:
-                    screen = disp_enter(x, y, map_set)
+                    screen = disp_enter(player.place)
                     standing = True
-                elif " ".join(action[2:]) in map_set[str((x, y))]["entries"]:
-                    screen, x, y, fight = enter(x, y, " ".join(action[2:]), player, map_set)
+                elif " ".join(action[2:]) in player.place.entries:
+                    screen, fight = enter(x, y, " ".join(action[2:]), player)
                     if fight:
                         play, menu, win = battle(player, mobs["orc"].copy(), map_set)
                         if not play:
-                            save(player, user_map, npc, map_set)
+                            save(player, user_map, npc, map_set, time_init)
+                    x, y = player.x, player.y
                     standing = True
                 else:
                     screen = "There is no " + " ".join(action[2:]) + "."
@@ -385,12 +397,20 @@ while run:
                     screen = equip(player, " ".join(action[1:]))
                     standing = True
 
+            elif action[0] == "exit":  # Exit entrie action:
+                if not player.outside:
+                    screen = "You left the " + player.place.name + "."
+                    player.outside = True
+                else:
+                    screen = "You are outside."
+                standing = False
+
             elif action[0] == "explore":  # Explore action:
-                screen, map_set = explore(x, y, map_set)
+                screen = explore(x, y, map_set)
                 standing = False
 
             elif action[0] == "land":  # Land action.
-                screen, map_set = land(x, y, player, map_set, tile_map)
+                screen = land(x, y, player, map_set, tile_map)
                 standing = False
 
             elif action[0] == "leave":  # Exit action:
@@ -401,7 +421,7 @@ while run:
                 screen = "You don't hear anything special."
 
             elif action == ["look", "around"]:  # Look around action.
-                screen = disp_look_around(player, map_set)
+                screen = disp_look_around(player.place)
 
             elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
                 user_map[y][x] = globals.PINK
@@ -409,7 +429,14 @@ while run:
                 plt.imshow(user_map)
                 plt.title("Map")
                 plt.show()
-                user_map[y][x] = globals.BIOMS[tile_map[y][x]]["c"]
+                user_map[y][x] = player.place.color
+                standing = True
+
+            elif action[:2] == ["pick", "up"]:  # Pick up action.
+                screen = pick_up(player, "_".join(action[2:]))
+
+            elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
+                screen = disp_show_inventory(player)
                 standing = True
 
             elif action[0] == "slot1":  # Selection slot1 action.
@@ -424,25 +451,22 @@ while run:
                     player.slot2 = " ".join(action[1:]).title()
                 standing = True
 
-            elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
-                screen = disp_show_inventory(player)
-                standing = True
-
             elif action[0] == "sleep":  # Sleep action.
                 if len(action) <= 2:
-                    screen = disp_sleep(x, y, map_set)
+                    screen = disp_sleep(x, y, player.place)
                     standing = True
                 else:
-                    screen, player.hp, day_time, day_moment = sleep_in_bed(x, y, map_set, player.hp, player.hpmax, day_time, action[2])
+                    screen, player.hp, day_time, day_moment = sleep_in_bed(player.place, player.hp, player.hpmax,
+                                                                           day_time, action[2])
                     player.x_cp, player.y_cp = x, y
                     standing = True
 
             elif action[0] == "talk":  # Talk action.
                 npc_name = " ".join(action[2:]).lower()
                 if len(action) <= 2:
-                    screen = disp_talk(x, y, map_set)
+                    screen = disp_talk(player.place)
                     standing = True
-                elif npc_name in map_set[str((x, y))]["npc"]:
+                elif npc_name in player.place.npc:
                     screen = talk(npc=npc[npc_name], npc_name=npc_name, player=player)
                     standing = True
                 else:
@@ -458,7 +482,7 @@ while run:
                     standing = True
 
             elif action == ["use", "boat"]:  # Use boat action.
-                screen, map_set = use_boat(x, y, player, map_set)
+                screen = use_boat(x, y, player, map_set)
                 standing = True
 
             elif action[0] in ["use"]:  # Fast use object action.
@@ -473,14 +497,33 @@ while run:
                     screen, day_time, day_moment = wait(day_time, action[2])
                     standing = False
 
+            # Admin commans.
+            elif action[0] == "teleport":
+                x = int(action[1])
+                y = int(action[2])
+                screen = "You teleported to " + str(x) + " " + str(y) + "."
+
+            elif action == ["time", "played"]:
+                player.refresh_time_played(datetime.now(), time_init)
+                screen = str(player.time_played)
+
+            elif action == ["map_set"]:
+                for i in range(len(tile_map)):
+                    for j in range(len(tile_map[i])):
+                        key = coordstr(j, i)
+                        print(key, map_set[key].name, map_set[key].description)
+
             elif action[0] == "update":  # Admin action for update de game while devolping.
-                #player.exp += 1000
-                map_set.update(globals.MAP_SETTING)
+                player.exp += 1000
+                player.inventory.add_item("telescope", 1)
+                player.inventory.add_item("torch", 1)
+                player.inventory.add_item("gold", 100)
+                # map_set.update(globals.MAP_SETTING_INIT)
                 npc.update(globals.NPC)
-                player.events["message"] = False
-                player.events["permission"] = False
+                # player.events["message"] = False
+                # player.events["permission"] = False
+                # npc["fisherman marlin"][3][0] = True
                 screen = "Map updated."
-                npc["fisherman marlin"][3][0] = True
             else:
                 standing = True
 

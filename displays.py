@@ -3,9 +3,10 @@
 import numpy as np
 
 # Locals imports.
-from utils import clear, get_label, patron_print, text_2_col
+from biome import Biome
 import globals
 from player import Player
+from utils import coordstr, clear, get_label, patron_print, text_2_col
 
 
 # Assign display.
@@ -68,10 +69,10 @@ def disp_drop() -> str:
 
 
 # Enter action.
-def disp_enter(x: int, y: int, set_map: dict) -> str:
-    if set_map[str((x, y))]["entries"]:
+def disp_enter(place) -> str:
+    if place.entries:
         msg = "You want to enter to:"
-        for i, entrie in enumerate(set_map[str((x, y))]["entries"]):
+        for i, entrie in enumerate(place.entries):
             msg += "\n - " + entrie.title()
         return msg
     else:
@@ -90,8 +91,8 @@ def disp_equip(equip: dict) -> str:
 
 
 # Look around action.
-def disp_look_around(player: Player(), ms: dict) -> str:
-    items = ms[str((player.x, player.y))]["items"]
+def disp_look_around(place) -> str:
+    items = place.items
     if items:
         text = "You have looked around and found:"
         for item in items:
@@ -179,7 +180,7 @@ def disp_play(
 
 
 # Show inventory display.
-def disp_show_inventory(player: Player()):
+def disp_show_inventory(player: Player):
     items = [(item, quantity) for item, quantity in player.inventory.items.items() if not player.inventory.items[item] <= 0]
     text = "INVENTORY:"
     for item, quantity in items:
@@ -189,18 +190,18 @@ def disp_show_inventory(player: Player()):
 
 
 # Sleep options display.
-def disp_sleep(x: int, y: int, set_map: dict) -> str:
-    if "bed" in set_map[str((x, y))]["items"]:
+def disp_sleep(x: int, y: int, place: Biome) -> str:
+    if "bed" in place.items:
         return "You want to sleep to:\n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Night"
     else:
         return "There is no bed here."
 
 
 # Talk npc options.
-def disp_talk(x: int, y: int, set_map: dict) -> str:
-    if set_map[str((x, y))]["npc"]:
+def disp_talk(place) -> str:
+    if place.npc:
         msg = "You want to talk to:"
-        for i, npc in enumerate(set_map[str((x, y))]["npc"]):
+        for i, npc in enumerate(place.npc):
             msg += "\n - " + npc.title()
         return msg
     else:

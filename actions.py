@@ -3,10 +3,11 @@
 import random
 
 # Internal imports.
+from biome import Biome, Entry
 from displays import disp_battle, disp_talk_util
 import globals
 from player import Player
-from utils import day_est, typewriter, clear, text_ljust, coast_reset
+from utils import coordstr, day_est, typewriter, clear, text_ljust, reset_map
 
 
 # Battle action.
@@ -41,10 +42,9 @@ def battle(player: Player(), enemy: dict, ms: dict):
 
         elif choice_action in ["2", "3"]:  # Use object action.
             if choice_action == "2":
-                fast_object = player.slot1
+                screen, object_used = use(player, player.slot1)
             if choice_action == "3":
-                fast_object = player.slot2
-            screen, object_used = use(player, fast_object)
+                screen, object_used = use(player, player.slot2)
 
         # Enemy attack.
         if enemy["hp"] > 0 and choice_action in ["0", "1", "2", "3"]:
@@ -70,7 +70,7 @@ def battle(player: Player(), enemy: dict, ms: dict):
             player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
             player.status = 0
             player.exp = 0
-            coast_reset(ms=ms, keys=["(2, 1)", "(6, 2)"])
+            reset_map(ms=ms, keys=["(2, 1)", "(6, 2)"])
 
             print(" GAME OVER")
             input(" > ")
@@ -119,20 +119,21 @@ def buy(player: Player(), item: str, quantity: int, price: int) -> str:
 
 
 # Check action.
-def check(x: int, y: int, ms: dict, item: str) -> str:
-    text = ""
-    if item in ms[str((x, y))]["items"]:
+def check(place, item: str) -> str:
+    if item in place.items:
         if item == "bed":
             text = "Comfortable resting surface for sleep and relaxation."
         elif item == "boat":
             text = "Small wooden boat gently rocks on calm water, weathered by time and adventures."
-        elif item == "origami flowers":
+        elif item == "origami_flowers":
             text = "Paper flowers, seem to have something inside the stem, but you can't get it out with your fingers," \
                    " you need a long stick."
+        elif item == "short_sword":
+            text = "A trusty Short Sword, swift and precise, ideal for close-quarter battles against foes in the wild."
         else:
             text = "You observe nothing."
     elif item == "":
-        text = "What do you     want to check? CHECK ITEM"
+        text = "What do you want to check? CHECK ITEM"
     else:
         text = "There is no " + item.title() + " here."
 
@@ -140,59 +141,45 @@ def check(x: int, y: int, ms: dict, item: str) -> str:
 
 
 # Drop action.
-def drop(player: Player(), item_name: str, quantity: int = 1) -> tuple[str, dict]:
+def drop(player: Player, item_name: str, quantity: int = 1) -> str:
     item = item_name.replace(" ", "_")
-    items = player.inventory.items
-    try:
-        if items[item] >= int(quantity) and item not in ["red_potion", "walk"]:
-            items[item] -= int(quantity)
-            if items[item] <= 0:
-                del items[item]
-            return "You drop " + str(quantity) + " " + item_name.title() + ".", player
-        else:
-            return "You don't have " + str(quantity) + " " + item_name.title() + ".", player
-    except KeyError:
-        return "You don't have " + item_name.title() + ".", player
+    if player.inventory.drop_item(item, quantity):
+        return "You drop " + str(quantity) + " " + item_name.title() + "."
+    else:
+        return "You don't have " + str(quantity) + " " + item_name.title() + "."
 
 
 # Enter action.
-def enter(x: int, y: int, entrie: str, player: Player(), ms: dict) -> tuple[str, int, int, bool, dict]:
-    if entrie == "castle":
-        return "You cannot enter here.", x, y, False, ms
-
-    if entrie == "cathedral":
-        return "You cannot enter here.", x, y, False, ms
-
-    elif entrie == "cave":
+def enter(x: int, y: int, entrie: str, player: Player()) -> tuple[str, bool]:
+    if entrie == "cave":
         if (x, y) == (13, 0):
             if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
                 if random.randint(0, 100) <= 10:
-                    return "You have crossed the cave without any problems.", 19, 0, False, ms
+                    player.x, player.y = 19, 0
+                    return "You have crossed the cave without any problems.", False
                 else:
-                    return "You have crossed the cave.", 19, 0, True, ms
+                    player.x, player.y = 19, 0
+                    return "You have crossed the cave.",  True
             else:
-                return "You need a torch to enter.", x, y, False, ms
+                return "You need a torch to enter.", False
 
         if (x, y) == (19, 0):
             if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
                 if random.randint(0, 100) <= 10:
-                    return "You have crossed the cave without any problems.", 13, 0, False, ms
+                    player.x, player.y = 13, 0
+                    return "You have crossed the cave without any problems.", False
                 else:
-                    return "You have crossed the cave.", 13, 0, True, ms
+                    player.x, player.y = 13, 0
+                    return "You have crossed the cave.", True
             else:
-                return "You need a torch to enter.", x, y, False, ms
-
-    elif entrie == "hut":
-        player.outside = True
-        ms[str((x, y))]["items"] = ["bed"]
-
-        return "You are in the " + entrie.title() + ".", x, y, False, ms
-
-    elif entrie == "inn":
-        pass
+                return "You need a torch to enter.", False
 
     else:
-        return "There is not a " + entrie + " here.", x, y, False, ms
+        player.outside = False
+        player.place = player.place.entries[entrie]
+        return "You have enter to the " + entrie.title() + ".", False
+
+    return "There is not a " + entrie + " here.", False
 
 
 # Equip action.
@@ -213,12 +200,12 @@ def equip(player: Player(), item_name: str) -> str:
 
 
 # Explore action.
-def explore(x: int, y: int, set_map: dict):
-    if (x, y) == (13, 0) and "cave" not in set_map[str((x, y))]["entries"]:
-        set_map[str((x, y))]["entries"].append("cave")
-        return "You have found a cave.", set_map
+def explore(x: int, y: int, ms: dict) -> str:
+    if (x, y) == (13, 0) and "cave" not in ms[coordstr(x, y)].entries:
+        ms[coordstr(x, y)].entries["cave"] = Entry(description="Nothing.")
+        return "You have found a cave."
     else:
-        return "You explore the zone but you found nothing.", set_map
+        return "You explore the zone but you found nothing."
 
 
 # Heal action.
@@ -231,20 +218,21 @@ def heal(name: str, health: int, healthmax: int, amount: int) -> tuple[str, int]
 
 
 # Land.
-def land(x: int, y: int, player: Player(), set_map: dict, tl_map: list) -> tuple[str, dict]:
+def land(x: int, y: int, player: Player(), ms: dict, tl_map: list) -> str:
     if player.status == 1 and tl_map[y][x] not in ["sea", "river"]:
         player.status = 0
-        set_map[str((x, y))]["items"].append("boat")
-        try:
-            set_map[str((x, y))]["d"] = globals.MAP_SETTING[str((x, y))]["d"]
-        except KeyError:
-            set_map[str((x, y))]["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
-        return "You have land.", set_map
+        ms[coordstr(x, y)].items.append("boat")
+        ms[coordstr(x, y)].description = ms[coordstr(x, y)].description.replace(
+            "Seaside with swaying palm trees, echoing waves, and vibrant life.",
+            "Seaside with anchored boat, echoing waves and vibrant coastal life.")
+        if ms[coordstr(x, y)].description == "":
+            ms[coordstr(x, y)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+        return "You have land."
     else:
         if player.status == 1:
-            return "You can't land here.", set_map
+            return "You can't land here."
         else:
-            return "You aren't in a boat.", set_map
+            return "You aren't in a boat."
 
 
 # Exit action.
@@ -259,33 +247,48 @@ def move(
     inventory = player.inventory.items
     hs = 8
     # Move North.
-    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]) and player.status in ms[str((x, y - 1))]["s"] and mv == "1":
+    if y > 0 and all(req in [*inventory.keys()] for req in ms[coordstr(x, y - 1)].req) and player.status in ms[coordstr(x, y - 1)].status and mv == "1":
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             return "You moved North.", x, y - 1, hs, False
     # Move East.
-    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]) and player.status in ms[str((x + 1, y))]["s"] and mv == "2":
+    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status and mv == "2":
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             return "You moved East.", x + 1, y, hs, False
 
     # Move South.
-    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]) and player.status in ms[str((x, y + 1))]["s"] and mv == "3":
+    if y < map_width and all(req in [*inventory.keys()] for req in ms[coordstr(x, y + 1)].req) and player.status in ms[coordstr(x, y + 1)].status and mv == "3":
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             return "You moved South.", x, y + 1, hs, False
 
     # Move West.
-    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]) and player.status in ms[str((x - 1, y))]["s"] and mv == "4":
+    if x > 0 and all(req in [*inventory.keys()] for req in ms[coordstr(x - 1, y)].req) and player.status in ms[coordstr(x - 1, y)].status and mv == "4":
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             return "You moved West.", x - 1, y, hs, False
     return "You can't move there.", x, y, hs, True
 
 
+# Pick up action.
+def pick_up(player: Player, item: str) -> str:
+    if item in player.place.items:
+        if item in globals.ITEMS_SELL.keys():
+
+            player.inventory.add_item(item, 1)  # Adding item to inventory.
+            player.place.items.remove(item)  # Removing item to place.
+
+            return "You pick up " + " ".join(item.split("_")).title() + "."
+        else:
+            return "You can't pick " + " ".join(item.split("_")).title() + "."
+    else:
+        return "There is no " + " ".join(item.split("_")).title() + " here."
+
+
 # Sleep to [morning, afternoon, evening, night].
-def sleep_in_bed(x: int, y: int, set_map: dict, hp, hpmax, actual_hs, opt: str) -> tuple[str, int, int, str]:
+def sleep_in_bed(place: Biome, hp, hpmax, actual_hs, opt: str) -> tuple[str, int, int, str]:
     if opt not in ["morning", "afternoon", "evening", "night"]:
         hs, d_moment = day_est(actual_hs, 0)
         return "This is not posible.", hp, hs, d_moment
     else:
-        if "bed" in set_map[str((x, y))]["items"]:
+        if "bed" in place.items:
             if opt == "morning":
                 return "You slept until the morning.", hpmax, 6, "MORNING"
             elif opt == "afternoon":
@@ -446,8 +449,11 @@ def talk(npc: dict, npc_name: str, player: Player()) -> str:
                 else:
                     return "Nothing done."
 
+            if "inkeeper" in npc_name:
+                pass
+
             else:
-                return  "You talked with " + npc_name.title() + "."
+                return "You talked with " + npc_name.title() + "."
 
         else:
             return "You talked with " + npc_name.title() + "."  # Break if the npc has no second message.
@@ -498,22 +504,22 @@ def use(player: Player(), obj: str) -> tuple[str, bool]:
 
 
 # Use boat.
-def use_boat(x: int, y: int, player: Player(), set_map: dict) -> tuple[str, dict]:
-    if "boat" in set_map[str((x, y))]["items"] and player.status != 1:
+def use_boat(x: int, y: int, player: Player(), ms: dict) -> str:
+    if "boat" in ms[coordstr(x, y)].items and player.status != 1:
         player.status = 1
-        set_map[str((x, y))]["items"].remove("boat")
-        if str((x, y)) == "(6, 2)":
-            set_map[str((x, y))]["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life. A " \
-                                        "solitary figure stands at the water's edge, gazing out into the " \
-                                        "vastness of the sea, captivated by the rhythmic dance of the waves and " \
-                                        "the boundless horizon stretching before them."
+        ms[coordstr(x, y)].items.remove("boat")
+        if "(x, y)" == "(6, 2)":
+            ms[coordstr(x, y)].description = "Seaside with swaying palm trees, echoing waves, and vibrant life. A " \
+                                             "solitary figure stands at the water's edge, gazing out into the " \
+                                             "vastness of the sea, captivated by the rhythmic dance of the waves and " \
+                                             "the boundless horizon stretching before them."
         else:
-            set_map[str((x, y))]["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
-        return "You are in the boat.", set_map
+            ms[coordstr(x, y)].description = "Seaside with swaying palm trees, echoing waves, and vibrant life."
+        return "You are in the boat."
     elif player.status == 1:
-        return "You are already in the boat.", set_map
+        return "You are already in the boat."
     else:
-        return "There is no boat here.", set_map
+        return "There is no boat here."
 
 
 # Wait action.

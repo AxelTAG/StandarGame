@@ -1,17 +1,19 @@
 # Imports.
 # Externals imports.
-from PIL import Image
+import copy
 import hashlib
 from itertools import zip_longest, cycle
 import numpy as np
 import os
 import pickle
+from PIL import Image
 import platform
 import sys
 import time
 
 # Local imports.
-import globals
+from biome import Biome
+from globals import BIOMES, ITEMS_EQUIP
 from player import Player
 
 
@@ -53,21 +55,23 @@ def clear():
 
 
 # Coast reset.
-def coast_reset(ms: dict, keys: list) -> dict:
-    for key, value in ms.items():
-        if value.get("t") == "COAST" and key in keys:
-            value["items"] = ["boat"]
-            value["d"] = "Seaside with anchored boat, echoing waves and vibrant coastal life."
-        elif value.get("t") == "COAST":
-            value["d"] = "Seaside with swaying palm trees, echoing waves, and vibrant life."
-            value["items"] = []
-    return ms
+def reset_map(ms: dict, keys: list) -> dict:
+    ms[keys[0]].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+    ms[keys[0]].items = ["boat"]
+
+    ms[keys[1]].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+    ms[keys[1]].items = ["boat"]
 
 
 # Function that concatenates two lists of str elements.
 def concatenate_lists(list1: list[str], list2: list[str]) -> list[str]:
     concatenated_list = ["".join(pair) for pair in zip_longest(list1, list2, fillvalue="")]
     return concatenated_list
+
+
+# Function that turns a tuple of to int elements to a string, for coord usages in map_set.
+def coordstr(x: int, y: int):
+    return str(tuple([x, y]))
 
 
 # Count spaces at first of a text.
@@ -106,21 +110,22 @@ def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
 def draw_move(x: int, y: int, map_heigt: int, map_width: int, player: Player, tl_map: list, ms: dict) -> list:
     inventory = player.inventory.items
     active_moves = [0, 0, 0, 0]
-    if y > 0 and all(req in [*inventory.keys()] for req in ms[str((x, y - 1))]["r"]) and player.status in ms[str((x, y - 1))]["s"]:
-        if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
-            active_moves[0] = 1
+    if player.outside:
+        if y > 0 and all(req in [*inventory.keys()] for req in ms[coordstr(x, y - 1)].req) and player.status in ms[coordstr(x, y - 1)].status:
+            if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
+                active_moves[0] = 1
 
-    if x < map_heigt and all(req in [*inventory.keys()] for req in ms[str((x + 1, y))]["r"]) and player.status in ms[str((x + 1, y))]["s"]:
-        if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
-            active_moves[1] = 1
+        if x < map_heigt and all(req in [*inventory.keys()] for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status:
+            if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
+                active_moves[1] = 1
 
-    if y < map_width and all(req in [*inventory.keys()] for req in ms[str((x, y + 1))]["r"]) and player.status in ms[str((x, y + 1))]["s"]:
-        if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
-            active_moves[2] = 1
+        if y < map_width and all(req in [*inventory.keys()] for req in ms[coordstr(x, y + 1)].req) and player.status in ms[coordstr(x, y + 1)].status:
+            if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
+                active_moves[2] = 1
 
-    if x > 0 and all(req in [*inventory.keys()] for req in ms[str((x - 1, y))]["r"]) and player.status in ms[str((x - 1, y))]["s"]:
-        if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
-            active_moves[3] = 1
+        if x > 0 and all(req in [*inventory.keys()] for req in ms[coordstr(x - 1, y)].req) and player.status in ms[coordstr(x - 1, y)].status:
+            if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
+                active_moves[3] = 1
 
     return active_moves
 
@@ -149,6 +154,12 @@ def export_player(player, path: str) -> None:
         pickle.dump(player, file)
 
 
+# Export player function.
+def export_settings(setting, path: str) -> None:
+    with open(path, 'wb') as file:
+        pickle.dump(setting, file)
+
+
 # Hash generator of txt file.
 def get_hash(file_name, algorithm='sha256', block_size=65536):
     hasher = hashlib.new(algorithm)
@@ -161,8 +172,8 @@ def get_hash(file_name, algorithm='sha256', block_size=65536):
 
 
 # Get label from pixel function.
-def get_label(x: int, y: int, user_map: np.array) -> str:
-    color = tuple(user_map[y, x])
+def get_label(x: int, y: int, matrix: np.array) -> str:
+    color = tuple(matrix[y, x])
 
     # Get the color of the pixel at coordinates (x, y)
     if color == (54, 54, 54, 255):  # Canyon.
@@ -221,6 +232,12 @@ def get_label(x: int, y: int, user_map: np.array) -> str:
 
 # Import player function.
 def import_player(path: str):
+    with open(path, 'rb') as archivo:
+        return pickle.load(archivo)
+
+
+# Import settings function.
+def import_settings(path: str):
     with open(path, 'rb') as archivo:
         return pickle.load(archivo)
 
@@ -299,6 +316,39 @@ def label_pixels(img_path: str):
     return tl_map
 
 
+# Import dictionary from txt.
+def load_dict_from_txt(file_path: str) -> dict:
+    reloaded_dictionary = {}
+    current_key = []
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        for i, line in enumerate(lines):
+            if i != 0 and count_first_spaces(lines[i]) < count_first_spaces(lines[i - 1]):
+                current_key.pop(-1)
+            key, value = line.strip().split(':', 1)
+            if value == '':
+                current_key.append(key)
+                reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, {})
+            else:
+                try:
+                    value = eval(value)
+                except SyntaxError:
+                    value = value.strip()
+                except NameError:
+                    value = value.strip()
+                current_key.append(key)
+                reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, value)
+                current_key.pop(-1)
+
+    return reloaded_dictionary
+
+
+# Load settings functions.
+def load_map_set(ms: dict, setting: dict):
+    for i, ii in zip(ms.values(), setting.values()):
+        i.__dict__.update(ii.__dict__)
+
+
 # Print patron in column function.
 def patron_print(elements, n):
     patron = []
@@ -313,7 +363,7 @@ def sum_item_stats(items: dict) -> dict:
     total_stats = {"atk": 0, "def": 0, "pre": 0, "eva": 0}
     items_equiped = {}
     for value in items.values():
-        items_equiped[value] = globals.ITEMS_EQUIP[str(value)]
+        items_equiped[value] = ITEMS_EQUIP[str(value)]
 
     for item_key, item_stats in items_equiped.items():
         for stat_key, stat_value in item_stats.items():
@@ -370,55 +420,17 @@ def text_coord(x, y) -> str:
 
 # Function that returns a dictionary from a list generated with label_pixels.
 def tl_map_set(tl_map: list) -> dict:
-    # Create empety dict.
+    # Create empty dict.
     dictionary = {}
 
     # Fill the dictionary
     for i in range(len(tl_map)):
         for j in range(len(tl_map[i])):
-            key = str((i, j))
-            value = {
-                    "t": globals.BIOMS[tl_map[j][i]]["t"],
-                    "e": globals.BIOMS[tl_map[j][i]]["e"],
-                    "e_list": globals.BIOMS[tl_map[j][i]]["e_list"],
-                    "e_chance": globals.BIOMS[tl_map[j][i]]["e_chance"],
-                    "r": globals.BIOMS[tl_map[j][i]]["r"],
-                    "s": globals.BIOMS[tl_map[j][i]]["s"],
-                    "d": globals.BIOMS[tl_map[j][i]]["d"],
-                    "items": [],
-                    "npc": [],
-                    "entries": [],
-                    "c": globals.BIOMS[tl_map[j][i]]["c"]}
+            key = coordstr(j, i)
+            value = copy.deepcopy(BIOMES[tl_map[i][j]])
             dictionary[key] = value
 
     return dictionary
-
-
-# Import dictionary from txt.
-def load_dict_from_txt(file_path: str) -> dict:
-    reloaded_dictionary = {}
-    current_key = []
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        for i, line in enumerate(lines):
-            if i != 0 and count_first_spaces(lines[i]) < count_first_spaces(lines[i - 1]):
-                current_key.pop(-1)
-            key, value = line.strip().split(':', 1)
-            if value == '':
-                current_key.append(key)
-                reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, {})
-            else:
-                try:
-                    value = eval(value)
-                except SyntaxError:
-                    value = value.strip()
-                except NameError:
-                    value = value.strip()
-                current_key.append(key)
-                reloaded_dictionary = assign_value_dict(reloaded_dictionary, current_key, value)
-                current_key.pop(-1)
-
-    return reloaded_dictionary
 
 
 # Typewriter function.

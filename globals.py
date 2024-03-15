@@ -1,4 +1,8 @@
-﻿# Command line settings.
+﻿# Imports.
+# Local imports.
+from biome import Biome
+
+# Command line settings.
 WIDTH = 92
 HEIGHT = 32
 
@@ -16,233 +20,237 @@ PINK = (255, 105, 180, 255)
 DAY_PARTS = ("MORNING", "AFTERNOON", "EVENING", "NIGHT")
 
 # Bioms of map.
-BIOMS = {
-    "canyon": {
-        "t": "CANYON",
-        "e": True,
-        "e_list": ["basilisk", "giant blind spider", "orc", "spectrum"],
-        "e_chance": [30, 50, 10, 30],
-        "r": ["torch"],
-        "s": [0],
-        "d": "Shadowy canyon inhabited by fearsome creatures, dark depths, echoing roars, and lurking horrors",
-        "c": (54, 54, 54, 255)},
-    "cave": {
-        "t": "CAVE",
-        "e": False,
-        "e_list": ["goblin", "orcs"],
-        "e_chance": [80, 50],
-        "r": ["torch"],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (1, 1, 1, 255)},
-    "coast": {
-        "t": "COAST",
-        "e": True,
-        "e_list": ["litle slime", "slime"],
-        "e_chance": [5, 30],
-        "r": [],
-        "s": [0, 1],
-        "d": "Seaside with swaying palm trees, echoing waves, and vibrant life.",
-        "c": (239, 228, 176, 255)},
-    "dark forest": {
-        "t": "DARK FOREST",
-        "e": True,
-        "e_list": ["spectral foxshade", "giant spider"],
-        "e_chance": [1, 30],
-        "r": [],
-        "s": [0],
-        "d": "Shadowy forest of peril, twisted trees loom overhead, their gnarled branches casting eerie shadows. "
-             "Giant spiders lurk among the dense undergrowth, adding a sinister layer to the foreboding darkness.",
-        "c": (22, 118, 51, 255)},
-    "death valley": {
-        "t": "DEATH VALLEY",
-        "e": True,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Dreadful dead valley, a chilling abyss where every step deepens the terror within. The air grows heavy,"
-             " and eerie whispers intensify, inducing an unsettling unease as you delve further.",
-        "c": (148, 148, 148, 255)},
-    "fields": {
-        "t": "FIELDS",
-        "e": True,
-        "e_list": ["dryad", "slime"],
-        "e_chance": [15, 30],
-        "r": [],
-        "s": [0],
-        "d": "Verdant fields, rolling emerald expanses dotted with wildflowers, where gentle breezes carry the sweet "
-             "scent of blooming herbs and distant melodies from hidden creatures in the tall grass.",
-        "c": (115, 231, 29, 255)},
-    "forest": {
-        "t": "FOREST",
-        "e": True,
-        "e_list": ["bandit", "spectral foxshade"],
-        "e_chance": [20, 1],
-        "r": [],
-        "s": [0],
-        "d": "Thick trees, vibrant flora, wildlife, hidden trails, and lurking danger in this treacherous "
-             "forest realm.",
-        "c": (34, 177, 76, 255)},
-    "frostvale": {
-        "t": "FROSTVALE",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "A pristine, snow-covered expanse where frost-kissed silence reigns. Glistening ice formations adorn the "
-             "landscape, creating an ethereal and serene winter tableau in nature's icy embrace.",
-        "c": (120, 186, 252, 255)},
-    "gates": {
-        "t": "GATES",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (200, 191, 231, 255)},
-    "highlands": {
-        "t": "HIGHLANDS",
-        "e": True,
-        "e_list": ["goblin"],
-        "e_chance": [40],
-        "r": [],
-        "s": [0],
-        "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
-        "c": (195, 195, 195, 255)},
-    "hills": {
-        "t": "HILLS",
-        "e": True,
-        "e_list": ["climbing goblin", "troll", "goblin war chief"],
-        "e_chance": [30, 30, 5],
-        "r": [],
-        "s": [0],
-        "d": "Undulating landscapes concealing lurking dangers. Treacherous creatures, hidden in the shadows, make "
-             "these hills a realm of risk for those who dare to traverse their slopes.",
-        "c": (78, 185, 32, 255)},
-    "hut": {
-        "t": "ELINA'S HUT",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (185, 122, 87, 255)},
-    "island": {
-        "t": "ISLAND",
-        "e": True,
-        "e_list": ["litle slime"],
-        "e_chance": [30],
-        "r": [],
-        "s": [0],
-        "d": "Island rainforest, dense foliage, vibrant biodiversity, and cascading waterfalls characterize this"
-             " tropical haven of life and greenery.",
-        "c": (201, 237, 92, 255)},
-    "mountains": {
-        "t": "MOUNTAINS",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": ["climbing tools"],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (127, 127, 127, 255)},
-    "plains": {
-        "t": "PLAINS",
-        "e": True,
-        "e_list": ["giant slime", "goblin", "slime"],
-        "e_chance": [20, 30, 30],
-        "r": [],
-        "s": [0],
-        "d": "Gentle terrain, waving grasslands, and minimal elevation define this vast, "
-             "open expanse of natural simplicity and beauty.",
-        "c": (181, 230, 29, 255)},
-    "plateau": {
-        "t": "PLATEAU",
-        "e": True,
-        "e_list": ["slime"],
-        "e_chance": [30],
-        "r": [],
-        "s": [0],
-        "d": "Elevated plateau, expansive views, flat summits, and resilient flora characterize this high-altitude, "
-             "majestic landscape.",
-        "c": (181, 230, 29, 255)},
-    "red": {
-        "t": "RED",
-        "e": True,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (255, 0, 0, 255)},
-    "river": {
-        "t": "RIVER",
-        "e": True,
-        "e_list": ["boat"],
-        "e_chance": [0],
-        "r": [],
-        "s": [1],
-        "d": "Nothing important.",
-        "c": (0, 162, 232, 255)},
-    "rocks": {
-        "t": "ROCKS",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": ["wings"],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (85, 80, 85, 255)},
-    "sea": {
-        "t": "SEA",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [1],
-        "d": "Nothing important.",
-        "c": (63, 72, 204, 255)},
-    "snow": {
-        "t": "SNOW",
-        "e": True,
-        "e_list": [],
-        "e_chance": [0],
-        "r": ["snow clothing"],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (250, 250, 250, 255)},
-    "town": {
-        "t": "TOWN",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Nothing important.",
-        "c": (170, 105, 70, 255)},
-    "valley": {
-        "t": "VALLEY",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Desolate, silent valley, cracked earth stretches between imposing cliffs, where an eerie stillness "
-             "envelops the barren landscape, untouched by the whispers of wind or the rustle of life.",
-        "c": (167, 167, 167, 255)},
-    "water": {
-        "t": "WATER",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [1],
-        "d": "Quiet water.",
-        "c": (128, 255, 255, 255)}
+BIOMES = {
+    "canyon": Biome(
+        color=(54, 54, 54, 255),
+        description="Shadowy canyon inhabited by fearsome creatures, dark depths, echoing roars, and lurking horrors",
+        fight=True,
+        mobs=["basilisk", "giant blind spider", "orc", "spectrum"],
+        mobs_chances=[30, 50, 10, 30],
+        name="CANYON",
+        req=["torch"],
+        status=[0]),
+    "cave": Biome(
+        color=(1, 1, 1, 255),
+        description="...",
+        fight=True,
+        mobs=["goblin", "orcs"],
+        mobs_chances=[80, 50],
+        name="CAVE",
+        req=["torch"],
+        status=[0]),
+    "coast": Biome(
+        color=(239, 228, 176, 255),
+        description="Seaside with swaying palm trees, echoing waves, and vibrant life.",
+        fight=True,
+        mobs=["litle slime", "slime"],
+        mobs_chances=[5, 30],
+        name="COAST",
+        req=[],
+        status=[0, 1]),
+    "dark forest": Biome(
+        color=(22, 118, 51, 255),
+        description="Shadowy forest of peril, twisted trees loom overhead, their gnarled branches casting eerie "
+                    "shadows. ",
+        fight=True,
+        mobs=["spectral foxshade", "giant spider"],
+        mobs_chances=[1, 30],
+        name="DARK FOREST",
+        req=[],
+        status=[0]),
+    "death valley": Biome(
+        color=(148, 148, 148, 255),
+        description="Dreadful dead valley, a chilling abyss where every step deepens the terror within. The air grows "
+                    "heavy, and eerie whispers intensify, inducing an unsettling unease as you delve further.",
+        fight=True,
+        mobs=[""],
+        mobs_chances=[0],
+        name="DEATH VALLEY",
+        req=[],
+        status=[0]),
+    "fields": Biome(
+        color=(115, 231, 29, 255),
+        description="Verdant fields, rolling emerald expanses dotted with wildflowers, where gentle breezes carry the "
+                    "sweet scent of blooming herbs and distant melodies from hidden creatures in the tall grass.",
+        fight=True,
+        mobs=["dryad", "slime"],
+        mobs_chances=[15, 30],
+        name="FIELDS",
+        req=[],
+        status=[0]),
+    "forest": Biome(
+        color=(34, 177, 76, 255),
+        description="Thick trees, vibrant flora, wildlife, hidden trails, and lurking danger in this treacherous "
+                    "forest realm.",
+        fight=True,
+        mobs=["bandit", "spectral foxshade"],
+        mobs_chances=[20, 1],
+        name="FOREST",
+        req=[],
+        status=[0]),
+    "frostvale": Biome(
+        color=(120, 186, 252, 255),
+        description="A pristine, snow-covered expanse where frost-kissed silence reigns. Glistening ice formations "
+                    "adorn the landscape, creating an ethereal and serene winter tableau in nature's icy embrace.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="FROSTVALE",
+        req=[],
+        status=[0]),
+    "gates": Biome(
+        color=(200, 191, 231, 255),
+        description="Nothing important.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="GATES",
+        req=[],
+        status=[0]),
+    "highlands": Biome(
+        color=(195, 195, 195, 255),
+        description="Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
+        fight=True,
+        mobs=["goblin"],
+        mobs_chances=[40],
+        name="HIGHLANDS",
+        req=[],
+        status=[0]),
+    "hills": Biome(
+        color=(78, 185, 32, 255),
+        description="Undulating landscapes concealing lurking dangers. Treacherous creatures, hidden in the shadows, "
+                    "make these hills a realm of risk for those who dare to traverse their slopes.",
+        fight=True,
+        mobs=["climbing goblin", "troll", "goblin war chief"],
+        mobs_chances=[30, 30, 5],
+        name="HILLS",
+        req=[],
+        status=[0]),
+    "hut": Biome(
+        color=(185, 122, 87, 255),
+        description="Nothing important.",
+        entries={"hut": Biome(description="Island hut, a cozy retreat adorned with a bed, a table, two "
+                                          "chairs, and a window, invites serenity amid nature's whispers.",
+                              items=["bed"])},
+        fight=False,
+        items=[],
+        mobs=[""],
+        mobs_chances=[0],
+        name="HUT",
+        req=[],
+        status=[0]),
+    "island": Biome(
+        color=(201, 237, 92, 255),
+        description="Island rainforest, dense foliage, vibrant biodiversity, and cascading waterfalls characterize "
+                    "this tropical haven of life and greenery.",
+        fight=True,
+        mobs=["litle slime"],
+        mobs_chances=[30],
+        name="ISLAND",
+        req=[],
+        status=[0]),
+    "mountains": Biome(
+        color=(127, 127, 127, 255),
+        description="Nothing important.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="MOUNTAINS",
+        req=["climbing tools"],
+        status=[0]),
+    "plains": Biome(
+        color=(181, 230, 29, 255),
+        description="Gentle terrain, waving grasslands, and minimal elevation define this vast, open expanse of natural"
+                    " simplicity and beauty.",
+        fight=True,
+        mobs=["giant slime", "goblin", "slime"],
+        mobs_chances=[20, 30, 30],
+        name="PLAINS",
+        req=[],
+        status=[0]),
+    "plateau": Biome(
+        color=(181, 230, 29, 255),
+        description="Elevated plateau, expansive views, flat summits, and resilient flora characterize this "
+                    "high-altitude, majestic landscape.",
+        fight=True,
+        mobs=["slime"],
+        mobs_chances=[30],
+        name="PLATEAU",
+        req=[],
+        status=[0]),
+    "red": Biome(
+        color=(255, 0, 0, 255),
+        description="Nothing important.",
+        fight=True,
+        mobs=[""],
+        mobs_chances=[0],
+        name="RED",
+        req=[],
+        status=[0]),
+    "river": Biome(
+        color=(0, 162, 232, 255),
+        description="Nothing important.",
+        fight=True,
+        mobs=["boat"],
+        mobs_chances=[0],
+        name="RIVER",
+        req=[],
+        status=[1]),
+    "rocks": Biome(
+        color=(85, 80, 85, 255),
+        description="Nothing important.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="ROCKS",
+        req=["wings"],
+        status=[0]),
+    "sea": Biome(
+        color=(63, 72, 204, 255),
+        description="Nothing important.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="SEA",
+        req=[],
+        status=[1]),
+    "snow": Biome(
+        color=(250, 250, 250, 255),
+        description="Nothing important.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[0],
+        name="SNOW",
+        req=["snow clothing"],
+        status=[0]),
+    "town": Biome(
+        color=(170, 105, 70, 255),
+        description="Nothing important.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="TOWN",
+        req=[],
+        status=[0]),
+    "valley": Biome(
+        color=(167, 167, 167, 255),
+        description="Desolate, silent valley, cracked earth stretches between imposing cliffs, where an eerie stillness"
+                    " envelops the barren landscape, untouched by the whispers of wind or the rustle of life.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="VALLEY",
+        req=[],
+        status=[0]),
+    "water": Biome(
+        color=(128, 255, 255, 255),
+        description="Quiet water.",
+        fight=False,
+        mobs=[""],
+        mobs_chances=[0],
+        name="WATER",
+        req=[],
+        status=[1])
     }
 
 
@@ -631,409 +639,16 @@ MOBS = {
     }
 }
 
-
-# MAP SETTING format dic[].
-MAP_SETTING = {
-    "(0, 0)": {
-        "t": "HUT",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, invites serenity amid "
-             "nature's whispers.",
-        "items": ["bed"],
-        "npc": [],
-        "entries": [],
-        "c": (185, 122, 87, 255)},
-    "(1, 23)": {
-        "t": "HUT",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Isolated shelter amid dangers, where rustling leaves and distant howls suggest that safety within is "
-             "uncertain at best.",
-        "items": ["bed"],
-        "npc": [],
-        "entries": [],
-        "c": (185, 122, 87, 255)},
-    "(2, 1)": {
-        "t": "COAST",
-        "e": True,
-        "e_list": ["slime"],
-        "e_chance": [30],
-        "r": [],
-        "s": [0],
-        "d": "Seaside with anchored boat, echoing waves and vibrant coastal life.",
-        "items": ["boat"],
-        "npc": [],
-        "entries": [],
-        "c": (239, 228, 176, 255)},
-    "(6, 2)": {
-        "t": "COAST",
-        "e": True,
-        "e_list": ["slime"],
-        "e_chance": [30],
-        "r": [],
-        "s": [0, 1],
-        "d": "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary figure stands at the "
-             "water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves and "
-             "the boundless horizon stretching before them.",
-        "items": ["boat"],
-        "npc": ["captain zelian"],
-        "entries": [],
-        "c": (239, 228, 176, 255)},
-    "(9, 4)": {
-        "t": "NORTHERN GATES",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Northern village entrance, sturdy gates open to a cozy haven, framed by rolling hills and welcoming "
-             "cottages.",
-        "items": [],
-        "npc": ["traveler thaldir"],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(9, 5)": {
-        "t": "TOWN",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Inn district, cozy tavern, lively marketplace, and quaint cottages surround the inviting inn, creating "
-             "a charming and bustling neighborhood. A charismatic merchant hawks wares in the heart of this bustling "
-             "community hub.",
-        "items": ["bed"],
-        "npc": ["merchant bryson", "traveler sylas"],
-        "entries": ["inn"],
-        "c": (170, 105, 70, 255)},
-    "(9, 17)": {
-        "t": "EASTERN GATES",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding travelers through a "
-             "bustling thoroughfare toward the heart of the enchanting city.",
-        "items": [],
-        "npc": ["traveler kaelin"],
-        "entries": [],
-        "c": (170, 105, 70, 255)},
-    "(10, 4)": {
-        "t": "TOWN CENTER",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Village hub, Mayor's office, bustling square, and a quaint temple create the heart of community life.",
-        "items": [],
-        "npc": ["mayor thorian"],
-        "entries": [],
-        "c": (170, 105, 70, 255)},
-    "(10, 5)": {
-        "t": "SOUTHERN GATES",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Southern gateway, welcoming gates, cobblestone paths, and a charming, serene atmosphere greet visitors.",
-        "items": [],
-        "npc": ["traveler elara"],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(10, 16)": {
-        "t": "ANTINA'S CATHEDRAL",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Majestic spires pierce the sky, casting a divine aura over cobblestone squares. The sacred structure "
-             "beckons pilgrims and whispers tales of ancient reverence",
-        "items": [],
-        "npc": [],
-        "entries": ["cathedral"],
-        "c": (200, 191, 231, 255)},
-    "(10, 17)": {
-        "t": "ANTINA CITY",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Antina's post-gate district, winding streets lead to residential quarters and training grounds. Stone "
-             "structures bear the weight of history, weaving a tapestry of everyday life beyond the bustling entrance "
-             "gates.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (170, 105, 70, 255)},
-    "(10, 18)": {
-        "t": "ANTINA'S TAVERN DISTRICT",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Cobbled lanes weave among lively taverns and cozy inns, offering weary travelers respite. A symphony of"
-             " laughter, music, and clinking tankards fills the air, creating an inviting atmosphere.",
-        "items": ["bed"],
-        "npc": [],
-        "entries": ["inn"],
-        "c": (200, 191, 231, 255)},
-    "(11, 15)": {
-        "t": "ANTINA'S CASTLE",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Antina's castle precinct, towering fortress crowned with turrets dominates the cityscape. Home to "
-             "nobility and adorned with banners, the castle overlooks sprawling courtyards, embodying the seat "
-             "of power in Antina.",
-        "items": [],
-        "npc": ["lord aric"],
-        "entries": ["castle"],
-        "c": (200, 191, 231, 255)},
-    "(11, 16)": {
-        "t": "ANTINA'S FOUNTAIN SQUARE",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "A grand centerpiece adorned with intricate sculptures, where cascading waters mirror the city's "
-             "vibrancy, inviting residents and visitors to linger in its refreshing ambiance.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(11, 17)": {
-        "t": "ANTINA'S MARKET",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Antina's medieval hub, majestic castle towers overlook bustling market squares, where knights, "
-             "merchants, and mystics converge. Cobblestone streets wind through diverse districts, echoing with the "
-             "city's vibrant heartbeat.",
-        "items": [],
-        "npc": ["merchant roland"],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(11, 18)": {
-        "t": "ANTINA'S RESIDENTIAL QUARTER",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene enclave where the city's "
-             "heartbeat echoes in the everyday rhythms of its residents.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(11, 24)": {
-        "t": "FROSTVALE",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Frozen valley under the watchful gaze of a dragon, crystalized landscapes echo with the dragon's silent"
-             " vigil, as icy winds and shimmering frost create an otherworldly ambiance.",
-        "items": [],
-        "npc": ["dragon firefrost"],
-        "entries": [],
-        "c": (120, 186, 252, 255)},
-    "(12, 16)": {
-        "t": "ANTINA'S RESIDENTIAL QUARTER",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene enclave where the city's "
-             "heartbeat echoes in the everyday rhythms of its residents.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(12, 17)": {
-        "t": "ANTINA CITY",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": ["permission"],
-        "s": [0],
-        "d": "Antina's post-gate district, winding streets lead to residential quarters and training grounds. Stone "
-             "structures bear the weight of history, weaving a tapestry of everyday life beyond the bustling entrance "
-             "gates.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (170, 105, 70, 255)},
-    "(12, 18)": {
-        "t": "ANTINA'S ARENA",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Antina's arena district: Colossal stone coliseum stands amidst cheering crowds. Brave warriors clash "
-             "within, seeking glory and honor, while merchants peddle wares to the fervent spectators, creating an "
-             "electrifying atmosphere.",
-        "items": [],
-        "npc": ["merchant elden"],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(13, 0)": {
-        "t": "HIGHLANDS",
-        "e": True,
-        "e_list": ["goblin", "orc"],
-        "e_chance": ["40", "90"],
-        "r": [],
-        "s": [0],
-        "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (195, 195, 195, 255)},
-    "(13, 17)": {
-        "t": "EAST GATES",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Eastern city-state entrance: Towering gates adorned with intricate carvings, guarded by vigilant "
-             "sentinels, mark the grand entry to a thriving metropolis blending history and modernity.",
-        "items": [],
-        "npc": ["guard lorian", "traveler elinor"],
-        "entries": [],
-        "c": (200, 191, 231, 255)},
-    "(14, 5)": {
-        "t": "VALLEY",
-        "e": True,
-        "e_list": ["slime"],
-        "e_chance": [30],
-        "r": [],
-        "s": [0],
-        "d": "Blocked valley passage, boulders from a recent landslide obstruct the way, as a diligent worker clears "
-             "debris, striving to reopen this vital route amidst the rugged beauty of the scenic landscape.",
-        "items": [],
-        "npc": ["worker gorrick", "traveler seraph"],
-        "entries": [],
-        "c": (167, 167, 167, 255)},
-    "(15, 5)": {
-        "t": "ROCKS",
-        "e": True,
-        "e_list": ["slime"],
-        "e_chance": [30],
-        "r": ["wings"],
-        "s": [0],
-        "d": "Nothing important here.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (85, 80, 85, 255)},
-    "(18, 24)": {
-        "t": "HUT",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the forest stands as a silent "
-             "witness to nature's reclamation.",
-        "items": ["bed"],
-        "npc": [],
-        "entries": [],
-        "c": (185, 122, 87, 255)},
-    "(19, 0)": {
-        "t": "HIGHLANDS",
-        "e": True,
-        "e_list": ["goblin", "orc"],
-        "e_chance": ["40", "90"],
-        "r": [],
-        "s": [0],
-        "d": "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
-        "items": [],
-        "npc": [],
-        "entries": ["cave"],
-        "c": (195, 195, 195, 255)},
-    "(22, 1)": {
-        "t": "HUT",
-        "e": False,
-        "e_list": [""],
-        "e_chance": [0],
-        "r": [],
-        "s": [0],
-        "d": "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the forest stands as a silent "
-             "witness to nature's reclamation.",
-        "items": ["bed"],
-        "npc": [],
-        "entries": [],
-        "c": (185, 122, 87, 255)},
-    "(26, 15)": {
-        "t": "AQUIRI'S PORTSIDE ENTRANCE" ,
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Aquiri's portside entrance: Bustling harbor welcomes ships with salty breezes. Weathered docks and "
-             "colorful boats set the scene for a lively maritime haven in this coastal village.",
-        "items": [],
-        "npc": [],
-        "entries": [],
-        "c": (170, 105, 70, 255)},
-    "(27, 14)": {
-        "t": "AQUIRI'S VILLAGE",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Seaside fishing hamlet, colorful boats bob gently in the harbor, while weathered cottages line the shore "
-             "of this picturesque coastal community. A lone fisherman casts his net into the glistening waters, "
-             "capturing the essence of maritime tranquility.",
-        "items": [],
-        "npc": ["fisherman marlin"],
-        "entries": [],
-        "c": (170, 105, 70, 255)},
-    "(27, 15)": {
-        "t": "AQUIRI'S VILLAGE",
-        "e": False,
-        "e_list": [],
-        "e_chance": [],
-        "r": [],
-        "s": [0],
-        "d": "Seaside fishing hamlet, colorful boats bob gently in the harbor, while weathered cottages line the shore "
-             "of this picturesque coastal community.",
-        "items": ["bed"],
-        "npc": ["merchant selena"],
-        "entries": [],
-        "c": (170, 105, 70, 255)}
-}
-
-
 # NPCs.
 NPC = {
     "whispers": [["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind, and come to me.",
                   "Secrets untold and challenges unknown lie ahead.", "Trust in the unseen path...", "... come to me."],
                  [], [], [0]],
+    "captain thorne": [["Ahoy, traveler. I'm Captain Thorne.", "You see my ship there? We won't be setting sail "
+                        "today. A dragon's presence spells danger on the open seas. Until the skies are clear, we "
+                        "remain anchored. Better to be safe in port than to risk the wrath of such a fearsome "
+                        "creature.", "But fear not, when the danger has passed, I'll gladly offer you passage to the "
+                        "next port."], [], [], [0]],
     "captain zelian": [["Ah, the sea, a fickle friend and fierce foe.", "Many a ship I've sailed, battling monsters "
                         "and discovering uncharted isles. The ocean whispers secrets to those who listen.", "Legend "
                         "speaks of a mystical realm beneath these waves, hidden from mortal eyes.", "One day, perhaps, "
@@ -1051,6 +666,10 @@ NPC = {
                       "State your business and present your identification, or you shall not venture beyond.", "The "
                       "safety of our citizens is paramount, and we cannot afford to be lax in these trying times."],
                      [], [], [0, 0, 0]],
+    "innkeeper mirabelle": [["Step into Mirabelle's Inn, weary wanderer. Here, amidst the tranquility of Epiiat, "
+                             "find shelter from the trials of the road. With hearty meals and soft beds, let your "
+                             "worries melt away."],
+                            [], [], [0]],
     "lord aric": [["Greetings, traveler. Alas, these are troubled times for our fair city.", "Just days past, a "
                    "dragon's shadow darkened our skies. Fear lingers in the hearts of our citizens. The safety of "
                    "Antina is at stake, and our once-stalwart walls now seem fragile.", "May the goddesses watch "
@@ -1112,7 +731,7 @@ NPC = {
                          "whispers and lurking dangers await. I'd advise against venturing there unless your "
                          "courage knows no bounds.", "May your travels be safer than mine, and the path you choose "
                          "be bathed in the light of wisdom."],
-                         [], [], [0]],
+                        [], [], [0]],
     "traveler seraph": [["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here mentioned some caves "
                          "to the north that might lead us across.", "Aye, those caves are an option, but beware! "
                          "Lately, they've become a haven for Goblins and other foul creatures.", "A perilous journey "
@@ -1125,7 +744,7 @@ NPC = {
     "traveler thaldir": [["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around and check. "
                           "Secrets often hide where the eye does not linger.", "May the journey unveil the unseen, "
                           "brave one."],
-                          [], [], [0]],
+                         [], [], [0]],
     "worker gorrick": [["Hail, traveler! The path ahead is blocked, and only through my efforts can it be opened. Alas,"
                         " it'll take time.", ],
                        [], [], [0]]

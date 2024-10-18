@@ -6,7 +6,7 @@ import numpy as np
 from biome import Biome
 import globals
 from player import Player
-from utils import coordstr, clear, get_label, patron_print, text_2_col
+from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter
 
 
 # Assign display.
@@ -73,7 +73,7 @@ def disp_enter(place) -> str:
     if place.entries:
         msg = "You want to enter to:"
         for i, entrie in enumerate(place.entries):
-            msg += "\n - " + entrie.title()
+            msg += "\n - " + " ".join(entrie.split("_")).title()
         return msg
     else:
         return "There aren't entries here."
@@ -208,6 +208,14 @@ def disp_talk(place) -> str:
         return "No one is here."
 
 
+def disp_talk_answers(answers):
+    print()
+    for i in range(len(answers.keys())):
+        print(" " * 4 + str(i + 1), ") " + answers[i + 1].capitalize() + ".")
+    print(" " * 4 + str(len(answers) + 1), ") Leave.")
+    print()
+
+
 # Talk display.
 def disp_talk_util(npc_name: str) -> None:
     clear()
@@ -216,6 +224,21 @@ def disp_talk_util(npc_name: str) -> None:
     print()
     print(" " * 4 + npc_name.title() + ":", end="\n ")
     print()
+
+
+# Talk printing function.
+def disp_talk_tw(npc, message):
+    clear()
+    # Printing of message.
+    for line in message:
+        disp_talk_util(npc.name)
+
+        lines = text_ljust(line, width=70)
+        for text in lines:
+            typewriter(" " * 4 + text)
+            print()
+
+        input(" " * 4 + "> ")
 
 
 # Title display.

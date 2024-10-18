@@ -5,61 +5,71 @@ from datetime import datetime
 
 # Local imports.
 from actions import battle, talk
-from inventory import Inventory
 from biome import Biome, Entry
+from npc import Npc
 from player import Player
 from utils import coordstr, export_dict_to_txt, get_hash, export_player, export_settings
 
 
 # Event handler.
-def event_handler(player: Player(), user_map: np.array, npc: dict, ms: dict, mobs: dict,
+def event_handler(player: Player(), user_map: np.array, npc: dict, ms: dict, mobs: dict, time_init: datetime,
                   play: int, menu: int) -> tuple[dict, dict, int, int]:
-    if npc["fisherman marlin"][3][0] and not npc["guard lorian"][3][1]:
-        npc["guard lorian"] = [["Halt, traveler! Hyrule City permits only those with proper credentials to pass these "
-                                "gates.", "State your business and present your identification, or you shall not "
-                                "venture beyond.", "The safety of our citizens is paramount, and we cannot afford to be "
-                                "lax in these trying times."],
-                               [["I have a message", ["Marlin, you say?", "Well, that old "
-                                "sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
-                                "fishing tales become too much for the villagers.", "Safe travels, adventurer."]]],
-                               [], [0, 0, 0]]
+
+    # Event of Guard Lorian and Fisherman Marlin. The message. First part.
+    if npc["fisherman marlin"].hist_messages[0]:
+        npc["guard lorian"].messages = {
+            0: ["Halt, traveler! Hyrule City permits only those with proper credentials to pass these gates.",
+                "State your business and present your identification, or you shall not venture beyond.",
+                "The safety of our citizens is paramount, and we cannot afford to be lax in these trying times."],
+            1: ["Well, that old sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
+                "fishing tales become too much for the villagers.",
+                "Safe travels, adventurer."]}
+        npc["guard lorian"].answers = {
+            1: "I have a message"}
+
+        player.events["message"] = True
 
         return npc, ms, play, menu
 
-    elif npc["guard lorian"][3][1] and not player.events["message"]:
-        npc["guard lorian"] = [["You've gained entry, but heed this counsel: Beyond the western outskirts lies "
-                                "uncharted territories and lurking dangers.", "Arm yourself well, noble traveler. The "
-                                "path is treacherous, and a sturdy sword or enchanted bow may be your greatest allies.",
-                                "Antina City rests in relative peace, but the world beyond is unpredictable. "
-                                "Safe travels, and may your blade remain sharp against the shadows that may encroach "
-                                "upon your journey."], [], [], [0, True, 0]]
-        player.events["message"] = True
+    # Event of Guard Lorian and Fisherman Marlin. The message. Second part.
+    elif player.events["message"] and npc["guard lorian"].hist_messages[1]:
+        npc["guard lorian"].messages = {
+            0: ["You've gained entry, but heed this counsel: Beyond the western outskirts lies uncharted territories"
+                 " and lurking dangers.",
+                 "Arm yourself well, noble traveler. The path is treacherous, and a sturdy sword or enchanted bow may"
+                 " be your greatest allies.",
+                 "Antina City rests in relative peace, but the world beyond is unpredictable. Safe travels, and may "
+                 "your blade remain sharp against the shadows that may encroach upon your journey."]}
+        npc["guard lorian"].reset_hist_messages()
+
         player.events["permission"] = True
 
-        ms["(12, 17)"]["r"].remove("permission")
-
         return npc, ms, play, menu
 
-    elif npc["dragon firefrost"][3][0]:
+    # Event batle with Dragon FireFrost after winning.
+    elif npc["dragon firefrost"].hist_messages[0]:
         play, menu, win = battle(player, mobs["dragon"].copy(), ms)
         if win:
-            npc["dragon firefrost"] = [["Impressive. Today, the winds of fate favor you.", "I yield. But heed my words,"
-                                        " for when the stars align in a different cosmic dance, I shall await you "
-                                        "once more.", "Until then, let the echoes of our encounter linger in the "
-                                        "mountain breeze. Farewell, " + player.name + ".", "Until our destinies "
-                                         "entwine again."],
-                                       [], [], [0]]
-            talk(npc=npc["dragon firefrost"], npc_name="dragon firefrost", player=player)
+            npc["dragon firefrost"].message = ["Impressive. Today, the winds of fate favor you.",
+                                               "I yield. But heed my words, for when the stars align in a different "
+                                               "cosmic dance, I shall await you once more.",
+                                               "Until then, let the echoes of our encounter linger in the mountain "
+                                               "breeze. Farewell, " + player.name + ".",
+                                               "Until our destinies entwine again."],
+
+            talk(npc=npc["dragon firefrost"], player=player)
+
             ms["(11, 24)"].description = "Frozen valley, a pristine, snow-covered expanse where frost-kissed silence" \
                                          " reigns. Glistening ice formations adorn the landscape, creating an " \
                                          "ethereal and serene winter tableau in nature's icy embrace."
             ms["(11, 24)"].npc = []
             ms["(0, 0)"].entries["hut"].items.append("origami_flowers")
             npc["dragon firefrost"] = [[], [], [], [0]]
+
             return npc, ms, play, menu
         else:
-            npc["dragon firefrost"][3] = [0]
-            save(player, user_map, npc, ms)
+            npc["dragon firefrost"].reset_hist_messages()
+            save(player, user_map, npc, ms, time_init)
             return npc, ms, play, menu
 
     else:
@@ -76,6 +86,8 @@ def init_map_setting(ms: dict):
         description="Island hut, a cozy retreat adorned with a bed, a table, two "
                     "chairs, and a window, invites serenity amid nature's whispers.",
         items=["bed", "short_sword"])}
+    ms[coordstr(0, 0)].entries["hut"].leave_entry = ms[coordstr(0, 0)]
+    ms[coordstr(0, 0)].fight = False
     ms[coordstr(0, 0)].name = "ISLAND"
 
     # (1, 23)
@@ -87,6 +99,11 @@ def init_map_setting(ms: dict):
                     "walls. Tattered maps and makeshift barricades hint at cautious attempts to secure the uncertain"
                     " safety within.",
         items=["bed"])}
+    ms[coordstr(1, 23)].entries["hut"].leave_entry = ms[coordstr(1, 23)]
+
+    # (2, 0)
+    ms[coordstr(2, 0)].mobs = ["litle slime", "slime", "poisonous slime"]
+    ms[coordstr(2, 0)].mobs_chances = [5, 30, 50]
 
     # (2, 1)
     ms[coordstr(2, 1)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
@@ -113,9 +130,27 @@ def init_map_setting(ms: dict):
         color=ms[coordstr(9, 5)].color,
         description="Warm hearth, wooden beams, and cozy furnishings create a welcoming atmosphere. Aromas of "
                     "home-cooked meals linger, inviting weary travelers to find respite.",
-        items=["bed"],
+        entries={
+            "main_room": Entry(
+                color=ms[coordstr(9, 5)].color,
+                description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
+                            "a warm hearth, rustic wooden beams, and snug furnishings.",
+                items=["bed"],
+                name="MIRABELLE'S INN MAIN ROOM",
+                req=["main_room_key"]),
+            "small_room": Entry(
+                color=ms[coordstr(9, 5)].color,
+                description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
+                            "a warm hearth, rustic wooden beams, and snug furnishings.",
+                items=["bed"],
+                name="MIRABELLE'S INN SMALL ROOM",
+                req=["small_room_key"])},
         name="MIRABELLE'S INN",
         npc=["innkeeper mirabelle"])}
+
+    ms[coordstr(9, 5)].entries["inn"].leave_entry = ms[coordstr(9, 5)]
+    ms[coordstr(9, 5)].entries["inn"].entries["main_room"].leave_entry = ms[coordstr(9, 5)].entries["inn"]
+    ms[coordstr(9, 5)].entries["inn"].entries["small_room"].leave_entry = ms[coordstr(9, 5)].entries["inn"]
     ms[coordstr(9, 5)].npc = ["merchant bryson", "traveler sylas"]
 
     # (9, 17)
@@ -146,6 +181,7 @@ def init_map_setting(ms: dict):
         color=ms[coordstr(10, 16)].color,
         description="Cathedral interior, stained glass bathes the solemn space in kaleidoscopic hues. Ornate pillars,"
                     " echoing arches, and the hushed reverence create an awe-inspiring sanctuary of divine grandeur.")}
+    ms[coordstr(10, 16)].entries["cathedral"].leave_entry = ms[coordstr(10, 16)]
 
     # (10, 17)
     ms[coordstr(10, 17)].name = "ANTINA CITY"
@@ -163,6 +199,7 @@ def init_map_setting(ms: dict):
                     " invite urban travelers to unwind in this vibrant, communal haven.",
         items=["bed"],
         name="TAVERN")}
+    ms[coordstr(10, 18)].entries["tavern"].leave_entry = ms[coordstr(10, 18)]
     ms[coordstr(10, 18)].name = "ANTINA'S TAVERN DISTRICT"
 
     # (11, 15)
@@ -175,6 +212,7 @@ def init_map_setting(ms: dict):
                     " invite urban travelers to unwind in this vibrant, communal haven.",
         name="CASTLE SALOON",
         npc=["lord aric"])}
+    ms[coordstr(11, 15)].entries["castle"].leave_entry = ms[coordstr(11, 15)]
     ms[coordstr(11, 15)].name = "ANTINA'S CASTLE"
 
     # (11, 16)
@@ -283,6 +321,7 @@ def init_map_setting(ms: dict):
                                        "weathered cottages line the shore of this picturesque coastal community."
     ms[coordstr(27, 15)].entries = {"inn": Entry(
         items=["bed"])}
+    ms[coordstr(27, 15)].entries["inn"].leave_entry = ms[coordstr(27, 15)]
     ms[coordstr(27, 15)].name = "AQUIRI'S VILLAGE"
     ms[coordstr(27, 15)].npc = ["captain thorne", "merchant selena"]
 

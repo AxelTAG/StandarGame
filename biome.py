@@ -5,8 +5,18 @@
 
 # Biome class.
 class Biome:
-    def __init__(self, color: tuple = (255, 0, 0, 255), description: str = "...", entries=None, fight: bool = True,
-                 items=None, mobs="", mobs_chances=None, name: str = "...", npc=None, req=None, status=None):
+    def __init__(self,
+                 color: tuple = (255, 0, 0, 255),
+                 description: str = "...",
+                 entries=None,
+                 fight: bool = True,
+                 items=None,
+                 mobs="",
+                 mobs_chances=None,
+                 name: str = "...",
+                 npc=None,
+                 req=None,
+                 status=None):
 
         if entries is None:
             entries = {}
@@ -40,10 +50,20 @@ class Biome:
 
 
 class Entry(Biome):
-    def __init__(self, color: tuple = (255, 0, 0, 255), description: str = "...", entries=None, fight: bool = True,
-                 items=None, mobs=None, mobs_chances=None, name: str = "...", npc=None,
-                 req=None, status: int = 0):
+    def __init__(self,
+                 color: tuple = (255, 0, 0, 255),
+                 description: str = "...",
+                 entries=None,
+                 fight: bool = False,
+                 items=None,
+                 leave_entry=Biome,
+                 mobs=None,
+                 mobs_chances=None,
+                 name: str = "...",
+                 npc=None,
+                 req=None,
+                 status: int = 0):
+
         super().__init__(color, description, entries, fight, items, mobs, mobs_chances, name, npc, req, status)
 
-    def leave(self):
-        pass
+        self.leave_entry = leave_entry

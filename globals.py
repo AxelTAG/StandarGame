@@ -367,11 +367,15 @@ ITEMS_EQUIP = {
 }
 
 
-ITEMS_SELL = {"axe": 150,
+ITEMS_SELL = {"antidote": 3,
+              "axe": 150,
               "basilisk_fangs": 15,
+              "bier": 1,
+              "bludgeon": 40,
+              "bread": 1,
               "chainmail_armor": 150,
-              "litle_red_potion": 2,
-              "fishing_pole": 9999,
+              "cheese": 2,
+              "fishing_pole": 25,
               "giant_red_potion": 10,
               "giant_silk": 30,
               "hardened_leather_armor": 60,
@@ -380,18 +384,21 @@ ITEMS_SELL = {"axe": 150,
               "large_bow": 110,
               "leather_armor": 35,
               "leather_boots": 25,
+              "litle_red_potion": 2,
               "longsword": 175,
               "mesh_boots": 50,
               "plate_armor": 200,
               "red_potion": 5,
               "short_sword": 50,
               "slime_balls": 1,
+              "soap": 1,
               "spear": 125,
               "spike_shield": 150,
               "sword": 150,
               "telescope": 125,
               "torch": 10,
               "tower_shield": 150,
+              "water": 1,
               "wood_shield": 20,
               "quit": 0}
 
@@ -408,6 +415,8 @@ MOBS = {
         "pre": 0.8,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 40,
         "items": {"gold": 15, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.7, 1],
@@ -423,6 +432,8 @@ MOBS = {
         "pre": 0.7,
         "c_coef": 1.7,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 20,
         "items": {"basilisk_fangs": 2, "none": None},
         "dc_items": [0.7, 1],
@@ -438,6 +449,8 @@ MOBS = {
         "pre": 0.8,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 40,
         "items": {"gold": 20, "red_potion": 1, "wood_shield": 1, "none": None},
         "dc_items": [0.5, 0.6, 0.65, 1],
@@ -453,6 +466,8 @@ MOBS = {
         "pre": 0.9,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 0,
         "items": {"scales": 4121996, "none": None},
         "dc_items": [0.9999999999, 1],
@@ -468,6 +483,8 @@ MOBS = {
         "pre": 0.9,
         "c_coef": 1.7,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 50,
         "items": {"none": None},
         "dc_items": [1],
@@ -483,6 +500,8 @@ MOBS = {
         "pre": 0.8,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 5,
         "items": {"giant_silk": 1, "none": None},
         "dc_items": [0.5, 1],
@@ -498,6 +517,8 @@ MOBS = {
         "pre": 0.65,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 50,
         "items": {"slime_balls": 2, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.7, 1],
@@ -513,6 +534,8 @@ MOBS = {
         "pre": 0.65,
         "c_coef": 1.6,
         "c_chance": 15,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 30,
         "items": {"giant_silk": 1, "red_potion": 1, "none": None},
         "dc_items": [0.6, 0.8, 1],
@@ -528,6 +551,8 @@ MOBS = {
         "pre": 0.7,
         "c_coef": 1.5,
         "c_chance": 30,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 45,
         "items": {"gold": 5, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.55, 1],
@@ -543,6 +568,8 @@ MOBS = {
         "pre": 0.7,
         "c_coef": 1.5,
         "c_chance": 30,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 35,
         "items": {"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1, "none": None},
         "dc_items": [0.8, 0.85, 0.90, 0.95, 1],
@@ -558,6 +585,8 @@ MOBS = {
         "pre": 0.8,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 60,
         "items": {"slime_balls": 1, "litle_red_potion": 1, "none": None},
         "dc_items": [0.3, 0.45, 1],
@@ -573,10 +602,29 @@ MOBS = {
         "pre": 0.7,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 0,
         "items": {"gold": 20, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.7, 1],
         "exp": 5,
+    },
+    "poisonous slime": {
+        "name": "Poisonous Slime",
+        "hp": 20,
+        "hpmax": 20,
+        "atk": 3,
+        "def": 1,
+        "eva": 0,
+        "pre": 0.7,
+        "c_coef": 1.5,
+        "c_chance": 20,
+        "poison": 1,
+        "c_poison": 0.5,
+        "esc": 50,
+        "items": {"red_potion": 1, "slime_balls": 2, "none": None},
+        "dc_items": [0.25, 0.45, 1],
+        "exp": 2
     },
     "slime": {
         "name": "Slime",
@@ -588,6 +636,8 @@ MOBS = {
         "pre": 0.7,
         "c_coef": 1.5,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 50,
         "items": {"red_potion": 1, "slime_balls": 2, "none": None},
         "dc_items": [0.25, 0.45, 1],
@@ -603,6 +653,8 @@ MOBS = {
         "pre": 1,
         "c_coef": 1.7,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 100,
         "items": {"gold": 50, "none": None},
         "dc_items": [0.9, 1],
@@ -618,6 +670,8 @@ MOBS = {
         "pre": 0.8,
         "c_coef": 1.7,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 20,
         "items": {"none": None},
         "dc_items": [1],
@@ -633,6 +687,8 @@ MOBS = {
         "pre": 0.75,
         "c_coef": 1.6,
         "c_chance": 20,
+        "poison": 0,
+        "c_poison": 0,
         "esc": 50,
         "items": {"gold": 15, "red_potion": 1, "bludgeon": 1, "none": None},
         "dc_items": [0.5, 0.6, 0.65, 1],
@@ -652,112 +708,216 @@ NPC = {
                                   " and come to me.", "Secrets untold and challenges unknown lie ahead.",
                                   "Trust in the unseen path...", "... come to me."]}),
 
-    "whispers": [["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind, and come to me.",
-                  "Secrets untold and challenges unknown lie ahead.", "Trust in the unseen path...", "... come to me."],
-                 [], [], [0]],
-    "captain thorne": [["Ahoy, traveler. I'm Captain Thorne.", "You see my ship there? We won't be setting sail "
-                        "today. A dragon's presence spells danger on the open seas. Until the skies are clear, we "
-                        "remain anchored. Better to be safe in port than to risk the wrath of such a fearsome "
-                        "creature.", "But fear not, when the danger has passed, I'll gladly offer you passage to the "
-                        "next port."], [], [], [0]],
-    "captain zelian": [["Ah, the sea, a fickle friend and fierce foe.", "Many a ship I've sailed, battling monsters "
-                        "and discovering uncharted isles. The ocean whispers secrets to those who listen.", "Legend "
-                        "speaks of a mystical realm beneath these waves, hidden from mortal eyes.", "One day, perhaps, "
-                        "the tides will reveal its mysteries to a brave soul like yourself, adventurer."],
-                       [], [], [0]],
-    "dragon firefrost": [["Elina...", "You finally come to me...", "Destiny calls for a dance of fire and frost "
-                          "between us...", "Ready your blade..."],
-                         [], [], [0]],
-    "fisherman marlin": [["Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.", "You know, my "
-                          "brother's a guard in the city, watches over the folks there. Dangerous duty, but he's got a "
-                          "heart as sturdy as a ship's hull.", "If you ever find yourself in Antina City, look for "
-                          "Guard Lorian. Tell him Marlin from Aqiri says hello."],
-                         [], [], [0]],
-    "guard lorian": [["Halt, traveler! Antina City permits only those with proper credentials to pass these gates.",
-                      "State your business and present your identification, or you shall not venture beyond.", "The "
-                      "safety of our citizens is paramount, and we cannot afford to be lax in these trying times."],
-                     [], [], [0, 0, 0]],
-    "innkeeper mirabelle": [["Step into Mirabelle's Inn, weary wanderer. Here, amidst the tranquility of Epiiat, "
-                             "find shelter from the trials of the road. With hearty meals and soft beds, let your "
-                             "worries melt away."],
-                            [], [], [0]],
-    "lord aric": [["Greetings, traveler. Alas, these are troubled times for our fair city.", "Just days past, a "
-                   "dragon's shadow darkened our skies. Fear lingers in the hearts of our citizens. The safety of "
-                   "Antina is at stake, and our once-stalwart walls now seem fragile.", "May the goddesses watch "
-                   "over us and protect us."],
-                  [], [], [0, 0, 0]],
-    "merchant bryson": [["Ah, welcome, welcome! Peruse my wares, brave one. From enchanted potions to sturdy shields, "
-                         "Bryson's Emporium has all you need for your journey.", "Each item tells a tale, and every "
-                         "purchase brings you one step closer to becoming a legend. Don't hesitate to ask if you seek "
-                         "something specific, for in this square, dreams and adventures await!"],
-                        [["buy", ["What do you want to buy?"]], ["sell", ["What do you want to sell?"]]],
-                        [{"leather_armor": 75, "leather_boots": 60, "litle_red_potion": 5, "red_potion": 10,
-                          "short_sword": 100, "wood_shield": 50, "torch": 20, "quit": 0}], [0, 0, 0]],
-    "merchant elden": [["Hail, warrior! Seek the finest blades and armor in Antina? Forge Master Elden crafts each "
-                        "piece with skill and care. From gleaming swords to resilient shields, my forge yields the"
-                        " tools to shape your destiny. ",
-                        "Arm yourself, adventurer, and may the battles you face be victorious!"],
-                       [["buy", ["What do you want to buy?"]], ["sell", ["What do you want to sell?"]]],
-                       [{"axe": 280, "chainmail_armor": 300, "large_bow": 220, "longsword": 350, "iron_shield": 130, "mesh_boots": 100, "plate_armor": 400,
-                         "spear": 250, "spike_shield": 150, "tower_shield": 150, "quit": 0}], [0, 0, 0]],
-    "merchant roland": [["Greetings, noble traveler! Step into Roland's Emporium, where treasures and trinkets await "
-                         "your discerning eye. From potions to weapons, my wares are the finest in Antina.", "Peruse "
-                         "at your leisure, and may your coffers overflow with the spoils of a grand adventure!"],
-                        [["buy", ["What do you want to buy?"]], ["sell", ["What do you want to sell?"]]],
-                        [{"giant_red_potion": 15, "red_potion": 10, "sword": 300, "iron_shield": 150, "torch": 20, "quit": 0}], [0, 0, 0]],
-    "mayor thorian": [["Greetings, traveler, to our humble abode! Epiiat is open to all seeking refuge.", "However, I "
-                       "must caution you—recently, the once-tranquil caves to the north have become infested with "
-                       "Goblins and other nefarious beings.", "We fear a sinister leader guides them.", "Be vigilant on"
-                       " your journey through our beloved town and beyond, and may the Goddesses guide your steps."],
-                      [], [], [0]],
-    "merchant selena": [["Ahoy, brave one! Step right up and behold the treasures of Aqiri's Market!", "From the "
-                         "finest catches of the sea to enchanted trinkets, Selena's Wares has all you desire. A "
-                         "purchase to aid your journey, perhaps?", "Sail through our goods, and may your pouch grow "
-                         "lighter with satisfaction!"],
-                        [["buy", ["What do you want to buy?"]], ["sell", ["What do you want to sell?"]]],
-                        [{"harpoon": 150, "hardened_leather_armor": 120, "red_potion": 10, "fishing_pole": 9999,
-                          "wood_shield": 50, "telescope": 200, "quit": 0}], [0, 0, 0]],
-    "traveler elara": [["Greetings, seeker of paths! If you yearn to traverse the mighty mountain range that veils our"
-                        " land, head eastward.", "Beyond the emerald canopy and whispering trees lies a hidden valley. "
-                        "It weaves through the ancient peaks, offering passage to those who dare to journey.", "Take "
-                        "heed, for the woods conceal both mystery and peril, but the call of adventure echoes through"
-                        " the leaves. May the spirits guide your way, brave traveler."],
-                       [["What lies to the north?", ["Northward, the land ascends into highlands infested with "
-                         "goblins and other vile creatures. A challenge for even the most seasoned adventurer."]],
-                        ["And what of the southern lands?", ["To the south, dense woodlands stretch as far as the eye "
-                         "can see.", "An enchanting realm, but one must tread cautiously, for shadows dance amidst "
-                         "the trees."]],
-                        ["What about the western reaches? Have you ventured there?", ["Nay, brave one. The west remains"
-                         " a mystery to me. My journey has yet to unveil the secrets concealed in those unexplored"
-                         " lands.", "Perhaps one day, the winds of fate will carry me in that direction."]],
-                        ["Leave", ["May the spirits guide your way, brave traveler."]]],
-                       [], [0, 0, 0, 0, 0]],
-    "traveler elinor": [["Alas, the city gates remain closed to me. But fear not, fellow wanderer!", "To the east "
-                         "lies the charming fishing village of Aquiri. A quaint haven where the sea breeze dances "
-                         "with the scent of salt and adventure.", "Seek refuge there, share tales with the fishermen,"
-                         " and who knows, perhaps your path will intertwine with the whims of destiny. May the winds"
-                         " guide your steps, for there is always another path to tread."], [], [], [0]],
-    "traveler kaelin": [["Hail, fellow wanderer. I've treaded the southern realms, through the treacherous "
-                         "Dark Forest.", "A word of caution, brave soul – the woods conceal more than beauty. Dark "
-                         "whispers and lurking dangers await. I'd advise against venturing there unless your "
-                         "courage knows no bounds.", "May your travels be safer than mine, and the path you choose "
-                         "be bathed in the light of wisdom."],
-                        [], [], [0]],
-    "traveler seraph": [["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here mentioned some caves "
-                         "to the north that might lead us across.", "Aye, those caves are an option, but beware! "
-                         "Lately, they've become a haven for Goblins and other foul creatures.", "A perilous journey "
-                         "awaits, my friend. Tread carefully if you choose that path."],
-                        [], [], [0]],
-    "traveler sylas": [["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration.",
-                        "Hidden wonders and untold tales await those who venture beyond the familiar. May your "
-                        "steps be guided by curiosity, and may the world unveil its mysteries before you."],
-                       [], [], [0]],
-    "traveler thaldir": [["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around and check. "
-                          "Secrets often hide where the eye does not linger.", "May the journey unveil the unseen, "
-                          "brave one."],
-                         [], [], [0]],
-    "worker gorrick": [["Hail, traveler! The path ahead is blocked, and only through my efforts can it be opened. Alas,"
-                        " it'll take time.", ],
-                       [], [], [0]]
-}
+    "captain thorne": Npc(name="captain thorne",
+                          npc_type="captain",
+                          messages={
+                              0: ["Ahoy, traveler. I'm Captain Thorne.",
+                                  "You see my ship there? We won't be setting sail today. A dragon's presence spells "
+                                  "danger on the open seas. Until the skies are clear, we remain anchored. Better "
+                                  "to be safe in port than to risk the wrath of such a fearsome creature.",
+                                  "But fear not, when the danger has passed, I'll gladly offer you passage to the "
+                                  "next port."]}),
 
+    "captain zelian": Npc(name="captain zelian",
+                          npc_type="captain",
+                          messages={
+                              0: ["Ah, the sea, a fickle friend and fierce foe.",
+                                  "Many a ship I've sailed, battling monsters and discovering uncharted isles. "
+                                  "The ocean whispers secrets to those who listen.",
+                                  "One day, perhaps, the tides will reveal its mysteries to a brave soul like "
+                                  "yourself, adventurer."]}),
+
+    "dragon firefrost": Npc(name="dragon firefrost",
+                            npc_type="dragon",
+                            messages={
+                                0: ["Elina...",
+                                    "You finally come to me...",
+                                    "Destiny calls for a dance of fire and frost between us...",
+                                    "Ready your blade..."]}),
+
+    "fisherman marlin": Npc(name="fisherman marlin",
+                            npc_type="fisherman",
+                            messages={
+                                0: ["Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.",
+                                    "You know, my brother's a guard in the city, watches over the folks there. "
+                                    "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
+                                    "If you ever find yourself in Antina City, look for Guard Lorian. Tell him Marlin "
+                                    "from Aqiri says hello."]}),
+
+    "guard lorian": Npc(name="guard lorian",
+                        npc_type="guard",
+                        messages={
+                            0: ["Halt, traveler! Antina City permits only those with proper credentials to pass "
+                                "these gates.",
+                                "State your business and present your identification, or you shall not venture beyond.",
+                                "The safety of our citizens is paramount, and we cannot afford to be lax in these "
+                                "trying times."]}),
+
+    "innkeeper mirabelle": Npc(name="innkeeper mirabelle",
+                               npc_type="innkeeper",
+                               messages={
+                                   0: ["Step into Mirabelle's Inn, weary wanderer. Here, amidst the tranquility of "
+                                       "Epiiat, find shelter from the trials of the road. With hearty meals and "
+                                       "soft beds, let your worries melt away."],
+                                   1: ["Interested in accommodations? Take your pick of rooms tailored to your needs."],
+                                   2: ["Are you looking to purchase some nourishment? What do you want?"]},
+                               answers={
+                                   1: "I need to sleep",
+                                   2: "Buy food"},
+                               buy_items={"bread": 2, "cheese": 4, "soap": 2, "water": 1, "bier": 2, "quit": 0},
+                               buy_beds={"main_room": (5, "main_room_key"), "small_room": (3, "small_room_key"),
+                                         "quit": (0, "quit")}),
+
+    "lord aric": Npc(name="lord aric",
+                     npc_type="lord",
+                     messages={
+                         0: ["Greetings, traveler. Alas, these are troubled times for our fair city.",
+                             "Just days past, a dragon's shadow darkened our skies. Fear lingers in the hearts of our "
+                             "citizens. The safety of Antina is at stake, and our once-stalwart walls now seem "
+                             "fragile.",
+                             "May the goddesses watch over us and protect us."]}),
+
+    "mayor thorian": Npc(name="mayor thorian",
+                         npc_type="mayor",
+                         messages={
+                             0: ["Greetings, traveler, to our humble abode! Epiiat is open to all seeking refuge.",
+                                 "However, I must caution you—recently, the once-tranquil caves to the north have "
+                                 "become infested with Goblins and other nefarious beings.",
+                                 "We fear a sinister leader guides them.",
+                                 "Be vigilant on your journey through our beloved town and beyond, and may the "
+                                 "Goddesses guide your steps."]}),
+
+    "merchant bryson": Npc(name="merchant bryson",
+                           npc_type="merchant",
+                           messages={
+                               0: ["Ah, welcome, welcome! Peruse my wares, brave one. From enchanted potions to sturdy"
+                                   " shields",
+                                   "Bryson's Emporium has all you need for your journey.",
+                                   "Each item tells a tale, and every purchase brings you one step closer to becoming "
+                                   "a legend. Don't hesitate to ask if you seek something specific, for in this square,"
+                                   " dreams and adventures await!"],
+                               1: ["What do you want to buy?"],
+                               2: ["What do you want to sell?"]},
+                           answers={
+                               1: "Buy",
+                               2: "Sell"},
+                           buy_items={"leather_armor": 75, "leather_boots": 60, "litle_red_potion": 5,
+                                      "red_potion": 10, "short_sword": 100, "wood_shield": 50, "torch": 20,
+                                      "quit": 0}),
+
+    "merchant elden": Npc(name="merchant elden",
+                          npc_type="merchant",
+                          messages={0: ["Hail, warrior! Seek the finest blades and armor in Antina? Forge Master Elden "
+                                        "crafts each piece with skill and care. From gleaming swords to resilient "
+                                        "shields, my forge yields the tools to shape your destiny.",
+                                        "Arm yourself, adventurer, and may the battles you face be victorious!"],
+                                    1: ["What do you want to buy?"],
+                                    2: ["What do you want to sell?"]},
+                          answers={
+                              1: "Buy",
+                              2: "Sell"},
+                          buy_items={"axe": 280, "chainmail_armor": 300, "large_bow": 220, "longsword": 350,
+                                     "iron_shield": 130, "mesh_boots": 100, "plate_armor": 400, "spear": 250,
+                                     "spike_shield": 150, "tower_shield": 150, "quit": 0}),
+
+    "merchant roland": Npc(name="merchant roland",
+                           npc_type="merchant",
+                           messages={0: ["Greetings, noble traveler! Step into Roland's Emporium, where treasures and "
+                                         "trinkets await your discerning eye. From potions to weapons, my wares are "
+                                         "the finest in Antina.",
+                                         "Peruse at your leisure, and may your coffers overflow with the spoils of a "
+                                         "grand adventure!"],
+                                     1: ["What do you want to buy?"],
+                                     2: ["What do you want to sell?"]},
+                           answers={
+                               1: "Buy",
+                               2: "Sell"},
+                           buy_items={"giant_red_potion": 15, "red_potion": 10, "sword": 300, "iron_shield": 150,
+                                      "torch": 20, "quit": 0}),
+
+    "merchant selena": Npc(name="merchant selena",
+                           npc_type="merchant",
+                           messages={
+                               0: ["Ahoy, brave one! Step right up and behold the treasures of Aqiri's Market!",
+                                   "From the finest catches of the sea to enchanted trinkets, Selena's Wares has all "
+                                   "you desire. A purchase to aid your journey, perhaps?",
+                                   "Sail through our goods, and may your pouch grow lighter with satisfaction!"],
+                               1: ["What do you want to buy?"],
+                               2: ["What do you want to sell?"]},
+                           answers={
+                               1: "Buy",
+                               2: "Sell"},
+                           buy_items={"harpoon": 150, "hardened_leather_armor": 120, "red_potion": 10,
+                                      "fishing_pole": 9999, "wood_shield": 50, "telescope": 200, "quit": 0}),
+
+    "traveler elara": Npc(
+        name="traveler elara",
+        npc_type="traveler",
+        messages={
+            0: ["Greetings, seeker of paths! If you yearn to traverse the mighty mountain range that veils our"
+                " land, head eastward.", "Beyond the emerald canopy and whispering trees lies a hidden valley. It "
+                "weaves through the ancient peaks, offering passage to those who dare to journey.", "Take heed, for "
+                "the woods conceal both mystery and peril, but the call of adventure echoes through the leaves. May "
+                "the spirits guide your way, brave traveler."],
+            1: ["Northward, the land ascends into highlands infested with goblins and other vile creatures. A "
+                "challenge for even the most seasoned adventurer."],
+            2: ["To the south, dense woodlands stretch as far as the eye can see.", "An enchanting realm, but one "
+                "must tread cautiously, for shadows dance amidst the trees."],
+            3: ["Nay, brave one. The west remains a mystery to me. My journey has yet to unveil the secrets concealed "
+                "in those unexplored lands.", "Perhaps one day, the winds of fate will carry me in that direction."]},
+        leave_message=["May the spirits guide your way, brave traveler."],
+        answers={
+            1: "What lies to the north?",
+            2: "And what of the southern lands?",
+            3: "What about the western reaches? Have you ventured there?"}),
+
+    "traveler elinor": Npc(name="traveler elinor",
+                           npc_type="traveler",
+                           messages={
+                               0: ["Alas, the city gates remain closed to me. But fear not, fellow wanderer!",
+                                   "To the east lies the charming fishing village of Aquiri. A quaint haven where the"
+                                   " sea breeze dances with the scent of salt and adventure.",
+                                   "Seek refuge there, share tales with the fishermen, and who knows, perhaps your "
+                                   "path will intertwine with the whims of destiny. May the winds guide your steps, "
+                                   "for there is always another path to tread."]}),
+
+    "traveler kaelin": Npc(name="traveler kaelin",
+                           npc_type="traveler",
+                           messages={
+                               0: ["Hail, fellow wanderer. I've treaded the southern realms, through the treacherous "
+                                   "Dark Forest.",
+                                   "A word of caution, brave soul – the woods conceal more than beauty. Dark whispers "
+                                   "and lurking dangers await. I'd advise against venturing there unless your courage "
+                                   "knows no bounds.",
+                                   "May your travels be safer than mine, and the path you choose be bathed in the "
+                                   "light of wisdom."]}),
+
+    "traveler seraph": Npc(name="traveler seraph",
+                           npc_type="traveler",
+                           messages={0: ["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here "
+                                         "mentioned some caves to the north that might lead us across.", "Aye, those "
+                                         "caves are an option, but beware! Lately, they've become a haven for Goblins "
+                                         "and other foul creatures.", "A perilous journey awaits, my friend. Tread "
+                                         "carefully if you choose that path."]}),
+
+    "traveler sylas": Npc(name="traveler sylas",
+                          npc_type="traveler",
+                          messages={
+                              0: ["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration.",
+                                  "Hidden wonders and untold tales await those who venture beyond the familiar. May "
+                                  "your steps be guided by curiosity, and may the world unveil its mysteries before "
+                                  "you."]}),
+
+    "traveler thaldir": Npc(name="traveler thaldir",
+                            npc_type="traveler",
+                            messages={
+                                0: ["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around "
+                                    "and check. Secrets often hide where the eye does not linger.",
+                                    "May the journey unveil the unseen, brave one."]}),
+
+    "worker gorrick": Npc(name="worker gorrick",
+                          npc_type="worker",
+                          messages={
+                              0: ["Hail, traveler! The path ahead is blocked, and only through my efforts can it be "
+                                  "opened. Alas, it'll take time."]}),
+}

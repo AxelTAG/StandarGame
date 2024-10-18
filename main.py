@@ -8,6 +8,7 @@ from datetime import datetime
 # Locals imports.
 from actions import drop, enter, equip, explore, leave, land, move, sleep_in_bed, wait, talk, battle, pick_up,\
     unequip, use, use_boat, check
+from biome import Entry
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
 import globals
@@ -42,7 +43,7 @@ user_map = np.zeros((32, 32, 4), dtype=np.uint8)
 user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
 
 # Global settings.
-tile_map = label_pixels("rsc.png")
+tile_map = label_pixels("rsc/tile-00.png")
 map_set = tl_map_set(tile_map)
 y_len = len(tile_map)-1
 x_len = len(tile_map[0])-1
@@ -175,17 +176,20 @@ while run:
             player.place = map_set[coordstr(0, 0)].entries["hut"]
 
             # Introduction setting.
-            npc["whispers"][0] = [player.name + "...", player.name + "...", "...your destiny awaits.",
-                                  "Follow the whispers of the wind, and come to me.", "Secrets untold and challenges "
-                                  "unknown lie ahead.", "Trust in the unseen path...", "... come to me."]
+            npc["whispers"].messages[0] = [player.name + "...", player.name + "...", "...your destiny awaits.",
+                                           "Follow the whispers of the wind, and come to me.", "Secrets untold and"
+                                           " challenges unknown lie ahead.", "Trust in the unseen path...",
+                                           "... come to me."]
 
             # Dragon Firefrost setting.
-            npc["dragon firefrost"][0] = [player.name + "...", "You finally come to me...", "Destiny calls "
-                                         "for a dance of fire and frost between us...", "Ready your blade..."]
+            npc["dragon firefrost"].messages = [player.name + "...",
+                                                "You finally come to me...",
+                                                "Destiny calls ""for a dance of fire and frost between us...",
+                                                "Ready your blade..."]
 
             # Introduction.
             if player.name:
-                screen = talk(npc=npc["whispers"], npc_name="Whispers", player=player)
+                screen = talk(npc=npc["whispers"], player=player)
 
         elif choice == "2":  # Load game choice.
             try:
@@ -235,19 +239,23 @@ while run:
     while play:
         player.x = x
         player.y = y
-        if player.outside:
-            player.place = map_set[coordstr(x, y)]
+
+
         save(player, user_map, npc, map_set, time_init)  # Autosave.
         time_init = datetime.now()
         clear()
 
-        # Fight chances of moving.
+        # Fight chances of moving, and player status refreshing.
         if not standing:
+            # Fight.
             if player.place.fight:
                 if random.randint(0, 100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
                     play, menu, win = battle(player, mobs[enemy].copy(), map_set)
                     save(player, user_map, npc, map_set, time_init)
+
+            # Player status refresh.
+            player.refresh_status()
 
         # Lvl upgrade of user.
         if player.exp >= player.expmax:
@@ -256,7 +264,7 @@ while run:
             player.expmax = 10 * player.lvl
             player.b_hpmax += 2
             player.b_attack += 0.4
-            player.b_defense += 0.025
+            player.b_defense += 0.20
             player.b_precision += 0.005
             player.b_evasion += 0.01
             screen = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
@@ -299,6 +307,7 @@ while run:
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 if player.outside:
                     screen, x, y, add_hs, standing = move(x, y, x_len, y_len, player, tile_map, action[0], map_set)
+                    player.place = map_set[coordstr(x, y)]
                 else:
                     screen = "You are in " + player.place.name.title().replace("'S", "'s")
 
@@ -377,8 +386,8 @@ while run:
                 if len(action) <= 2:
                     screen = disp_enter(player.place)
                     standing = True
-                elif " ".join(action[2:]) in player.place.entries:
-                    screen, fight = enter(x, y, " ".join(action[2:]), player)
+                elif "_".join(action[2:]) in player.place.entries:
+                    screen, fight = enter(x, y, "_".join(action[2:]), player)
                     if fight:
                         play, menu, win = battle(player, mobs["orc"].copy(), map_set)
                         if not play:
@@ -400,10 +409,14 @@ while run:
             elif action[0] == "exit":  # Exit entrie action:
                 if not player.outside:
                     screen = "You left the " + player.place.name + "."
-                    player.outside = True
+                    if hasattr(player.place.leave_entry, "leave_entry"):
+                        player.place = player.place.leave_entry
+                    else:
+                        player.place = player.place.leave_entry
+                        player.outside = True
                 else:
                     screen = "You are outside."
-                standing = False
+                standing = True
 
             elif action[0] == "explore":  # Explore action:
                 screen = explore(x, y, map_set)
@@ -411,10 +424,6 @@ while run:
 
             elif action[0] == "land":  # Land action.
                 screen = land(x, y, player, map_set, tile_map)
-                standing = False
-
-            elif action[0] == "leave":  # Exit action:
-                screen, map_set = leave(x, y, map_set)
                 standing = False
 
             elif action[0] == "listen":  # Listen action.
@@ -467,7 +476,7 @@ while run:
                     screen = disp_talk(player.place)
                     standing = True
                 elif npc_name in player.place.npc:
-                    screen = talk(npc=npc[npc_name], npc_name=npc_name, player=player)
+                    screen = talk(npc=npc[npc_name], player=player)
                     standing = True
                 else:
                     screen = "Here no one is called " + npc_name.title() + "."
@@ -501,6 +510,8 @@ while run:
             elif action[0] == "teleport":
                 x = int(action[1])
                 y = int(action[2])
+                player.place = map_set[coordstr(x, y)]
+                standing = True
                 screen = "You teleported to " + str(x) + " " + str(y) + "."
 
             elif action == ["time", "played"]:
@@ -519,7 +530,6 @@ while run:
                 player.inventory.add_item("torch", 1)
                 player.inventory.add_item("gold", 100)
                 # map_set.update(globals.MAP_SETTING_INIT)
-                npc.update(globals.NPC)
                 # player.events["message"] = False
                 # player.events["permission"] = False
                 # npc["fisherman marlin"][3][0] = True
@@ -528,4 +538,4 @@ while run:
                 standing = True
 
             # Event handler.
-            npc, map_set, play, menu = event_handler(player, user_map, npc, map_set, mobs, play, menu)
+            npc, map_set, play, menu = event_handler(player, user_map, npc, map_set, mobs, time_init, play, menu)

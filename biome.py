@@ -8,21 +8,25 @@ class Biome:
     def __init__(self,
                  color: tuple = (255, 0, 0, 255),
                  description: str = "...",
-                 entries=None,
+                 entries: dict = None,
                  fight: bool = True,
-                 items=None,
-                 mobs="",
-                 mobs_chances=None,
+                 items: list = None,
+                 mobs: list = None,
+                 mobs_chances: list = None,
                  name: str = "...",
-                 npc=None,
-                 req=None,
-                 status=None):
+                 npc: list = None,
+                 req: list = None,
+                 status: list = None,
+                 temperature: int = 15):
 
         if entries is None:
             entries = {}
 
         if items is None:
             items = []
+
+        if mobs is None:
+            mobs = []
 
         if mobs_chances is None:
             mobs_chances = [0]
@@ -47,6 +51,10 @@ class Biome:
         self.npc = npc
         self.req = req
         self.status = status
+        self.temperature = temperature
+
+    def refresh_temperature(self, season: Season = None):
+        pass
 
 
 class Entry(Biome):
@@ -62,7 +70,7 @@ class Entry(Biome):
                  name: str = "...",
                  npc=None,
                  req=None,
-                 status: int = 0):
+                 status: int = None):
 
         super().__init__(color, description, entries, fight, items, mobs, mobs_chances, name, npc, req, status)
 

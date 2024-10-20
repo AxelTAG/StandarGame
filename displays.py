@@ -19,6 +19,7 @@ def disp_bar(n: int = 18, disp: bool = True) -> str:
     text = "--" + "-" * n + "--"
     if disp:
         print(text)
+
     return text
 
 
@@ -104,7 +105,7 @@ def disp_look_around(place) -> str:
 
 # Play display.
 def disp_play(
-        player: Player(), loc: str, reg: str, time: str, des: str, x: int, y: int, user_map: np.array,
+        player: Player, loc: str, reg: str, time: str, des: str, x: int, y: int, user_map: np.array,
         mdir: list, screen_text: str, width: int) -> None:
     print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
     print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
@@ -119,6 +120,13 @@ def disp_play(
     t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
     t_lvl = "\nEXP: " + str(player.exp) + "/" + str(player.expmax) + " | LVL: " + str(player.lvl)
     t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
+
+    # Status text.
+    if player.poison > 0:
+        t_status = "\nSTATUS: POISONED [" + str(player.poison) + "]"
+    else:
+        t_status = "\nSTATUS: HEALTHY"
+
     t_gold = "\nGOLD: " + str(player.inventory.gold)
     t_item1 = "\n5 - " + player.slot1.replace("_", " ").upper() + ": " + str(player.inventory.items[player.slot1.lower().replace(" ", "_")])
     t_item2 = "\n6 - " + player.slot2.replace("_", " ").upper() + ": " + str(player.inventory.items[player.slot2.lower().replace(" ", "_")])
@@ -140,7 +148,7 @@ def disp_play(
 
     text1 = t_loc + t_reg + t_coord + t_time + "\n." * 3
     text2 = des
-    text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + "\n." + t_gold
+    text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + t_status + t_gold
     text41 = prim_stats + t_atk + t_def + t_eva + t_pre
     text42 = sec_stats + t_str + t_res + t_agi + t_vit
     text4 = "\n".join(text_2_col(text41, text42, int(width / 2 - 2), "|", False))

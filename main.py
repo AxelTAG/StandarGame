@@ -26,6 +26,7 @@ rules = False
 # Play variables.
 fight = False
 standing = True
+year = 96
 day_time = 6
 day_moment = "MORNING"
 add_hs = 0
@@ -51,7 +52,7 @@ x_len = len(tile_map[0])-1
 npc = globals.NPC.copy()
 mobs = globals.MOBS.copy()
 
-screen = random.choices(["Nothing done yet.", "Waiting for commands."], [50, 50], k=1)[0]
+screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
 
 
 # Main loop of the game.
@@ -240,7 +241,6 @@ while run:
         player.x = x
         player.y = y
 
-
         save(player, user_map, npc, map_set, time_init)  # Autosave.
         time_init = datetime.now()
         clear()
@@ -249,7 +249,7 @@ while run:
         if not standing:
             # Fight.
             if player.place.fight:
-                if random.randint(0, 100) < max(player.place.mobs_chances):
+                if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
                     play, menu, win = battle(player, mobs[enemy].copy(), map_set)
                     save(player, user_map, npc, map_set, time_init)
@@ -267,8 +267,8 @@ while run:
             player.b_defense += 0.20
             player.b_precision += 0.005
             player.b_evasion += 0.01
-            screen = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
             player.st_points += 3
+            screen = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
 
         # Refreshing stats of user.
         items_stats = sum_item_stats(player.equip)
@@ -313,9 +313,9 @@ while run:
 
             elif action[0] in ["5", "6"]:  # Fast use object action.
                 if action[0] == "5":
-                    screen, object_used = use(player, player.slot1)
+                    screen, _ = use(player, player.slot1)
                 if action[0] == "6":
-                    screen, object_used = use(player, player.slot2)
+                    screen, _ = use(player, player.slot2)
                 standing = True
 
             elif action[0] == "assign":  # Assign action.
@@ -495,7 +495,7 @@ while run:
                 standing = True
 
             elif action[0] in ["use"]:  # Fast use object action.
-                screen, object_used = use(player, "_".join(action[1:]))
+                screen, _ = use(player, "_".join(action[1:]))
                 standing = True
 
             elif action[0] == "wait":  # Wait action.
@@ -525,14 +525,15 @@ while run:
                         print(key, map_set[key].name, map_set[key].description)
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
-                player.exp += 1000
-                player.inventory.add_item("telescope", 1)
-                player.inventory.add_item("torch", 1)
-                player.inventory.add_item("gold", 100)
-                # map_set.update(globals.MAP_SETTING_INIT)
+                #
+                # map_set.updatplayer.exp += 1000
+                #                 # player.inventory.add_item("telescope", 1)
+                #                 # player.inventory.add_item("torch", 1)
+                #                 # player.inventory.add_item("gold", 100)e(globals.MAP_SETTING_INIT)
                 # player.events["message"] = False
                 # player.events["permission"] = False
                 # npc["fisherman marlin"][3][0] = True
+                player.inventory.add_item(item="antidote", quantity=1)
                 screen = "Map updated."
             else:
                 standing = True

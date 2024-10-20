@@ -3,6 +3,9 @@
 from biome import Biome
 from npc import Npc
 
+# External imports.
+from enum import Enum
+
 # Command line settings.
 WIDTH = 92
 HEIGHT = 32
@@ -19,6 +22,15 @@ PINK = (255, 105, 180, 255)
 
 # Day parts.
 DAY_PARTS = ("MORNING", "AFTERNOON", "EVENING", "NIGHT")
+
+
+# Seasons.
+class Season(Enum):
+    SPRING = 0
+    SUMMER = 1
+    AUTUMN = 2
+    WINTER = 3
+
 
 # Bioms of map.
 BIOMES = {

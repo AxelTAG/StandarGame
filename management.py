@@ -333,8 +333,13 @@ def load_game(path_usavepkl: str = "cfg_save.pkl", path_msave: str = "cfg_map.tx
 
 
 # Save function.
-def save(player: Player, user_map: np.array, npc: dict, ms: dict, time_init: datetime,
-         path_usavepkl: str = "cfg_save.pkl", path_msave: str = "cfg_map.txt", path_settingpkl: str = "cfg_setting.pkl",
+def save(player: Player,
+         user_map: np.array,
+         npc: dict,
+         ms: dict, time_init: datetime,
+         path_usavepkl: str = "cfg_save.pkl",
+         path_msave: str = "cfg_map.txt",
+         path_settingpkl: str = "cfg_setting.pkl",
          path_hsave: str = "cfg_hash.txt") -> None:
 
     player.refresh_time_played(datetime.now(), time_init)

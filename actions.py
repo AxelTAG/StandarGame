@@ -109,18 +109,42 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
 
 
 # Buy action.
-def buy(player: Player(), item: str, quantity: int, price: int) -> str:
+def buy(player: Player(), item: str, quantity: int, price: int) -> tuple[str, bool]:
+    """
+    Attempts to buy a specified quantity of an item for a player if they have enough gold.
+
+    The function checks if the player has sufficient gold to purchase the desired quantity of the item at the given
+    price.
+    If successful, the item is added to the player's inventory, and the gold is deducted from their balance.
+    If the player doesn't have enough gold, the purchase is rejected.
+
+    :param player: The player making the purchase. It must be an instance of the `Player` class.
+    :type player: Player
+    :param item: The name of the item to purchase.
+    :type item: str
+    :param quantity: The quantity of the item to purchase.
+    :type quantity: int
+    :param price: The price per unit of the item.
+    :type price: int
+
+    :return: A message indicating the result of the transaction and a boolean that is `True` if the purchase is
+    successful, otherwise `False`.
+    :rtype: tuple[str, bool]
+    """
     inventory = player.inventory
     items = player.inventory.items
     if inventory.gold >= price * quantity:
         try:
             items[item] += quantity
+
         except KeyError:
             items[item] = quantity
         inventory.gold -= price * quantity
-        return "You buy " + str(quantity) + " " + item.replace("_", " ").title() + "."
+
+        return "You buy " + str(quantity) + " " + item.replace("_", " ").title() + ".", True
+
     else:
-        return "You don't have enough gold."
+        return "You don't have enough gold.", False
 
 
 # Check action.
@@ -336,7 +360,7 @@ def sell(player: Player(), item: str, quantity: int, price: int) -> str:
 
 
 # Talk.
-def talk(npc: Npc, player: Player()) -> str:
+def talk(npc: Npc, player: Player) -> str:
     # First message of npc.
     disp_talk_tw(npc, npc.messages[0])  # Printing first message.
     npc.hist_messages[0] = True  # Turning True first message of NPC.
@@ -400,7 +424,8 @@ def talk(npc: Npc, player: Player()) -> str:
                                 while True:
                                     try:
                                         quantity = int(input(" " * 4 + "# "))
-                                        transactions += buy(player, items[item], quantity, prices[item])
+                                        transaction, transaction_status = buy(player, items[item], quantity, prices[item])
+                                        transactions += transaction
                                         break
                                     except ValueError:
                                         break
@@ -479,14 +504,25 @@ def talk(npc: Npc, player: Player()) -> str:
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
 
-                                transactions += buy(player, items[item], 1, prices[item])
-                                disp_talk_tw(npc, ["Perfect. Keep this key, until 30 days."])
+                                transaction, transaction_status = buy(player=player,
+                                                                      item=items[item],
+                                                                      quantity=1,
+                                                                      price=prices[item])
+
+                                if transaction_status:
+                                    disp_talk_tw(npc,
+                                                 message=["Perfect. Keep this key, until 30 days."])
+                                else:
+                                    disp_talk_tw(npc,
+                                                 message=["Mmmm... you don't have enough."])
                                 break
+
                             else:
                                 break
                         except ValueError:
                             pass
 
+                # Buy food.
                 if action_choice == 2:
                     items = []
                     prices = []
@@ -510,11 +546,14 @@ def talk(npc: Npc, player: Player()) -> str:
                                     break
                                 print()
                                 print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to buy?")
+
                                 while True:
                                     try:
                                         quantity = int(input(" " * 4 + "# "))
-                                        transactions += buy(player, items[item], quantity, prices[item])
+                                        transaction, transaction_status = buy(player, items[item], quantity, prices[item])
+                                        transactions += transaction
                                         break
+
                                     except ValueError:
                                         break
                                 break
@@ -549,39 +588,42 @@ def unequip(player: Player(), item_name: str) -> str:
 
 # Use action (general).
 def use(player: Player, obj: str) -> tuple[str, bool]:
-    object_used = False
     item = obj.replace(" ", "_").lower()
 
     if item == "gold":
-        return "You can't use " + item.replace("_", " ").title() + ".", object_used
+        return "You can't use " + item.replace("_", " ").title() + ".", False
 
     if item not in player.inventory.items.keys():
-        return "You have no " + item.replace("_", " ").title() + ".", object_used
+        return "You have no " + item.replace("_", " ").title() + ".", False
 
     if player.inventory.items[item] > 0:
-        text = "Nothing done."
         if "potion" in item:
             if item == "giant_red_potion":
-                text, player.hp = heal(player.name, amount=40)
-                player.inventory.items[item] -= 1
+                player.heal(amount=40)
 
             elif item == "red_potion":
-                text, player.hp = heal(player.name, amount=25)
-                player.inventory.items[item] -= 1
+                player.heal(amount=25)
 
             elif item == "litle_red_potion":
-                text, player.hp = heal(player.name, amount=10)
-                player.inventory.items[item] -= 1
+                player.heal(amount=10)
 
-            return text, object_used
+            else:
+                return "Nothing done.", False
+
+            player.inventory.items[item] -= 1
+
+            return player.name + "'s HP refilled to " + str(player.hp) + "!", True
 
         elif "antidote" in item:
-            pass
+            player.heal_poisoning()
+            player.inventory.items[item] -= 1
+
+            return "You have taken the antidote.", True
 
         else:
-            return "You can't use this item.", object_used
+            return "You can't use this item.", False
     else:
-        return "You have no more " + item.replace("_", " ").title() + ".", object_used
+        return "You have no more " + item.replace("_", " ").title() + ".", False
 
 
 # Use boat.

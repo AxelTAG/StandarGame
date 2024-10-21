@@ -1,9 +1,10 @@
 # Imports.
-# External imports
-from datetime import timedelta
-
 # Local imports.
 from inventory import Inventory
+
+# External imports.
+import numpy as np
+from datetime import timedelta
 
 
 # Player class.
@@ -42,6 +43,7 @@ class Player:
                  status: int = 0,
                  outside: bool = False,
                  place=None,
+                 explored_map: np.array = None,
                  poison: int = 0):
 
         if len(name) > 12:
@@ -76,13 +78,17 @@ class Player:
         self.st_points = st_points
         self.sk_points = sk_points
 
-        # Placement player attributes.
+        # Placement player and map attributes.
         self.x = x
         self.y = y
         self.x_cp = x_cp
         self.y_cp = y_cp
         self.outside = outside
         self.place = place
+
+        if explored_map is None:
+            self.map = np.zeros(shape=(32, 32, 4), dtype=np.uint8)
+            self.map[:, :, 3] = np.ones(shape=(32, 32), dtype=np.uint8) * 255
 
         # Inventory and equip player attributes.
         self.slot1 = slot1

@@ -1,8 +1,4 @@
 # Imports.
-# External imports.
-import numpy as np
-from datetime import datetime
-
 # Local imports.
 from actions import battle, talk
 from biome import Biome, Entry
@@ -10,10 +6,19 @@ from npc import Npc
 from player import Player
 from utils import coordstr, export_dict_to_txt, get_hash, export_player, export_settings
 
+# External imports.
+import numpy as np
+from datetime import datetime
+
 
 # Event handler.
-def event_handler(player: Player(), user_map: np.array, npc: dict, ms: dict, mobs: dict, time_init: datetime,
-                  play: int, menu: int) -> tuple[dict, dict, int, int]:
+def event_handler(player: Player,
+                  npc: dict,
+                  ms: dict,
+                  mobs: dict,
+                  time_init: datetime,
+                  play: int,
+                  menu: int) -> tuple[dict, dict, int, int]:
 
     # Event of Guard Lorian and Fisherman Marlin. The message. First part.
     if npc["fisherman marlin"].hist_messages[0]:
@@ -69,7 +74,7 @@ def event_handler(player: Player(), user_map: np.array, npc: dict, ms: dict, mob
             return npc, ms, play, menu
         else:
             npc["dragon firefrost"].reset_hist_messages()
-            save(player, user_map, npc, ms, time_init)
+            save(player, npc, ms, time_init)
             return npc, ms, play, menu
 
     else:
@@ -334,18 +339,13 @@ def load_game(path_usavepkl: str = "cfg_save.pkl", path_msave: str = "cfg_map.tx
 
 # Save function.
 def save(player: Player,
-         user_map: np.array,
          npc: dict,
          ms: dict, time_init: datetime,
          path_usavepkl: str = "cfg_save.pkl",
-         path_msave: str = "cfg_map.txt",
          path_settingpkl: str = "cfg_setting.pkl",
          path_hsave: str = "cfg_hash.txt") -> None:
 
     player.refresh_time_played(datetime.now(), time_init)
-
-    # Map drawing of user saving (export to txt).
-    np.savetxt(path_msave, user_map.reshape(-1, user_map.shape[-1]), fmt='%d', delimiter='\t')
 
     # Inventory, user stats and map setting saving (export to txt).
     export_player(player, path_usavepkl)

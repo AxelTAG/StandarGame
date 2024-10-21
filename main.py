@@ -39,17 +39,13 @@ y = player.y  # Y location.
 
 inventory = player.inventory  # Inventory.
 
-# Player map.
-user_map = np.zeros((32, 32, 4), dtype=np.uint8)
-user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
-
 # Global settings.
 tile_map = label_pixels("rsc/tile-00.png")
 map_set = tl_map_set(tile_map)
 y_len = len(tile_map)-1
 x_len = len(tile_map[0])-1
 
-npc = globals.NPC.copy()
+npc = globals.NPCS.copy()
 mobs = globals.MOBS.copy()
 
 screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
@@ -136,17 +132,13 @@ while run:
 
                     inventory = player.inventory  # Inventory.
 
-                    # Player map.
-                    user_map = np.zeros((32, 32, 4), dtype=np.uint8)
-                    user_map[:, :, 3] = np.ones((32, 32), dtype=np.uint8) * 255
-
                     # Global settings.
                     tile_map = label_pixels("rsc.png")
                     map_set = tl_map_set(tile_map)
                     y_len = len(tile_map) - 1
                     x_len = len(tile_map[0]) - 1
 
-                    npc = globals.NPC.copy()
+                    npc = globals.NPCS.copy()
                     mobs = globals.MOBS.copy()
 
                     screen = "Nothing done yet."
@@ -199,10 +191,6 @@ while run:
                 print(" < LOAD GAME >")
                 print()
 
-                # Loading user map.
-                map_load = np.loadtxt("cfg_map.txt", delimiter='\t', dtype=int)
-                user_map = map_load.reshape((32, 32, 4))
-
                 # Loading inventory, user stats and map settings.
                 player = import_player("cfg_save.pkl")
                 load_setting = import_settings("cfg_setting.pkl")
@@ -241,7 +229,7 @@ while run:
         player.x = x
         player.y = y
 
-        save(player, user_map, npc, map_set, time_init)  # Autosave.
+        save(player, npc, map_set, time_init)  # Autosave.
         time_init = datetime.now()
         clear()
 
@@ -252,7 +240,7 @@ while run:
                 if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
                     play, menu, win = battle(player, mobs[enemy].copy(), map_set)
-                    save(player, user_map, npc, map_set, time_init)
+                    save(player, npc, map_set, time_init)
 
             # Player status refresh.
             player.refresh_status()
@@ -289,7 +277,7 @@ while run:
 
             # Draw of general stats.
             clear()
-            disp_play(player, location, "NAIWAT", day_moment, loc_des, x, y, user_map,
+            disp_play(player, location, "NAIWAT", day_moment, loc_des, x, y,
                       draw_move(x, y, x_len, y_len, player, tile_map, map_set), screen, 36)
 
             # Input action.
@@ -302,7 +290,7 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(player, user_map, npc, map_set, time_init)
+                save(player, npc, map_set, time_init)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 if player.outside:
@@ -352,22 +340,22 @@ while run:
                 screen = check(player.place, " ".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                user_map[y][x] = player.place.color
+                player.map[y][x] = player.place.color
                 if x != 0:
-                    user_map[y][x - 1] = map_set[coordstr(x - 1, y)].color
+                    player.map[y][x - 1] = map_set[coordstr(x - 1, y)].color
                 if x != x_len:
-                    user_map[y][x + 1] = map_set[coordstr(x + 1, y)].color
+                    player.map[y][x + 1] = map_set[coordstr(x + 1, y)].color
                 if y != 0:
-                    user_map[y - 1][x] = map_set[coordstr(x, y - 1)].color
+                    player.map[y - 1][x] = map_set[coordstr(x, y - 1)].color
                 if y != y_len:
-                    user_map[y + 1][x] = map_set[coordstr(x, y + 1)].color
+                    player.map[y + 1][x] = map_set[coordstr(x, y + 1)].color
                 screen = "You have explored the area and mapped it out."
 
                 if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
                     # Explore a square instead of a cross
                     for i in range(max(0, x - 1), min(x_len, x + 2)):
                         for j in range(max(0, y - 1), min(y_len, y + 2)):
-                            user_map[j][i] = map_set[coordstr(i, j)].color
+                            player.map[j][i] = map_set[coordstr(i, j)].color
 
             elif action[0] == "drop":  # Drop action.
                 try:  # Converting input in proper clases and form.
@@ -391,7 +379,7 @@ while run:
                     if fight:
                         play, menu, win = battle(player, mobs["orc"].copy(), map_set)
                         if not play:
-                            save(player, user_map, npc, map_set, time_init)
+                            save(player, npc, map_set, time_init)
                     x, y = player.x, player.y
                     standing = True
                 else:
@@ -433,12 +421,12 @@ while run:
                 screen = disp_look_around(player.place)
 
             elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
-                user_map[y][x] = globals.PINK
+                player.map[y][x] = globals.PINK
                 plt.figure(player.name + "'s map")
-                plt.imshow(user_map)
+                plt.imshow(player.map)
                 plt.title("Map")
                 plt.show()
-                user_map[y][x] = player.place.color
+                player.map[y][x] = player.place.color
                 standing = True
 
             elif action[:2] == ["pick", "up"]:  # Pick up action.
@@ -539,4 +527,4 @@ while run:
                 standing = True
 
             # Event handler.
-            npc, map_set, play, menu = event_handler(player, user_map, npc, map_set, mobs, time_init, play, menu)
+            npc, map_set, play, menu = event_handler(player, npc, map_set, mobs, time_init, play, menu)

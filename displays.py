@@ -104,9 +104,16 @@ def disp_look_around(place) -> str:
 
 
 # Play display.
-def disp_play(
-        player: Player, loc: str, reg: str, time: str, des: str, x: int, y: int, user_map: np.array,
-        mdir: list, screen_text: str, width: int) -> None:
+def disp_play(player: Player,
+              loc: str,
+              reg: str,
+              time: str,
+              des: str,
+              x: int,
+              y: int,
+              mdir: list,
+              screen_text: str,
+              width: int) -> None:
     print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
     print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
     print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
@@ -174,7 +181,7 @@ def disp_play(
         else:
             x_pos, y_pos = x, y
         if status:
-            text5 += "\n" + globals.DIRECTIONS[i] + " (" + get_label(x_pos, y_pos, user_map).upper() + ")"
+            text5 += "\n" + globals.DIRECTIONS[i] + " (" + get_label(x_pos, y_pos, player.map).upper() + ")"
     text5 += t_item1 + t_item2
 
     cmp_text = cmp_text + text_2_col(text5, text6, width, "|")

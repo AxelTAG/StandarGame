@@ -1,6 +1,6 @@
 # Imports.
-# External imports
 # Local imports.
+from enums import Season
 
 
 # Biome class.

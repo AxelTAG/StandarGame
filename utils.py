@@ -243,7 +243,7 @@ def import_settings(path: str):
 
 
 # Functions that returns tile map of a image, depending de colors.
-def label_pixels(img_path: str):
+def label_pixels(img_path: str) -> list:
     # Open the image.
     img = Image.open(img_path, mode="r")
 

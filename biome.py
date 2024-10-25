@@ -16,6 +16,7 @@ class Biome:
                  name: str = "...",
                  npc: list = None,
                  req: list = None,
+                 pace: int = 8,
                  status: list = None,
                  temperature: int = 15):
 
@@ -29,7 +30,7 @@ class Biome:
             mobs = []
 
         if mobs_chances is None:
-            mobs_chances = [0]
+            mobs_chances = []
 
         if npc is None:
             npc = []
@@ -50,6 +51,7 @@ class Biome:
         self.name = name
         self.npc = npc
         self.req = req
+        self.pace = pace
         self.status = status
         self.temperature = temperature
 
@@ -64,7 +66,7 @@ class Entry(Biome):
                  entries=None,
                  fight: bool = False,
                  items=None,
-                 leave_entry=Biome,
+                 leave_entry=None,
                  mobs=None,
                  mobs_chances=None,
                  name: str = "...",

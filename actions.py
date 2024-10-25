@@ -3,18 +3,20 @@
 import random
 
 # Internal imports.
+import globals
 from biome import Biome, Entry
 from displays import disp_battle, disp_talk_answers, disp_talk_tw
-import globals
+from enums import PlayerStatus, TimeOfDay
+from map import Map
 from npc import Npc
 from player import Player
-from utils import coordstr, day_est, reset_map, text_ljust
+from utils import coordstr, reset_map, text_ljust
 
 
 # Battle action.
 def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
 
-    screen = "Defeat de enemy!"
+    screen = "Defeat the enemy!"
     play = True
     menu = False
     fight = True
@@ -88,9 +90,9 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
             player.exp += enemy["exp"]
             if enemy["items"]:
                 drop_quantity = random.randint(1, len(enemy["items"])) - 1
-                drop = list(set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
+                drop_items = list(set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
 
-                for item in drop:
+                for item in drop_items:
                     if item == "gold":
                         player.inventory.gold += enemy["items"][item]
                         screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_", " ").title() + "."
@@ -131,6 +133,7 @@ def buy(player: Player(), item: str, quantity: int, price: int) -> tuple[str, bo
     successful, otherwise `False`.
     :rtype: tuple[str, bool]
     """
+    item_name = item.replace('_', ' ').title()
     inventory = player.inventory
     items = player.inventory.items
     if inventory.gold >= price * quantity:
@@ -141,57 +144,67 @@ def buy(player: Player(), item: str, quantity: int, price: int) -> tuple[str, bo
             items[item] = quantity
         inventory.gold -= price * quantity
 
-        return "You buy " + str(quantity) + " " + item.replace("_", " ").title() + ".", True
+        return f"You buy {quantity} {item_name}.", True
 
     else:
         return "You don't have enough gold.", False
 
 
 # Check action.
-def check(place, item: str) -> str:
+def check(place: Biome, item: str) -> str:
     if item in place.items:
         if item == "bed":
             text = "Comfortable resting surface for sleep and relaxation."
+
         elif item == "boat":
             text = "Small wooden boat gently rocks on calm water, weathered by time and adventures."
+
         elif item == "origami_flowers":
-            text = "Paper flowers, seem to have something inside the stem, but you can't get it out with your fingers," \
-                   " you need a long stick."
+            text = ("Paper flowers, seem to have something inside the stem, but you can't get it out with your "
+                    "fingers, you need a long stick.")
+
         elif item == "short_sword":
             text = "A trusty Short Sword, swift and precise, ideal for close-quarter battles against foes in the wild."
         else:
             text = "You observe nothing."
+
     elif item == "":
         text = "What do you want to check? CHECK ITEM"
+
     else:
-        text = "There is no " + item.title() + " here."
+        text = f"There is no {item.title()} here."
 
     return text
 
 
 # Drop action.
-def drop(player: Player, item_name: str, quantity: int = 1) -> str:
-    item = item_name.replace(" ", "_")
-    if player.inventory.drop_item(item, quantity):
-        return "You drop " + str(quantity) + " " + item_name.title() + "."
+def drop(player: Player, item: str, quantity: int = 1) -> str:
+    item_name = item.replace("_", " ")
+
+    if player.inventory.drop_item(item=item, quantity=quantity):
+        return f"You drop {quantity} {item_name.title()}."
+
     else:
-        return "You don't have " + str(quantity) + " " + item_name.title() + "."
+        return f"You don't have {quantity} {item_name}."
 
 
 # Enter action.
-def enter(x: int, y: int, entrie: str, player: Player()) -> tuple[str, bool]:
+def enter(player: Player, entrie: str) -> tuple[str, bool]:
+    x, y = player.x, player.y
     objects = [*player.inventory.items.keys()] + [*player.events.keys()]
 
     if all(req in objects for req in player.place.entries[entrie].req):
         if entrie == "cave":
             if (x, y) == (13, 0):
                 if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
-                    if random.randint(0, 100) <= 10:
+                    if random.randint(a=0, b=100) <= 10:
                         player.x, player.y = 19, 0
                         return "You have crossed the cave without any problems.", False
+
                     else:
                         player.x, player.y = 19, 0
-                        return "You have crossed the cave.",  True
+                        return "You have crossed the cave.", True
+
                 else:
                     return "You need a torch to enter.", False
 
@@ -200,19 +213,21 @@ def enter(x: int, y: int, entrie: str, player: Player()) -> tuple[str, bool]:
                     if random.randint(0, 100) <= 10:
                         player.x, player.y = 13, 0
                         return "You have crossed the cave without any problems.", False
+
                     else:
                         player.x, player.y = 13, 0
                         return "You have crossed the cave.", True
+
                 else:
                     return "You need a torch to enter.", False
 
         else:
             player.outside = False
             player.place = player.place.entries[entrie]
-            return "You have enter to the " + entrie.title() + ".", False
+            return f"You have enter to the {entrie.title()}.", False
 
     elif entrie not in player.place.entries.keys():
-        return "There is not a " + entrie + " here.", False
+        return f"There is not a {entrie} here.", False
 
     else:
         requirements = " ".join(player.place.entries[entrie].req).split("_")
@@ -221,27 +236,36 @@ def enter(x: int, y: int, entrie: str, player: Player()) -> tuple[str, bool]:
 
 
 # Equip action.
-def equip(player: Player(), item_name: str) -> str:
-    item = item_name.replace(" ", "_").lower()
+def equip(player: Player(), item: str) -> str:
+    item_name = item.replace("_", " ").lower()
+
     if item in player.inventory.items.keys() and player.inventory.items[item] > 0 and item in globals.ITEMS_EQUIP.keys():
         body_part = globals.ITEMS_EQUIP[item]["body"]
+
         if player.equip[body_part] == "None":
             player.equip[body_part] = item
             player.inventory.items[item] -= 1
-            return "You have equip " + item_name.title() + "."
+            return f"You have equip {item_name.title()}."
+
         else:
-            return "You already have an item equipped. UNEQUIP " + player.equip[body_part].title() + "."
+            return f"You already have an item equipped. UNEQUIP {player.equip[body_part].title()}."
+
     elif item not in player.inventory.items.keys() or player.inventory.items[item] < 1:
-        return "You don't have " + item_name.title() + "."
+        return f"You don't have {item_name.title()}."
+
     elif item not in globals.ITEMS_EQUIP.keys():
-        return "You can't equip " + item_name.title() + "."
+        return f"You can't equip {item_name.title()}."
 
 
 # Explore action.
-def explore(x: int, y: int, ms: dict) -> str:
-    if (x, y) == (13, 0) and "cave" not in ms[coordstr(x, y)].entries:
-        ms[coordstr(x, y)].entries["cave"] = Entry(description="Nothing.")
+def explore(player: Player, map_game: Map) -> str:
+    x, y = player.x, player.y
+
+    if (x, y) == (13, 0) and "cave" not in map_game.map_settings[coordstr(x, y)].entries:
+        map_game.map_settings[coordstr(x, y)].entries["cave"] = Entry(description="Nothing.")
+
         return "You have found a cave."
+
     else:
         return "You explore the zone but you found nothing."
 
@@ -253,21 +277,25 @@ def heal(player: Player, amount: int) -> tuple[str, int]:
 
 
 # Land.
-def land(x: int, y: int, player: Player(), ms: dict, tl_map: list) -> str:
-    if player.status == 1 and tl_map[y][x] not in ["sea", "river"]:
-        player.status = 0
-        ms[coordstr(x, y)].items.append("boat")
-        ms[coordstr(x, y)].description = ms[coordstr(x, y)].description.replace(
+def land(player: Player, map_game: Map) -> str:
+    x, y = player.x, player.y
+
+    if player.status == PlayerStatus.SURF.value and map_game.map_labels[y][x] not in ["sea", "river"]:
+        player.status = PlayerStatus.WALK.value
+
+        map_game.map_settings[coordstr(x, y)].items.append("boat")
+        map_game.map_settings[coordstr(x, y)].description = map_game.map_settings[coordstr(x, y)].description.replace(
             "Seaside with swaying palm trees, echoing waves, and vibrant life.",
             "Seaside with anchored boat, echoing waves and vibrant coastal life.")
 
-        if ms[coordstr(x, y)].description == "":
-            ms[coordstr(x, y)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+        if map_game.map_settings[coordstr(x, y)].description == "":
+            map_game.map_settings[coordstr(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
+                                                                 " coastal life.")
 
         return "You have land."
 
     else:
-        if player.status == 1:
+        if player.status == PlayerStatus.SURF.value:
             return "You can't land here."
 
         else:
@@ -280,83 +308,93 @@ def leave(x: int, y: int, ms: dict):
 
 
 # Move function.
-def move(
-        x: int, y: int, map_heigt: int, map_width: int, player: Player(),
-        tl_map: list, mv: str, ms: dict) -> tuple[str, int, int, int, bool]:
+def move(player: Player(),
+         map_game: Map,
+         mv: str) -> tuple[str, bool]:
+    x, y = player.x, player.y
+    map_height, map_width = map_game.x_len, map_game.y_len
+    tl_map, ms = map_game.map_labels, map_game.map_settings
     inventory = player.inventory.items
     events = [*player.events.keys()]
-    hs = 8
 
     # Move North.
     if y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status in ms[coordstr(x, y - 1)].status and mv == "1":
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
-            return "You moved North.", x, y - 1, hs, False
+            player.x, player.y = x, y - 1
+            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            map_game.add_hours(hours_to_add=player.place.pace)
+            return "You moved North.", False
 
     # Move East.
-    if x < map_heigt and all(req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status and mv == "2":
+    if x < map_height and all(req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status and mv == "2":
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
-            return "You moved East.", x + 1, y, hs, False
+            player.x, player.y = x + 1, y
+            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            map_game.add_hours(hours_to_add=player.place.pace)
+            return "You moved East.", False
 
     # Move South.
     if y < map_width and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status in ms[coordstr(x, y + 1)].status and mv == "3":
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
-            return "You moved South.", x, y + 1, hs, False
+            player.x, player.y = x, y + 1
+            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            map_game.add_hours(hours_to_add=player.place.pace)
+            return "You moved South.", False
 
     # Move West.
     if x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status in ms[coordstr(x - 1, y)].status and mv == "4":
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
-            return "You moved West.", x - 1, y, hs, False
-    return "You can't move there.", x, y, hs, True
+            player.x, player.y = x - 1, y
+            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            map_game.add_hours(hours_to_add=player.place.pace)
+            return "You moved West.", False
+
+    return "You can't move there.", True
 
 
 # Pick up action.
 def pick_up(player: Player, item: str) -> str:
+    item_name = " ".join(item.split("_")).title()
     if item in player.place.items:
         if item in globals.ITEMS_SELL.keys():
+            player.inventory.add_item(item=item, quantity=1)  # Adding item to inventory.
+            player.place.items.remove(item)  # Removing item from place.
 
-            player.inventory.add_item(item, 1)  # Adding item to inventory.
-            player.place.items.remove(item)  # Removing item to place.
+            return f"You pick up {item_name}."
 
-            return "You pick up " + " ".join(item.split("_")).title() + "."
         else:
-            return "You can't pick " + " ".join(item.split("_")).title() + "."
+            return f"You can't pick {item_name}."
     else:
-        return "There is no " + " ".join(item.split("_")).title() + " here."
+        return f"There is no {item_name} here."
 
 
 # Sleep to [morning, afternoon, evening, night].
-def sleep_in_bed(place: Biome, hp, hpmax, actual_hs, opt: str) -> tuple[str, int, int, str]:
-    if opt not in ["morning", "afternoon", "evening", "night"]:
-        hs, d_moment = day_est(actual_hs, 0)
-        return "This is not posible.", hp, hs, d_moment
+def sleep_in_bed(player: Player, map_game: Map, time_of_day: int) -> str:
+    if "bed" in player.place.items:
+        map_game.skip_to(time_of_day=time_of_day)
+        player.hp = player.hpmax
+        return f"You slept until the {TimeOfDay(time_of_day).name.title()}."
+
     else:
-        if "bed" in place.items:
-            if opt == "morning":
-                return "You slept until the morning.", hpmax, 6, "MORNING"
-            elif opt == "afternoon":
-                return "You slept until the afternoon.", hpmax, 12, "AFTERNOON"
-            elif opt == "evening":
-                return "You slept until the evening.", hpmax, 18, "EVENING"
-            else:
-                return "You slept until the night.", hpmax, 22, "NIGHT"
-        else:
-            hs, d_moment = day_est(actual_hs, 0)
-            return "There is no bed here.", hp, hs, d_moment
+        return "There is no bed here."
 
 
 # Sell action.
-def sell(player: Player(), item: str, quantity: int, price: int) -> str:
+def sell(player: Player, item: str, quantity: int, price: int) -> str:
     inventory = player.inventory
     items = player.inventory.items
+    item_name = item.replace("_", " ").title()
     try:
         if items[item] >= quantity:
             items[item] -= quantity
             inventory.gold += quantity * price
-            return "You sell " + str(quantity) + " " + item.replace("_", " ").title() + ". You earn " + str(quantity * price) + " gold."
+            return f"You sell {quantity} {item_name}. You earn {quantity * price} gold."
+
         else:
-            return "You don't have enough " + item.replace("_", " ").title() + "."
+            return f"You don't have enough {item_name}."
+
     except KeyError:
-        return "You don't have enough " + item.replace("_", " ").title() + "."
+        return f"You don't have enough {item_name}."
 
 
 # Talk.
@@ -385,7 +423,7 @@ def talk(npc: Npc, player: Player) -> str:
                             elif npc.npc_type == "merchant":
                                 return "Nothing done."  # If nothing was done.
                             else:
-                                return "You talked with " + npc.name.title() + "."
+                                return f"You talked with {npc.name.title()}."
                         else:
                             break
                 except ValueError:  # Bucle will reset if input is not an intenger.
@@ -403,27 +441,29 @@ def talk(npc: Npc, player: Player) -> str:
                     prices = []
                     n = 0
                     for item, value in npc.buy_items.items():
+                        item_name = item.replace("_", " ").title()
                         if item != "quit":
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.")
+                            print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold.")
                         else:
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title())
+                            print(f"{' ' * 6}{n + 1}) {item_name}")
                         items.append(item)
                         prices.append(value)
                         n += 1
                     print()
-                    print(" " * 6 + "[GOLD: " + str(player.inventory.gold) + "]\n")
+                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
 
                     while True:
                         try:
                             item = int(input(" " * 4 + "# ")) - 1
+                            item_name = items[item].replace('_', ' ').title()
                             if 0 <= item < len(items):
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
                                 print()
-                                print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to buy?")
+                                print(f"{' ' * 4}How many {item_name} do you want to buy?")
                                 while True:
                                     try:
-                                        quantity = int(input(" " * 4 + "# "))
+                                        quantity = int(input(f"{' ' * 4}# "))
                                         transaction, transaction_status = buy(player, items[item], quantity, prices[item])
                                         transactions += transaction
                                         break
@@ -441,27 +481,30 @@ def talk(npc: Npc, player: Player) -> str:
                     prices = []
                     n = 0
                     for item, value in {key: globals.ITEMS_SELL[key] for key in set(player.inventory.items.keys()).intersection(set(globals.ITEMS_SELL.keys())) if player.inventory.items[key] > 0}.items():
+                        item_name = item.replace("_", " ").title()
                         if item != "quit":
-                            line_text = text_ljust(str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.", 30)
-                            print(" " * 6 + line_text[0] + "[" + str(player.inventory.items[item]) + "]")
+                            line_text = text_ljust(msg=f"{n + 1}) {item_name} x {value} gold.", width=30)
+                            print(f"{' ' * 6}{line_text[0]}[{player.inventory.items[item]}]")
+
                         else:
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " "))
+                            print(f"{' ' * 6}{n + 1}) {item_name}")
                         items.append(item)
                         prices.append(value)
                         n += 1
-                    print(" " * 6 + str(n + 1) + ") Quit.")
+                    print(f"{' ' * 6}{n + 1}) Quit.")
                     items.append("quit")
                     print()
-                    print(" " * 6 + "GOLD: " + str(player.inventory.gold) + ".\n")
+                    print(f"{' ' * 6}GOLD: {player.inventory.gold}.\n")
 
                     while True:
                         try:
-                            item = int(input(" " * 4 + "# ")) - 1
+                            item = int(input(f"{' ' * 4}'# '")) - 1
                             if 0 <= item < len(items):
+                                item_name = items[item].replace("_", " ").title()
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
                                 print()
-                                print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to sell?")
+                                print(f"{' ' * 4}How many{item_name} do you want to sell?")
                                 while True:
                                     try:
                                         quantity = int(input(" " * 4 + "# "))
@@ -487,19 +530,21 @@ def talk(npc: Npc, player: Player) -> str:
                     prices = []
                     n = 0
                     for item, value in npc.buy_beds.items():
+                        item_name = item.replace("_", " ").title()
                         if item != "quit":
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value[0]) + " gold.")
+                            print(f"{' ' * 6}{n + 1}) {item_name} x {value[0]} gold.")
+
                         else:
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title())
+                            print(f"{' ' * 6}{n + 1}) {item_name}")
                         items.append(value[1])
                         prices.append(value[0])
                         n += 1
                     print()
-                    print(" " * 6 + "[GOLD: " + str(player.inventory.gold) + "]\n")
+                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
 
                     while True:
                         try:
-                            item = int(input(" " * 4 + "# ")) - 1
+                            item = int(input(f"{' ' * 4}'# '")) - 1
                             if 0 <= item < len(items):
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
@@ -528,37 +573,45 @@ def talk(npc: Npc, player: Player) -> str:
                     prices = []
                     n = 0
                     for item, value in npc.buy_items.items():
+                        item_name = item.replace("_", " ").title()
                         if item != "quit":
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title() + " x " + str(value) + " gold.")
+                            print(f"{' ' * 6}{n + 1}) {item_name}  x {value} gold.")
+
                         else:
-                            print(" " * 6 + str(n + 1) + ") " + item.replace("_", " ").title())
+                            print(f"{' ' * 6}{n + 1}) {item_name}")
                         items.append(item)
                         prices.append(value)
                         n += 1
                     print()
-                    print(" " * 6 + "[GOLD: " + str(player.inventory.gold) + "]\n")
+                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
 
                     while True:
                         try:
-                            item = int(input(" " * 4 + "# ")) - 1
+                            item = int(input(f"{' ' * 4}'# '")) - 1
                             if 0 <= item < len(items):
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
                                 print()
-                                print(" " * 4 + "How many " + items[item].replace("_", " ").title() + " do you want to buy?")
+                                item_name = items[item].replace('_', ' ').title()
+                                print(f"{' ' * 4}How many {item_name} do you want to buy?")
 
                                 while True:
                                     try:
                                         quantity = int(input(" " * 4 + "# "))
-                                        transaction, transaction_status = buy(player, items[item], quantity, prices[item])
+                                        transaction, transaction_status = buy(player=player,
+                                                                              item=items[item],
+                                                                              quantity=quantity,
+                                                                              price=prices[item])
                                         transactions += transaction
                                         break
 
                                     except ValueError:
                                         break
                                 break
+
                             else:
                                 break
+
                         except ValueError:
                             pass
 
@@ -566,35 +619,63 @@ def talk(npc: Npc, player: Player) -> str:
             return "You heard some whispers. "
 
         else:
-            return "You talked with " + npc.name.title() + "."  # Break if the npc has no second message.
+            return f"You talked with {npc.name.title()}."  # Break if the npc has no second message.
 
 
 # Unequip action.
-def unequip(player: Player(), item_name: str) -> str:
-    item = item_name.replace(" ", "_").lower()
-    item_name = item_name.replace("_", " ").title()
+def unequip(player: Player, item: str) -> str:
+    item_name = item.replace("_", " ").lower()
+
     if item in player.equip.values():
         body_part = globals.ITEMS_EQUIP[item]["body"]
         player.equip[body_part] = "None"
+
         try:
             player.inventory.items[item] += 1
-            return "You have unequip " + item_name + "."
+            return f"You have unequip {item_name}."
+
         except KeyError:
             player.inventory.items[item] = 1
-            return "You have unequip " + item_name + "."
+            return f"You have unequip {item_name}."
+
     else:
-        return "You don't have " + item_name + " equipped."
+        return f"You don't have {item_name} equipped."
+
+
+# Use boat.
+def use_boat(player: Player, map_game: Map) -> str:
+    place = map_game.map_settings[coordstr(player.x, player.y)]
+    
+    if "boat" in place.items and player.status != PlayerStatus.SURF.value:
+        player.status = PlayerStatus.SURF.value
+        place.items.remove("boat")
+
+        if f"{(player.x, player.y)}" == "(6, 2)":
+            description = """Seaside with swaying palm trees, echoing waves, and vibrant life. A solitary figure stands 
+            at the water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves
+             and the boundless horizon stretching before them."""
+            place.description = description
+
+        else:
+            place.description = "Seaside with swaying palm trees, echoing waves, and vibrant life."
+
+        return "You are in the boat."
+
+    elif player.status == PlayerStatus.SURF.value:
+        return "You are already in the boat."
+
+    else:
+        return "There is no boat here."
 
 
 # Use action (general).
-def use(player: Player, obj: str) -> tuple[str, bool]:
-    item = obj.replace(" ", "_").lower()
+def use(player: Player, item: str) -> tuple[str, bool]:
 
     if item == "gold":
-        return "You can't use " + item.replace("_", " ").title() + ".", False
+        return f"You can't use {item.replace('_', ' ').title()}.", False
 
     if item not in player.inventory.items.keys():
-        return "You have no " + item.replace("_", " ").title() + ".", False
+        return f"You have no {item.replace('_', ' ').title()}.", False
 
     if player.inventory.items[item] > 0:
         if "potion" in item:
@@ -612,7 +693,7 @@ def use(player: Player, obj: str) -> tuple[str, bool]:
 
             player.inventory.items[item] -= 1
 
-            return player.name + "'s HP refilled to " + str(player.hp) + "!", True
+            return f"{player.name}'s HP refilled to {player.hp}!", True
 
         elif "antidote" in item:
             player.heal_poisoning()
@@ -623,38 +704,11 @@ def use(player: Player, obj: str) -> tuple[str, bool]:
         else:
             return "You can't use this item.", False
     else:
-        return "You have no more " + item.replace("_", " ").title() + ".", False
-
-
-# Use boat.
-def use_boat(x: int, y: int, player: Player(), ms: dict) -> str:
-    if "boat" in ms[coordstr(x, y)].items and player.status != 1:
-        player.status = 1
-        ms[coordstr(x, y)].items.remove("boat")
-        if "(x, y)" == "(6, 2)":
-            ms[coordstr(x, y)].description = "Seaside with swaying palm trees, echoing waves, and vibrant life. A " \
-                                             "solitary figure stands at the water's edge, gazing out into the " \
-                                             "vastness of the sea, captivated by the rhythmic dance of the waves and " \
-                                             "the boundless horizon stretching before them."
-        else:
-            ms[coordstr(x, y)].description = "Seaside with swaying palm trees, echoing waves, and vibrant life."
-        return "You are in the boat."
-    elif player.status == 1:
-        return "You are already in the boat."
-    else:
-        return "There is no boat here."
+        return f"You have no more {item.replace('_', ' ').title()}.", False
 
 
 # Wait action.
-def wait(actual_hs, opt: str) -> tuple[str, int, str]:
-    if opt not in ["morning", "afternoon", "evening", "night"]:
-        hs, d_moment = day_est(actual_hs, 0)
-        return "This is not posible.", actual_hs, d_moment
-    elif opt == "morning":
-        return "You wait until the morning.", 6, "MORNING"
-    elif opt == "afternoon":
-        return "You wait until the afternoon.", 12, "AFTERNOON"
-    elif opt == "evening":
-        return "You wait until the evening.", 18, "EVENING"
-    else:
-        return "You slept wait the night.", 22, "NIGHT"
+def wait(map_game: Map, time_of_day: int) -> str:
+    map_game.skip_to(time_of_day=time_of_day)
+    return f"You wait until the {TimeOfDay(time_of_day).name.title()}."
+

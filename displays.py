@@ -1,10 +1,10 @@
 # Imports.
-# External imports.
-import numpy as np
-
 # Locals imports.
-from biome import Biome
 import globals
+
+from biome import Biome
+from enums import Season, Months, TimeOfDay, WeekDays
+from map import Map
 from player import Player
 from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter
 
@@ -105,10 +105,8 @@ def disp_look_around(place) -> str:
 
 # Play display.
 def disp_play(player: Player,
-              loc: str,
+              map_game: Map,
               reg: str,
-              time: str,
-              des: str,
               x: int,
               y: int,
               mdir: list,
@@ -118,10 +116,13 @@ def disp_play(player: Player,
     print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
     print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
     print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
-    t_loc = "LOCATION: " + loc.upper()
+    t_loc = "LOCATION: " + player.place.name.upper()
     t_reg = "\n REGION: " + reg.upper()
     t_coord = "\n COORD: " + str(x) + " " + str(y)
-    t_time = "\n TIME OF DAY: " + time.upper()
+    t_time = f"\n TIME OF DAY: {map_game.current_time_of_day_name.upper()} [{map_game.hour}HS]"
+    t_week_day = f"\n WEEK DAY: {map_game.current_week_day_name.upper()} [{map_game.day} DAY]"
+    t_month_year = f"\n MONTH: {Months(map_game.month).name.upper()} - YEAR: {map_game.year}"
+
     t_name = "NAME: " + player.name.upper()
     t_hp = "\nHP: " + str(int(player.hp)) + "/" + str(player.hpmax)
     t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
@@ -153,8 +154,8 @@ def disp_play(player: Player,
     # t_dex = "\n DEXTERITY:  " + str(int(user["b_dex"]))
     t_vit = "\n VITALITY:   " + str(int(player.vitality))
 
-    text1 = t_loc + t_reg + t_coord + t_time + "\n." * 3
-    text2 = des
+    text1 = t_loc + t_reg + t_coord + "\n." + t_time + t_week_day + t_month_year
+    text2 = player.place.description
     text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + t_status + t_gold
     text41 = prim_stats + t_atk + t_def + t_eva + t_pre
     text42 = sec_stats + t_str + t_res + t_agi + t_vit

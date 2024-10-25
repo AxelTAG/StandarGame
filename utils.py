@@ -106,7 +106,7 @@ def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
 
 
 # Functions that simplifies moving options.
-def draw_move(x: int, y: int, map_heigt: int, map_width: int, player: Player, tl_map: list, ms: dict) -> list:
+def draw_move(x: int, y: int, map_height: int, map_width: int, player: Player, tl_map: list, ms: dict) -> list:
     inventory = player.inventory.items
     events = [*player.events.keys()]
     active_moves = [0, 0, 0, 0]
@@ -115,7 +115,7 @@ def draw_move(x: int, y: int, map_heigt: int, map_width: int, player: Player, tl
             if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
                 active_moves[0] = 1
 
-        if x < map_heigt and all(req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status:
+        if x < map_height and all(req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status:
             if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
                 active_moves[1] = 1
 
@@ -149,13 +149,13 @@ def export_dict_to_txt(dictionary: dict, file_path: str) -> None:
 
 
 # Export player function.
-def export_player(player, path: str) -> None:
+def export_player(player: object, path: str) -> None:
     with open(path, 'wb') as file:
         pickle.dump(player, file)
 
 
 # Export player function.
-def export_settings(setting, path: str) -> None:
+def export_settings(setting: object, path: str) -> None:
     with open(path, 'wb') as file:
         pickle.dump(setting, file)
 

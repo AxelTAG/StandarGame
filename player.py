@@ -1,5 +1,7 @@
 # Imports.
 # Local imports.
+from biome import Biome, Entry
+from enums import PlayerStatus
 from inventory import Inventory
 
 # External imports.
@@ -36,13 +38,13 @@ class Player:
                  y_cp: int = 0,
                  st_points: int = 0,
                  sk_points: int = 0,
-                 slot1: str = "Red Potion",
-                 slot2: str = "Litle Red Potion",
-                 equip=None,
+                 slot1: str = "red_potion",
+                 slot2: str = "litle_red_potion",
+                 equip: dict = None,
                  inventory: Inventory = Inventory(),
-                 status: int = 0,
+                 status: int = PlayerStatus.WALK.value,
                  outside: bool = False,
-                 place=None,
+                 place: Biome | Entry = None,
                  explored_map: np.array = None,
                  poison: int = 0):
 

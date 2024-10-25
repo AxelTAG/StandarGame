@@ -119,13 +119,14 @@ while run:
                     menu = False
                     play = True
 
-            except:
+            except FileNotFoundError:
                 clear()
                 disp_title()
 
                 print(" < NEW GAME >")
                 print()
 
+                player = Player()
                 while not check_name(player.name):
                     player.name = input(" # What's your NAME, hero? ").title()
                 menu = False
@@ -213,27 +214,6 @@ while run:
 
             # Player status refresh.
             player.refresh_status()
-
-        # Lvl upgrade of user.
-        if player.exp >= player.expmax:
-            player.lvl += 1
-            player.exp = 0
-            player.expmax = 10 * player.lvl
-            player.b_hpmax += 2
-            player.b_attack += 0.4
-            player.b_defense += 0.20
-            player.b_precision += 0.005
-            player.b_evasion += 0.01
-            player.st_points += 3
-            screen = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
-
-        # Refreshing stats of user.
-        items_stats = sum_item_stats(player.equip)
-        player.hpmax = player.b_hpmax + player.vitality * 2
-        player.attack = player.b_attack + int(player.strength * 0.4) + items_stats["atk"]
-        player.defense = player.b_defense + int(player.resistance * 0.4) + items_stats["def"]
-        player.evasion = player.b_evasion + player.agility * 0.01 + items_stats["eva"]
-        player.precision = player.b_precision + player.agility * 0.005 + items_stats["pre"]
 
         if play:
             # Draw of general stats.
@@ -494,6 +474,10 @@ while run:
             # # Admin commands.
             elif action[0] == "calendar":  # Calendar.
                 screen = f"{map_game.day, map_game.month, map_game.year}"
+                standing = True
+
+            elif action[0] == "attack":  # Calendar.
+                screen = f"{player.attack, player.attack_equip}"
                 standing = True
 
             # elif action[0] == "teleport":

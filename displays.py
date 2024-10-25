@@ -24,7 +24,7 @@ def disp_bar(n: int = 18, disp: bool = True) -> str:
 
 
 # Battle display.
-def disp_battle(player: Player(), enemy: dict, text: str) -> None:
+def disp_battle(player: Player, enemy: dict, text: str) -> None:
     width = 36
     clear()
     disp_title()
@@ -84,10 +84,12 @@ def disp_enter(place) -> str:
 def disp_equip(equip: dict) -> str:
     text = "EQUIP:"
     for body_part, item in equip.items():
-        if equip[body_part]:
-            text += "\n- " + body_part.replace("_", " ").title() + ": " + item.replace("_", " ").title() + "."
+        body_part_name = body_part.name.replace('_', ' ').title()
+
+        if equip[body_part] is not None:
+            text += f"\n- {body_part_name}: {item.name}."
         else:
-            text += "\n- " + body_part.replace("_", " ").title() + ": " + str(item) + "."
+            text += f"\n- {body_part_name}: None."
     return text
 
 

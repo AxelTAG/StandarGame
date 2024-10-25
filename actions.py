@@ -7,10 +7,20 @@ import globals
 from biome import Biome, Entry
 from displays import disp_battle, disp_talk_answers, disp_talk_tw
 from enums import PlayerStatus, TimeOfDay
+from item import Item
 from map import Map
 from npc import Npc
 from player import Player
 from utils import coordstr, reset_map, text_ljust
+
+
+# ----------------------------------------------------------------------------------------------------
+# Utiliy functions.
+def get_item(item_name: str) -> Item:
+    if item_name in globals.ITEMS.keys():
+        return globals.ITEMS[item_name]
+
+# ----------------------------------------------------------------------------------------------------
 
 
 # Battle action.
@@ -64,6 +74,7 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
         input(" > ")
 
         # Logic of fight status or result.
+        # Lose.
         if player.hp <= 0:
             disp_battle(player, enemy, screen)
             screen += "\n " + enemy["name"] + " defeated " + player.name + "..."
@@ -82,12 +93,12 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
             input(" > ")
             return play, menu, 0
 
+        # Win.
         if enemy["hp"] <= 0:
             screen += "\n " + "You defeated the " + enemy["name"] + "!"
             fight = False
 
-            # Drop items logic.
-            player.exp += enemy["exp"]
+            # Drop items logic and exp gain.
             if enemy["items"]:
                 drop_quantity = random.randint(1, len(enemy["items"])) - 1
                 drop_items = list(set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
@@ -104,6 +115,9 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
 
             screen += "\n You have gained " + str(enemy["exp"]) + " experience."
 
+            if player.add_exp(enemy["exp"]):
+                screen += "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
+
     disp_battle(player, enemy, screen)
     input(" > ")
 
@@ -111,7 +125,7 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
 
 
 # Buy action.
-def buy(player: Player(), item: str, quantity: int, price: int) -> tuple[str, bool]:
+def buy(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool]:
     """
     Attempts to buy a specified quantity of an item for a player if they have enough gold.
 
@@ -236,25 +250,23 @@ def enter(player: Player, entrie: str) -> tuple[str, bool]:
 
 
 # Equip action.
-def equip(player: Player(), item: str) -> str:
-    item_name = item.replace("_", " ").lower()
+def equip(player: Player, item: str) -> str:
+    item_name = item.replace('_', ' ').title()
+    item_object = get_item(item_name=item)
 
-    if item in player.inventory.items.keys() and player.inventory.items[item] > 0 and item in globals.ITEMS_EQUIP.keys():
-        body_part = globals.ITEMS_EQUIP[item]["body"]
+    if item not in player.inventory.items.keys() or item_object is None:
+        return f"You don't have {item_name}."
 
-        if player.equip[body_part] == "None":
-            player.equip[body_part] = item
-            player.inventory.items[item] -= 1
-            return f"You have equip {item_name.title()}."
+    elif not item_object.equippable:
+        return f"You can't equip {item_object.name}."
 
-        else:
-            return f"You already have an item equipped. UNEQUIP {player.equip[body_part].title()}."
+    elif player.equip[item_object.body_part] is not None:
+        return f"You already have an item equipped. UNEQUIP {item_object.body_part.name}."
 
-    elif item not in player.inventory.items.keys() or player.inventory.items[item] < 1:
-        return f"You don't have {item_name.title()}."
-
-    elif item not in globals.ITEMS_EQUIP.keys():
-        return f"You can't equip {item_name.title()}."
+    else:
+        player.equip[item_object.body_part] = item_object
+        player.inventory.drop_item(item=item, quantity=1)
+        return f"You have equip {item_object.name}."
 
 
 # Explore action.
@@ -308,7 +320,7 @@ def leave(x: int, y: int, ms: dict):
 
 
 # Move function.
-def move(player: Player(),
+def move(player: Player,
          map_game: Map,
          mv: str) -> tuple[str, bool]:
     x, y = player.x, player.y
@@ -624,22 +636,16 @@ def talk(npc: Npc, player: Player) -> str:
 
 # Unequip action.
 def unequip(player: Player, item: str) -> str:
-    item_name = item.replace("_", " ").lower()
+    item_name = item.replace("_", " ").title()
+    item_object = get_item(item_name=item)
 
-    if item in player.equip.values():
-        body_part = globals.ITEMS_EQUIP[item]["body"]
-        player.equip[body_part] = "None"
-
-        try:
-            player.inventory.items[item] += 1
-            return f"You have unequip {item_name}."
-
-        except KeyError:
-            player.inventory.items[item] = 1
-            return f"You have unequip {item_name}."
+    if item_object not in player.equip.values() or item_object is None:
+        return f"You don't have equipped {item_name}."
 
     else:
-        return f"You don't have {item_name} equipped."
+        player.unequip_item(item=item_object)
+        player.inventory.add_item(item=item, quantity=1)
+        return f"You have unequip {item_object.name}."
 
 
 # Use boat.

@@ -15,8 +15,7 @@ from enums import TimeOfDay
 from management import event_handler, save
 from map import Map
 from player import Player
-from utils import (coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
-                   get_hash, sum_item_stats)
+from utils import coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name, get_hash
 
 # Game variables.
 run = True
@@ -109,7 +108,6 @@ while run:
                     player = Player()
                     inventory = player.inventory  # Inventory.
 
-                    npc = globals.NPCS.copy()
                     mobs = globals.MOBS.copy()
 
                     screen = "Nothing done yet."
@@ -119,7 +117,7 @@ while run:
                     menu = False
                     play = True
 
-            except FileNotFoundError:
+            except:
                 clear()
                 disp_title()
 
@@ -143,20 +141,22 @@ while run:
                 player.place = map_game.map_settings[coordstr(x=0, y=0)].entries["hut"]
 
                 # Introduction setting.
-                npc["whispers"].messages[0] = [player.name + "...", player.name + "...", "...your destiny awaits.",
-                                               "Follow the whispers of the wind, and come to me.", "Secrets untold and"
-                                               " challenges unknown lie ahead.", "Trust in the unseen path...",
-                                               "... come to me."]
+                map_game.npcs["whispers"].messages[0] = [player.name + "...", player.name + "...",
+                                                         "...your destiny awaits.",
+                                                         "Follow the whispers of the wind, and come to me.",
+                                                         "Secrets untold and"
+                                                         " challenges unknown lie ahead.",
+                                                         "Trust in the unseen path...",
+                                                         "... come to me."]
 
                 # Dragon Firefrost setting.
-                npc["dragon firefrost"].messages = [player.name + "...",
-                                                    "You finally come to me...",
-                                                    "Destiny calls ""for a dance of fire and frost between us...",
-                                                    "Ready your blade..."]
+                map_game.npcs["dragon firefrost"].messages = [player.name + "...", "You finally come to me...",
+                                                              "Destiny calls ""for a dance of fire and frost between us...",
+                                                              "Ready your blade..."]
 
                 # Introduction.
                 if player.name:
-                    screen = talk(npc=npc["whispers"], player=player)
+                    screen = talk(npc=map_game.npcs["whispers"], player=player)
 
         elif choice == "2":  # Load game choice.
             try:
@@ -172,8 +172,6 @@ while run:
                 load_hash = load_dict_from_txt("cfg_hash.txt")
                 if get_hash("cfg_save.pkl") != load_hash["hash"]:
                     raise OSError
-
-                npc.update(load_setting["npc"])
 
                 player.place = map_game.map_settings[coordstr(player.x, player.y)]
                 player.outside = True
@@ -199,7 +197,7 @@ while run:
     time_init = datetime.now()
     while play:
         # Autosave.
-        save(player=player, map_game=map_game, npc=npc, time_init=time_init)  # Autosave.
+        save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)  # Autosave.
         time_init = datetime.now()
         clear()
 
@@ -210,7 +208,7 @@ while run:
                 if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
                     play, menu, win = battle(player, mobs[enemy].copy(), map_game.map_settings)
-                    save(player=player, map_game=map_game, npc=npc, time_init=time_init)
+                    save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
 
             # Player status refresh.
             player.refresh_status()
@@ -243,7 +241,7 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(player=player, map_game=map_game, npc=npc, time_init=time_init)
+                save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 if player.outside:
@@ -332,7 +330,7 @@ while run:
                     if fight:
                         play, menu, win = battle(player=player, enemy=mobs["orc"].copy(), ms=map_game.map_settings)
                         if not play:
-                            save(player=player, map_game=map_game, npc=npc, time_init=time_init)
+                            save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
 
                     standing = True
 
@@ -431,7 +429,7 @@ while run:
                     standing = True
 
                 elif npc_name in player.place.npc:
-                    screen = talk(npc=npc[npc_name], player=player)
+                    screen = talk(npc=map_game.npcs[npc_name], player=player)
                     standing = True
 
                 else:
@@ -476,10 +474,6 @@ while run:
                 screen = f"{map_game.day, map_game.month, map_game.year}"
                 standing = True
 
-            elif action[0] == "attack":  # Calendar.
-                screen = f"{player.attack, player.attack_equip}"
-                standing = True
-
             # elif action[0] == "teleport":
             #     player.x = int(action[1])
             #     player.y = int(action[2])
@@ -512,4 +506,4 @@ while run:
                 standing = True
 
             # Event handler.
-            npc, map_game.map_settings, play, menu = event_handler(player, npc, map_game.map_settings, mobs, time_init, play, menu)
+            map_game.npcs, map_game.map_settings, play, menu = event_handler(player, map_game.npcs, map_game.map_settings, mobs, time_init, play, menu)

@@ -1,6 +1,6 @@
 ﻿# Imports.
 # Local imports.
-from biome import Biome
+from biome import Biome, Entry
 from enums import BodyPart
 from item import Item
 from npc import Npc
@@ -10,10 +10,10 @@ WIDTH = 92
 HEIGHT = 32
 
 # Patron.
-PATRON = [" / /\  ", "/ /\ \ ","\ \/ / ", " \/ /  ", " / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  "]
+PATRON = [" / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  ", " / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  "]
 
 # Directions.
-DIRECTIONS = {0: "1 - NORTH",  1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
+DIRECTIONS = {0: "1 - NORTH", 1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
 
 # Colors.
 WHITE = (255, 255, 255, 255)
@@ -252,7 +252,20 @@ BIOMES = {
         name="WATER",
         req=[],
         status=[1])
-    }
+}
+
+ENTRIES = {
+    "hut_0_0": Entry(description="Island hut, a cozy retreat adorned with a bed, a table, two "
+                                    "chairs, and a window, invites serenity amid nature's whispers.",
+                        items=["bed", "short_sword", "bread", "apple"]),
+
+    "mirabelle_small_room": Entry(),
+
+    "hut_1_23": Entry(description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
+                                  "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
+                                  " to secure the uncertain safety within.",
+                      items=["bed"])
+}
 
 ITEMS = {
     # Equippable items.
@@ -263,11 +276,26 @@ ITEMS = {
                 precision=0,
                 evasion=0,
                 body_part=BodyPart.RIGHT_HAND,
+                pickable=True,
                 consumable=False,
                 equippable=True,
                 expiration=None,
                 buy_price=200,
                 sell_price=150),
+    "bludgeon": Item(name="Axe",
+                     description="Hefty Bludgeon blunt and brutal, ideal for stunning foes with a single, "
+                                 "powerful blow.",
+                     attack=2,
+                     defense=0,
+                     precision=0,
+                     evasion=0,
+                     body_part=BodyPart.RIGHT_HAND,
+                     pickable=True,
+                     consumable=False,
+                     equippable=True,
+                     expiration=None,
+                     buy_price=200,
+                     sell_price=40),
     "chainmail_armor": Item(name="Chainmail Armor",
                             description=("Sturdy armor made of interlocked rings. Offers great protection for the "
                                          "chest."),
@@ -276,11 +304,12 @@ ITEMS = {
                             precision=0,
                             evasion=0,
                             body_part=BodyPart.CHEST,
+                            pickable=True,
                             consumable=False,
                             equippable=True,
                             expiration=None,
                             buy_price=500,
-                            sell_price=300),
+                            sell_price=150),
     "hardened_leather_armor": Item(name="Hardened Leather Armor",
                                    description=("Thick, reinforced leather armor. Flexible and offers decent "
                                                 "protection."),
@@ -289,11 +318,12 @@ ITEMS = {
                                    precision=0,
                                    evasion=0,
                                    body_part=BodyPart.CHEST,
+                                   pickable=True,
                                    consumable=False,
                                    equippable=True,
                                    expiration=None,
                                    buy_price=300,
-                                   sell_price=200),
+                                   sell_price=60),
     "harpoon": Item(name="Harpoon",
                     description="A sharp harpoon for striking enemies from a distance. Balanced and quick.",
                     attack=2,
@@ -301,11 +331,12 @@ ITEMS = {
                     precision=0,
                     evasion=0.1,
                     body_part=BodyPart.RIGHT_HAND,
+                    pickable=True,
                     consumable=False,
                     equippable=True,
                     expiration=None,
                     buy_price=150,
-                    sell_price=100),
+                    sell_price=40),
     "iron_shield": Item(name="Iron Shield",
                         description="Solid iron shield. Blocks incoming attacks with ease.",
                         attack=0,
@@ -313,11 +344,12 @@ ITEMS = {
                         precision=0,
                         evasion=0,
                         body_part=BodyPart.LEFT_HAND,
+                        pickable=True,
                         consumable=False,
                         equippable=True,
                         expiration=None,
                         buy_price=400,
-                        sell_price=250),
+                        sell_price=75),
     "large_bow": Item(name="Large Bow",
                       description="A hefty bow designed for long-range attacks. Great precision and speed.",
                       attack=2,
@@ -325,11 +357,12 @@ ITEMS = {
                       precision=0.15,
                       evasion=0.30,
                       body_part=BodyPart.RIGHT_HAND,
+                      pickable=True,
                       consumable=False,
                       equippable=True,
                       expiration=None,
                       buy_price=350,
-                      sell_price=200),
+                      sell_price=110),
     "leather_armor": Item(name="Leather Armor",
                           description="Basic leather armor. Provides light protection to the chest.",
                           attack=0,
@@ -337,11 +370,12 @@ ITEMS = {
                           precision=0,
                           evasion=0,
                           body_part=BodyPart.CHEST,
+                          pickable=True,
                           consumable=False,
                           equippable=True,
                           expiration=None,
                           buy_price=200,
-                          sell_price=100),
+                          sell_price=35),
     "leather_boots": Item(name="Leather Boots",
                           description="Sturdy boots made of leather. Offers some defense for your legs.",
                           attack=0,
@@ -349,11 +383,12 @@ ITEMS = {
                           precision=0,
                           evasion=0,
                           body_part=BodyPart.LEGS,
+                          pickable=True,
                           consumable=False,
                           equippable=True,
                           expiration=None,
                           buy_price=150,
-                          sell_price=80),
+                          sell_price=25),
     "longsword": Item(name="Longsword",
                       description="A finely crafted longsword. Perfect for dealing heavy, precise strikes.",
                       attack=4,
@@ -361,11 +396,12 @@ ITEMS = {
                       precision=0.05,
                       evasion=0,
                       body_part=BodyPart.RIGHT_HAND,
+                      pickable=True,
                       consumable=False,
                       equippable=True,
                       expiration=None,
                       buy_price=500,
-                      sell_price=300),
+                      sell_price=175),
     "mesh_boots": Item(name="Mesh Boots",
                        description="Flexible boots with added defense. Protects legs while maintaining mobility.",
                        attack=0,
@@ -373,11 +409,12 @@ ITEMS = {
                        precision=0,
                        evasion=0,
                        body_part=BodyPart.LEGS,
+                       pickable=True,
                        consumable=False,
                        equippable=True,
                        expiration=None,
                        buy_price=250,
-                       sell_price=150),
+                       sell_price=50),
     "plate_armor": Item(name="Plate Armor",
                         description="Heavy plate armor that offers superior protection to the chest.",
                         attack=0,
@@ -385,11 +422,12 @@ ITEMS = {
                         precision=0,
                         evasion=0,
                         body_part=BodyPart.CHEST,
+                        pickable=True,
                         consumable=False,
                         equippable=True,
                         expiration=None,
                         buy_price=700,
-                        sell_price=400),
+                        sell_price=200),
     "short_sword": Item(name="Short Sword",
                         description=("A trusty Short Sword, swift and precise, ideal for close-quarter battles against "
                                      "foes in the wild."),
@@ -398,11 +436,12 @@ ITEMS = {
                         precision=0,
                         evasion=0,
                         body_part=BodyPart.RIGHT_HAND,
+                        pickable=True,
                         consumable=False,
                         equippable=True,
                         expiration=None,
                         buy_price=150,
-                        sell_price=100),
+                        sell_price=50),
     "spear": Item(name="Spear",
                   description="A long spear for thrusting attacks. Great reach and balance.",
                   attack=3,
@@ -410,11 +449,12 @@ ITEMS = {
                   precision=0.05,
                   evasion=0.15,
                   body_part=BodyPart.RIGHT_HAND,
+                  pickable=True,
                   consumable=False,
                   equippable=True,
                   expiration=None,
                   buy_price=300,
-                  sell_price=200),
+                  sell_price=125),
     "spike_shield": Item(name="Spike Shield",
                          description="A sturdy shield with deadly spikes. Can block and deal damage.",
                          attack=1,
@@ -422,11 +462,12 @@ ITEMS = {
                          precision=0,
                          evasion=0,
                          body_part=BodyPart.LEFT_HAND,
+                         pickable=True,
                          consumable=False,
                          equippable=True,
                          expiration=None,
                          buy_price=500,
-                         sell_price=300),
+                         sell_price=150),
     "sword": Item(name="Sword",
                   description="A balanced sword. Reliable for close combat with decent attack power.",
                   attack=3,
@@ -434,11 +475,12 @@ ITEMS = {
                   precision=0.05,
                   evasion=0,
                   body_part=BodyPart.RIGHT_HAND,
+                  pickable=True,
                   consumable=False,
                   equippable=True,
                   expiration=None,
                   buy_price=400,
-                  sell_price=250),
+                  sell_price=150),
     "tower_shield": Item(name="Tower Shield",
                          description="A massive shield offering unparalleled defense. Best for tanking heavy attacks.",
                          attack=0,
@@ -446,11 +488,12 @@ ITEMS = {
                          precision=0,
                          evasion=0,
                          body_part=BodyPart.LEFT_HAND,
+                         pickable=True,
                          consumable=False,
                          equippable=True,
                          expiration=None,
                          buy_price=600,
-                         sell_price=400),
+                         sell_price=150),
     "wood_shield": Item(name="Wood Shield",
                         description="A simple wooden shield. Provides basic defense.",
                         attack=0,
@@ -458,34 +501,37 @@ ITEMS = {
                         precision=0,
                         evasion=0,
                         body_part=BodyPart.LEFT_HAND,
+                        pickable=True,
                         consumable=False,
                         equippable=True,
                         expiration=None,
                         buy_price=100,
-                        sell_price=50),
+                        sell_price=20),
+
+    # Consumable items.
     "apple": Item(name="Apple",
                   description="A fresh, red apple. Satisfies hunger but offers no special effects.",
                   attack=0,
                   defense=0,
                   precision=0,
                   evasion=0,
+                  pickable=True,
                   consumable=True,
                   equippable=False,
                   expiration=None,
                   buy_price=1,
                   sell_price=1),
-
-    # Consumable items.
     "antidote": Item(name="Antidote",
                      description="A small vial that cures poison. Essential for survival in venomous areas.",
                      attack=0,
                      defense=0,
                      precision=0,
                      evasion=0,
+                     pickable=True,
                      consumable=True,
                      equippable=False,
                      expiration=None,
-                     buy_price=3,
+                     buy_price=5,
                      sell_price=3),
     "basilisk_fangs": Item(name="Basilisk Fangs",
                            description="Deadly fangs of a basilisk. Handle with care, might still be venomous.",
@@ -493,6 +539,7 @@ ITEMS = {
                            defense=0,
                            precision=0,
                            evasion=0,
+                           pickable=True,
                            consumable=False,
                            equippable=False,
                            expiration=None,
@@ -504,6 +551,7 @@ ITEMS = {
                  defense=0,
                  precision=0,
                  evasion=0,
+                 pickable=True,
                  consumable=True,
                  equippable=False,
                  expiration=None,
@@ -515,6 +563,7 @@ ITEMS = {
                   defense=0,
                   precision=0,
                   evasion=0,
+                  pickable=True,
                   consumable=True,
                   equippable=False,
                   expiration=None,
@@ -526,6 +575,7 @@ ITEMS = {
                    defense=0,
                    precision=0,
                    evasion=0,
+                   pickable=True,
                    consumable=True,
                    equippable=False,
                    expiration=None,
@@ -537,6 +587,7 @@ ITEMS = {
                          defense=0,
                          precision=0,
                          evasion=0,
+                         pickable=True,
                          consumable=False,
                          equippable=False,
                          expiration=None,
@@ -548,6 +599,7 @@ ITEMS = {
                              defense=0,
                              precision=0,
                              evasion=0,
+                             pickable=True,
                              consumable=True,
                              equippable=False,
                              expiration=None,
@@ -559,6 +611,7 @@ ITEMS = {
                        defense=0,
                        precision=0,
                        evasion=0,
+                       pickable=True,
                        consumable=False,
                        equippable=False,
                        expiration=None,
@@ -570,6 +623,7 @@ ITEMS = {
                              defense=0,
                              precision=0,
                              evasion=0,
+                             pickable=True,
                              consumable=True,
                              equippable=False,
                              expiration=None,
@@ -581,6 +635,7 @@ ITEMS = {
                        defense=0,
                        precision=0,
                        evasion=0,
+                       pickable=True,
                        consumable=True,
                        equippable=False,
                        expiration=None,
@@ -592,6 +647,7 @@ ITEMS = {
                         defense=0,
                         precision=0,
                         evasion=0,
+                        pickable=True,
                         consumable=False,
                         equippable=False,
                         expiration=None,
@@ -603,6 +659,7 @@ ITEMS = {
                  defense=0,
                  precision=0,
                  evasion=0,
+                 pickable=True,
                  consumable=False,
                  equippable=False,
                  expiration=None,
@@ -614,6 +671,7 @@ ITEMS = {
                       defense=0,
                       precision=0,
                       evasion=0,
+                      pickable=True,
                       consumable=False,
                       equippable=False,
                       expiration=None,
@@ -625,6 +683,7 @@ ITEMS = {
                   defense=0,
                   precision=0,
                   evasion=0,
+                  pickable=True,
                   consumable=True,
                   equippable=False,
                   expiration=None,
@@ -636,171 +695,50 @@ ITEMS = {
                   defense=0,
                   precision=0,
                   evasion=0,
+                  pickable=True,
                   consumable=True,
                   equippable=False,
                   expiration=None,
                   buy_price=1,
                   sell_price=1),
-    "quit": Item(name="Quit",
-                 description="This item ends the game session when used.",
+
+    # Places items.
+    "bed": Item(name="Bed",
+                description="Simple yet soft, promising warmth and restful sleep in humble surroundings",
+                attack=0,
+                defense=0,
+                precision=0,
+                evasion=0,
+                pickable=False,
+                consumable=False,
+                equippable=False,
+                expiration=None,
+                buy_price=300,
+                sell_price=150),
+    "boat": Item(name="Boat",
+                 description="A sturdy sooden ship crafted to brave the seas, steady against waves and fierce winds.",
                  attack=0,
                  defense=0,
                  precision=0,
                  evasion=0,
-                 consumable=True,
+                 pickable=False,
+                 consumable=False,
                  equippable=False,
                  expiration=None,
-                 buy_price=0,
-                 sell_price=0)
+                 buy_price=1000,
+                 sell_price=700),
+    "origame_flowers": Item(name="Origame Flowers",
+                            description="Paper flowers, seem to have something inside the stem, but you can't get it "
+                                        "out with your fingers, you need a long stick."),
+
+    # Others.
+    "quit": Item(name="Quit",
+                 description="This item ends the game session when used."),
+    "small_room_key": Item(name="Small Room Key",
+                           description="Small room key, worn and simple, granting access to a modest inn chamber.",
+                           expiration=30,
+                           buy_price=3)
 }
-
-ITEMS_EQUIP = {
-    "axe": {
-        "atk": 4,
-        "def": 0,
-        "pre": 0,
-        "eva": 0,
-        "body": "right_hand"},
-    "chainmail_armor": {
-        "atk": 0,
-        "def": 3,
-        "pre": 0,
-        "eva": 0,
-        "body": "chest"},
-    "hardened_leather_armor": {
-        "atk": 0,
-        "def": 2,
-        "pre": 0,
-        "eva": 0,
-        "body": "chest"},
-    "harpoon": {
-        "atk": 2,
-        "def": 0,
-        "pre": 0,
-        "eva": 0.1,
-        "body": "right_hand"},
-    "iron_shield": {
-        "atk": 0,
-        "def": 3,
-        "pre": 0,
-        "eva": 0,
-        "body": "left_hand"},
-    "large_bow": {
-        "atk": 2,
-        "def": 0,
-        "pre": 0.15,
-        "eva": 0.30,
-        "body": "right_hand"},
-    "leather_armor": {
-        "atk": 0,
-        "def": 1,
-        "pre": 0.,
-        "eva": 0,
-        "body": "chest"},
-    "leather_boots": {
-        "atk": 0,
-        "def": 1,
-        "pre": 0.,
-        "eva": 0,
-        "body": "legs"},
-    "longsword": {
-        "atk": 4,
-        "def": 0,
-        "pre": 0.05,
-        "eva": 0,
-        "body": "right_hand"},
-    "mesh_boots": {
-        "atk": 0,
-        "def": 2,
-        "pre": 0.,
-        "eva": 0,
-        "body": "legs"},
-    "plate_armor": {
-        "atk": 0,
-        "def": 4,
-        "pre": 0.,
-        "eva": 0,
-        "body": "chest"},
-    "short_sword": {
-        "atk": 1,
-        "def": 0,
-        "pre": 0,
-        "eva": 0,
-        "body": "right_hand"},
-    "spear": {
-        "atk": 3,
-        "def": 0,
-        "pre": 0.05,
-        "eva": 0.15,
-        "body": "right_hand"},
-    "spike_shield": {
-        "atk": 1,
-        "def": 3,
-        "pre": 0,
-        "eva": 0,
-        "body": "left_hand"},
-    "sword": {
-        "atk": 3,
-        "def": 0,
-        "pre": 0.05,
-        "eva": 0,
-        "body": "right_hand"},
-    "tower_shield": {
-        "atk": 0,
-        "def": 4,
-        "pre": 0,
-        "eva": 0,
-        "body": "left_hand"},
-    "wood_shield": {
-        "atk": 0,
-        "def": 1,
-        "pre": 0,
-        "eva": 0,
-        "body": "left_hand"},
-    "None": {
-        "atk": 0,
-        "def": 0,
-        "pre": 0,
-        "eva": 0,
-        "body": "None"}
-}
-
-
-ITEMS_SELL = {"antidote": 3,
-              "axe": 150,
-              "basilisk_fangs": 15,
-              "bier": 1,
-              "bludgeon": 40,
-              "bread": 1,
-              "chainmail_armor": 150,
-              "cheese": 2,
-              "fishing_pole": 25,
-              "giant_red_potion": 10,
-              "giant_silk": 30,
-              "hardened_leather_armor": 60,
-              "harpoon": 40,
-              "iron_shield": 75,
-              "large_bow": 110,
-              "leather_armor": 35,
-              "leather_boots": 25,
-              "litle_red_potion": 2,
-              "longsword": 175,
-              "mesh_boots": 50,
-              "plate_armor": 200,
-              "red_potion": 5,
-              "short_sword": 50,
-              "slime_balls": 1,
-              "soap": 1,
-              "spear": 125,
-              "spike_shield": 150,
-              "sword": 150,
-              "telescope": 125,
-              "torch": 10,
-              "tower_shield": 150,
-              "water": 1,
-              "wood_shield": 20,
-              "quit": 0}
-
 
 # MOBS.
 MOBS = {
@@ -1104,7 +1042,8 @@ NPCS = {
     "whispers": Npc(name="whispers",
                     npc_type="dragon",
                     messages={0: ["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind,"
-                                  " and come to me.", "Secrets untold and challenges unknown lie ahead.",
+                                                                                     " and come to me.",
+                                  "Secrets untold and challenges unknown lie ahead.",
                                   "Trust in the unseen path...", "... come to me."]}),
 
     "captain thorne": Npc(name="captain thorne",
@@ -1255,13 +1194,14 @@ NPCS = {
         messages={
             0: ["Greetings, seeker of paths! If you yearn to traverse the mighty mountain range that veils our"
                 " land, head eastward.", "Beyond the emerald canopy and whispering trees lies a hidden valley. It "
-                "weaves through the ancient peaks, offering passage to those who dare to journey.", "Take heed, for "
+                                         "weaves through the ancient peaks, offering passage to those who dare to journey.",
+                "Take heed, for "
                 "the woods conceal both mystery and peril, but the call of adventure echoes through the leaves. May "
                 "the spirits guide your way, brave traveler."],
             1: ["Northward, the land ascends into highlands infested with goblins and other vile creatures. A "
                 "challenge for even the most seasoned adventurer."],
             2: ["To the south, dense woodlands stretch as far as the eye can see.", "An enchanting realm, but one "
-                "must tread cautiously, for shadows dance amidst the trees."],
+                                                                                    "must tread cautiously, for shadows dance amidst the trees."],
             3: ["Nay, brave one. The west remains a mystery to me. My journey has yet to unveil the secrets concealed "
                 "in those unexplored lands.", "Perhaps one day, the winds of fate will carry me in that direction."]},
         leave_message=["May the spirits guide your way, brave traveler."],
@@ -1295,8 +1235,9 @@ NPCS = {
                            npc_type="traveler",
                            messages={0: ["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here "
                                          "mentioned some caves to the north that might lead us across.", "Aye, those "
-                                         "caves are an option, but beware! Lately, they've become a haven for Goblins "
-                                         "and other foul creatures.", "A perilous journey awaits, my friend. Tread "
+                                                                                                         "caves are an option, but beware! Lately, they've become a haven for Goblins "
+                                                                                                         "and other foul creatures.",
+                                         "A perilous journey awaits, my friend. Tread "
                                          "carefully if you choose that path."]}),
 
     "traveler sylas": Npc(name="traveler sylas",

@@ -165,25 +165,22 @@ def buy(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool
 
 
 # Check action.
-def check(place: Biome, item: str) -> str:
-    if item in place.items:
-        if item == "bed":
-            text = "Comfortable resting surface for sleep and relaxation."
+def check(player: Player = None, item: str = None, inventory: bool = False) -> str:
+    if player is None or item is None:
+        return f"What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
 
-        elif item == "boat":
-            text = "Small wooden boat gently rocks on calm water, weathered by time and adventures."
+    if item in player.place.items or (inventory and item in player.inventory.items.keys()):
+        if item in globals.ITEMS.keys():
+            text = globals.ITEMS[item].description
 
-        elif item == "origami_flowers":
-            text = ("Paper flowers, seem to have something inside the stem, but you can't get it out with your "
-                    "fingers, you need a long stick.")
-
-        elif item == "short_sword":
-            text = "A trusty Short Sword, swift and precise, ideal for close-quarter battles against foes in the wild."
         else:
-            text = "You observe nothing."
+            text = f"You observe nothing."
 
     elif item == "":
-        text = "What do you want to check? CHECK ITEM"
+        text = f"What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items at the inventory."
+
+    elif item in globals.ITEMS.keys():
+        text = f"There is no {globals.ITEMS[item].name} here."
 
     else:
         text = f"There is no {item.title()} here."
@@ -236,9 +233,10 @@ def enter(player: Player, entrie: str) -> tuple[str, bool]:
                     return "You need a torch to enter.", False
 
         else:
+            entrie_name = player.place.entries[entrie].name
             player.outside = False
             player.place = player.place.entries[entrie]
-            return f"You have enter to the {entrie.title()}.", False
+            return f"You have enter to the {entrie_name}.", False
 
     elif entrie not in player.place.entries.keys():
         return f"There is not a {entrie} here.", False
@@ -271,6 +269,9 @@ def equip(player: Player, item: str) -> str:
 
 # Explore action.
 def explore(player: Player, map_game: Map) -> str:
+    if not player.outside:
+        return "You can't explore here."
+
     x, y = player.x, player.y
 
     if (x, y) == (13, 0) and "cave" not in map_game.map_settings[coordstr(x, y)].entries:
@@ -368,7 +369,7 @@ def move(player: Player,
 def pick_up(player: Player, item: str) -> str:
     item_name = " ".join(item.split("_")).title()
     if item in player.place.items:
-        if item in globals.ITEMS_SELL.keys():
+        if item in globals.ITEMS.keys() and globals.ITEMS[item].pickable:
             player.inventory.add_item(item=item, quantity=1)  # Adding item to inventory.
             player.place.items.remove(item)  # Removing item from place.
 
@@ -448,7 +449,7 @@ def talk(npc: Npc, player: Player) -> str:
             # Talking with merchant.
             if npc.npc_type == "merchant":
                 print()
-                if action_choice == 1:
+                if action_choice == 1:  # Buy option.
                     items = []
                     prices = []
                     n = 0
@@ -467,9 +468,9 @@ def talk(npc: Npc, player: Player) -> str:
                     while True:
                         try:
                             item = int(input(" " * 4 + "# ")) - 1
-                            item_name = items[item].replace('_', ' ').title()
                             if 0 <= item < len(items):
-                                if item >= len(items) - 1:  # Quit condition.
+                                item_name = items[item].replace('_', ' ').title()
+                                if item >= len(items):  # Quit condition.
                                     break
                                 print()
                                 print(f"{' ' * 4}How many {item_name} do you want to buy?")
@@ -487,21 +488,23 @@ def talk(npc: Npc, player: Player) -> str:
                         except ValueError:
                             pass
 
-                elif action_choice == 2:
+                elif action_choice == 2:  # Sell option.
                     print()
                     items = []
                     prices = []
                     n = 0
-                    for item, value in {key: globals.ITEMS_SELL[key] for key in set(player.inventory.items.keys()).intersection(set(globals.ITEMS_SELL.keys())) if player.inventory.items[key] > 0}.items():
-                        item_name = item.replace("_", " ").title()
-                        if item != "quit":
-                            line_text = text_ljust(msg=f"{n + 1}) {item_name} x {value} gold.", width=30)
-                            print(f"{' ' * 6}{line_text[0]}[{player.inventory.items[item]}]")
+                    for item, quantity in player.inventory.items.items():
+                        item_object = get_item(item_name=item)
 
-                        else:
-                            print(f"{' ' * 6}{n + 1}) {item_name}")
+                        if quantity < 1 or item_object.sell_price is None:
+                            continue
+
+                        line_text = text_ljust(msg=f"{n + 1}) {item_object.name} x {item_object.sell_price} gold.",
+                                               width=30)
+                        print(f"{' ' * 6}{line_text[0]}[{player.inventory.items[item]}]")
+
                         items.append(item)
-                        prices.append(value)
+                        prices.append(item_object.sell_price)
                         n += 1
                     print(f"{' ' * 6}{n + 1}) Quit.")
                     items.append("quit")
@@ -510,13 +513,13 @@ def talk(npc: Npc, player: Player) -> str:
 
                     while True:
                         try:
-                            item = int(input(f"{' ' * 4}'# '")) - 1
+                            item = int(input(f"{' ' * 4}# ")) - 1
                             if 0 <= item < len(items):
                                 item_name = items[item].replace("_", " ").title()
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
                                 print()
-                                print(f"{' ' * 4}How many{item_name} do you want to sell?")
+                                print(f"{' ' * 4}How many {item_name} do you want to sell?")
                                 while True:
                                     try:
                                         quantity = int(input(" " * 4 + "# "))
@@ -536,8 +539,7 @@ def talk(npc: Npc, player: Player) -> str:
             if npc.npc_type == "innkeeper":
                 print()
 
-                # Buy room bed.
-                if action_choice == 1:
+                if action_choice == 1:  # Buy room bed.
                     items = []
                     prices = []
                     n = 0
@@ -556,7 +558,7 @@ def talk(npc: Npc, player: Player) -> str:
 
                     while True:
                         try:
-                            item = int(input(f"{' ' * 4}'# '")) - 1
+                            item = int(input(f"{' ' * 4}# ")) - 1
                             if 0 <= item < len(items):
                                 if item >= len(items) - 1:  # Quit condition.
                                     break
@@ -579,8 +581,7 @@ def talk(npc: Npc, player: Player) -> str:
                         except ValueError:
                             pass
 
-                # Buy food.
-                if action_choice == 2:
+                if action_choice == 2:  # Buy food.
                     items = []
                     prices = []
                     n = 0

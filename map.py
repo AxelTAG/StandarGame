@@ -88,6 +88,10 @@ class Map:
     def current_week_day_name(self):
         return WeekDays(self.day % self.week_duration).name
 
+    @property
+    def year_duration_days(self):
+        return self.year_duration * self.month_duration
+
     def add_hours(self, hours_to_add: int):
         hours_sum = self.hour + hours_to_add
         if hours_sum < self.day_duration:
@@ -135,3 +139,17 @@ class Map:
             self.add_hours(hours_to_add=time_of_day_start - self.hour)
         else:
             self.add_hours(hours_to_add=time_of_day_start + (self.day_duration - self.hour))
+
+    def estimate_date(self, days: int) -> tuple[int, int, int]:
+        sum_days = (self.day - 1) + days
+        sum_months_days = self.month * self.month_duration
+        sum_year_days = (self.year - 1) * self.year_duration_days
+        sum_all_days = sum_days + sum_months_days + sum_year_days
+
+        year = sum_all_days // self.year_duration_days
+        days_left = sum_all_days % self.year_duration_days
+
+        months = days_left // self.month_duration
+        days = days_left % self.month_duration + 1
+
+        return year + 1, months, days

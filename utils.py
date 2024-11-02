@@ -12,7 +12,7 @@ import sys
 import time
 
 # Local imports.
-from globals import BIOMES, ITEMS_EQUIP
+from globals import BIOMES
 from player import Player
 
 
@@ -356,21 +356,6 @@ def patron_print(elements, n):
     for _ in range(n):
         patron.append(next(elements_cycle))
     return patron
-
-
-# Stat item extractor.
-def sum_item_stats(items: dict) -> dict:
-    total_stats = {"atk": 0, "def": 0, "pre": 0, "eva": 0}
-    items_equiped = {}
-    for value in items.values():
-        items_equiped[value] = ITEMS_EQUIP[str(value)]
-
-    for item_key, item_stats in items_equiped.items():
-        for stat_key, stat_value in item_stats.items():
-            if stat_key != "body" and stat_value is not None:
-                total_stats[stat_key] += stat_value
-
-    return total_stats
 
 
 # Function that left justify a text.

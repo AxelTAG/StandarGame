@@ -8,7 +8,7 @@ from datetime import datetime
 import globals
 
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up,\
-    unequip, use, use_boat, check
+    unequip, use, use_boat, check, get_item
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
 from enums import TimeOfDay
@@ -288,10 +288,17 @@ while run:
                 standing = True
 
             elif action[0] == "check":  # Check action.
-                screen = check(place=player.place, item=" ".join(action[1:]))
+                if len(action) == 1:
+                    screen = check(player=player, item=" ".join(action[1:]))
+
+                elif action[1] in ["inv", "inventory"]:
+                    screen = check(player=player, item="_".join(action[2:]), inventory=True)
+
+                else:
+                    screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                player.map[player.y][player.x] = player.place.color
+                player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
                 if player.x != 0:
                     player.map[player.y][player.x - 1] = map_game.map_settings[coordstr(x=player.x - 1, y=player.y)].color
                 if player.x != map_game.x_len:
@@ -331,7 +338,6 @@ while run:
                         play, menu, win = battle(player=player, enemy=mobs["orc"].copy(), ms=map_game.map_settings)
                         if not play:
                             save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
-
                     standing = True
 
                 else:
@@ -364,7 +370,7 @@ while run:
 
             elif action[0] == "explore":  # Explore action:
                 screen = explore(player=player, map_game=map_game)
-                standing = False
+                standing = False if player.outside else True
 
             elif action[0] == "land":  # Land action.
                 screen = land(player=player, map_game=map_game)
@@ -394,14 +400,20 @@ while run:
 
             elif action[0] == "slot1":  # Selection slot1 action.
                 item_select = "_".join(action[1:])
-                if item_select in globals.ITEMS_SELL and item_select in player.inventory.items.keys():
+                item_object = get_item(item_name=item_select)
+                if item_object.consumable or item_object.equippable and item_select in player.inventory.items.keys():
                     player.slot1 = " ".join(action[1:]).title()
+                else:
+                    screen = f"You cannot equip {item_object.name} in the belt."
                 standing = True
 
             elif action[0] == "slot2":  # Selection slot1 action.
                 item_select = "_".join(action[1:])
-                if item_select in globals.ITEMS_SELL and item_select in player.inventory.items.keys():
+                item_object = get_item(item_name=item_select)
+                if item_object.consumable or item_object.equippable and item_select in player.inventory.items.keys():
                     player.slot2 = " ".join(action[1:]).title()
+                else:
+                    screen = f"You cannot equip {item_object.name} in the belt."
                 standing = True
 
             elif action[0] == "sleep":  # Sleep action.
@@ -470,38 +482,47 @@ while run:
             # --------------------------------------------------------------------------------------------------------
 
             # # Admin commands.
+            elif action[0] == "estimate":  # Estimate date.
+                screen = f"{map_game.estimate_date(days=int(action[1]))}"
+                standing = True
+
             elif action[0] == "calendar":  # Calendar.
                 screen = f"{map_game.day, map_game.month, map_game.year}"
                 standing = True
 
-            # elif action[0] == "teleport":
-            #     player.x = int(action[1])
-            #     player.y = int(action[2])
-            #     player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
-            #     standing = True
-            #     screen = "You teleported to " + str(player.x) + " " + str(player.y) + "."
-            #
-            # elif action == ["time", "played"]:
-            #     player.refresh_time_played(datetime.now(), time_init)
-            #     screen = str(player.time_played)
-            #
-            # elif action == ["map_set"]:
-            #     for i in range(len(map_game.map_settings)):
-            #         for j in range(len(map_game.map_labels[i])):
-            #             key = coordstr(j, i)
-            #             print(key, map_game.map_settings[key].name, map_game.map_settings[key].description)
-            #
-            # elif action[0] == "update":  # Admin action for update de game while devolping.
-            #     #
-            #     # map_set.updatplayer.exp += 1000
-            #     #                 # player.inventory.add_item("telescope", 1)
-            #     #                 # player.inventory.add_item("torch", 1)
-            #     #                 # player.inventory.add_item("gold", 100)e(globals.MAP_SETTING_INIT)
-            #     # player.events["message"] = False
-            #     # player.events["permission"] = False
-            #     # npc["fisherman marlin"][3][0] = True
-            #     player.inventory.add_item(item="antidote", quantity=1)
-            #     screen = "Map updated."
+            elif action[0] == "teleport":
+                player.x = int(action[1])
+                player.y = int(action[2])
+                player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+                standing = True
+                screen = "You teleported to " + str(player.x) + " " + str(player.y) + "."
+
+            elif action == ["time", "played"]:
+                player.refresh_time_played(datetime.now(), time_init)
+                screen = str(player.time_played)
+
+            elif action == ["map_set"]:
+                for i in range(len(map_game.map_settings)):
+                    for j in range(len(map_game.map_labels[i])):
+                        key = coordstr(j, i)
+                        print(key, map_game.map_settings[key].name, map_game.map_settings[key].description)
+
+            elif action == ["lvl", "up"]:
+                player.lvl_up()
+
+            elif action[:2] == ["add", "item"]:
+                player.inventory.add_item(item=action[2], quantity=1)
+
+            elif action[0] == "update":  # Admin action for update de game while devolping.
+                #
+                # map_set.updatplayer.exp += 1000
+                #                 # player.inventory.add_item("telescope", 1)
+                #                 # player.inventory.add_item("torch", 1)
+                #                 # player.inventory.add_item("gold", 100)e(globals.MAP_SETTING_INIT)
+                # player.events["message"] = False
+                # player.events["permission"] = False
+                # npc["fisherman marlin"][3][0] = True
+                screen = "Map updated."
             else:
                 standing = True
 

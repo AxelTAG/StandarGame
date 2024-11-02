@@ -21,6 +21,7 @@ class Item:
     body_part: BodyPart = field(default=None)
 
     # Items properties.
+    pickable: bool = field(default=False)
     consumable: bool = field(default=False)
     equippable: bool = field(default=False)
     expiration: int | None = field(default=None)

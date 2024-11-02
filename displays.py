@@ -74,7 +74,8 @@ def disp_enter(place) -> str:
     if place.entries:
         msg = "You want to enter to:"
         for i, entrie in enumerate(place.entries):
-            msg += "\n - " + " ".join(entrie.split("_")).title()
+            entrie_name = " ".join(entrie.split("_")).title()
+            msg += f"\n - {entrie_name}"
         return msg
     else:
         return "There aren't entries here."

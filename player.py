@@ -41,7 +41,7 @@ class Player:
     dexterity: int = field(default=0)
     attack_factor: float = field(default=0.4)
     defence_factor: float = field(default=0.4)
-    evasion_factor: float = field(default=0.1)
+    evasion_factor: float = field(default=0.01)
     precision_factor: float = field(default=0.005)
     vitality_factor: float = field(default=1)
 

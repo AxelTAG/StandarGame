@@ -156,7 +156,7 @@ while run:
 
                 # Introduction.
                 if player.name:
-                    screen = talk(npc=map_game.npcs["whispers"], player=player)
+                    screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
 
         elif choice == "2":  # Load game choice.
             try:
@@ -441,7 +441,7 @@ while run:
                     standing = True
 
                 elif npc_name in player.place.npc:
-                    screen = talk(npc=map_game.npcs[npc_name], player=player)
+                    screen = talk(npc=map_game.npcs[npc_name], player=player, map_game=map_game)
                     standing = True
 
                 else:
@@ -527,4 +527,4 @@ while run:
                 standing = True
 
             # Event handler.
-            map_game.npcs, map_game.map_settings, play, menu = event_handler(player, map_game.npcs, map_game.map_settings, mobs, time_init, play, menu)
+            map_game.npcs, map_game.map_settings, play, menu = event_handler(player, map_game, map_game.npcs, map_game.map_settings, mobs, time_init, play, menu)

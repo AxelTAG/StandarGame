@@ -12,6 +12,37 @@ class BodyPart(Enum):
     LEGS = 4
 
 
+class EntryType(Enum):
+    ARENA = 0
+    BARRACKS = 1
+    BLACKSMITH = 2
+    CASTLE = 3
+    CATHEDRAL = 4
+    CAVERN = 5
+    CHAPEL = 6
+    COTTAGE = 7
+    DUNGEON = 8
+    FORTRESS = 9
+    GRANARY = 10
+    HALL = 11
+    HUT = 12
+    INN = 13
+    LIBRARY = 14
+    MARKET = 15
+    MONASTERY = 16
+    OUTPOST = 17
+    PALACE = 18
+    PORT = 19
+    SANCTUARY = 20
+    SHRINE = 21
+    STABLES = 22
+    TAVERN = 23
+    TEMPLE = 24
+    TOWER = 25
+    VILLA = 26
+    WATCHTOWER = 27
+
+
 # Items.
 class Items(Enum):
     RED_POTION = auto()
@@ -30,37 +61,6 @@ class Months(Enum):
     VALORA = 5
     NERITH = 6
     REVERIS = 7
-
-
-class PlayerStatus(Enum):
-    WALK = 0
-    SURF = 1
-
-
-# Seasons.
-class Season(Enum):
-    SPRING = 0
-    SUMMER = 1
-    AUTUMN = 2
-    WINTER = 3
-
-
-class TimeOfDay(Enum):
-    MORNING = 0
-    AFTERNOON = 1
-    EVENING = 2
-    NIGHT = 3
-
-
-class WeekDays(Enum):
-    SOLMAR = 0
-    FIRNAR = 1
-    LUNATHAR = 2
-    ERATH = 3
-    NYDAR = 4
-    THORNAR = 5
-    ELTHAR = 6
-    KARNATH = 7
 
 
 class NpcTypes(Enum):
@@ -151,3 +151,34 @@ class NpcTypes(Enum):
 
     # Others.
     WHISPERS = 471993
+
+
+class PlayerStatus(Enum):
+    WALK = 0
+    SURF = 1
+
+
+# Seasons.
+class Season(Enum):
+    SPRING = 0
+    SUMMER = 1
+    AUTUMN = 2
+    WINTER = 3
+
+
+class TimeOfDay(Enum):
+    MORNING = 0
+    AFTERNOON = 1
+    EVENING = 2
+    NIGHT = 3
+
+
+class WeekDays(Enum):
+    SOLMAR = 0
+    FIRNAR = 1
+    LUNATHAR = 2
+    ERATH = 3
+    NYDAR = 4
+    THORNAR = 5
+    ELTHAR = 6
+    KARNATH = 7

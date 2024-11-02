@@ -11,6 +11,7 @@ from datetime import datetime
 
 # Event handler.
 def event_handler(player: Player,
+                  map_game: Map,
                   npc: dict,
                   ms: dict,
                   mobs: dict,
@@ -60,7 +61,7 @@ def event_handler(player: Player,
                                                "breeze. Farewell, " + player.name + ".",
                                                "Until our destinies entwine again."],
 
-            talk(npc=npc["dragon firefrost"], player=player)
+            talk(npc=npc["dragon firefrost"], player=player, map_game=map_game)
 
             ms["(11, 24)"].description = "Frozen valley, a pristine, snow-covered expanse where frost-kissed silence" \
                                          " reigns. Glistening ice formations adorn the landscape, creating an " \

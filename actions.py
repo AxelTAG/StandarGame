@@ -411,7 +411,7 @@ def sell(player: Player, item: str, quantity: int, price: int) -> str:
 
 
 # Talk.
-def talk(npc: Npc, player: Player) -> str:
+def talk(npc: Npc, player: Player, map_game: Map) -> str:
     # First message of npc.
     disp_talk_tw(npc, npc.messages[0])  # Printing first message.
     npc.hist_messages[0] = True  # Turning True first message of NPC.
@@ -571,6 +571,7 @@ def talk(npc: Npc, player: Player) -> str:
                                 if transaction_status:
                                     disp_talk_tw(npc,
                                                  message=["Perfect. Keep this key, until 30 days."])
+                                    npc.room_expirations[items[item]] = map_game.current_date
                                 else:
                                     disp_talk_tw(npc,
                                                  message=["Mmmm... you don't have enough."])

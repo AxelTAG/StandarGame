@@ -5,13 +5,8 @@ from globals import NPCS, BIOMES
 from utils_settings import init_map_setting
 from utils import label_pixels, tl_map_set
 
-
 # External imports.
-import numpy as np
-import random
-
 from attrs import define, field
-from datetime import datetime
 
 
 @define
@@ -59,7 +54,11 @@ class Map:
         self.y_len = len(self.map_labels[0]) - 1
 
     @property
-    def current_time_of_day(self):
+    def current_date(self) -> tuple[int, int, int]:
+        return self.year, self.month, self.day
+
+    @property
+    def current_time_of_day(self) -> int:
         if self.night_start < self.morning_start:
             if self.night_start <= self.hour < self.morning_start:
                 return TimeOfDay.NIGHT.value
@@ -77,19 +76,19 @@ class Map:
             return TimeOfDay.NIGHT.value
 
     @property
-    def current_time_of_day_name(self):
+    def current_time_of_day_name(self) -> str:
         return TimeOfDay(self.current_time_of_day).name
 
     @property
-    def current_week_day(self):
+    def current_week_day(self) -> int:
         return WeekDays(self.day % self.week_duration).value
 
     @property
-    def current_week_day_name(self):
+    def current_week_day_name(self) -> str:
         return WeekDays(self.day % self.week_duration).name
 
     @property
-    def year_duration_days(self):
+    def year_duration_days(self) -> int:
         return self.year_duration * self.month_duration
 
     def add_hours(self, hours_to_add: int):
@@ -119,7 +118,7 @@ class Map:
             self.month = months_sum % self.year_duration
             self.year += months_sum // self.year_duration
 
-    def get_start_hour_tod(self, time_of_day: int):
+    def get_start_hour_tod(self, time_of_day: int) -> int:
         if time_of_day == TimeOfDay.MORNING.value:
             return self.morning_start
 

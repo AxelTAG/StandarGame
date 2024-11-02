@@ -153,3 +153,9 @@ class Map:
         days = days_left % self.month_duration + 1
 
         return year + 1, months, days
+
+    def is_major_date(self, first_date: tuple[int, int, int], second_date: tuple[int, int, int]):
+        date_1 = (first_date[0] - 1) * self.year_duration_days + first_date[1] * self.month_duration + first_date[2]
+        date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
+
+        return date_1 < date_2

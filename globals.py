@@ -1,7 +1,7 @@
 ﻿# Imports.
 # Local imports.
 from biome import Biome, Entry
-from enums import BodyPart
+from enums import BodyPart, NpcTypes
 from item import Item
 from npc import Npc
 
@@ -1033,21 +1033,18 @@ MOBS = {
     }
 }
 
-# NPCs types.
-NPC_TYPES = ["captain", "dragon", "fisherman", "guard", "innkeeper", "lord", "mayor", "merchant", "monk", "traveler",
-             "worker"]
 
 # NPCs.
 NPCS = {
     "whispers": Npc(name="whispers",
-                    npc_type="dragon",
+                    npc_type=NpcTypes.WHISPERS,
                     messages={0: ["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind,"
                                                                                      " and come to me.",
                                   "Secrets untold and challenges unknown lie ahead.",
                                   "Trust in the unseen path...", "... come to me."]}),
 
     "captain thorne": Npc(name="captain thorne",
-                          npc_type="captain",
+                          npc_type=NpcTypes.CAPTAIN,
                           messages={
                               0: ["Ahoy, traveler. I'm Captain Thorne.",
                                   "You see my ship there? We won't be setting sail today. A dragon's presence spells "
@@ -1057,7 +1054,7 @@ NPCS = {
                                   "next port."]}),
 
     "captain zelian": Npc(name="captain zelian",
-                          npc_type="captain",
+                          npc_type=NpcTypes.CAPTAIN,
                           messages={
                               0: ["Ah, the sea, a fickle friend and fierce foe.",
                                   "Many a ship I've sailed, battling monsters and discovering uncharted isles. "
@@ -1066,7 +1063,7 @@ NPCS = {
                                   "yourself, adventurer."]}),
 
     "dragon firefrost": Npc(name="dragon firefrost",
-                            npc_type="dragon",
+                            npc_type=NpcTypes.DRAGON,
                             messages={
                                 0: ["Elina...",
                                     "You finally come to me...",
@@ -1074,7 +1071,7 @@ NPCS = {
                                     "Ready your blade..."]}),
 
     "fisherman marlin": Npc(name="fisherman marlin",
-                            npc_type="fisherman",
+                            npc_type=NpcTypes.FISHERMAN,
                             messages={
                                 0: ["Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.",
                                     "You know, my brother's a guard in the city, watches over the folks there. "
@@ -1083,7 +1080,7 @@ NPCS = {
                                     "from Aqiri says hello."]}),
 
     "guard lorian": Npc(name="guard lorian",
-                        npc_type="guard",
+                        npc_type=NpcTypes.GUARD,
                         messages={
                             0: ["Halt, traveler! Antina City permits only those with proper credentials to pass "
                                 "these gates.",
@@ -1092,7 +1089,7 @@ NPCS = {
                                 "trying times."]}),
 
     "innkeeper mirabelle": Npc(name="innkeeper mirabelle",
-                               npc_type="innkeeper",
+                               npc_type=NpcTypes.INNKEEPER,
                                messages={
                                    0: ["Step into Mirabelle's Inn, weary wanderer. Here, amidst the tranquility of "
                                        "Epiiat, find shelter from the trials of the road. With hearty meals and "
@@ -1107,7 +1104,7 @@ NPCS = {
                                          "quit": (0, "quit")}),
 
     "lord aric": Npc(name="lord aric",
-                     npc_type="lord",
+                     npc_type=NpcTypes.LORD,
                      messages={
                          0: ["Greetings, traveler. Alas, these are troubled times for our fair city.",
                              "Just days past, a dragon's shadow darkened our skies. Fear lingers in the hearts of our "
@@ -1116,7 +1113,7 @@ NPCS = {
                              "May the goddesses watch over us and protect us."]}),
 
     "mayor thorian": Npc(name="mayor thorian",
-                         npc_type="mayor",
+                         npc_type=NpcTypes.MAYOR,
                          messages={
                              0: ["Greetings, traveler, to our humble abode! Epiiat is open to all seeking refuge.",
                                  "However, I must caution you—recently, the once-tranquil caves to the north have "
@@ -1126,7 +1123,7 @@ NPCS = {
                                  "Goddesses guide your steps."]}),
 
     "merchant bryson": Npc(name="merchant bryson",
-                           npc_type="merchant",
+                           npc_type=NpcTypes.MERCHANT,
                            messages={
                                0: ["Ah, welcome, welcome! Peruse my wares, brave one. From enchanted potions to sturdy"
                                    " shields",
@@ -1144,7 +1141,7 @@ NPCS = {
                                       "quit": 0}),
 
     "merchant elden": Npc(name="merchant elden",
-                          npc_type="merchant",
+                          npc_type=NpcTypes.MERCHANT,
                           messages={0: ["Hail, warrior! Seek the finest blades and armor in Antina? Forge Master Elden "
                                         "crafts each piece with skill and care. From gleaming swords to resilient "
                                         "shields, my forge yields the tools to shape your destiny.",
@@ -1159,7 +1156,7 @@ NPCS = {
                                      "spike_shield": 150, "tower_shield": 150, "quit": 0}),
 
     "merchant roland": Npc(name="merchant roland",
-                           npc_type="merchant",
+                           npc_type=NpcTypes.MERCHANT,
                            messages={0: ["Greetings, noble traveler! Step into Roland's Emporium, where treasures and "
                                          "trinkets await your discerning eye. From potions to weapons, my wares are "
                                          "the finest in Antina.",
@@ -1174,7 +1171,7 @@ NPCS = {
                                       "torch": 20, "quit": 0}),
 
     "merchant selena": Npc(name="merchant selena",
-                           npc_type="merchant",
+                           npc_type=NpcTypes.MERCHANT,
                            messages={
                                0: ["Ahoy, brave one! Step right up and behold the treasures of Aqiri's Market!",
                                    "From the finest catches of the sea to enchanted trinkets, Selena's Wares has all "
@@ -1190,7 +1187,7 @@ NPCS = {
 
     "traveler elara": Npc(
         name="traveler elara",
-        npc_type="traveler",
+        npc_type=NpcTypes.TRAVELER,
         messages={
             0: ["Greetings, seeker of paths! If you yearn to traverse the mighty mountain range that veils our"
                 " land, head eastward.", "Beyond the emerald canopy and whispering trees lies a hidden valley. It "
@@ -1211,7 +1208,7 @@ NPCS = {
             3: "What about the western reaches? Have you ventured there?"}),
 
     "traveler elinor": Npc(name="traveler elinor",
-                           npc_type="traveler",
+                           npc_type=NpcTypes.TRAVELER,
                            messages={
                                0: ["Alas, the city gates remain closed to me. But fear not, fellow wanderer!",
                                    "To the east lies the charming fishing village of Aquiri. A quaint haven where the"
@@ -1221,7 +1218,7 @@ NPCS = {
                                    "for there is always another path to tread."]}),
 
     "traveler kaelin": Npc(name="traveler kaelin",
-                           npc_type="traveler",
+                           npc_type=NpcTypes.TRAVELER,
                            messages={
                                0: ["Hail, fellow wanderer. I've treaded the southern realms, through the treacherous "
                                    "Dark Forest.",
@@ -1232,7 +1229,7 @@ NPCS = {
                                    "light of wisdom."]}),
 
     "traveler seraph": Npc(name="traveler seraph",
-                           npc_type="traveler",
+                           npc_type=NpcTypes.TRAVELER,
                            messages={0: ["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here "
                                          "mentioned some caves to the north that might lead us across.", "Aye, those "
                                                                                                          "caves are an option, but beware! Lately, they've become a haven for Goblins "
@@ -1241,7 +1238,7 @@ NPCS = {
                                          "carefully if you choose that path."]}),
 
     "traveler sylas": Npc(name="traveler sylas",
-                          npc_type="traveler",
+                          npc_type=NpcTypes.TRAVELER,
                           messages={
                               0: ["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration.",
                                   "Hidden wonders and untold tales await those who venture beyond the familiar. May "
@@ -1249,14 +1246,14 @@ NPCS = {
                                   "you."]}),
 
     "traveler thaldir": Npc(name="traveler thaldir",
-                            npc_type="traveler",
+                            npc_type=NpcTypes.TRAVELER,
                             messages={
                                 0: ["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around "
                                     "and check. Secrets often hide where the eye does not linger.",
                                     "May the journey unveil the unseen, brave one."]}),
 
     "worker gorrick": Npc(name="worker gorrick",
-                          npc_type="worker",
+                          npc_type=NpcTypes.WORKER,
                           messages={
                               0: ["Hail, traveler! The path ahead is blocked, and only through my efforts can it be "
                                   "opened. Alas, it'll take time."]}),

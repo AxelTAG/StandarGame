@@ -1,54 +1,50 @@
 # Imports.
-# External imports
-
 # Local imports.
+from enums import NpcTypes
+
+# External imports
+from attrs import define, field
 
 
+@define
 class Npc:
-    def __init__(self,
-                 name: str = "...",
-                 npc_type: str = "traveler",
-                 messages=None,
-                 answers=None,
-                 leave_message=None,
-                 buy_items=None,
-                 buy_beds=None,
-                 room_expirations=None):
+    # General attributes.
+    name: str = field(default="...")
+    npc_type: NpcTypes = field(default=None)
+    messages: dict[int, list[str, str]] = field(default=None)
+    answers: dict[int, str] = field(default=None)
+    leave_message = field(default=None)
 
-        if buy_beds is None:
-            buy_beds = {}
+    # Merchants or Innkeepers.
+    buy_items: dict[str, int] = field(default=None)
+    buy_beds: dict[str, tuple[int, str]] = field(default=None)
+    room_expirations: dict[str, tuple] = field(default=None)
 
-        if leave_message is None:
-            leave_message = []
+    # Talking attributes.
+    hist_messages = field(init=False)
+    talk_active = field(default=True)
 
-        if buy_items is None:
-            buy_items = {}
+    def __attrs_post_init__(self):
+        if self.buy_beds is None:
+            self.buy_beds = {}
 
-        if answers is None:
-            answers = {}
+        if self.leave_message is None:
+            self.leave_message = []
 
-        if messages is None:
-            messages = {0: ["...", "..."]}
+        if self.buy_items is None:
+            self.buy_items = {}
 
-        # General attributs.
-        self.name = name
-        self.npc_type = npc_type
-        self.messages = messages
-        self.answers = answers
-        self.leave_message = leave_message
+        if self.answers is None:
+            self.answers = {}
 
+        if self.messages is None:
+            self.messages = {0: ["...", "..."]}
+
+        # Talking attributes.
         self.hist_messages = {}
         self.reset_hist_messages()
-        self.talk_active = True
-
-        # Merchants or Innkeepers.
-        self.buy_items = buy_items
-        self.buy_beds = buy_beds
-        self.room_expirations = room_expirations
 
     def reset_hist_messages(self):
         self.hist_messages = {}
         for _ in self.messages.keys():
             self.hist_messages[_] = False
-
-

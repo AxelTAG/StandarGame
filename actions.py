@@ -6,7 +6,7 @@ import random
 import globals
 from biome import Biome, Entry
 from displays import disp_battle, disp_talk_answers, disp_talk_tw
-from enums import PlayerStatus, TimeOfDay
+from enums import NpcTypes, PlayerStatus, TimeOfDay
 from item import Item
 from map import Map
 from npc import Npc
@@ -447,12 +447,11 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
             npc.hist_messages[action_choice] = True  # Turning True message of NPC.
 
             # Talking with merchant.
-            if npc.npc_type == "merchant":
+            if npc.npc_type == NpcTypes.MERCHANT:
                 print()
                 if action_choice == 1:  # Buy option.
-                    items = []
-                    prices = []
-                    n = 0
+                    items, prices, n = [], [], 0
+
                     for item, value in npc.buy_items.items():
                         item_name = item.replace("_", " ").title()
                         if item != "quit":
@@ -536,7 +535,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                 else:
                     return "Nothing done."
 
-            if npc.npc_type == "innkeeper":
+            if npc.npc_type == NpcTypes.INNKEEPER:
                 print()
 
                 if action_choice == 1:  # Buy room bed.

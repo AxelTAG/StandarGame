@@ -40,6 +40,9 @@ class Npc:
         if self.messages is None:
             self.messages = {0: ["...", "..."]}
 
+        if self.room_expirations is None:
+            self.room_expirations = {}
+
         # Talking attributes.
         self.hist_messages = {}
         self.reset_hist_messages()

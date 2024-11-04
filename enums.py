@@ -18,7 +18,7 @@ class EntryType(Enum):
     BLACKSMITH = 2
     CASTLE = 3
     CATHEDRAL = 4
-    CAVERN = 5
+    CAVE = 5
     CHAPEL = 6
     COTTAGE = 7
     DUNGEON = 8

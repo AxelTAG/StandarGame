@@ -1,6 +1,6 @@
 # Imports.
 # Local imports.
-from enums import Season
+from enums import EntryType, Season
 
 
 # Biome class.
@@ -64,16 +64,18 @@ class Entry(Biome):
                  color: tuple = (255, 0, 0, 255),
                  description: str = "...",
                  entries=None,
+                 entry_type: EntryType = None,
                  fight: bool = False,
-                 items=None,
-                 leave_entry=None,
-                 mobs=None,
-                 mobs_chances=None,
+                 items: list = None,
+                 leave_entry: Biome = None,
+                 mobs: list = None,
+                 mobs_chances: list = None,
                  name: str = "...",
-                 npc=None,
-                 req=None,
+                 npc: list = None,
+                 req: list = None,
                  status: int = None):
 
         super().__init__(color, description, entries, fight, items, mobs, mobs_chances, name, npc, req, status)
 
+        self.entry_type = entry_type
         self.leave_entry = leave_entry

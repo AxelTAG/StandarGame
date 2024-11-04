@@ -255,9 +255,9 @@ BIOMES = {
 }
 
 ENTRIES = {
-    "hut_0_0": Entry(description="Island hut, a cozy retreat adorned with a bed, a table, two "
-                                    "chairs, and a window, invites serenity amid nature's whispers.",
-                        items=["bed", "short_sword", "bread", "apple"]),
+    "hut_0_0": Entry(description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
+                                 "invites serenity amid nature's whispers.",
+                     items=["bed", "short_sword", "bread", "apple"]),
 
     "mirabelle_small_room": Entry(),
 
@@ -1100,7 +1100,8 @@ NPCS = {
                                    1: "I need to sleep",
                                    2: "Buy food"},
                                buy_items={"bread": 2, "cheese": 4, "soap": 2, "water": 1, "bier": 2, "quit": 0},
-                               buy_beds={"main_room": (5, "main_room_key"), "small_room": (3, "small_room_key"),
+                               buy_beds={"main_room": (5, "mirabelles_main_room_key"),
+                                         "small_room": (3, "mirabelles_small_room_key"),
                                          "quit": (0, "quit")}),
 
     "lord aric": Npc(name="lord aric",

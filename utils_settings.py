@@ -47,37 +47,18 @@ def init_map_setting(ms: dict):
     # (9, 5)
     ms[coordstr(x=9, y=5)].description = "Inn district, cozy tavern, lively marketplace, and quaint cottages surround " \
                                          "the inviting town."
-    ms[coordstr(x=9, y=5)].entries = {"inn": Entry(
-        color=ms[coordstr(x=9, y=5)].color,
-        description="Warm hearth, wooden beams, and cozy furnishings create a welcoming atmosphere. Aromas of "
-                    "home-cooked meals linger, inviting weary travelers to find respite.",
-        entries={
-            "main_room": Entry(
-                color=ms[coordstr(x=9, y=5)].color,
-                description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
-                            "a warm hearth, rustic wooden beams, and snug furnishings.",
-                items=["bed"],
-                name="MIRABELLE'S INN MAIN ROOM",
-                req=["main_room_key"]),
-            "small_room": Entry(
-                color=ms[coordstr(x=9, y=5)].color,
-                description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
-                            "a warm hearth, rustic wooden beams, and snug furnishings.",
-                items=["bed"],
-                name="MIRABELLE'S INN SMALL ROOM",
-                req=["small_room_key"])},
-        name="MIRABELLE'S INN",
-        npc=["innkeeper mirabelle"])}
-
-    ms[coordstr(x=9, y=5)].entries["inn"].leave_entry = ms[coordstr(9, 5)]
-    ms[coordstr(x=9, y=5)].entries["inn"].entries["main_room"].leave_entry = ms[coordstr(9, 5)].entries["inn"]
-    ms[coordstr(x=9, y=5)].entries["inn"].entries["small_room"].leave_entry = ms[coordstr(9, 5)].entries["inn"]
+    ms[coordstr(x=9, y=5)].entries = {"inn": ENTRIES["mirabelles_inn"]}
+    ms[coordstr(x=9, y=5)].entries["inn"].leave_entry = ms[coordstr(x=9, y=5)]
+    ms[coordstr(x=9, y=5)].entries["inn"].entries = {"main_room": ENTRIES["mirabelles_main_room"],
+                                                     "small_room": ENTRIES["mirabelles_main_room"]}
+    ms[coordstr(x=9, y=5)].entries["inn"].entries["main_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
+    ms[coordstr(x=9, y=5)].entries["inn"].entries["small_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
     ms[coordstr(x=9, y=5)].npc = ["merchant bryson", "traveler sylas"]
 
     # (9, 17)
-    ms[coordstr(x=9, y=17)].description = "Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding " \
-                                          "travelers through a bustling thoroughfare toward the heart of the enchanting " \
-                                          "city."
+    ms[coordstr(x=9, y=17)].description = ("Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding"
+                                           " travelers through a bustling thoroughfare toward the heart of the "
+                                           "enchanting city.")
     ms[coordstr(x=9, y=17)].name = "EASTERN GATES"
     ms[coordstr(x=9, y=17)].npc = ["traveler kaelin"]
 
@@ -89,15 +70,15 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=10, y=4)].npc = ["mayor thorian"]
 
     # (10, 5)
-    ms[coordstr(x=10, y=5)].description = "Southern gateway, welcoming gates, cobblestone paths, and a charming, serene" \
-                                          " atmosphere greet visitors."
+    ms[coordstr(x=10, y=5)].description = ("Southern gateway, welcoming gates, cobblestone paths, and a charming,"
+                                           " serene atmosphere greet visitors.")
     ms[coordstr(x=10, y=5)].name = "SOUTHERN GATES"
     ms[coordstr(x=10, y=5)].npc = ["traveler elara"]
 
     # (10, 16)
-    ms[coordstr(x=10, y=16)].description = "Majestic spires pierce the sky, casting a divine aura over cobblestone " \
-                                           "squares. The sacred structure beckons pilgrims and whispers tales of ancient" \
-                                           " reverence"
+    ms[coordstr(x=10, y=16)].description = ("Majestic spires pierce the sky, casting a divine aura over cobblestone"
+                                            " squares. The sacred structure beckons pilgrims and whispers tales of"
+                                            " ancient reverence")
     ms[coordstr(x=10, y=16)].name = "ANTINA'S CATHEDRAL"
     ms[coordstr(x=10, y=16)].entries = {"cathedral": Entry(
         color=ms[coordstr(x=10, y=16)].color,

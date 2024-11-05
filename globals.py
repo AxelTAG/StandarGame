@@ -255,16 +255,38 @@ BIOMES = {
 }
 
 ENTRIES = {
-    "hut_0_0": Entry(description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
-                                 "invites serenity amid nature's whispers.",
-                     items=["bed", "short_sword", "bread", "apple"]),
 
-    "mirabelle_small_room": Entry(),
+    "mirabelles_inn": Entry(
+        description="Warm hearth, wooden beams, and cozy furnishings create a welcoming "
+                    "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
+                    "find respite.",
+        name="MIRABELLE'S INN",
+        npc=["innkeeper mirabelle"]),
 
-    "hut_1_23": Entry(description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
-                                  "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
-                                  " to secure the uncertain safety within.",
-                      items=["bed"])
+    "mirabelles_main_room": Entry(
+        description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
+                    "a warm hearth, rustic wooden beams, and snug furnishings.",
+        items=["bed"],
+        name="MIRABELLE'S INN MAIN ROOM",
+        req=["mirabelles_main_room_key"]),
+
+    "mirabelles_small_room": Entry(
+        description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
+                    "a warm hearth, rustic wooden beams, and snug furnishings.",
+        items=["bed"],
+        name="MIRABELLE'S INN SMALL ROOM",
+        req=["mirabelles_small_room_key"]),
+
+    "hut_0_0": Entry(
+        description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
+                    "invites serenity amid nature's whispers.",
+        items=["bed", "short_sword", "bread", "apple"]),
+
+    "hut_1_23": Entry(
+        description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
+                    "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
+                    " to secure the uncertain safety within.",
+        items=["bed"])
 }
 
 ITEMS = {
@@ -1032,7 +1054,6 @@ MOBS = {
         "exp": 6
     }
 }
-
 
 # NPCs.
 NPCS = {

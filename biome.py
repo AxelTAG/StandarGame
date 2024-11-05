@@ -73,9 +73,11 @@ class Entry(Biome):
                  name: str = "...",
                  npc: list = None,
                  req: list = None,
-                 status: int = None):
+                 status: int = None,
+                 hide: tuple[bool, float] = None):
 
         super().__init__(color, description, entries, fight, items, mobs, mobs_chances, name, npc, req, status)
 
         self.entry_type = entry_type
+        self.hide = hide
         self.leave_entry = leave_entry

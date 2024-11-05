@@ -272,15 +272,20 @@ def explore(player: Player, map_game: Map) -> str:
     if not player.outside:
         return "You can't explore here."
 
-    x, y = player.x, player.y
-
-    if (x, y) == (13, 0) and "cave" not in map_game.map_settings[coordstr(x, y)].entries:
-        map_game.map_settings[coordstr(x, y)].entries["cave"] = Entry(description="Nothing.")
-
-        return "You have found a cave."
-
-    else:
+    if player.place.entries is None:
         return "You explore the zone but you found nothing."
+
+    for key_entrie, entrie in player.place.entries.items():
+        if entrie.hide is None:
+            continue
+        if not entrie.hide[0]:
+            continue
+        else:
+            if entrie.hide[1] >= random.random():
+                entrie.hide[0] = True
+                return f"You have found a {entrie.name}."
+            return "You explore the zone but you found nothing."
+    return "You explore the zone but you found nothing."
 
 
 # Heal action.

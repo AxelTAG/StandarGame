@@ -19,7 +19,7 @@ def event_handler(player: Player,
                   play: int,
                   menu: int) -> tuple[dict, dict, int, int]:
 
-    # Event of Guard Lorian and Fisherman Marlin. The message. First part.
+    # Event of Guard Lorian and Fisherman Marlin. The message. First part (1/2).
     if npc["fisherman marlin"].hist_messages[0]:
         npc["guard lorian"].messages = {
             0: ["Halt, traveler! Hyrule City permits only those with proper credentials to pass these gates.",
@@ -35,7 +35,7 @@ def event_handler(player: Player,
 
         return npc, ms, play, menu
 
-    # Event of Guard Lorian and Fisherman Marlin. The message. Second part.
+    # Event of Guard Lorian and Fisherman Marlin. The message. Second part (2/2).
     elif player.events["message"] and npc["guard lorian"].hist_messages[1]:
         npc["guard lorian"].messages = {
             0: ["You've gained entry, but heed this counsel: Beyond the western outskirts lies uncharted territories"

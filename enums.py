@@ -150,7 +150,9 @@ class NpcTypes(Enum):
     ROYAL_HERALD = 78
 
     # Others.
+    MONSTER = 79
     WHISPERS = 471993
+
 
 
 class PlayerStatus(Enum):

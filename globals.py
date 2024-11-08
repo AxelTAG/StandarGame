@@ -1,7 +1,7 @@
 ﻿# Imports.
 # Local imports.
 from biome import Biome, Entry
-from enums import BodyPart, NpcTypes
+from enums import BodyPart, NpcTypes, EntryType
 from item import Item
 from npc import Npc
 
@@ -255,6 +255,128 @@ BIOMES = {
 }
 
 ENTRIES = {
+    "cave_13_0": Entry(
+        description="Echoing cave, shadows stretch across damp walls, while unsettling sounds resonate from unseen"
+                    " depths, hinting at hidden creatures lurking within the dark.",
+        name="CAVE",
+        hide={"visibility": False, "finding_chance": 0.80},
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin"],
+        mobs_chances=[40]),
+
+    "sub_cave_1_0": Entry(
+        description="Cave pit, jagged walls descend into darkness, littered with bones and crude markings. The air is"
+                    " thick with the stench of decay and faint goblin whispers.",
+        name="CAVE PIT",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin"],
+        mobs_chances=[40]),
+
+    "sub_cave_1_1": Entry(
+        description="Goblin lookout hole, roughly dug with narrow slits for spying, scattered with makeshift weapons."
+                    " Flickering torchlight reveals grimy walls and vigilant goblin eyes peering into the shadows.",
+        name="GOBLIN LOOKOUT HOLE",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["watchful goblin", "goblin war"],
+        mobs_chances=[90, 30]),
+
+    "sub_cave_1_2": Entry(
+        description="Crude racks hold jagged weapons, rusted blades, and splintered shields. The walls bear scratch "
+                    "marks, and a foul smell lingers amid the chaotic stash.",
+        name="GOBLIN'S ARMORY CAVE",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin", "goblin war"],
+        mobs_chances=[30, 60]),
+
+    "sub_cave_2_0": Entry(
+        description="Basin, murky, foul-smelling pool at the pit's depths, filled with discarded scraps, broken bones,"
+                    " and refuse. A grimy layer coats the stagnant surface, emitting a nauseating stench.",
+        name="CAVE BASIN",
+        entry_type=EntryType.CAVE,
+        fight=False),
+
+    "sub_cave_2_1": Entry(
+        description="Goblin chief's cave, dark and cluttered, adorned with stolen trinkets and crude trophies. A "
+                    "makeshift throne sits in the center, surrounded by flickering torches.",
+        name="CHIEF'S CAVE",
+        entry_type=EntryType.CAVE,
+        fight=True,),
+
+    "sub_cave_2_2": Entry(
+        description="Goblin chief's bedroom, dimly lit by flickering torches, the room is strewn with riches and "
+                    "treasures. Shackled prisoners lie in the shadows, while the chief’s bed, made of rough furs, "
+                    "dominates the chaotic space.",
+        name="GOBLIN CHIEF'S BEDROOM",
+        entry_type=EntryType.CAVE,
+        fight=False),
+
+    "sub_cave_2_3": Entry(
+        description="Cave passage, narrow and winding, with jagged walls and low ceilings. The air is damp, filled "
+                    "with the faint sound of scurrying feet and the occasional echo of distant growls.",
+        name="CAVE PASSAGE",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin", "goblin war"],
+        mobs_chances=[60, 20]),
+
+    "sub_cave_2_4": Entry(
+        description="Goblin cave cage chamber, rows of rusted iron cages line the damp stone walls, holding captives "
+                    "in grim silence. The air is thick with tension, and the faint clinking of chains echoes "
+                    "throughout.",
+        name="CAGE CHAMBER",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin", "goblin war"],
+        mobs_chances=[60, 20]),
+
+    "sub_cave_3_0": Entry(
+        description="Towering stalactites hang from the ceiling, casting eerie shadows in the dim light. The damp air"
+                    " drips steadily, creating a haunting, rhythmic echo throughout the chamber.",
+        name="CAVE GALLERY",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin", "goblin war"],
+        mobs_chances=[60, 20]),
+
+    "sub_cave_3_1": Entry(
+        description="Cave passage, narrow and winding, with jagged walls and low ceilings. The air is damp, filled "
+                    "with the faint sound of scurrying feet and the occasional echo of distant growls.",
+        name="CAVE PASSAGE",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin", "goblin war"],
+        mobs_chances=[50, 50]),
+
+    "sub_cave_3_2": Entry(
+        description="Crude stone tables scattered with scraps of half-eaten food and cracked bones. The air is "
+                    "thick with the smell of rancid meat, and discarded remnants litter the grimy floor.",
+        name="GOBLIN DINING GALLERY",
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["goblin", "goblin war"],
+        mobs_chances=[70, 70]),
+
+    "sub_cave_4_0": Entry(
+        description="Unused goblin cave chimney. A narrow, soot-stained shaft reaching upward, clogged with debris "
+                    "and cobwebs. Cold drafts whistle through, hinting at an abandoned escape route to the surface.",
+        name="CHIMNEY CAVE",
+        entry_type=EntryType.CAVE,
+        hide={"visibility": False, "finding_chance": 0.9}),
+
+    "hut_0_0": Entry(
+        description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
+                    "invites serenity amid nature's whispers.",
+        items=["bed", "short_sword", "bread", "apple"]),
+
+    "hut_1_23": Entry(
+        description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
+                    "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
+                    " to secure the uncertain safety within.",
+        items=["bed"]),
 
     "mirabelles_inn": Entry(
         description="Warm hearth, wooden beams, and cozy furnishings create a welcoming "
@@ -275,18 +397,7 @@ ENTRIES = {
                     "a warm hearth, rustic wooden beams, and snug furnishings.",
         items=["bed"],
         name="MIRABELLE'S INN SMALL ROOM",
-        req=["mirabelles_small_room_key"]),
-
-    "hut_0_0": Entry(
-        description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
-                    "invites serenity amid nature's whispers.",
-        items=["bed", "short_sword", "bread", "apple"]),
-
-    "hut_1_23": Entry(
-        description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
-                    "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
-                    " to secure the uncertain safety within.",
-        items=["bed"])
+        req=["mirabelles_small_room_key"])
 }
 
 ITEMS = {
@@ -917,6 +1028,23 @@ MOBS = {
         "dc_items": [0.5, 0.55, 1],
         "exp": 3
     },
+    "goblin hunter": {
+        "name": "Goblin Hunter",
+        "hp": 35,
+        "hpmax": 35,
+        "atk": 4,
+        "def": 2,
+        "eva": 0.5,
+        "pre": 0.7,
+        "c_coef": 1.5,
+        "c_chance": 60,
+        "poison": 2,
+        "c_poison": 40,
+        "esc": 50,
+        "items": {"gold": 10, "bone_sword": 1, "bone_shiel": 1, "none": None},
+        "dc_items": [0.5, 0.6, 0.7, 1],
+        "exp": 4
+    },
     "goblin war chief": {
         "name": "Goblin War Chief",
         "hp": 60,
@@ -933,6 +1061,23 @@ MOBS = {
         "items": {"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1, "none": None},
         "dc_items": [0.8, 0.85, 0.90, 0.95, 1],
         "exp": 8
+    },
+    "goblin war": {
+        "name": "War Goblin",
+        "hp": 35,
+        "hpmax": 35,
+        "atk": 4,
+        "def": 3,
+        "eva": 0.4,
+        "pre": 0.7,
+        "c_coef": 1.7,
+        "c_chance": 40,
+        "poison": 0,
+        "c_poison": 0,
+        "esc": 40,
+        "items": {"gold": 10, "bone_sword": 1, "bone_shiel": 1, "none": None},
+        "dc_items": [0.5, 0.6, 0.7, 1],
+        "exp": 4
     },
     "litle slime": {
         "name": "Litle Slime",
@@ -1052,10 +1197,28 @@ MOBS = {
         "items": {"gold": 15, "red_potion": 1, "bludgeon": 1, "none": None},
         "dc_items": [0.5, 0.6, 0.65, 1],
         "exp": 6
+    },
+    "watchful goblin": {
+        "name": "Watchful Goblin",
+        "hp": 25,
+        "hpmax": 25,
+        "atk": 3,
+        "def": 1,
+        "eva": 0.4,
+        "pre": 0.7,
+        "c_coef": 1.5,
+        "c_chance": 30,
+        "poison": 0,
+        "c_poison": 0,
+        "esc": 40,
+        "items": {"gold": 5, "bones": 1, "none": None},
+        "dc_items": [0.5, 0.55, 1],
+        "exp": 3
     }
 }
 
 # NPCs.
+
 NPCS = {
     "whispers": Npc(name="whispers",
                     npc_type=NpcTypes.WHISPERS,
@@ -1099,6 +1262,11 @@ NPCS = {
                                     "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
                                     "If you ever find yourself in Antina City, look for Guard Lorian. Tell him Marlin "
                                     "from Aqiri says hello."]}),
+
+    "goblin griznuk": Npc(name="chief goblin griznuk",
+                          npc_type=NpcTypes.MONSTER,
+                          messages={
+                            0: ["Grraaak... hssssk!", "Zilgruk!", "Fwaahh!"]}),
 
     "guard lorian": Npc(name="guard lorian",
                         npc_type=NpcTypes.GUARD,

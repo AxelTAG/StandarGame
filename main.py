@@ -8,7 +8,7 @@ from datetime import datetime
 import globals
 
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up,\
-    unequip, use, use_boat, check, get_item
+    unequip, use, use_boat, check, get_item, exit_entry
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
     disp_show_inventory, disp_drop, disp_look_around
 from enums import TimeOfDay
@@ -101,7 +101,6 @@ while run:
 
                 elif action_choice == "1":
                     # Play variables.
-                    fight = False
                     standing = True
 
                     # Player variables.
@@ -332,17 +331,8 @@ while run:
                     screen = disp_enter(player.place)
                     standing = True
 
-                elif "_".join(action[2:]) in player.place.entries:
-                    screen, fight = enter(player=player, entrie="_".join(action[2:]))
-                    if fight:
-                        play, menu, win = battle(player=player, enemy=mobs["orc"].copy(), ms=map_game.map_settings)
-                        if not play:
-                            save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
-                    standing = True
-
                 else:
-                    screen = f"There is no {' '.join(action[2:])}."
-                    standing = True
+                    screen, standing = enter(player=player, entrie="_".join(action[2:]))
 
             elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                 if len(action) <= 1:
@@ -354,19 +344,7 @@ while run:
                     standing = True
 
             elif action[0] == "exit":  # Exit entrie action:
-                if not player.outside:
-                    screen = f"You left the {player.place.name}."
-
-                    if hasattr(player.place.leave_entry, "leave_entry"):
-                        player.place = player.place.leave_entry
-
-                    else:
-                        player.place = player.place.leave_entry
-                        player.outside = True
-
-                else:
-                    screen = "You are outside."
-                standing = True
+                screen, standing = exit_entry(player=player, map_game=map_game)
 
             elif action[0] == "explore":  # Explore action:
                 screen = explore(player=player, map_game=map_game)

@@ -50,7 +50,7 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=9, y=5)].entries = {"inn": ENTRIES["mirabelles_inn"]}
     ms[coordstr(x=9, y=5)].entries["inn"].leave_entry = ms[coordstr(x=9, y=5)]
     ms[coordstr(x=9, y=5)].entries["inn"].entries = {"main_room": ENTRIES["mirabelles_main_room"],
-                                                     "small_room": ENTRIES["mirabelles_main_room"]}
+                                                     "small_room": ENTRIES["mirabelles_small_room"]}
     ms[coordstr(x=9, y=5)].entries["inn"].entries["main_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
     ms[coordstr(x=9, y=5)].entries["inn"].entries["small_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
     ms[coordstr(x=9, y=5)].npc = ["merchant bryson", "traveler sylas"]
@@ -162,9 +162,10 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=12, y=17)].req = ["permission"]
 
     # (12, 18)
-    ms[coordstr(x=12, y=18)].description = "Antina's arena district: Colossal stone coliseum stands amidst cheering " \
-                                           "crowds. Brave warriors clash within, seeking glory and honor, while merchants" \
-                                           " peddle wares to the fervent spectators, creating an electrifying atmosphere."
+    ms[coordstr(x=12, y=18)].description = ("Antina's arena district: Colossal stone coliseum stands amidst cheering"
+                                            " crowds. Brave warriors clash within, seeking glory and honor, while"
+                                            " merchants peddle wares to the fervent spectators, creating an "
+                                            "electrifying atmosphere.")
     ms[coordstr(x=12, y=18)].name = "ANTINA'S ARENA"
     ms[coordstr(x=12, y=18)].npc = ["merchant elden"]
 
@@ -174,6 +175,63 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=13, y=0)].mobs = ["goblin"]
     ms[coordstr(x=13, y=0)].mobs_chances = [40]
     ms[coordstr(x=13, y=0)].name = "HIGHLANDS"
+
+    # (13, 0): Cave - stage 0
+    cave_13_0 = ENTRIES["cave_13_0"]
+    cave_13_0.leave_entry = ms[coordstr(x=13, y=0)]
+    ms[coordstr(x=13, y=0)].entries = {"cave": cave_13_0}
+
+    # (13, 0): Cave - stage 1
+    sub_cave_1_0 = ENTRIES["sub_cave_1_0"]
+    sub_cave_1_1 = ENTRIES["sub_cave_1_1"]
+    sub_cave_1_2 = ENTRIES["sub_cave_1_2"]
+
+    cave_13_0.entries = {"cave_pit": sub_cave_1_0,
+                         "hole": sub_cave_1_1,
+                         "big_cave": sub_cave_1_2}
+
+    # (13, 0): Cave - stage 2
+    sub_cave_2_0 = ENTRIES["sub_cave_2_0"]
+    sub_cave_2_1 = ENTRIES["sub_cave_2_1"]
+    sub_cave_2_2 = ENTRIES["sub_cave_2_2"]
+    sub_cave_2_3 = ENTRIES["sub_cave_2_3"]
+    sub_cave_2_4 = ENTRIES["sub_cave_2_4"]
+
+    sub_cave_1_0.entries = {"cave": cave_13_0,
+                            "cave_basin": sub_cave_2_0}
+    sub_cave_1_1.entries = {"cave": cave_13_0}
+    sub_cave_1_2.entries = {"cave": cave_13_0,
+                            "passageway_cave": sub_cave_2_3,
+                            "cave_chamber": sub_cave_2_4}
+
+    # (13, 0): Cave - stage 3
+    sub_cave_3_0 = ENTRIES["sub_cave_3_0"]
+    sub_cave_3_1 = ENTRIES["sub_cave_3_1"]
+    sub_cave_3_2 = ENTRIES["sub_cave_3_2"]
+
+    sub_cave_2_0.entries = {"cave_pit": sub_cave_1_0,
+                            "cave gallery": sub_cave_3_0,
+                            "goblin_dining_gallery": sub_cave_3_2}
+    sub_cave_2_1.entries = {"goblin_chief_bedroom": sub_cave_2_2,
+                            "gallery": sub_cave_3_0}
+    sub_cave_2_3.entries = {"big_cave": sub_cave_1_2,
+                            "cave_gallery": sub_cave_3_1,
+                            "goblin_dining_gallery": sub_cave_3_2}
+    sub_cave_2_4.entries = {"big_cave": sub_cave_1_2}
+
+    # (13, 0): Cave - stage 4
+    sub_cave_4_0 = ENTRIES["sub_cave_4_0"]
+    sub_cave_4_0.leave_entry = ms[coordstr(x=19, y=0)]
+
+    sub_cave_3_0.entries = {"pit": sub_cave_2_0,
+                            "chiefs_cave": sub_cave_2_1,
+                            "gallery": sub_cave_3_1}
+    sub_cave_3_1.entries = {"chimney": sub_cave_4_0,
+                            "cave_gallery": sub_cave_3_0,
+                            "goblin_dining_gallery": sub_cave_3_2,
+                            "passageway_cave": sub_cave_2_0}
+    sub_cave_4_0.entries = {"cave_passage": sub_cave_3_1,
+                            "surface": ms[coordstr(x=19, y=0)]}
 
     # (13, 17)
     ms[coordstr(x=13, y=17)].name = "EAST GATES"

@@ -6,7 +6,7 @@ import random
 import globals
 from biome import Biome, Entry
 from displays import disp_battle, disp_talk_answers, disp_talk_tw
-from enums import NpcTypes, PlayerStatus, TimeOfDay
+from enums import EntryType, NpcTypes, PlayerStatus, TimeOfDay
 from item import Item
 from map import Map
 from npc import Npc
@@ -20,12 +20,12 @@ def get_item(item_name: str) -> Item:
     if item_name in globals.ITEMS.keys():
         return globals.ITEMS[item_name]
 
+
 # ----------------------------------------------------------------------------------------------------
 
 
 # Battle action.
 def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
-
     screen = "Defeat the enemy!"
     play = True
     menu = False
@@ -62,7 +62,8 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
         # Enemy attack.
         if enemy["hp"] > 0 and choice_action in ["0", "1", "2", "3"]:
             if enemy["pre"] * (1 - player.evasion) > random.random() and object_used:
-                ENEMY_ATK = [[enemy["atk"], enemy["atk"] * enemy["c_coef"]], [100 - enemy["c_chance"], enemy["c_chance"]]]
+                ENEMY_ATK = [[enemy["atk"], enemy["atk"] * enemy["c_coef"]],
+                             [100 - enemy["c_chance"], enemy["c_chance"]]]
                 ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(player.defense)), 0)
                 player.hp -= ENEMY_DMG
                 screen += "\n " + enemy["name"] + " dealt " + str(ENEMY_DMG) + " damage to " + player.name + "."
@@ -101,15 +102,18 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
             # Drop items logic and exp gain.
             if enemy["items"]:
                 drop_quantity = random.randint(1, len(enemy["items"])) - 1
-                drop_items = list(set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
+                drop_items = list(
+                    set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
 
                 for item in drop_items:
                     if item == "gold":
                         player.inventory.gold += enemy["items"][item]
-                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_", " ").title() + "."
+                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_",
+                                                                                                      " ").title() + "."
                     elif item != "none" and item in player.inventory.items.keys():
                         player.inventory.items[item] += enemy["items"][item]
-                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_", " ").title() + "."
+                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_",
+                                                                                                      " ").title() + "."
                     elif item != "none":
                         player.inventory.items[item] = enemy["items"][item]
 
@@ -201,50 +205,24 @@ def drop(player: Player, item: str, quantity: int = 1) -> str:
 
 # Enter action.
 def enter(player: Player, entrie: str) -> tuple[str, bool]:
-    x, y = player.x, player.y
     objects = [*player.inventory.items.keys()] + [*player.events.keys()]
 
-    if all(req in objects for req in player.place.entries[entrie].req):
-        if entrie == "cave":
-            if (x, y) == (13, 0):
-                if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
-                    if random.randint(a=0, b=100) <= 10:
-                        player.x, player.y = 19, 0
-                        return "You have crossed the cave without any problems.", False
+    if entrie not in player.place.entries.keys():
+        return f"There is not a {entrie} here.", True
 
-                    else:
-                        player.x, player.y = 19, 0
-                        return "You have crossed the cave.", True
+    elif not player.place.entries[entrie].hide["visibility"]:
+        return f"There is not a {entrie} here.", True
 
-                else:
-                    return "You need a torch to enter.", False
-
-            if (x, y) == (19, 0):
-                if "torch" in player.inventory.items.keys() and player.inventory.items["torch"] > 0:
-                    if random.randint(0, 100) <= 10:
-                        player.x, player.y = 13, 0
-                        return "You have crossed the cave without any problems.", False
-
-                    else:
-                        player.x, player.y = 13, 0
-                        return "You have crossed the cave.", True
-
-                else:
-                    return "You need a torch to enter.", False
-
-        else:
-            entrie_name = player.place.entries[entrie].name
-            player.outside = False
-            player.place = player.place.entries[entrie]
-            return f"You have enter to the {entrie_name}.", False
-
-    elif entrie not in player.place.entries.keys():
-        return f"There is not a {entrie} here.", False
+    elif all(req in objects for req in player.place.entries[entrie].req):
+        entrie_name = player.place.entries[entrie].name
+        player.outside = False
+        player.place = player.place.entries[entrie]
+        return f"You have enter to the {entrie_name}.", False
 
     else:
         requirements = " ".join(player.place.entries[entrie].req).split("_")
         requirements = " ".join(requirements).title()
-        return "You need " + requirements + " to enter.", False
+        return "You need " + requirements + " to enter.", True
 
 
 # Equip action.
@@ -267,25 +245,47 @@ def equip(player: Player, item: str) -> str:
         return f"You have equip {item_object.name}."
 
 
+# Exit action.
+def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
+    if player.place.leave_entry is None:
+        return "There aren't exits here.", True
+
+    if not player.outside:
+        place_name = player.place.name
+        if type(player.place.leave_entry) == Entry:
+            player.place = player.place.leave_entry
+        else:
+            player.place = player.place.leave_entry
+            player.outside = True
+
+        return f"You left the {place_name}.", False
+
+    else:
+        return "You are outside.", True
+
+
 # Explore action.
 def explore(player: Player, map_game: Map) -> str:
-    if not player.outside:
-        return "You can't explore here."
-
     if player.place.entries is None:
         return "You explore the zone but you found nothing."
 
+    if isinstance(player.place, Entry):
+        if player.place.entry_type not in [EntryType.CAVE]:
+            return "You can't explore here."
+
     for key_entrie, entrie in player.place.entries.items():
+        if type(entrie) == Biome:
+            continue
         if entrie.hide is None:
             continue
-        if not entrie.hide[0]:
+        if entrie.hide["visibility"]:
             continue
         else:
-            if entrie.hide[1] >= random.random():
-                entrie.hide[0] = True
+            if entrie.hide["finding_chance"] >= random.random():
+                entrie.hide["visibility"] = True
                 return f"You have found a {entrie.name}."
             return "You explore the zone but you found nothing."
-    return "You explore the zone but you found nothing."
+    return f"You explore the zone but you found nothing."
 
 
 # Heal action.
@@ -320,11 +320,6 @@ def land(player: Player, map_game: Map) -> str:
             return "You aren't in a boat."
 
 
-# Exit action.
-def leave(x: int, y: int, ms: dict):
-    pass
-
-
 # Move function.
 def move(player: Player,
          map_game: Map,
@@ -336,32 +331,46 @@ def move(player: Player,
     events = [*player.events.keys()]
 
     # Move North.
-    if y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status in ms[coordstr(x, y - 1)].status and mv == "1":
-        if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
+    if y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status in ms[
+        coordstr(x, y - 1)].status and mv == "1":
+        if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
+                tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
+                tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             player.x, player.y = x, y - 1
             player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved North.", False
 
     # Move East.
-    if x < map_height and all(req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status and mv == "2":
-        if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
+    if x < map_height and all(
+            req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[
+        coordstr(x + 1, y)].status and mv == "2":
+        if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
+                tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
+                tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             player.x, player.y = x + 1, y
             player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved East.", False
 
     # Move South.
-    if y < map_width and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status in ms[coordstr(x, y + 1)].status and mv == "3":
-        if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
+    if y < map_width and all(
+            req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status in ms[
+        coordstr(x, y + 1)].status and mv == "3":
+        if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
+                tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
+                tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             player.x, player.y = x, y + 1
             player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved South.", False
 
     # Move West.
-    if x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status in ms[coordstr(x - 1, y)].status and mv == "4":
-        if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
+    if x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status in ms[
+        coordstr(x - 1, y)].status and mv == "4":
+        if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
+                tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
+                tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             player.x, player.y = x - 1, y
             player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
             map_game.add_hours(hours_to_add=player.place.pace)
@@ -481,7 +490,8 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                                 while True:
                                     try:
                                         quantity = int(input(f"{' ' * 4}# "))
-                                        transaction, transaction_status = buy(player, items[item], quantity, prices[item])
+                                        transaction, transaction_status = buy(player, items[item], quantity,
+                                                                              prices[item])
                                         transactions += transaction
                                         break
                                     except ValueError:
@@ -657,7 +667,7 @@ def unequip(player: Player, item: str) -> str:
 # Use boat.
 def use_boat(player: Player, map_game: Map) -> str:
     place = map_game.map_settings[coordstr(player.x, player.y)]
-    
+
     if "boat" in place.items and player.status != PlayerStatus.SURF.value:
         player.status = PlayerStatus.SURF.value
         place.items.remove("boat")
@@ -682,7 +692,6 @@ def use_boat(player: Player, map_game: Map) -> str:
 
 # Use action (general).
 def use(player: Player, item: str) -> tuple[str, bool]:
-
     if item == "gold":
         return f"You can't use {item.replace('_', ' ').title()}.", False
 
@@ -723,4 +732,3 @@ def use(player: Player, item: str) -> tuple[str, bool]:
 def wait(map_game: Map, time_of_day: int) -> str:
     map_game.skip_to(time_of_day=time_of_day)
     return f"You wait until the {TimeOfDay(time_of_day).name.title()}."
-

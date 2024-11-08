@@ -70,12 +70,19 @@ def disp_drop() -> str:
 
 
 # Enter action.
-def disp_enter(place) -> str:
+def disp_enter(place: Biome) -> str:
     if place.entries:
         msg = "You want to enter to:"
-        for i, entrie in enumerate(place.entries):
-            entrie_name = " ".join(entrie.split("_")).title()
-            msg += f"\n - {entrie_name}"
+        n = 0
+        for entrie_key, entrie in place.entries.items():
+            if type(entrie) == Biome or entrie.hide["visibility"]:
+                entrie_name = " ".join(entrie_key.split("_")).title()
+                msg += f"\n - {entrie_name}"
+                n += 1
+            else:
+                continue
+        if n < 1:
+            return "There aren't entries here."
         return msg
     else:
         return "There aren't entries here."

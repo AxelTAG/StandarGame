@@ -21,7 +21,7 @@ class Npc:
     room_expirations: dict[str, tuple] = field(default=None)
 
     # Talking attributes.
-    hist_messages = field(init=False)
+    hist_messages: dict = field(init=False)
     talk_active = field(default=True)
 
     def __attrs_post_init__(self):

@@ -63,7 +63,7 @@ class Entry(Biome):
     def __init__(self,
                  color: tuple = (255, 0, 0, 255),
                  description: str = "...",
-                 entries=None,
+                 entries: dict = None,
                  entry_type: EntryType = None,
                  fight: bool = False,
                  items: list = None,

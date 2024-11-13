@@ -53,7 +53,7 @@ def init_map_setting(ms: dict):
                                                      "small_room": ENTRIES["mirabelles_small_room"]}
     ms[coordstr(x=9, y=5)].entries["inn"].entries["main_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
     ms[coordstr(x=9, y=5)].entries["inn"].entries["small_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
-    ms[coordstr(x=9, y=5)].npc = ["merchant bryson", "traveler sylas"]
+    ms[coordstr(x=9, y=5)].npc = ["merchant bryson", "traveler sylas", "villager merrin"]
 
     # (9, 17)
     ms[coordstr(x=9, y=17)].description = ("Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding"
@@ -73,7 +73,7 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=10, y=5)].description = ("Southern gateway, welcoming gates, cobblestone paths, and a charming,"
                                            " serene atmosphere greet visitors.")
     ms[coordstr(x=10, y=5)].name = "SOUTHERN GATES"
-    ms[coordstr(x=10, y=5)].npc = ["traveler elara"]
+    ms[coordstr(x=10, y=5)].npc = ["traveler elara", "villager fira"]
 
     # (10, 16)
     ms[coordstr(x=10, y=16)].description = ("Majestic spires pierce the sky, casting a divine aura over cobblestone"
@@ -179,7 +179,7 @@ def init_map_setting(ms: dict):
     # (13, 0): Cave - stage 0
     cave_13_0 = ENTRIES["cave_13_0"]
     cave_13_0.leave_entry = ms[coordstr(x=13, y=0)]
-    ms[coordstr(x=13, y=0)].entries = {"cave": cave_13_0}
+    ms[coordstr(x=13, y=0)].entries = {"cave_entrance": cave_13_0}
 
     # (13, 0): Cave - stage 1
     sub_cave_1_0 = ENTRIES["sub_cave_1_0"]
@@ -197,11 +197,11 @@ def init_map_setting(ms: dict):
     sub_cave_2_3 = ENTRIES["sub_cave_2_3"]
     sub_cave_2_4 = ENTRIES["sub_cave_2_4"]
 
-    sub_cave_1_0.entries = {"cave": cave_13_0,
+    sub_cave_1_0.entries = {"cave_entrance": cave_13_0,
                             "cave_basin": sub_cave_2_0}
-    sub_cave_1_1.entries = {"cave": cave_13_0}
-    sub_cave_1_2.entries = {"cave": cave_13_0,
-                            "passageway_cave": sub_cave_2_3,
+    sub_cave_1_1.entries = {"cave_entrance": cave_13_0}
+    sub_cave_1_2.entries = {"cave_entrance": cave_13_0,
+                            "passageway_cave_entrance": sub_cave_2_3,
                             "cave_chamber": sub_cave_2_4}
 
     # (13, 0): Cave - stage 3
@@ -210,12 +210,14 @@ def init_map_setting(ms: dict):
     sub_cave_3_2 = ENTRIES["sub_cave_3_2"]
 
     sub_cave_2_0.entries = {"cave_pit": sub_cave_1_0,
-                            "cave gallery": sub_cave_3_0,
-                            "goblin_dining_gallery": sub_cave_3_2}
+                            "cave_gallery": sub_cave_3_0}
     sub_cave_2_1.entries = {"goblin_chief_bedroom": sub_cave_2_2,
-                            "gallery": sub_cave_3_0}
+                            "cave_gallery": sub_cave_3_0}
+    sub_cave_2_2.entries = {"chiefs_cave": sub_cave_2_1}
+    sub_cave_2_2.npc = ["mayors daughter maisie"]
+    
     sub_cave_2_3.entries = {"big_cave": sub_cave_1_2,
-                            "cave_gallery": sub_cave_3_1,
+                            "cave_passageway_exit": sub_cave_3_1,
                             "goblin_dining_gallery": sub_cave_3_2}
     sub_cave_2_4.entries = {"big_cave": sub_cave_1_2}
 
@@ -223,14 +225,16 @@ def init_map_setting(ms: dict):
     sub_cave_4_0 = ENTRIES["sub_cave_4_0"]
     sub_cave_4_0.leave_entry = ms[coordstr(x=19, y=0)]
 
-    sub_cave_3_0.entries = {"pit": sub_cave_2_0,
+    sub_cave_3_0.entries = {"cave_basin": sub_cave_2_0,
                             "chiefs_cave": sub_cave_2_1,
-                            "gallery": sub_cave_3_1}
+                            "cave_passageway_exit": sub_cave_3_1}
     sub_cave_3_1.entries = {"chimney": sub_cave_4_0,
                             "cave_gallery": sub_cave_3_0,
                             "goblin_dining_gallery": sub_cave_3_2,
-                            "passageway_cave": sub_cave_2_0}
-    sub_cave_4_0.entries = {"cave_passage": sub_cave_3_1,
+                            "cave_passageway_entrance": sub_cave_2_3}
+    sub_cave_3_2.entries = {"cave_passageway_entrance": sub_cave_2_3,
+                            "goblin_dining_gallery": sub_cave_3_2}
+    sub_cave_4_0.entries = {"cave_passageway_exit": sub_cave_3_1,
                             "surface": ms[coordstr(x=19, y=0)]}
 
     # (13, 17)
@@ -263,7 +267,7 @@ def init_map_setting(ms: dict):
     # (19, 0)
     ms[coordstr(x=19, y=0)].description = "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these " \
                                           "perilous elevated lands."
-    ms[coordstr(x=19, y=0)].entries = ["cave"]
+    ms[coordstr(x=19, y=0)].entries = {"cave_entrance": ENTRIES["sub_cave_4_0"]}
 
     # (22, 1)
     ms[coordstr(x=22,

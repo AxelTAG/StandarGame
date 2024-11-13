@@ -52,6 +52,8 @@ class Player:
     y_cp: int = field(default=0)
     outside: bool = field(default=False)
     place: Biome | Entry = field(default=None)
+    last_place: Biome | Entry = field(default=None)
+    last_entry: Entry = field(default=None)
 
     # Lvl up attributes.
     st_points: int = field(default=0)
@@ -94,30 +96,34 @@ class Player:
             self.equip = {key: self.equip.get(key) for key in valid_keys}
 
         if self.events is None:
-            self.events = {"message": False, "permission": False, "win": False}
+            self.events = {"message": False,
+                           "permission": False,
+                           "win": False,
+                           "goblin_chief_crown": False,
+                           "message_maisie": False}
 
     @property
-    def attack(self):
+    def attack(self) -> int:
         item_attack_sum = sum(item.attack for item in self.equip.values() if isinstance(item, Item))
         return int(self.b_attack + self.strength * self.attack_factor + item_attack_sum)
 
     @property
-    def defense(self):
+    def defense(self) -> int:
         item_defense_sum = sum(item.defense for item in self.equip.values() if isinstance(item, Item))
         return int(self.b_defense + self.resistance * self.defence_factor + item_defense_sum)
 
     @property
-    def evasion(self):
+    def evasion(self) -> float:
         item_evasion_sum = sum(item.evasion for item in self.equip.values() if isinstance(item, Item))
         return self.b_evasion + self.agility * self.evasion_factor + item_evasion_sum
 
     @property
-    def precision(self):
+    def precision(self) -> float:
         item_evasion_sum = sum(item.precision for item in self.equip.values() if item is Item)
         return self.b_precision + self.agility * self.precision_factor + item_evasion_sum
 
     @property
-    def hpmax(self):
+    def hpmax(self) -> int:
         return int(self.b_hpmax + self.vitality * self.vitality_factor)
 
     def heal(self, amount: int) -> None:
@@ -127,22 +133,22 @@ class Player:
         else:
             self.hp = self.hpmax
 
-    def heal_poisoning(self):
+    def heal_poisoning(self) -> None:
         if self.poison:
             self.poison = 0
 
-    def refresh_time_played(self, time_close: timedelta | datetime, time_init: timedelta | datetime):
+    def refresh_time_played(self, time_close: timedelta | datetime, time_init: timedelta | datetime) -> None:
         self.time_played = time_close - time_init + self.time_played
 
-    def refresh_status(self):
+    def refresh_status(self) -> None:
         if self.poison > 0:
             self.hp -= self.poison
 
-    def equip_item(self, item: Item):
+    def equip_item(self, item: Item) -> None:
         if item.equippable and self.equip[item.body_part] is None:
             self.equip[item.body_part] = item
 
-    def unequip_item(self, item: Item):
+    def unequip_item(self, item: Item) -> None:
         if item in self.equip.values():
             self.equip[item.body_part] = None
 
@@ -155,7 +161,7 @@ class Player:
         else:
             return False
 
-    def lvl_up(self):
+    def lvl_up(self) -> None:
         self.lvl += 1
         self.exp = 0
         self.expmax = 10 * self.lvl
@@ -166,3 +172,9 @@ class Player:
         self.b_defense += 0.20
         self.b_precision += 0.005
         self.b_evasion += 0.01
+
+    def set_place(self, place: Biome | Entry) -> None:
+        if type(self.place) == Entry:
+            self.last_entry = self.place
+        self.last_place = self.place
+        self.place = place

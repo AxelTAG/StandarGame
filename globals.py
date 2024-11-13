@@ -258,12 +258,13 @@ ENTRIES = {
     "cave_13_0": Entry(
         description="Echoing cave, shadows stretch across damp walls, while unsettling sounds resonate from unseen"
                     " depths, hinting at hidden creatures lurking within the dark.",
-        name="CAVE",
+        name="CAVE ENTRANCE",
         hide={"visibility": False, "finding_chance": 0.80},
         entry_type=EntryType.CAVE,
         fight=True,
         mobs=["goblin"],
-        mobs_chances=[40]),
+        mobs_chances=[40],
+        req=["torch"]),
 
     "sub_cave_1_0": Entry(
         description="Cave pit, jagged walls descend into darkness, littered with bones and crude markings. The air is"
@@ -304,7 +305,7 @@ ENTRIES = {
                     "makeshift throne sits in the center, surrounded by flickering torches.",
         name="CHIEF'S CAVE",
         entry_type=EntryType.CAVE,
-        fight=True,),
+        fight=True, ),
 
     "sub_cave_2_2": Entry(
         description="Goblin chief's bedroom, dimly lit by flickering torches, the room is strewn with riches and "
@@ -317,7 +318,7 @@ ENTRIES = {
     "sub_cave_2_3": Entry(
         description="Cave passage, narrow and winding, with jagged walls and low ceilings. The air is damp, filled "
                     "with the faint sound of scurrying feet and the occasional echo of distant growls.",
-        name="CAVE PASSAGE",
+        name="CAVE PASSAGE ENTRANCE",
         entry_type=EntryType.CAVE,
         fight=True,
         mobs=["goblin", "goblin war"],
@@ -345,7 +346,7 @@ ENTRIES = {
     "sub_cave_3_1": Entry(
         description="Cave passage, narrow and winding, with jagged walls and low ceilings. The air is damp, filled "
                     "with the faint sound of scurrying feet and the occasional echo of distant growls.",
-        name="CAVE PASSAGE",
+        name="CAVE PASSAGE EXIT",
         entry_type=EntryType.CAVE,
         fight=True,
         mobs=["goblin", "goblin war"],
@@ -383,7 +384,7 @@ ENTRIES = {
                     "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
                     "find respite.",
         name="MIRABELLE'S INN",
-        npc=["innkeeper mirabelle"]),
+        npc=["innkeeper mirabelle", "villager doran"]),
 
     "mirabelles_main_room": Entry(
         description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
@@ -927,7 +928,7 @@ MOBS = {
         "exp": 6
     },
     "dragon": {
-        "name": "Dragon FrostFire",
+        "name": "Dragon FireFrost",
         "hp": 10,
         "hpmax": 10,
         "atk": 15,
@@ -939,8 +940,8 @@ MOBS = {
         "poison": 0,
         "c_poison": 0,
         "esc": 0,
-        "items": {"scales": 4121996, "none": None},
-        "dc_items": [0.9999999999, 1],
+        "items": {"none": None},
+        "dc_items": [1],
         "exp": 250,
     },
     "dryad": {
@@ -1027,6 +1028,23 @@ MOBS = {
         "items": {"gold": 5, "red_potion": 1, "none": None},
         "dc_items": [0.5, 0.55, 1],
         "exp": 3
+    },
+    "goblin chief": {
+        "name": "Goblin Chief",
+        "hp": 75,
+        "hpmax": 75,
+        "atk": 5,
+        "def": 3,
+        "eva": 0.4,
+        "pre": 0.6,
+        "c_coef": 1.3,
+        "c_chance": 30,
+        "poison": 0,
+        "c_poison": 0,
+        "esc": 0,
+        "items": {"gold": 60, "red_potion": 5, "none": None},
+        "dc_items": [0.5, 0.95, 1],
+        "exp": 30
     },
     "goblin hunter": {
         "name": "Goblin Hunter",
@@ -1266,7 +1284,7 @@ NPCS = {
     "goblin griznuk": Npc(name="chief goblin griznuk",
                           npc_type=NpcTypes.MONSTER,
                           messages={
-                            0: ["Grraaak... hssssk!", "Zilgruk!", "Fwaahh!"]}),
+                              0: ["Grraaak... hssssk!", "Zilgruk!", "Fwaahh!"]}),
 
     "guard lorian": Npc(name="guard lorian",
                         npc_type=NpcTypes.GUARD,
@@ -1305,12 +1323,20 @@ NPCS = {
     "mayor thorian": Npc(name="mayor thorian",
                          npc_type=NpcTypes.MAYOR,
                          messages={
-                             0: ["Greetings, traveler, to our humble abode! Epiiat is open to all seeking refuge.",
-                                 "However, I must caution you—recently, the once-tranquil caves to the north have "
-                                 "become infested with Goblins and other nefarious beings.",
-                                 "We fear a sinister leader guides them.",
-                                 "Be vigilant on your journey through our beloved town and beyond, and may the "
-                                 "Goddesses guide your steps."]}),
+                             0: ["Welcome to Epiiat, traveler.",
+                                 "Though I greet you as I would any of our own, my heart is heavy with concern. My"
+                                 " daughter, Maisie, has gone missing.",
+                                 "She wandered off days ago, and no trace of her remains. If your path allows it, "
+                                 "please keep an eye out for her.",
+                                 "The villagers and I are desperate for her safe return."]}),
+
+    "mayors daughter maisie": Npc(name="mayor's daughter maisie",
+                                  npc_type=NpcTypes.MAYORS_DAUGHTER,
+                                  messages={0: ["You... you saved me! I feared I'd never escape Griznuk's clutches.",
+                                                "My father, the mayor, will want to thank you properly. Please, come"
+                                                " back with me to the village.",
+                                                "Words cannot express my gratitude, but I hope our people can repay"
+                                                " your bravery."]}),
 
     "merchant bryson": Npc(name="merchant bryson",
                            npc_type=NpcTypes.MERCHANT,
@@ -1442,9 +1468,35 @@ NPCS = {
                                     "and check. Secrets often hide where the eye does not linger.",
                                     "May the journey unveil the unseen, brave one."]}),
 
+    "villager doran": Npc(name="villager doran",
+                          npc_type=NpcTypes.VILLAGER,
+                          messages={
+                              0: ["Ah, nothing like a good drink and a hot meal after a long day. The bard's song"
+                                  " tonight is a fine one—fills the air with tales of heroes and lost treasures.",
+                                  "Sit and listen a while, friend. The road can wait a moment longer, can’t it?"]}),
+
+    "villager fira": Npc(name="villager fira",
+                         npc_type=NpcTypes.VILLAGER,
+                         messages={
+                             0: ["Oh, traveler, have you heard? The mayor’s daughter, Maisie, hasn’t been seen "
+                                 "for days."
+                                 " I’m so worried—she’s always been kind to us all.",
+                                 "If she’s in danger, we must do something. Please, if you find any trace of her, "
+                                 "let the mayor know."]}),
+
+    "villager merrin": Npc(name="villager merrin",
+                           npc_type=NpcTypes.VILLAGER,
+                           messages={
+                               0: ["Oh, traveler, have you heard? The mayor’s daughter, Elara, has gone missing.",
+                                   "Some say she wandered too far, but I fear the worst... The goblins have been"
+                                   " lurking near the forest caves lately. It’s possible they’ve taken her.",
+                                   "I hope I’m wrong, but we need help before it’s too late."]}),
+
     "worker gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,
                           messages={
-                              0: ["Hail, traveler! The path ahead is blocked, and only through my efforts can it be "
-                                  "opened. Alas, it'll take time."]}),
+                              0: ["Oh, traveler, have you heard? The mayor’s daughter, Elara, has gone missing.",
+                                  "Some say she wandered too far, but I fear the worst... The goblins have been "
+                                  "lurking near the forest caves lately. It’s possible they’ve taken her. ",
+                                  "I hope I’m wrong, but we need help before it’s too late."]}),
 }

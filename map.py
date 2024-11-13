@@ -1,7 +1,8 @@
 # Imports.
 # Local imports.
+from biome import Biome, Entry
 from enums import Months, Season, TimeOfDay, WeekDays
-from globals import NPCS, BIOMES
+from globals import BIOMES, MOBS, NPCS
 from utils_settings import init_map_setting
 from utils import label_pixels, tl_map_set
 
@@ -16,7 +17,6 @@ class Map:
     month: int = field(default=Months.AURENAR.value)
     day: int = field(default=1)
     hour: int = field(default=6)
-    season: Season = field(default=Season.SUMMER.value)
 
     morning_start: int = field(default=6)
     afternoon_start: int = field(default=12)
@@ -29,6 +29,7 @@ class Map:
 
     # Climate map attributes.
     temperature: int = field(default=15)
+    length_of_seasons: int = field(default=2)
 
     # Map attributes.
     map_labels: list = field(default=None)
@@ -36,6 +37,7 @@ class Map:
     map_settings: dict = field(default=None)
     npcs: dict = field(default=NPCS.copy())
     biomes: dict = field(default=BIOMES.copy())
+    mobs: dict = field(default=MOBS.copy())
     x_len: int = field(init=False)
     y_len: int = field(init=False)
 
@@ -90,6 +92,10 @@ class Map:
     @property
     def year_duration_days(self) -> int:
         return self.year_duration * self.month_duration
+
+    @property
+    def current_season(self):
+        return [*Season][self.month // self.length_of_seasons]
 
     def add_hours(self, hours_to_add: int):
         hours_sum = self.hour + hours_to_add
@@ -158,3 +164,6 @@ class Map:
         date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
 
         return date_1 < date_2
+
+    def coords_from_place(self, place: Biome | Entry) -> tuple:
+        return next((eval(k) for k, v in self.map_settings.items() if v == place), None)

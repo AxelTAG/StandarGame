@@ -204,23 +204,33 @@ def drop(player: Player, item: str, quantity: int = 1) -> str:
 
 
 # Enter action.
-def enter(player: Player, entrie: str) -> tuple[str, bool]:
+def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
     objects = [*player.inventory.items.keys()] + [*player.events.keys()]
+    entry_name = entrie.replace("_", " ").title()
 
     if entrie not in player.place.entries.keys():
-        return f"There is not a {entrie} here.", True
+        return f"There is not a {entry_name} here.", True
 
-    elif not player.place.entries[entrie].hide["visibility"]:
-        return f"There is not a {entrie} here.", True
+    entrie_object = player.place.entries[entrie]
+    if type(entrie_object) == Entry and not entrie_object.hide["visibility"]:
+        return f"There is not a {entry_name} here.", True
 
-    elif all(req in objects for req in player.place.entries[entrie].req):
-        entrie_name = player.place.entries[entrie].name
-        player.outside = False
-        player.place = player.place.entries[entrie]
+    elif all(req in objects for req in entrie_object.req):
+        if type(entrie_object) == Entry:
+            player.outside = False
+        elif type(entrie_object) == Biome:
+            coordinates = tuple(map_game.coords_from_place(place=entrie_object))
+            print(player.x, player.y)
+            player.x, player.y = coordinates[0], coordinates[1]
+            print(player.x, player.y)
+            input("aaaaaaaaaaaaaaaa")
+            player.outside = True
+        entrie_name = entrie_object.name
+        player.set_place(entrie_object)
         return f"You have enter to the {entrie_name}.", False
 
     else:
-        requirements = " ".join(player.place.entries[entrie].req).split("_")
+        requirements = " ".join(entrie_object.req).split("_")
         requirements = " ".join(requirements).title()
         return "You need " + requirements + " to enter.", True
 
@@ -247,21 +257,21 @@ def equip(player: Player, item: str) -> str:
 
 # Exit action.
 def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
+    if type(player.place) == Biome:
+        return "You are outside.", True
+
     if player.place.leave_entry is None:
         return "There aren't exits here.", True
 
     if not player.outside:
         place_name = player.place.name
         if type(player.place.leave_entry) == Entry:
-            player.place = player.place.leave_entry
+            player.set_place(player.place.leave_entry)
         else:
-            player.place = player.place.leave_entry
+            player.set_place(player.place.leave_entry)
             player.outside = True
 
         return f"You left the {place_name}.", False
-
-    else:
-        return "You are outside.", True
 
 
 # Explore action.
@@ -337,7 +347,7 @@ def move(player: Player,
                 tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             player.x, player.y = x, y - 1
-            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved North.", False
 
@@ -349,7 +359,7 @@ def move(player: Player,
                 tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             player.x, player.y = x + 1, y
-            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved East.", False
 
@@ -361,7 +371,7 @@ def move(player: Player,
                 tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             player.x, player.y = x, y + 1
-            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved South.", False
 
@@ -372,7 +382,7 @@ def move(player: Player,
                 tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             player.x, player.y = x - 1, y
-            player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
             map_game.add_hours(hours_to_add=player.place.pace)
             return "You moved West.", False
 

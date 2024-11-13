@@ -7,9 +7,9 @@ from datetime import datetime
 # Locals imports.
 import globals
 
-from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up,\
+from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
     unequip, use, use_boat, check, get_item, exit_entry
-from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,\
+from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip, \
     disp_show_inventory, disp_drop, disp_look_around
 from enums import TimeOfDay
 from management import event_handler, save
@@ -31,7 +31,6 @@ npc = globals.NPCS.copy()
 mobs = globals.MOBS.copy()
 
 screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
-
 
 # Main loop of the game.
 while run:
@@ -193,11 +192,17 @@ while run:
         elif choice == "4":  # Quit option.
             quit()
 
-    time_init = datetime.now()
     while play:
-        # Autosave.
-        save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)  # Autosave.
+        # Time setting.
         time_init = datetime.now()
+
+        # Event handler.
+        play, menu = event_handler(player=player,
+                                   map_game=map_game,
+                                   time_init=time_init)
+
+        # Autosave.
+        save(player=player, map_game=map_game, time_init=time_init)  # Autosave.
         clear()
 
         # Fight chances of moving, and player status refreshing.
@@ -206,8 +211,8 @@ while run:
             if player.place.fight and player.place.mobs:
                 if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
-                    play, menu, win = battle(player, mobs[enemy].copy(), map_game.map_settings)
-                    save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
+                    play, menu, win = battle(player, map_game.mobs[enemy].copy(), map_game.map_settings)
+                    save(player=player, map_game=map_game, time_init=time_init)
 
             # Player status refresh.
             player.refresh_status()
@@ -240,7 +245,7 @@ while run:
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(player=player, map_game=map_game, npc=map_game.npcs, time_init=time_init)
+                save(player=player, map_game=map_game, time_init=time_init)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 if player.outside:
@@ -299,13 +304,17 @@ while run:
             elif action == ["draw", "map"]:  # Update of map action.
                 player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
                 if player.x != 0:
-                    player.map[player.y][player.x - 1] = map_game.map_settings[coordstr(x=player.x - 1, y=player.y)].color
+                    player.map[player.y][player.x - 1] = map_game.map_settings[
+                        coordstr(x=player.x - 1, y=player.y)].color
                 if player.x != map_game.x_len:
-                    player.map[player.y][player.x + 1] = map_game.map_settings[coordstr(x=player.x + 1, y=player.y)].color
+                    player.map[player.y][player.x + 1] = map_game.map_settings[
+                        coordstr(x=player.x + 1, y=player.y)].color
                 if player.y != 0:
-                    player.map[player.y - 1][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y - 1)].color
+                    player.map[player.y - 1][player.x] = map_game.map_settings[
+                        coordstr(x=player.x, y=player.y - 1)].color
                 if player.y != map_game.y_len:
-                    player.map[player.y + 1][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y + 1)].color
+                    player.map[player.y + 1][player.x] = map_game.map_settings[
+                        coordstr(x=player.x, y=player.y + 1)].color
                 screen = "You have explored the area and mapped it out."
 
                 if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
@@ -332,7 +341,7 @@ while run:
                     standing = True
 
                 else:
-                    screen, standing = enter(player=player, entrie="_".join(action[2:]))
+                    screen, standing = enter(player=player, entrie="_".join(action[2:]), map_game=map_game)
 
             elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                 if len(action) <= 1:
@@ -489,7 +498,17 @@ while run:
                 player.lvl_up()
 
             elif action[:2] == ["add", "item"]:
-                player.inventory.add_item(item=action[2], quantity=1)
+                quantity = 1 if len(action) < 4 else int(action[3])
+                player.inventory.add_item(item=action[2], quantity=quantity)
+
+            elif action == ["events"]:
+                screen = f"{player.events}"
+
+            elif action == ["place"]:
+                screen = f"{player.place.name, player.last_place.name, player.last_entry.name}"
+
+            elif action == ["print", "coord"]:
+                screen = f"{map_game.coords_from_place(place=player.place)}"
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
                 #
@@ -503,6 +522,3 @@ while run:
                 screen = "Map updated."
             else:
                 standing = True
-
-            # Event handler.
-            map_game.npcs, map_game.map_settings, play, menu = event_handler(player, map_game, map_game.npcs, map_game.map_settings, mobs, time_init, play, menu)

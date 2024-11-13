@@ -151,8 +151,9 @@ class NpcTypes(Enum):
 
     # Others.
     MONSTER = 79
+    MAYORS_DAUGHTER = 80
+    VILLAGER = 81
     WHISPERS = 471993
-
 
 
 class PlayerStatus(Enum):

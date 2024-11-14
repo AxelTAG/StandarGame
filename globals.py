@@ -1406,15 +1406,15 @@ NPCS = {
         npc_type=NpcTypes.TRAVELER,
         messages={
             0: ["Greetings, seeker of paths! If you yearn to traverse the mighty mountain range that veils our"
-                " land, head eastward.", "Beyond the emerald canopy and whispering trees lies a hidden valley. It "
-                                         "weaves through the ancient peaks, offering passage to those who dare to journey.",
-                "Take heed, for "
-                "the woods conceal both mystery and peril, but the call of adventure echoes through the leaves. May "
-                "the spirits guide your way, brave traveler."],
+                " land, head eastward.",
+                "Beyond the emerald canopy and whispering trees lies a hidden valley. It weaves through the ancient "
+                "peaks, offering passage to those who dare to journey.",
+                "Take heed, for the woods conceal both mystery and peril, but the call of adventure echoes through "
+                "the leaves. May the spirits guide your way, brave traveler."],
             1: ["Northward, the land ascends into highlands infested with goblins and other vile creatures. A "
                 "challenge for even the most seasoned adventurer."],
-            2: ["To the south, dense woodlands stretch as far as the eye can see.", "An enchanting realm, but one "
-                                                                                    "must tread cautiously, for shadows dance amidst the trees."],
+            2: ["To the south, dense woodlands stretch as far as the eye can see.",
+                "An enchanting realm, but one must tread cautiously, for shadows dance amidst the trees."],
             3: ["Nay, brave one. The west remains a mystery to me. My journey has yet to unveil the secrets concealed "
                 "in those unexplored lands.", "Perhaps one day, the winds of fate will carry me in that direction."]},
         leave_message=["May the spirits guide your way, brave traveler."],
@@ -1444,12 +1444,19 @@ NPCS = {
                                    "May your travels be safer than mine, and the path you choose be bathed in the "
                                    "light of wisdom."]}),
 
+    "traveler renan": Npc(name="traveler renan",
+                          npc_type=NpcTypes.TRAVELER,
+                          messages={0: ["You look like you’ve seen your share of the road, friend. If you need rest, "
+                                        "look for an inn—there’s no better place to regain your strength.",
+                                        "A warm bed and a hearty meal can make all the difference before facing "
+                                        "whatever lies ahead."]}),
+
     "traveler seraph": Npc(name="traveler seraph",
                            npc_type=NpcTypes.TRAVELER,
                            messages={0: ["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here "
-                                         "mentioned some caves to the north that might lead us across.", "Aye, those "
-                                                                                                         "caves are an option, but beware! Lately, they've become a haven for Goblins "
-                                                                                                         "and other foul creatures.",
+                                         "mentioned some caves to the north that might lead us across.",
+                                         "Aye, those caves are an option, but beware! Lately, they've become a haven "
+                                         "for Goblins and other foul creatures.",
                                          "A perilous journey awaits, my friend. Tread "
                                          "carefully if you choose that path."]}),
 

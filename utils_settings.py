@@ -45,15 +45,15 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=9, y=4)].npc = ["traveler thaldir"]
 
     # (9, 5)
-    ms[coordstr(x=9, y=5)].description = "Inn district, cozy tavern, lively marketplace, and quaint cottages surround " \
-                                         "the inviting town."
+    ms[coordstr(x=9, y=5)].description = ("Inn district, cozy tavern, lively marketplace, and quaint cottages "
+                                          "surround the inviting town.")
     ms[coordstr(x=9, y=5)].entries = {"inn": ENTRIES["mirabelles_inn"]}
     ms[coordstr(x=9, y=5)].entries["inn"].leave_entry = ms[coordstr(x=9, y=5)]
     ms[coordstr(x=9, y=5)].entries["inn"].entries = {"main_room": ENTRIES["mirabelles_main_room"],
                                                      "small_room": ENTRIES["mirabelles_small_room"]}
     ms[coordstr(x=9, y=5)].entries["inn"].entries["main_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
     ms[coordstr(x=9, y=5)].entries["inn"].entries["small_room"].leave_entry = ms[coordstr(x=9, y=5)].entries["inn"]
-    ms[coordstr(x=9, y=5)].npc = ["merchant bryson", "traveler sylas", "villager merrin"]
+    ms[coordstr(x=9, y=5)].npc = ["merchant bryson", "traveler sylas", "villager merrin", "traveler renan"]
 
     # (9, 17)
     ms[coordstr(x=9, y=17)].description = ("Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding"

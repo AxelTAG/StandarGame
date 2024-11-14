@@ -220,10 +220,7 @@ def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
             player.outside = False
         elif type(entrie_object) == Biome:
             coordinates = tuple(map_game.coords_from_place(place=entrie_object))
-            print(player.x, player.y)
             player.x, player.y = coordinates[0], coordinates[1]
-            print(player.x, player.y)
-            input("aaaaaaaaaaaaaaaa")
             player.outside = True
         entrie_name = entrie_object.name
         player.set_place(entrie_object)
@@ -593,11 +590,12 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                                                                       price=prices[item])
 
                                 if transaction_status:
-                                    disp_talk_tw(npc,
+                                    disp_talk_tw(npc=npc,
                                                  message=["Perfect. Keep this key, until 30 days."])
-                                    npc.room_expirations[items[item]] = map_game.current_date
+                                    expiration_date = globals.ITEMS[items[item]].expiration
+                                    npc.room_expirations[items[item]] = map_game.estimate_date(days=expiration_date)
                                 else:
-                                    disp_talk_tw(npc,
+                                    disp_talk_tw(npc=npc,
                                                  message=["Mmmm... you don't have enough."])
                                 break
 

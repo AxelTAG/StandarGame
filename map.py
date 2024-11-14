@@ -2,9 +2,10 @@
 # Local imports.
 from biome import Biome, Entry
 from enums import Months, Season, TimeOfDay, WeekDays
-from globals import BIOMES, MOBS, NPCS
-from utils_settings import init_map_setting
+from npc import Npc
+from player import Player
 from utils import label_pixels, tl_map_set
+from utils_settings import init_map_setting
 
 # External imports.
 from attrs import define, field
@@ -35,9 +36,9 @@ class Map:
     map_labels: list = field(default=None)
     map_init_settings: dict = field(default=None)
     map_settings: dict = field(default=None)
-    npcs: dict = field(default=NPCS.copy())
-    biomes: dict = field(default=BIOMES.copy())
-    mobs: dict = field(default=MOBS.copy())
+    npcs: dict = field(default=None)
+    biomes: dict = field(default=None)
+    mobs: dict = field(default=None)
     x_len: int = field(init=False)
     y_len: int = field(init=False)
 
@@ -49,7 +50,7 @@ class Map:
             pass
 
         if self.map_settings is None:
-            self.map_settings = tl_map_set(self.map_labels)
+            self.map_settings = tl_map_set(self.map_labels, biomes=self.biomes)
             init_map_setting(ms=self.map_settings)
 
         self.x_len = len(self.map_labels) - 1
@@ -167,3 +168,9 @@ class Map:
 
     def coords_from_place(self, place: Biome | Entry) -> tuple:
         return next((eval(k) for k, v in self.map_settings.items() if v == place), None)
+
+    def check_room_expiration(self, player: Player, npc: Npc) -> iter:
+        for item, date in self.npcs[npc].room_expirations.items():
+            if item in player.inventory.items.keys():
+                if self.is_major_date(date, self.current_date):
+                    yield item

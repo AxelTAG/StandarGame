@@ -1,4 +1,7 @@
 # Imports.
+# Local imports.
+from player import Player
+
 # Externals imports.
 import copy
 import hashlib
@@ -10,10 +13,6 @@ from PIL import Image
 import platform
 import sys
 import time
-
-# Local imports.
-from globals import BIOMES
-from player import Player
 
 
 # Assign a value to a key of a dict.
@@ -404,7 +403,7 @@ def text_coord(x, y) -> str:
 
 
 # Function that returns a dictionary from a list generated with label_pixels.
-def tl_map_set(tl_map: list) -> dict:
+def tl_map_set(tl_map: list, biomes: dict) -> dict:
     # Create empty dict.
     dictionary = {}
 
@@ -412,7 +411,7 @@ def tl_map_set(tl_map: list) -> dict:
     for i in range(len(tl_map)):
         for j in range(len(tl_map[i])):
             key = coordstr(j, i)
-            value = copy.deepcopy(BIOMES[tl_map[i][j]])
+            value = copy.deepcopy(biomes[tl_map[i][j]])
             dictionary[key] = value
 
     return dictionary

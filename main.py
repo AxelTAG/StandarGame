@@ -12,7 +12,7 @@ from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait,
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip, \
     disp_show_inventory, disp_drop, disp_look_around
 from enums import TimeOfDay
-from management import event_handler, save
+from management import event_handler, map_control_handling, save
 from map import Map
 from player import Player
 from utils import coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name, get_hash
@@ -132,7 +132,9 @@ while run:
             if play:
                 # Initial settings.
                 # Map settings.
-                map_game = Map()
+                map_game = Map(mobs=globals.MOBS.copy(),
+                               biomes=globals.BIOMES.copy(),
+                               npcs=globals.NPCS.copy())
 
                 # Location setting.
                 map_game.map_settings[coordstr(x=0, y=0)].entries["hut"].name = player.name + "'s Hut"
@@ -196,10 +198,11 @@ while run:
         # Time setting.
         time_init = datetime.now()
 
-        # Event handler.
+        # Event handler and map control.
         play, menu = event_handler(player=player,
                                    map_game=map_game,
                                    time_init=time_init)
+        map_control_handling(player=player, map_game=map_game)
 
         # Autosave.
         save(player=player, map_game=map_game, time_init=time_init)  # Autosave.

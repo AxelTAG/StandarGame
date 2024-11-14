@@ -1,6 +1,8 @@
 # Imports.
 # Local imports.
 from actions import battle, talk
+from displays import disp_talk_tw
+from enums import NpcTypes
 from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
@@ -126,6 +128,18 @@ def event_handler(player: Player,
 
     return True, False
 
+
+def map_control_handling(player: Player,
+                         map_game: Map):
+    for npc in player.place.npc:
+        if map_game.npcs[npc].npc_type == NpcTypes.INNKEEPER:
+            expirated_room_keys = map_game.check_room_expiration(player=player, npc=npc)
+            for key in expirated_room_keys:
+                player.inventory.drop_item(item=key, quantity=player.inventory.items[key])
+                disp_talk_tw(npc=map_game.npcs[npc],
+                             message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
+                                      "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to rent "
+                                      "it again if you plan on staying longer."])
 
 # Load game function.
 def load_game(path_usavepkl: str = "cfg_save.pkl", path_msave: str = "cfg_map.txt",

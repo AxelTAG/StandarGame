@@ -865,13 +865,22 @@ ITEMS = {
                             description="Paper flowers, seem to have something inside the stem, but you can't get it "
                                         "out with your fingers, you need a long stick."),
 
+    # Innkeeper room keys.
+    "mirabelles_small_room_key": Item(name="Mirabelle's Small Room Key",
+                                      description="Small room key, worn and simple, granting access to a modest inn"
+                                                  " chamber.",
+                                      expiration=30,
+                                      buy_price=3),
+
+    "mirabelles_main_room_key": Item(name="Mirabelle's Small Room Key",
+                                     description="Small room key, worn and simple, granting access to a modest inn"
+                                                 " chamber.",
+                                     expiration=30,
+                                     buy_price=5),
+
     # Others.
     "quit": Item(name="Quit",
                  description="This item ends the game session when used."),
-    "small_room_key": Item(name="Small Room Key",
-                           description="Small room key, worn and simple, granting access to a modest inn chamber.",
-                           expiration=30,
-                           buy_price=3)
 }
 
 # MOBS.

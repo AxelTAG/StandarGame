@@ -178,3 +178,6 @@ class Player:
             self.last_entry = self.place
         self.last_place = self.place
         self.place = place
+
+    def has(self, item: str) -> bool:
+        return item in self.inventory.items.keys() and self.inventory.items[item] >= 0

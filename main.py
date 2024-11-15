@@ -6,9 +6,8 @@ from datetime import datetime
 
 # Locals imports.
 import globals
-
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
-    unequip, use, use_boat, check, get_item, exit_entry
+    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map
 from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip, \
     disp_show_inventory, disp_drop, disp_look_around
 from enums import TimeOfDay
@@ -214,7 +213,7 @@ while run:
             if player.place.fight and player.place.mobs:
                 if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
-                    play, menu, win = battle(player, map_game.mobs[enemy].copy(), map_game.map_settings)
+                    play, menu, win = battle(player=player, map_game=map_game, enemy=map_game.mobs[enemy].copy())
                     save(player=player, map_game=map_game, time_init=time_init)
 
             # Player status refresh.
@@ -305,26 +304,7 @@ while run:
                     screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
-                if player.x != 0:
-                    player.map[player.y][player.x - 1] = map_game.map_settings[
-                        coordstr(x=player.x - 1, y=player.y)].color
-                if player.x != map_game.x_len:
-                    player.map[player.y][player.x + 1] = map_game.map_settings[
-                        coordstr(x=player.x + 1, y=player.y)].color
-                if player.y != 0:
-                    player.map[player.y - 1][player.x] = map_game.map_settings[
-                        coordstr(x=player.x, y=player.y - 1)].color
-                if player.y != map_game.y_len:
-                    player.map[player.y + 1][player.x] = map_game.map_settings[
-                        coordstr(x=player.x, y=player.y + 1)].color
-                screen = "You have explored the area and mapped it out."
-
-                if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
-                    # Explore a square instead of a cross
-                    for i in range(max(0, player.x - 1), min(map_game.x_len, player.x + 2)):
-                        for j in range(max(0, player.y - 1), min(map_game.y_len, player.y + 2)):
-                            player.map[j][i] = map_game.map_settings[coordstr(x=i, y=j)].color
+                screen = draw_map(player=player, map_game=map_game)
 
             elif action[0] == "drop":  # Drop action.
                 try:  # Converting input in proper clases and form.
@@ -370,6 +350,7 @@ while run:
                 screen = "You don't hear anything special."
 
             elif action == ["look", "around"]:  # Look around action.
+                look_around(player=player, map_game=map_game)
                 screen = disp_look_around(player.place)
 
             elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.

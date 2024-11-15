@@ -2,86 +2,91 @@
 # Local imports.
 from enums import EntryType, Season
 
+# External imports.
+from attrs import define, field
 
-# Biome class.
+
+@define
 class Biome:
-    def __init__(self,
-                 color: tuple = (255, 0, 0, 255),
-                 description: str = "...",
-                 entries: dict = None,
-                 fight: bool = True,
-                 items: list = None,
-                 mobs: list = None,
-                 mobs_chances: list = None,
-                 name: str = "...",
-                 npc: list = None,
-                 req: list = None,
-                 pace: int = 8,
-                 status: list = None,
-                 temperature: int = 15):
+    # Common attributes.
+    name: str = field(default="...")
+    color: tuple = field(default=(255, 0, 0, 255))
+    description: str = field(default="...")
+    entries: dict = field(default=None)
 
-        if entries is None:
-            entries = {}
+    # Mobs and fighting attributes.
+    mobs: list = field(default=None)
+    mobs_chances: list = field(default=None)
+    fight: bool = field(default=True)
 
-        if items is None:
-            items = []
+    # Place attributes.
+    npc: list = field(default=None)
+    items: list = field(default=None)
+    req: list = field(default=None)
+    pace: int = field(default=8)
+    draw_map: bool = field(default=True)
+    status: list = field(default=None)
 
-        if mobs is None:
-            mobs = []
+    # Place climate attributes.
+    temperature: int = field(default=15)
 
-        if mobs_chances is None:
-            mobs_chances = []
+    def __attrs_post_init__(self):
+        if self.entries is None:
+            self.entries = {}
 
-        if npc is None:
-            npc = []
+        if self.items is None:
+            self.items = []
 
-        if req is None:
-            req = []
+        if self.mobs is None:
+            self.mobs = []
 
-        if status is None:
-            status = []
+        if self.mobs_chances is None:
+            self.mobs_chances = []
 
-        self.color = color
-        self.description = description
-        self.entries = entries
-        self.fight = fight
-        self.items = items
-        self.mobs = mobs
-        self.mobs_chances = mobs_chances
-        self.name = name
-        self.npc = npc
-        self.req = req
-        self.pace = pace
-        self.status = status
-        self.temperature = temperature
+        if self.npc is None:
+            self.npc = []
+
+        if self.req is None:
+            self.req = []
+
+        if self.status is None:
+            self.status = []
 
     def refresh_temperature(self, season: Season = None):
         pass
 
 
+@define
 class Entry(Biome):
-    def __init__(self,
-                 color: tuple = (255, 0, 0, 255),
-                 description: str = "...",
-                 entries: dict = None,
-                 entry_type: EntryType = None,
-                 fight: bool = False,
-                 items: list = None,
-                 leave_entry: Biome = None,
-                 mobs: list = None,
-                 mobs_chances: list = None,
-                 name: str = "...",
-                 npc: list = None,
-                 req: list = None,
-                 status: int = None,
-                 hide: dict[str, bool | float] = None):
+    # Common attributes.
+    entry_type: EntryType = field(default=None)
+    leave_entry: Biome = field(default=None)
+    hide: dict[str, bool | float] = field(default=None)
 
-        super().__init__(color, description, entries, fight, items, mobs, mobs_chances, name, npc, req, status)
+    # Place attributes.
+    draw_map: bool = field(default=False)
 
-        if hide is None:
+    def __attrs_post_init__(self):
+        if self.entries is None:
+            self.entries = {}
+
+        if self.items is None:
+            self.items = []
+
+        if self.mobs is None:
+            self.mobs = []
+
+        if self.mobs_chances is None:
+            self.mobs_chances = []
+
+        if self.npc is None:
+            self.npc = []
+
+        if self.req is None:
+            self.req = []
+
+        if self.status is None:
+            self.status = []
+
+        if self.hide is None:
             self.hide = {"visibility": True, "finding_chance": 0}
-        else:
-            self.hide = hide
-
-        self.entry_type = entry_type
-        self.leave_entry = leave_entry

@@ -25,17 +25,19 @@ def get_item(item_name: str) -> Item:
 
 
 # Battle action.
-def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
+def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05) -> tuple[bool, bool, int]:
     screen = "Defeat the enemy!"
     play = True
     menu = False
     fight = True
 
+    hours_to_add = 0
     while fight:
         disp_battle(player, enemy, screen)
         choice_action = input(" # ")  # User choice action.
         object_used = True
         screen = "."  # Clearing text output screen.
+        hours_to_add += player.place.pace * pace_factor
 
         if choice_action == "0":  # Escape option.
             escape = random.choices([True, False], [enemy["esc"], 100 - enemy["esc"]], k=1)
@@ -88,7 +90,7 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
             player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
             player.status = 0
             player.exp = 0
-            reset_map(ms=ms, keys=["(2, 1)", "(6, 2)"])
+            reset_map(ms=map_game.map_settings, keys=["(2, 1)", "(6, 2)"])
 
             print(" GAME OVER")
             input(" > ")
@@ -98,6 +100,7 @@ def battle(player: Player, enemy: dict, ms: dict) -> tuple[bool, bool, int]:
         if enemy["hp"] <= 0:
             screen += "\n " + "You defeated the " + enemy["name"] + "!"
             fight = False
+            map_game.add_hours(hours_to_add=int(hours_to_add))
 
             # Drop items logic and exp gain.
             if enemy["items"]:
@@ -192,6 +195,37 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
     return text
 
 
+# Draw map action.
+def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
+    if not player.place.draw_map:
+        return "You can't draw map here. You can't explore for it."
+
+    player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
+    if player.x != 0:
+        player.map[player.y][player.x - 1] = map_game.map_settings[
+            coordstr(x=player.x - 1, y=player.y)].color
+    if player.x != map_game.x_len:
+        player.map[player.y][player.x + 1] = map_game.map_settings[
+            coordstr(x=player.x + 1, y=player.y)].color
+    if player.y != 0:
+        player.map[player.y - 1][player.x] = map_game.map_settings[
+            coordstr(x=player.x, y=player.y - 1)].color
+    if player.y != map_game.y_len:
+        player.map[player.y + 1][player.x] = map_game.map_settings[
+            coordstr(x=player.x, y=player.y + 1)].color
+
+    if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
+        # Explore a square instead of a cross
+        for i in range(max(0, player.x - 1), min(map_game.x_len, player.x + 2)):
+            for j in range(max(0, player.y - 1), min(map_game.y_len, player.y + 2)):
+                player.map[j][i] = map_game.map_settings[coordstr(x=i, y=j)].color
+
+    hours_to_add = int(player.place.pace * pace_factor)
+    map_game.add_hours(hours_to_add=hours_to_add)
+
+    return "You have explored the area and mapped it out."
+
+
 # Drop action.
 def drop(player: Player, item: str, quantity: int = 1) -> str:
     item_name = item.replace("_", " ")
@@ -272,8 +306,9 @@ def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
 
 
 # Explore action.
-def explore(player: Player, map_game: Map) -> str:
+def explore(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
     if player.place.entries is None:
+        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
         return "You explore the zone but you found nothing."
 
     if isinstance(player.place, Entry):
@@ -290,8 +325,11 @@ def explore(player: Player, map_game: Map) -> str:
         else:
             if entrie.hide["finding_chance"] >= random.random():
                 entrie.hide["visibility"] = True
+                map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
                 return f"You have found a {entrie.name}."
+            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You explore the zone but you found nothing."
+    map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
     return f"You explore the zone but you found nothing."
 
 
@@ -302,7 +340,7 @@ def heal(player: Player, amount: int) -> tuple[str, int]:
 
 
 # Land.
-def land(player: Player, map_game: Map) -> str:
+def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
     x, y = player.x, player.y
 
     if player.status == PlayerStatus.SURF.value and map_game.map_labels[y][x] not in ["sea", "river"]:
@@ -317,6 +355,7 @@ def land(player: Player, map_game: Map) -> str:
             map_game.map_settings[coordstr(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
                                                                  " coastal life.")
 
+        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
         return "You have land."
 
     else:
@@ -330,7 +369,8 @@ def land(player: Player, map_game: Map) -> str:
 # Move function.
 def move(player: Player,
          map_game: Map,
-         mv: str) -> tuple[str, bool]:
+         mv: str,
+         pace_factor: float = 1) -> tuple[str, bool]:
     x, y = player.x, player.y
     map_height, map_width = map_game.x_len, map_game.y_len
     tl_map, ms = map_game.map_labels, map_game.map_settings
@@ -345,7 +385,7 @@ def move(player: Player,
                 tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             player.x, player.y = x, y - 1
             player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
-            map_game.add_hours(hours_to_add=player.place.pace)
+            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved North.", False
 
     # Move East.
@@ -357,7 +397,7 @@ def move(player: Player,
                 tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             player.x, player.y = x + 1, y
             player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
-            map_game.add_hours(hours_to_add=player.place.pace)
+            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved East.", False
 
     # Move South.
@@ -369,7 +409,7 @@ def move(player: Player,
                 tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             player.x, player.y = x, y + 1
             player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
-            map_game.add_hours(hours_to_add=player.place.pace)
+            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved South.", False
 
     # Move West.
@@ -380,10 +420,16 @@ def move(player: Player,
                 tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             player.x, player.y = x - 1, y
             player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
-            map_game.add_hours(hours_to_add=player.place.pace)
+            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved West.", False
 
     return "You can't move there.", True
+
+
+# Look around action.
+def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None:
+    hours_to_add = int(player.place.pace * pace_factor)
+    map_game.add_hours(hours_to_add=hours_to_add)
 
 
 # Pick up action.

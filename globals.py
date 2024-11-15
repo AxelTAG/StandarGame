@@ -39,6 +39,7 @@ BIOMES = {
         mobs_chances=[80, 50],
         name="CAVE",
         req=["torch"],
+        pace=10,
         status=[0]),
     "coast": Biome(
         color=(239, 228, 176, 255),
@@ -48,6 +49,7 @@ BIOMES = {
         mobs_chances=[5, 30],
         name="COAST",
         req=[],
+        pace=4,
         status=[0, 1]),
     "dark forest": Biome(
         color=(22, 118, 51, 255),
@@ -58,6 +60,7 @@ BIOMES = {
         mobs_chances=[1, 30],
         name="DARK FOREST",
         req=[],
+        pace=7,
         status=[0]),
     "death valley": Biome(
         color=(148, 148, 148, 255),
@@ -68,6 +71,7 @@ BIOMES = {
         mobs_chances=[],
         name="DEATH VALLEY",
         req=[],
+        pace=7,
         status=[0]),
     "fields": Biome(
         color=(115, 231, 29, 255),
@@ -78,6 +82,7 @@ BIOMES = {
         mobs_chances=[15, 30],
         name="FIELDS",
         req=[],
+        pace=5,
         status=[0]),
     "forest": Biome(
         color=(34, 177, 76, 255),
@@ -88,6 +93,7 @@ BIOMES = {
         mobs_chances=[20, 1],
         name="FOREST",
         req=[],
+        pace=6,
         status=[0]),
     "frostvale": Biome(
         color=(120, 186, 252, 255),
@@ -98,6 +104,7 @@ BIOMES = {
         mobs_chances=[],
         name="FROSTVALE",
         req=[],
+        pace=6,
         status=[0]),
     "gates": Biome(
         color=(200, 191, 231, 255),
@@ -107,6 +114,7 @@ BIOMES = {
         mobs_chances=[],
         name="GATES",
         req=[],
+        pace=2,
         status=[0]),
     "highlands": Biome(
         color=(195, 195, 195, 255),
@@ -116,6 +124,7 @@ BIOMES = {
         mobs_chances=[40],
         name="HIGHLANDS",
         req=[],
+        pace=8,
         status=[0]),
     "hills": Biome(
         color=(78, 185, 32, 255),
@@ -126,6 +135,7 @@ BIOMES = {
         mobs_chances=[30, 30, 5],
         name="HILLS",
         req=[],
+        pace=6,
         status=[0]),
     "hut": Biome(
         color=(185, 122, 87, 255),
@@ -138,6 +148,7 @@ BIOMES = {
         mobs=[],
         mobs_chances=[],
         name="HUT",
+        pace=2,
         req=[],
         status=[0]),
     "island": Biome(
@@ -149,6 +160,7 @@ BIOMES = {
         mobs_chances=[30],
         name="ISLAND",
         req=[],
+        pace=4,
         status=[0]),
     "mountains": Biome(
         color=(127, 127, 127, 255),
@@ -158,6 +170,7 @@ BIOMES = {
         mobs_chances=[],
         name="MOUNTAINS",
         req=["climbing tools"],
+        pace=10,
         status=[0]),
     "plains": Biome(
         color=(181, 230, 29, 255),
@@ -168,6 +181,7 @@ BIOMES = {
         mobs_chances=[20, 30, 30],
         name="PLAINS",
         req=[],
+        pace=6,
         status=[0]),
     "plateau": Biome(
         color=(181, 230, 29, 255),
@@ -178,6 +192,7 @@ BIOMES = {
         mobs_chances=[30],
         name="PLATEAU",
         req=[],
+        pace=6,
         status=[0]),
     "red": Biome(
         color=(255, 0, 0, 255),
@@ -196,6 +211,7 @@ BIOMES = {
         mobs_chances=[],
         name="RIVER",
         req=[],
+        pace=6,
         status=[1]),
     "rocks": Biome(
         color=(85, 80, 85, 255),
@@ -214,6 +230,7 @@ BIOMES = {
         mobs_chances=[],
         name="SEA",
         req=[],
+        pace=10,
         status=[1]),
     "snow": Biome(
         color=(250, 250, 250, 255),
@@ -223,6 +240,7 @@ BIOMES = {
         mobs_chances=[],
         name="SNOW",
         req=["snow clothing"],
+        pace=8,
         status=[0]),
     "town": Biome(
         color=(170, 105, 70, 255),
@@ -232,6 +250,7 @@ BIOMES = {
         mobs_chances=[],
         name="TOWN",
         req=[],
+        pace=2,
         status=[0]),
     "valley": Biome(
         color=(167, 167, 167, 255),
@@ -242,6 +261,7 @@ BIOMES = {
         mobs_chances=[],
         name="VALLEY",
         req=[],
+        pace=5,
         status=[0]),
     "water": Biome(
         color=(128, 255, 255, 255),
@@ -251,6 +271,7 @@ BIOMES = {
         mobs_chances=[],
         name="WATER",
         req=[],
+        pace=6,
         status=[1])
 }
 

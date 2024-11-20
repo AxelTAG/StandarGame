@@ -1,7 +1,7 @@
 ﻿# Imports.
 # Local imports.
 from biome import Biome, Entry
-from enums import BodyPart, NpcTypes, EntryType
+from enums import BodyPart, NpcTypes, EntryType, PlayerStatus
 from item import Item
 from npc import Npc
 
@@ -21,6 +21,17 @@ PINK = (255, 105, 180, 255)
 
 # Bioms of map.
 BIOMES = {
+    "building": Biome(
+        color=(180, 110, 60, 255),
+        description="...",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="...",
+        req=[],
+        pace=4,
+        status=[PlayerStatus.WALK.value]),
+
     "canyon": Biome(
         color=(54, 54, 54, 255),
         description="Shadowy canyon inhabited by fearsome creatures, dark depths, echoing roars, and lurking horrors",
@@ -30,7 +41,8 @@ BIOMES = {
         name="CANYON",
         req=["torch"],
         pace=12,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "cave": Biome(
         color=(1, 1, 1, 255),
         description="...",
@@ -40,7 +52,8 @@ BIOMES = {
         name="CAVE",
         req=["torch"],
         pace=10,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "coast": Biome(
         color=(239, 228, 176, 255),
         description="Seaside with swaying palm trees, echoing waves, and vibrant life.",
@@ -50,7 +63,8 @@ BIOMES = {
         name="COAST",
         req=[],
         pace=4,
-        status=[0, 1]),
+        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
+
     "dark forest": Biome(
         color=(22, 118, 51, 255),
         description="Shadowy forest of peril, twisted trees loom overhead, their gnarled branches casting eerie "
@@ -61,7 +75,8 @@ BIOMES = {
         name="DARK FOREST",
         req=[],
         pace=7,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "death valley": Biome(
         color=(148, 148, 148, 255),
         description="Dreadful dead valley, a chilling abyss where every step deepens the terror within. The air grows "
@@ -72,7 +87,8 @@ BIOMES = {
         name="DEATH VALLEY",
         req=[],
         pace=7,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "fields": Biome(
         color=(115, 231, 29, 255),
         description="Verdant fields, rolling emerald expanses dotted with wildflowers, where gentle breezes carry the "
@@ -83,7 +99,8 @@ BIOMES = {
         name="FIELDS",
         req=[],
         pace=5,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "forest": Biome(
         color=(34, 177, 76, 255),
         description="Thick trees, vibrant flora, wildlife, hidden trails, and lurking danger in this treacherous "
@@ -94,7 +111,8 @@ BIOMES = {
         name="FOREST",
         req=[],
         pace=6,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "frostvale": Biome(
         color=(120, 186, 252, 255),
         description="A pristine, snow-covered expanse where frost-kissed silence reigns. Glistening ice formations "
@@ -105,7 +123,8 @@ BIOMES = {
         name="FROSTVALE",
         req=[],
         pace=6,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "gates": Biome(
         color=(200, 191, 231, 255),
         description="Nothing important.",
@@ -115,7 +134,8 @@ BIOMES = {
         name="GATES",
         req=[],
         pace=2,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "highlands": Biome(
         color=(195, 195, 195, 255),
         description="Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
@@ -125,7 +145,8 @@ BIOMES = {
         name="HIGHLANDS",
         req=[],
         pace=8,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "hills": Biome(
         color=(78, 185, 32, 255),
         description="Undulating landscapes concealing lurking dangers. Treacherous creatures, hidden in the shadows, "
@@ -136,7 +157,8 @@ BIOMES = {
         name="HILLS",
         req=[],
         pace=6,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "hut": Biome(
         color=(185, 122, 87, 255),
         description="Nothing important.",
@@ -150,7 +172,8 @@ BIOMES = {
         name="HUT",
         pace=2,
         req=[],
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "island": Biome(
         color=(201, 237, 92, 255),
         description="Island rainforest, dense foliage, vibrant biodiversity, and cascading waterfalls characterize "
@@ -161,7 +184,8 @@ BIOMES = {
         name="ISLAND",
         req=[],
         pace=4,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "mountains": Biome(
         color=(127, 127, 127, 255),
         description="Nothing important.",
@@ -171,7 +195,8 @@ BIOMES = {
         name="MOUNTAINS",
         req=["climbing tools"],
         pace=10,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "plains": Biome(
         color=(181, 230, 29, 255),
         description="Gentle terrain, waving grasslands, and minimal elevation define this vast, open expanse of natural"
@@ -182,9 +207,10 @@ BIOMES = {
         name="PLAINS",
         req=[],
         pace=6,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "plateau": Biome(
-        color=(181, 230, 29, 255),
+        color=(82, 249, 11, 255),
         description="Elevated plateau, expansive views, flat summits, and resilient flora characterize this "
                     "high-altitude, majestic landscape.",
         fight=True,
@@ -193,7 +219,8 @@ BIOMES = {
         name="PLATEAU",
         req=[],
         pace=6,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "red": Biome(
         color=(255, 0, 0, 255),
         description="Nothing important.",
@@ -202,7 +229,8 @@ BIOMES = {
         mobs_chances=[],
         name="RED",
         req=[],
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "river": Biome(
         color=(0, 162, 232, 255),
         description="Nothing important.",
@@ -212,7 +240,8 @@ BIOMES = {
         name="RIVER",
         req=[],
         pace=6,
-        status=[1]),
+        status=[PlayerStatus.SURF.value]),
+
     "rocks": Biome(
         color=(85, 80, 85, 255),
         description="Nothing important.",
@@ -221,7 +250,8 @@ BIOMES = {
         mobs_chances=[],
         name="ROCKS",
         req=["wings"],
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "sea": Biome(
         color=(63, 72, 204, 255),
         description="Nothing important.",
@@ -231,7 +261,8 @@ BIOMES = {
         name="SEA",
         req=[],
         pace=10,
-        status=[1]),
+        status=[PlayerStatus.SURF.value]),
+
     "snow": Biome(
         color=(250, 250, 250, 255),
         description="Nothing important.",
@@ -241,7 +272,8 @@ BIOMES = {
         name="SNOW",
         req=["snow clothing"],
         pace=8,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "town": Biome(
         color=(170, 105, 70, 255),
         description="Nothing important.",
@@ -251,7 +283,8 @@ BIOMES = {
         name="TOWN",
         req=[],
         pace=2,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "valley": Biome(
         color=(167, 167, 167, 255),
         description="Desolate, silent valley, cracked earth stretches between imposing cliffs, where an eerie stillness"
@@ -262,7 +295,8 @@ BIOMES = {
         name="VALLEY",
         req=[],
         pace=5,
-        status=[0]),
+        status=[PlayerStatus.WALK.value]),
+
     "water": Biome(
         color=(128, 255, 255, 255),
         description="Quiet water.",
@@ -272,7 +306,7 @@ BIOMES = {
         name="WATER",
         req=[],
         pace=6,
-        status=[1])
+        status=[PlayerStatus.SURF.value])
 }
 
 ENTRIES = {
@@ -419,7 +453,20 @@ ENTRIES = {
                     "a warm hearth, rustic wooden beams, and snug furnishings.",
         items=["bed"],
         name="MIRABELLE'S INN SMALL ROOM",
-        req=["mirabelles_small_room_key"])
+        req=["mirabelles_small_room_key"]),
+
+    "tower_of_eldra_floor_1": Entry(
+        description="Simple bed beside a small desk, lit by a dim lantern. Personal belongings and handwritten"
+                    "notes lie scattered across a worn rug.",
+        items=["bed", "telescope", "notes"],
+        name="TOWER OF ELDRA FIRST FLOOR"),
+
+    "tower_of_eldra_floor_2": Entry(
+        description="Shelves packed with star charts and ancient tomes. A brass telescope points skyward, surrounded"
+                    " by scattered scrolls and glowing crystal orbs.",
+        items=["bed"],
+        name="TOWER OF ELDRA SECOND FLOOR",
+        npc=["astronomer quillon"])
 }
 
 ITEMS = {
@@ -882,6 +929,9 @@ ITEMS = {
                  expiration=None,
                  buy_price=1000,
                  sell_price=700),
+    "giant_telescope": Item(name="Giant Telescope",
+                            description="Giant Telescope, towering and precise, reveals distant lands and secrets "
+                                        "hidden among the stars."),
     "origame_flowers": Item(name="Origame Flowers",
                             description="Paper flowers, seem to have something inside the stem, but you can't get it "
                                         "out with your fingers, you need a long stick."),
@@ -1268,6 +1318,15 @@ MOBS = {
 # NPCs.
 
 NPCS = {
+    "astronomer quillon": Npc(name="astronomer quillon",
+                              npc_type=NpcTypes.ASTRONOMER,
+                              messages={
+                                  0: ["Oh my, a visitor? It’s rare for anyone to make it up here. Welcome to the Tower"
+                                      " of Eldra—a name of my own choosing.",
+                                      "I built it to study the movements of our great moon, Eldra.",
+                                      "Fascinating, isn’t it? If you’re curious, I’d be glad to share what I’ve "
+                                      "learned about its mysterious dance across the night sky."]}),
+
     "whispers": Npc(name="whispers",
                     npc_type=NpcTypes.WHISPERS,
                     messages={0: ["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind,"
@@ -1301,6 +1360,15 @@ NPCS = {
                                     "You finally come to me...",
                                     "Destiny calls for a dance of fire and frost between us...",
                                     "Ready your blade..."]}),
+
+    "fisherman brann": Npc(name="fisherman marlin",
+                           npc_type=NpcTypes.FISHERMAN,
+                           messages={
+                               0: ["You there, traveler... Have you come from the port?",
+                                   "I’ve been waiting for days now. Marlin, the fisherman, promised to send "
+                                   "supplies, but nothing has arrived yet. My stores are running low, and the "
+                                   "sea hasn’t been kind lately.",
+                                   "If you see him, could you ask what’s causing the delay?"]}),
 
     "fisherman marlin": Npc(name="fisherman marlin",
                             npc_type=NpcTypes.FISHERMAN,

@@ -153,6 +153,7 @@ class NpcTypes(Enum):
     MONSTER = 79
     MAYORS_DAUGHTER = 80
     VILLAGER = 81
+    ASTRONOMER = 82
     WHISPERS = 471993
 
 

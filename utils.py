@@ -90,20 +90,6 @@ def count_first_spaces(string: str) -> int:
     return count
 
 
-# Function that calculates the part of the day.
-def day_est(actual_hs: int, add_hs: int) -> tuple[int, str]:
-    hs = (actual_hs + add_hs) % 24
-    if 0 <= hs < 6:
-        return hs, "NIGHT"
-    elif 6 <= hs < 12:
-        return hs, "MORNING"
-    elif 12 <= hs < 18:
-        return hs, "AFTERNOON"
-    elif 18 <= hs < 22:
-        return hs, "EVENING"
-    return hs, "NIGHT"
-
-
 # Functions that simplifies moving options.
 def draw_move(x: int, y: int, map_height: int, map_width: int, player: Player, tl_map: list, ms: dict) -> list:
     inventory = player.inventory.items
@@ -175,7 +161,9 @@ def get_label(x: int, y: int, matrix: np.array) -> str:
     color = tuple(matrix[y, x])
 
     # Get the color of the pixel at coordinates (x, y)
-    if color == (54, 54, 54, 255):  # Canyon.
+    if color == (180, 110, 60, 255):  # Building.
+        label = "building"
+    elif color == (54, 54, 54, 255):  # Canyon.
         label = "canyon"
     elif color == (1, 1, 1, 255):  # Cave.
         label = "cave"
@@ -205,6 +193,8 @@ def get_label(x: int, y: int, matrix: np.array) -> str:
         label = "mountains"
     elif color == (181, 230, 29, 255):  # Plains.
         label = "plains"
+    elif color == (82, 249, 11, 255):  # Plateau.
+        label = "plateau"
     elif color == (255, 0, 0, 255):  # Red.
         label = "red"
     elif color == (0, 162, 232, 255):  # River.
@@ -258,7 +248,9 @@ def label_pixels(img_path: str) -> list:
         for x in range(width):
             # Get the color of the pixel at coordinates (x, y)
             color = img.getpixel((x, y))
-            if color == (54, 54, 54, 255):  # Canyon.
+            if color == (180, 110, 60, 255):  # Building.
+                label = "building"
+            elif color == (54, 54, 54, 255):  # Canyon.
                 label = "canyon"
             elif color == (1, 1, 1, 255):  # Cave.
                 label = "cave"
@@ -288,6 +280,8 @@ def label_pixels(img_path: str) -> list:
                 label = "mountains"
             elif color == (181, 230, 29, 255):  # Plains.
                 label = "plains"
+            elif color == (82, 249, 11, 255):  # Plateau.
+                label = "plateau"
             elif color == (255, 0, 0, 255):  # Red.
                 label = "red"
             elif color == (0, 162, 232, 255):  # River.

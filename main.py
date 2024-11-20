@@ -26,9 +26,7 @@ rules = False
 fight = False
 standing = True
 
-npc = globals.NPCS.copy()
-mobs = globals.MOBS.copy()
-
+# First screen massage.
 screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
 
 # Main loop of the game.

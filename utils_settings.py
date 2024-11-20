@@ -258,12 +258,6 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=15, y=5)].name = "ROCKS"
     ms[coordstr(x=15, y=5)].req = ["wings"]
 
-    # (18, 24)
-    ms[coordstr(x=18,
-                y=24)].description = "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the" \
-                                     " forest stands as a silent witness to nature's reclamation."
-    ms[coordstr(x=18, y=24)].name = "FOREST"
-
     # (19, 0)
     ms[coordstr(x=19, y=0)].description = "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these " \
                                           "perilous elevated lands."
@@ -274,6 +268,26 @@ def init_map_setting(ms: dict):
                 y=1)].description = "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the" \
                                     " forest stands as a silent witness to nature's reclamation."
     ms[coordstr(x=22, y=1)].name = "DARK FOREST"
+
+    # (22, 18)
+    first_floor = ENTRIES["tower_of_eldra_floor_1"]
+    first_floor.leave_entry = ms[coordstr(x=22, y=18)]
+
+    second_floor = ENTRIES["tower_of_eldra_floor_2"]
+    second_floor.leave_entry = first_floor
+
+    ms[coordstr(x=22, y=18)].description = ("Vast, rocky expanse crowned with a solitary wooden tower. The structure "
+                                            "stands tall, offering sweeping views of the sky and distant horizons.")
+    ms[coordstr(x=22, y=18)].name = "PLATEAU"
+    ms[coordstr(x=22, y=18)].entries = {"tower_of_eldra": first_floor}
+    ms[coordstr(x=22, y=18)].entries["tower_of_eldra"].entries = {"tower_of_eldra_second_floor": second_floor}
+
+    # (22, 27)
+    ms[coordstr(x=18, y=24)].description = ("Seaside hut, weathered wood and a thatched roof, filled with fishing "
+                                            "gear and seashells. The salty breeze drifts through, mingling with the "
+                                            "scent of dried fish.")
+    ms[coordstr(x=18, y=24)].name = "PLAINS"
+    ms[coordstr(x=18, y=24)].npc = ["fisherman brann"]
 
     # (26, 15)
     ms[coordstr(x=26, y=15)].description = "Aquiri's portside entrance: Bustling harbor welcomes ships with salty " \

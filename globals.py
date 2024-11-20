@@ -466,7 +466,8 @@ ENTRIES = {
                     " by scattered scrolls and glowing crystal orbs.",
         items=["bed"],
         name="TOWER OF ELDRA SECOND FLOOR",
-        npc=["astronomer quillon"])
+        npc=["astronomer quillon"],
+        draw_map=True)
 }
 
 ITEMS = {
@@ -873,6 +874,7 @@ ITEMS = {
                       defense=0,
                       precision=0,
                       evasion=0,
+                      vision=0.5,
                       pickable=True,
                       consumable=False,
                       equippable=False,

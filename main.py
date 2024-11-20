@@ -8,13 +8,14 @@ from datetime import datetime
 import globals
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
     unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map
-from displays import disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip, \
-    disp_show_inventory, disp_drop, disp_look_around
+from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
+                      disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
 from management import event_handler, map_control_handling, save
 from map import Map
 from player import Player
-from utils import coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name, get_hash
+from utils import (coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
+                   find_full_name, get_hash)
 
 # Game variables.
 run = True
@@ -302,7 +303,12 @@ while run:
                     screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                screen = draw_map(player=player, map_game=map_game)
+                if player.place == map_game.map_settings[coordstr(x=22, y=18)].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]:
+                    exploration_radius = 10
+                else:
+                    exploration_radius = player.exploration_radius
+
+                screen = draw_map(player=player, map_game=map_game, exploration_radius=exploration_radius)
 
             elif action[0] == "drop":  # Drop action.
                 try:  # Converting input in proper clases and form.
@@ -322,7 +328,9 @@ while run:
                     standing = True
 
                 else:
-                    screen, standing = enter(player=player, entrie="_".join(action[2:]), map_game=map_game)
+                    place_entries = [*player.place.entries.keys()]
+                    entry_name = find_full_name(partial_name="_".join(action[2:]), names_list=place_entries)
+                    screen, standing = enter(player=player, entrie=entry_name, map_game=map_game)
 
             elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                 if len(action) <= 1:
@@ -403,7 +411,7 @@ while run:
                         standing = True
 
             elif action[0] == "talk":  # Talk action.
-                npc_name = " ".join(action[2:]).lower()
+                npc_name = find_full_name(partial_name=" ".join(action[2:]).lower(), names_list=player.place.npc)
 
                 if len(action) <= 2:
                     screen = disp_talk(player.place)

@@ -1,5 +1,6 @@
 # Imports.
 # External imports.
+import math
 import random
 
 # Internal imports.
@@ -196,30 +197,29 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
 
 
 # Draw map action.
-def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
+def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploration_radius: float = None) -> str:
     if not player.place.draw_map:
         return "You can't draw map here. You can't explore for it."
 
+    if exploration_radius is None:
+        exploration_radius = player.exploration_radius
+    print(exploration_radius)
+    input()
     player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
-    if player.x != 0:
-        player.map[player.y][player.x - 1] = map_game.map_settings[
-            coordstr(x=player.x - 1, y=player.y)].color
-    if player.x != map_game.x_len:
-        player.map[player.y][player.x + 1] = map_game.map_settings[
-            coordstr(x=player.x + 1, y=player.y)].color
-    if player.y != 0:
-        player.map[player.y - 1][player.x] = map_game.map_settings[
-            coordstr(x=player.x, y=player.y - 1)].color
-    if player.y != map_game.y_len:
-        player.map[player.y + 1][player.x] = map_game.map_settings[
-            coordstr(x=player.x, y=player.y + 1)].color
 
-    if "telescope" in player.inventory.items.keys() and player.inventory.items["telescope"] >= 0:
-        # Explore a square instead of a cross
-        for i in range(max(0, player.x - 1), min(map_game.x_len, player.x + 2)):
-            for j in range(max(0, player.y - 1), min(map_game.y_len, player.y + 2)):
-                player.map[j][i] = map_game.map_settings[coordstr(x=i, y=j)].color
+    # Helper function to map specific coordinates.
+    def map_tile(x: int, y: int):
+        if 0 <= x < map_game.x_len and 0 <= y < map_game.y_len:
+            player.map[y][x] = map_game.map_settings[coordstr(x=x, y=y)].color
 
+    # Map the boxes within the circular radius.
+    for i in range(max(0, player.x - int(exploration_radius)), min(map_game.x_len, player.x + int(exploration_radius) + 1)):
+        for j in range(max(0, player.y - int(exploration_radius)), min(map_game.y_len, player.y + int(exploration_radius) + 1)):
+            # Verificar si la casilla está dentro del círculo
+            if math.sqrt((player.x - i) ** 2 + (player.y - j) ** 2) <= exploration_radius:
+                map_tile(i, j)
+
+    # Add time based on venue tempo and pace factor.
     hours_to_add = int(player.place.pace * pace_factor)
     map_game.add_hours(hours_to_add=hours_to_add)
 

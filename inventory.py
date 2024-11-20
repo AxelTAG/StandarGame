@@ -1,6 +1,7 @@
 # Imports.
 # External imports.
 # Local imports.
+from globals import ITEMS
 
 
 # Inventory class.
@@ -40,3 +41,8 @@ class Inventory:
                 return True
             else:
                 return False
+
+    @property
+    def item_objects(self):
+        for item in self.items.keys():
+            yield ITEMS[item]

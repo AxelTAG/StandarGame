@@ -44,6 +44,7 @@ class Player:
     evasion_factor: float = field(default=0.01)
     precision_factor: float = field(default=0.005)
     vitality_factor: float = field(default=1)
+    vision: int = field(default=1)
 
     # Player location attributes.
     x: int = field(default=0)
@@ -125,6 +126,10 @@ class Player:
     @property
     def hpmax(self) -> int:
         return int(self.b_hpmax + self.vitality * self.vitality_factor)
+
+    @property
+    def exploration_radius(self):
+        return self.vision + sum([item.vision for item in self.inventory.item_objects])
 
     def heal(self, amount: int) -> None:
         if self.hp + amount < self.hpmax:

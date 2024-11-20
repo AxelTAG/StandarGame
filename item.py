@@ -13,10 +13,11 @@ class Item:
     description: str = field(default=None)
 
     # Item stats.
-    attack: int = field(default=None)
-    defense: int = field(default=None)
-    precision: float = field(default=None)
-    evasion: float = field(default=None)
+    attack: int = field(default=0)
+    defense: int = field(default=0)
+    precision: float = field(default=0)
+    evasion: float = field(default=0)
+    vision: float = field(default=0)
 
     body_part: BodyPart = field(default=None)
 

@@ -145,6 +145,15 @@ def export_settings(setting: object, path: str) -> None:
         pickle.dump(setting, file)
 
 
+def find_full_name(partial_name: str, names_list: list) -> str | None:
+    matching_names = [name for name in names_list if partial_name.lower() in name.lower()]
+
+    if len(matching_names) != 1:
+        return None
+
+    return matching_names[0]
+
+
 # Hash generator of txt file.
 def get_hash(file_name, algorithm='sha256', block_size=65536):
     hasher = hashlib.new(algorithm)

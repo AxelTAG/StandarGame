@@ -1,8 +1,4 @@
 # Imports.
-# External imports.
-import math
-import random
-
 # Internal imports.
 import globals
 from biome import Biome, Entry
@@ -13,6 +9,10 @@ from map import Map
 from npc import Npc
 from player import Player
 from utils import coordstr, reset_map, text_ljust
+
+# External imports.
+import math
+import random
 
 
 # ----------------------------------------------------------------------------------------------------

@@ -1,9 +1,4 @@
 # Imports.
-# External imports.
-import random
-import matplotlib.pyplot as plt
-from datetime import datetime
-
 # Locals imports.
 import globals
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
@@ -16,6 +11,11 @@ from map import Map
 from player import Player
 from utils import (coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
                    find_full_name, get_hash)
+
+# External imports.
+import random
+import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Game variables.
 run = True

@@ -1,10 +1,10 @@
 # Imports.
-# External imports.
 # Local imports.
 from globals import ITEMS
 
+# External imports.
 
-# Inventory class.
+
 class Inventory:
     def __init__(self, items=None, gold: int = 5):
         if items is None:

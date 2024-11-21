@@ -149,7 +149,8 @@ while run:
 
                 # Dragon Firefrost setting.
                 map_game.npcs["dragon firefrost"].messages = [player.name + "...", "You finally come to me...",
-                                                              "Destiny calls ""for a dance of fire and frost between us...",
+                                                              "Destiny calls ""for a dance of fire and frost between "
+                                                              "us...",
                                                               "Ready your blade..."]
 
                 # Introduction.
@@ -303,7 +304,8 @@ while run:
                     screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                if player.place == map_game.map_settings[coordstr(x=22, y=18)].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]:
+                place = map_game.map_settings["(22, 18)"].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]
+                if player.place == place:
                     exploration_radius = 10
                 else:
                     exploration_radius = player.exploration_radius
@@ -415,6 +417,10 @@ while run:
 
                 if len(action) <= 2:
                     screen = disp_talk(player.place)
+                    standing = True
+
+                elif npc_name is None:
+                    screen = "You need to specify the name more clearly."
                     standing = True
 
                 elif npc_name in player.place.npc:

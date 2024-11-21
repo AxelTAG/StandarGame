@@ -203,8 +203,7 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
 
     if exploration_radius is None:
         exploration_radius = player.exploration_radius
-    print(exploration_radius)
-    input()
+
     player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
 
     # Helper function to map specific coordinates.
@@ -239,6 +238,9 @@ def drop(player: Player, item: str, quantity: int = 1) -> str:
 
 # Enter action.
 def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
+    if entrie is None:
+        return "You need to specify the name more clearly.", True
+
     objects = [*player.inventory.items.keys()] + [*player.events.keys()]
     entry_name = entrie.replace("_", " ").title()
 

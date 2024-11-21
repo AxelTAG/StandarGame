@@ -154,6 +154,7 @@ class NpcTypes(Enum):
     MAYORS_DAUGHTER = 80
     VILLAGER = 81
     ASTRONOMER = 82
+    CARAVANNER = 83
     WHISPERS = 471993
 
 

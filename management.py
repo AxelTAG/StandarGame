@@ -6,7 +6,7 @@ from enums import NpcTypes
 from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
-from utils import export_dict_to_txt, get_hash, export_player, export_settings
+from utils import export_dict_to_txt, get_hash, export_player
 
 # External imports.
 from datetime import datetime
@@ -20,7 +20,7 @@ def event_handler(player: Player,
     if player.place == ENTRIES["sub_cave_2_2"] and not player.events["goblin_chief_crown"]:
         talk(npc=map_game.npcs["goblin griznuk"], player=player, map_game=map_game)
 
-        play, menu, win = battle(player=player, enemy=MOBS["goblin chief"], ms=map_game.map_settings)
+        play, menu, win = battle(player=player, enemy=MOBS["goblin chief"], map_game=map_game)
 
         if win:
             player.events["goblin_chief_crown"] = True
@@ -67,36 +67,40 @@ def event_handler(player: Player,
                 "I must ensure the village knows of this deed; tales of courage like this must be remembered.",
                 "May the gods guide that your steps, wherever the road may lead."]}
 
-    # Event of Guard Lorian and Fisherman Marlin. The message. First part (1/2).
-    if map_game.npcs["fisherman marlin"].hist_messages[0]:
-        map_game.npcs["guard lorian"].messages = {
-            0: ["Halt, traveler! Hyrule City permits only those with proper credentials to pass these gates.",
-                "State your business and present your identification, or you shall not venture beyond.",
-                "The safety of our citizens is paramount, and we cannot afford to be lax in these trying times."],
-            1: ["Well, that old sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
-                "fishing tales become too much for the villagers.",
-                "Safe travels, adventurer."]}
-        map_game.npcs["guard lorian"].answers = {
-            1: "I have a message"}
+    # Event Fisherman Marlin quests.
 
-        player.events["message"] = True
 
-        return True, False
 
-    # Event of Guard Lorian and Fisherman Marlin. The message. Second part (2/2).
-    if player.events["message"] and map_game.npcs["guard lorian"].hist_messages[1]:
-        map_game.npcs["guard lorian"].messages = {
-            0: ["You've gained entry, but heed this counsel: Beyond the western outskirts lies uncharted territories"
-                " and lurking dangers.",
-                "Arm yourself well, noble traveler. The path is treacherous, and a sturdy sword or enchanted bow may"
-                " be your greatest allies.",
-                "Antina City rests in relative peace, but the world beyond is unpredictable. Safe travels, and may "
-                "your blade remain sharp against the shadows that may encroach upon your journey."]}
-        map_game.npcs["guard lorian"].reset_hist_messages()
-
-        player.events["permission"] = True
-
-        return True, False
+    # # Event of Guard Lorian and Fisherman Marlin. The message. First part (1/2).
+    # if map_game.npcs["fisherman marlin"].hist_messages[0]:
+    #     map_game.npcs["guard lorian"].messages = {
+    #         0: ["Halt, traveler! Hyrule City permits only those with proper credentials to pass these gates.",
+    #             "State your business and present your identification, or you shall not venture beyond.",
+    #             "The safety of our citizens is paramount, and we cannot afford to be lax in these trying times."],
+    #         1: ["Well, that old sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
+    #             "fishing tales become too much for the villagers.",
+    #             "Safe travels, adventurer."]}
+    #     map_game.npcs["guard lorian"].answers = {
+    #         1: "I have a message"}
+    #
+    #     player.events["message"] = True
+    #
+    #     return True, False
+    #
+    # # Event of Guard Lorian and Fisherman Marlin. The message. Second part (2/2).
+    # if player.events["message"] and map_game.npcs["guard lorian"].hist_messages[1]:
+    #     map_game.npcs["guard lorian"].messages = {
+    #         0: ["You've gained entry, but heed this counsel: Beyond the western outskirts lies uncharted territories"
+    #             " and lurking dangers.",
+    #             "Arm yourself well, noble traveler. The path is treacherous, and a sturdy sword or enchanted bow may"
+    #             " be your greatest allies.",
+    #             "Antina City rests in relative peace, but the world beyond is unpredictable. Safe travels, and may "
+    #             "your blade remain sharp against the shadows that may encroach upon your journey."]}
+    #     map_game.npcs["guard lorian"].reset_hist_messages()
+    #
+    #     player.events["permission"] = True
+    #
+    #     return True, False
 
     # Event batle with Dragon FireFrost after winning.
     if map_game.npcs["dragon firefrost"].hist_messages[0]:
@@ -140,6 +144,7 @@ def map_control_handling(player: Player,
                              message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
                                       "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to rent "
                                       "it again if you plan on staying longer."])
+
 
 # Load game function.
 def load_game(path_usavepkl: str = "cfg_save.pkl", path_msave: str = "cfg_map.txt",

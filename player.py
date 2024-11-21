@@ -184,5 +184,7 @@ class Player:
         self.last_place = self.place
         self.place = place
 
-    def has(self, item: str) -> bool:
-        return item in self.inventory.items.keys() and self.inventory.items[item] >= 0
+    def has(self, item: str, amount: int = None) -> bool:
+        if amount is None:
+            amount = 1
+        return item in self.inventory.items.keys() and self.inventory.items[item] >= amount

@@ -464,7 +464,7 @@ ENTRIES = {
     "tower_of_eldra_floor_2": Entry(
         description="Shelves packed with star charts and ancient tomes. A brass telescope points skyward, surrounded"
                     " by scattered scrolls and glowing crystal orbs.",
-        items=["bed"],
+        items=["giant_telescope"],
         name="TOWER OF ELDRA SECOND FLOOR",
         npc=["astronomer quillon"],
         draw_map=True)
@@ -485,6 +485,7 @@ ITEMS = {
                 expiration=None,
                 buy_price=200,
                 sell_price=150),
+
     "bludgeon": Item(name="Axe",
                      description="Hefty Bludgeon blunt and brutal, ideal for stunning foes with a single, "
                                  "powerful blow.",
@@ -499,6 +500,7 @@ ITEMS = {
                      expiration=None,
                      buy_price=200,
                      sell_price=40),
+
     "chainmail_armor": Item(name="Chainmail Armor",
                             description=("Sturdy armor made of interlocked rings. Offers great protection for the "
                                          "chest."),
@@ -513,6 +515,7 @@ ITEMS = {
                             expiration=None,
                             buy_price=500,
                             sell_price=150),
+
     "hardened_leather_armor": Item(name="Hardened Leather Armor",
                                    description=("Thick, reinforced leather armor. Flexible and offers decent "
                                                 "protection."),
@@ -527,6 +530,7 @@ ITEMS = {
                                    expiration=None,
                                    buy_price=300,
                                    sell_price=60),
+
     "harpoon": Item(name="Harpoon",
                     description="A sharp harpoon for striking enemies from a distance. Balanced and quick.",
                     attack=2,
@@ -540,6 +544,7 @@ ITEMS = {
                     expiration=None,
                     buy_price=150,
                     sell_price=40),
+
     "iron_shield": Item(name="Iron Shield",
                         description="Solid iron shield. Blocks incoming attacks with ease.",
                         attack=0,
@@ -553,6 +558,7 @@ ITEMS = {
                         expiration=None,
                         buy_price=400,
                         sell_price=75),
+
     "large_bow": Item(name="Large Bow",
                       description="A hefty bow designed for long-range attacks. Great precision and speed.",
                       attack=2,
@@ -566,6 +572,7 @@ ITEMS = {
                       expiration=None,
                       buy_price=350,
                       sell_price=110),
+
     "leather_armor": Item(name="Leather Armor",
                           description="Basic leather armor. Provides light protection to the chest.",
                           attack=0,
@@ -579,6 +586,7 @@ ITEMS = {
                           expiration=None,
                           buy_price=200,
                           sell_price=35),
+
     "leather_boots": Item(name="Leather Boots",
                           description="Sturdy boots made of leather. Offers some defense for your legs.",
                           attack=0,
@@ -592,6 +600,7 @@ ITEMS = {
                           expiration=None,
                           buy_price=150,
                           sell_price=25),
+
     "longsword": Item(name="Longsword",
                       description="A finely crafted longsword. Perfect for dealing heavy, precise strikes.",
                       attack=4,
@@ -605,6 +614,7 @@ ITEMS = {
                       expiration=None,
                       buy_price=500,
                       sell_price=175),
+
     "mesh_boots": Item(name="Mesh Boots",
                        description="Flexible boots with added defense. Protects legs while maintaining mobility.",
                        attack=0,
@@ -618,6 +628,7 @@ ITEMS = {
                        expiration=None,
                        buy_price=250,
                        sell_price=50),
+
     "plate_armor": Item(name="Plate Armor",
                         description="Heavy plate armor that offers superior protection to the chest.",
                         attack=0,
@@ -631,6 +642,7 @@ ITEMS = {
                         expiration=None,
                         buy_price=700,
                         sell_price=200),
+
     "short_sword": Item(name="Short Sword",
                         description=("A trusty Short Sword, swift and precise, ideal for close-quarter battles against "
                                      "foes in the wild."),
@@ -645,6 +657,7 @@ ITEMS = {
                         expiration=None,
                         buy_price=150,
                         sell_price=50),
+
     "spear": Item(name="Spear",
                   description="A long spear for thrusting attacks. Great reach and balance.",
                   attack=3,
@@ -658,6 +671,7 @@ ITEMS = {
                   expiration=None,
                   buy_price=300,
                   sell_price=125),
+
     "spike_shield": Item(name="Spike Shield",
                          description="A sturdy shield with deadly spikes. Can block and deal damage.",
                          attack=1,
@@ -671,6 +685,7 @@ ITEMS = {
                          expiration=None,
                          buy_price=500,
                          sell_price=150),
+
     "sword": Item(name="Sword",
                   description="A balanced sword. Reliable for close combat with decent attack power.",
                   attack=3,
@@ -684,6 +699,7 @@ ITEMS = {
                   expiration=None,
                   buy_price=400,
                   sell_price=150),
+
     "tower_shield": Item(name="Tower Shield",
                          description="A massive shield offering unparalleled defense. Best for tanking heavy attacks.",
                          attack=0,
@@ -697,6 +713,7 @@ ITEMS = {
                          expiration=None,
                          buy_price=600,
                          sell_price=150),
+
     "wood_shield": Item(name="Wood Shield",
                         description="A simple wooden shield. Provides basic defense.",
                         attack=0,
@@ -724,6 +741,7 @@ ITEMS = {
                   expiration=None,
                   buy_price=1,
                   sell_price=1),
+
     "antidote": Item(name="Antidote",
                      description="A small vial that cures poison. Essential for survival in venomous areas.",
                      attack=0,
@@ -736,6 +754,7 @@ ITEMS = {
                      expiration=None,
                      buy_price=5,
                      sell_price=3),
+
     "basilisk_fangs": Item(name="Basilisk Fangs",
                            description="Deadly fangs of a basilisk. Handle with care, might still be venomous.",
                            attack=0,
@@ -748,6 +767,7 @@ ITEMS = {
                            expiration=None,
                            buy_price=15,
                            sell_price=15),
+
     "bier": Item(name="Bier",
                  description="A simple bier. Helps recover energy after a long day's journey.",
                  attack=0,
@@ -760,6 +780,7 @@ ITEMS = {
                  expiration=None,
                  buy_price=1,
                  sell_price=1),
+
     "bread": Item(name="Bread",
                   description="A crusty loaf of bread, filling and freshly baked for hungry travelers.",
                   attack=0,
@@ -772,6 +793,7 @@ ITEMS = {
                   expiration=None,
                   buy_price=1,
                   sell_price=1),
+
     "cheese": Item(name="Cheese",
                    description="A wedge of cheese. Restores energy but offers no additional effects.",
                    attack=0,
@@ -784,6 +806,7 @@ ITEMS = {
                    expiration=None,
                    buy_price=2,
                    sell_price=2),
+
     "fishing_pole": Item(name="Fishing Pole",
                          description="A sturdy pole for fishing. A useful tool for catching food.",
                          attack=0,
@@ -796,6 +819,7 @@ ITEMS = {
                          expiration=None,
                          buy_price=25,
                          sell_price=25),
+
     "giant_red_potion": Item(name="Giant Red Potion",
                              description="A large red potion that restores a significant amount of health.",
                              attack=0,
@@ -808,6 +832,7 @@ ITEMS = {
                              expiration=None,
                              buy_price=10,
                              sell_price=10),
+
     "giant_silk": Item(name="Giant Silk",
                        description="Silk from a giant spider. Valuable for crafting or trading.",
                        attack=0,
@@ -820,6 +845,7 @@ ITEMS = {
                        expiration=None,
                        buy_price=30,
                        sell_price=30),
+
     "litle_red_potion": Item(name="Little Red Potion",
                              description="A small potion that restores a minor amount of health.",
                              attack=0,
@@ -832,6 +858,7 @@ ITEMS = {
                              expiration=None,
                              buy_price=2,
                              sell_price=2),
+
     "red_potion": Item(name="Red Potion",
                        description="A standard red potion to restore health during battle.",
                        attack=0,
@@ -844,6 +871,7 @@ ITEMS = {
                        expiration=None,
                        buy_price=5,
                        sell_price=5),
+
     "slime_balls": Item(name="Slime Balls",
                         description="Gooey remnants of a defeated slime. Maybe useful, but hard to tell.",
                         attack=0,
@@ -856,6 +884,7 @@ ITEMS = {
                         expiration=None,
                         buy_price=1,
                         sell_price=1),
+
     "soup": Item(name="Soup",
                  description="A warm bowl of hearty soup, perfect for cold, weary adventurers.",
                  attack=0,
@@ -868,6 +897,7 @@ ITEMS = {
                  expiration=None,
                  buy_price=1,
                  sell_price=1),
+
     "telescope": Item(name="Telescope",
                       description="A long-range viewing device.",
                       attack=0,
@@ -881,6 +911,7 @@ ITEMS = {
                       expiration=None,
                       buy_price=125,
                       sell_price=125),
+
     "torch": Item(name="Torch",
                   description="A burning torch to light the way. Useful in dark places.",
                   attack=0,
@@ -893,6 +924,7 @@ ITEMS = {
                   expiration=None,
                   buy_price=10,
                   sell_price=10),
+
     "water": Item(name="Water",
                   description="A bottle of clean water. Refreshing and essential for survival.",
                   attack=0,
@@ -919,21 +951,16 @@ ITEMS = {
                 expiration=None,
                 buy_price=300,
                 sell_price=150),
+
     "boat": Item(name="Boat",
                  description="A sturdy sooden ship crafted to brave the seas, steady against waves and fierce winds.",
-                 attack=0,
-                 defense=0,
-                 precision=0,
-                 evasion=0,
-                 pickable=False,
-                 consumable=False,
-                 equippable=False,
-                 expiration=None,
                  buy_price=1000,
                  sell_price=700),
+
     "giant_telescope": Item(name="Giant Telescope",
                             description="Giant Telescope, towering and precise, reveals distant lands and secrets "
                                         "hidden among the stars."),
+
     "origame_flowers": Item(name="Origame Flowers",
                             description="Paper flowers, seem to have something inside the stem, but you can't get it "
                                         "out with your fingers, you need a long stick."),
@@ -1327,7 +1354,28 @@ NPCS = {
                                       " of Eldra—a name of my own choosing.",
                                       "I built it to study the movements of our great moon, Eldra.",
                                       "Fascinating, isn’t it? If you’re curious, I’d be glad to share what I’ve "
-                                      "learned about its mysterious dance across the night sky."]}),
+                                      "learned about its mysterious dance across the night sky."],
+                                  1: ["Marvelous, isn’t it? I built this grand telescope with my own hands. It lets"
+                                      " me study the stars and the mysteries of the heavens.",
+                                      "But it’s not just for the sky—I can peer into distant lands as well. The "
+                                      "world looks so small from up here, yet so full of wonder."],
+                                  2: ["Ah, Eldra—the moon of wisdom and magic. Its cycle spans 64 days, visible both "
+                                      "day and night, tied to nature’s rhythms.",
+                                      "Many believe it grants mystical power, but I suspect its effects stem from its"
+                                      " geological makeup.",
+                                      "Imagine the secrets its surface holds! Wouldn’t you agree the truth is just"
+                                      " as fascinating as legend?"],
+                                  3: ["Karûn, the Red Moon—a younger sister to Eldra.",
+                                      "Its cycle is shorter, just 32 days, and it graces the night skies. I haven’t "
+                                      "studied it much myself, but I know someone who has.",
+                                      "A colleague of mine in the west is dedicated to uncovering its secrets. You "
+                                      "might seek them out if Karûn intrigues you."]},
+                              answers={
+                                  1: "What can you tell me about the large telescope that is here?",
+                                  2: "What do you know about the moon Eldra?",
+                                  3: "There is another moon, right?"},
+                              leave_message=["Farewell, traveler! May the stars guide your path, and perhaps we’ll "
+                                             "meet again under Eldran’s glow."]),
 
     "whispers": Npc(name="whispers",
                     npc_type=NpcTypes.WHISPERS,
@@ -1355,6 +1403,21 @@ NPCS = {
                                   "One day, perhaps, the tides will reveal its mysteries to a brave soul like "
                                   "yourself, adventurer."]}),
 
+    "caravan leader darek": Npc(name="Caravan Leader Darek",
+                                npc_type=NpcTypes.CARAVAN_LEADER,
+                                messages={
+                                    0: ["We’re stuck here, traveler. The path through the valley to Epiiat is "
+                                        "blocked by a landslide. Until the rubble is cleared, there’s no way forward.",
+                                        "It’s put quite the halt to our journey."]}),
+
+    "caravenner lorien": Npc(name="Caravanner Lorien",
+                             npc_type=NpcTypes.CARAVANNER,
+                             messages={
+                                 0: ["Epiiat... It’s been years since I last visited. A quiet little place, if I "
+                                     "recall.",
+                                     "I was looking forward to seeing it again, but with this landslide, who knows "
+                                     "when we’ll get through."]}),
+
     "dragon firefrost": Npc(name="dragon firefrost",
                             npc_type=NpcTypes.DRAGON,
                             messages={
@@ -1363,7 +1426,7 @@ NPCS = {
                                     "Destiny calls for a dance of fire and frost between us...",
                                     "Ready your blade..."]}),
 
-    "fisherman brann": Npc(name="fisherman marlin",
+    "fisherman brann": Npc(name="fisherman brann",
                            npc_type=NpcTypes.FISHERMAN,
                            messages={
                                0: ["You there, traveler... Have you come from the port?",
@@ -1394,6 +1457,13 @@ NPCS = {
                                 "State your business and present your identification, or you shall not venture beyond.",
                                 "The safety of our citizens is paramount, and we cannot afford to be lax in these "
                                 "trying times."]}),
+
+    "jester ralzo": Npc(name="jester ralzo",
+                        npc_type=NpcTypes.JESTER,
+                        messages={
+                            0: ["Traveling solo, but tagging along with this fine caravan! Life’s a journey, after"
+                                " all, and laughter is my trade. Stuck here or not, the road’s more fun with a bit "
+                                "of mischief, wouldn’t you say?"]}),
 
     "innkeeper mirabelle": Npc(name="innkeeper mirabelle",
                                npc_type=NpcTypes.INNKEEPER,
@@ -1532,6 +1602,12 @@ NPCS = {
                                    "Seek refuge there, share tales with the fishermen, and who knows, perhaps your "
                                    "path will intertwine with the whims of destiny. May the winds guide your steps, "
                                    "for there is always another path to tread."]}),
+
+    "traveler kaelen": Npc(name="traveler kaelin",
+                           npc_type=NpcTypes.TRAVELER,
+                           messages={
+                               0: ["You know, if we had some explosives, those rocks would be gone in no time.",
+                                   "Do you, by chance, carry any? It’d make clearing this path a lot easier."]}),
 
     "traveler kaelin": Npc(name="traveler kaelin",
                            npc_type=NpcTypes.TRAVELER,

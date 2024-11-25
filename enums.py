@@ -41,6 +41,7 @@ class EntryType(Enum):
     TOWER = 25
     VILLA = 26
     WATCHTOWER = 27
+    SHIP = 28
 
 
 # Items.

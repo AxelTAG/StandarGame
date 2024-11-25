@@ -97,11 +97,19 @@ class Player:
             self.equip = {key: self.equip.get(key) for key in valid_keys}
 
         if self.events is None:
-            self.events = {"message": False,
-                           "permission": False,
-                           "win": False,
-                           "goblin_chief_crown": False,
-                           "message_maisie": False}
+            self.events = {
+                "goblin_chief_crown_1": False,
+                "goblin_chief_crown_2": False,
+                "goblin_chief_crown_3": False,
+
+                "marlin_quests_1": False,
+                "marlin_quests_2": False,
+                "marlin_quests_3": False,
+                "marlin_quests_4": False,
+                "lorian_permission": False,
+
+                "win": False,
+            }
 
     @property
     def attack(self) -> int:
@@ -182,6 +190,13 @@ class Player:
         if type(self.place) == Entry:
             self.last_entry = self.place
         self.last_place = self.place
+
+        if type(place) == Entry:
+            self.outside = False
+        else:
+            self.x = place.x
+            self.y = place.y
+            self.outside = True
         self.place = place
 
     def has(self, item: str, amount: int = None) -> bool:

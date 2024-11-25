@@ -212,8 +212,10 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
             player.map[y][x] = map_game.map_settings[coordstr(x=x, y=y)].color
 
     # Map the boxes within the circular radius.
-    for i in range(max(0, player.x - int(exploration_radius)), min(map_game.x_len, player.x + int(exploration_radius) + 1)):
-        for j in range(max(0, player.y - int(exploration_radius)), min(map_game.y_len, player.y + int(exploration_radius) + 1)):
+    for i in range(max(0, player.x - int(exploration_radius)),
+                   min(map_game.x_len, player.x + int(exploration_radius) + 1)):
+        for j in range(max(0, player.y - int(exploration_radius)),
+                       min(map_game.y_len, player.y + int(exploration_radius) + 1)):
             # Verificar si la casilla está dentro del círculo
             if math.sqrt((player.x - i) ** 2 + (player.y - j) ** 2) <= exploration_radius:
                 map_tile(i, j)
@@ -228,6 +230,10 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
 # Drop action.
 def drop(player: Player, item: str, quantity: int = 1) -> str:
     item_name = item.replace("_", " ")
+    item_object = globals.ITEMS[item]
+
+    if not item_object.droppable:
+        return f"You can't drop {item_object.name}."
 
     if player.inventory.drop_item(item=item, quantity=quantity):
         return f"You drop {quantity} {item_name.title()}."
@@ -380,8 +386,8 @@ def move(player: Player,
     events = [*player.events.keys()]
 
     # Move North.
-    if y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status in ms[
-        coordstr(x, y - 1)].status and mv == "1":
+    if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status
+            in ms[coordstr(x, y - 1)].status and mv == "1"):
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
@@ -391,9 +397,9 @@ def move(player: Player,
             return "You moved North.", False
 
     # Move East.
-    if x < map_height and all(
-            req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[
-        coordstr(x + 1, y)].status and mv == "2":
+    if (x < map_height and all(
+            req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status
+            in ms[coordstr(x + 1, y)].status and mv == "2"):
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
@@ -403,9 +409,9 @@ def move(player: Player,
             return "You moved East.", False
 
     # Move South.
-    if y < map_width and all(
-            req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status in ms[
-        coordstr(x, y + 1)].status and mv == "3":
+    if (y < map_width and all(
+            req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status
+            in ms[coordstr(x, y + 1)].status and mv == "3"):
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
@@ -415,8 +421,8 @@ def move(player: Player,
             return "You moved South.", False
 
     # Move West.
-    if x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status in ms[
-        coordstr(x - 1, y)].status and mv == "4":
+    if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status
+            in ms[coordstr(x - 1, y)].status and mv == "4"):
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):

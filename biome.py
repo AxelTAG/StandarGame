@@ -26,6 +26,8 @@ class Biome:
     pace: int = field(default=8)
     draw_map: bool = field(default=True)
     status: list = field(default=None)
+    x: int = field(default=None)
+    y: int = field(default=None)
 
     # Place climate attributes.
     temperature: int = field(default=15)
@@ -90,3 +92,21 @@ class Entry(Biome):
 
         if self.hide is None:
             self.hide = {"visibility": True, "finding_chance": 0}
+
+    # @property
+    # def return_x(self):
+    #     current = self
+    #     while current.leave_entry:
+    #         current = current.leave_entry
+    #         if current.x is not None:
+    #             return current.x
+    #     return None
+    #
+    # @property
+    # def return_y(self):
+    #     current = self
+    #     while current.leave_entry:
+    #         current = current.leave_entry
+    #         if current.y is not None:
+    #             return current.y
+    #     return None

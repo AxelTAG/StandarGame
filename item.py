@@ -25,6 +25,7 @@ class Item:
     pickable: bool = field(default=False)
     consumable: bool = field(default=False)
     equippable: bool = field(default=False)
+    droppable: bool = field(default=True)
     expiration: int | None = field(default=None)
 
     # Buy/Sell prices.

@@ -415,6 +415,7 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
         for j in range(len(tl_map[i])):
             key = coordstr(j, i)
             value = copy.deepcopy(biomes[tl_map[i][j]])
+            value.x, value.y = j, i
             dictionary[key] = value
 
     return dictionary

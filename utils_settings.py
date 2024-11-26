@@ -314,9 +314,13 @@ def init_map_setting(ms: dict):
 
     ms[coordstr(x=27, y=15)].entries["thornes_ship"].leave_entry = ms[coordstr(x=27, y=15)]
     ms[coordstr(x=27, y=15)].entries["inn"].leave_entry = ms[coordstr(x=27, y=15)]
+
     ms[coordstr(x=27, y=15)].entries["inn"].entries = {
         "first_room": ENTRIES["lyssias_first_room"],
         "second_room": ENTRIES["lyssias_second_room"],
         "third_room": ENTRIES["lyssias_third_room"]}
+    ms[coordstr(x=27, y=15)].entries["inn"].entries["first_room"].leave_entry = ms[coordstr(x=27, y=15)].entries["inn"]
+    ms[coordstr(x=27, y=15)].entries["inn"].entries["second_room"].leave_entry = ms[coordstr(x=27, y=15)].entries["inn"]
+    ms[coordstr(x=27, y=15)].entries["inn"].entries["third_room"].leave_entry = ms[coordstr(x=27, y=15)].entries["inn"]
     ms[coordstr(x=27, y=15)].name = "AQUIRI'S VILLAGE"
     ms[coordstr(x=27, y=15)].npc = ["captain thorne", "merchant selena"]

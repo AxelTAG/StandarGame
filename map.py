@@ -182,9 +182,9 @@ class Map:
         self.npcs[npc_key] = npc
 
     def place_from_list(self, place_list: list) -> Biome | Entry | None:
-        place = None
-        for site in place_list:
-            place = self.map_settings[site]
+        place = self.map_settings[place_list[0]]
+        for site in place_list[1:]:
+            place = place.entries[site]
         return place
 
     def refresh_npcs(self) -> None:

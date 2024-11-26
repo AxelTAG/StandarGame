@@ -2,7 +2,7 @@
 # Local imports.
 from actions import battle, talk
 from displays import disp_talk_tw
-from enums import NpcTypes
+from enums import NpcTypes, TimeOfDay
 from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
@@ -137,8 +137,6 @@ def event_handler(player: Player,
                 "If you’re willing, could you bring some explosives to clear the way?",
                 "I think I saw Captain Thorne loading some onto his ship recently. He might be able to help."]}
 
-
-
     # # Event Fisherman Marlin quests (4/6).
     # if all([player.events["marlin_quests_2"],
     #         not player.events["marlin_quests_3"],
@@ -228,7 +226,7 @@ def map_control_handling(player: Player,
                                       "it again if you plan on staying longer."])
 
     # Sailor Kael detention.
-    if "sailor kael" in player.place.npc:
+    if "sailor kael" in player.place.npc and player.place == map_game.map_settings["(27, 15)"].entries["thornes_ship"]:
         talk(npc=map_game.npcs["sailor kael"], player=player, map_game=map_game)
         player.set_place(place=player.last_place)
 

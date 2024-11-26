@@ -1744,9 +1744,13 @@ NPCS = {
 
     "sailor kael": Npc(name="Sailor Kael",
                        npc_type=NpcTypes.SAILOR,
-                       messages={
+                       messages_morning={
                            0: ["Hold it right there, traveler! This ship isn’t open to passengers. Captain’s orders—no "
-                               "exceptions!"]}),
+                               "exceptions!"]},
+                       place_morning=["(27, 15)", "thornes_ship"],
+                       messages_night={
+                           0: ["Zzz... Zzz... Hngh..."]},
+                       place_night=["(27, 15)", "inn", "third_room"]),
 
     "sailor rolan": Npc(name="Sailor Rolan",
                         npc_type=NpcTypes.SAILOR,

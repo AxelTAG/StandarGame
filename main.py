@@ -100,11 +100,8 @@ while run:
                     # Play variables.
                     standing = True
 
-                    # Player variables.
+                    # Player:
                     player = Player()
-                    inventory = player.inventory  # Inventory.
-
-                    mobs = globals.MOBS.copy()
 
                     screen = "Nothing done yet."
 
@@ -154,8 +151,8 @@ while run:
                                                               "Ready your blade..."]
 
                 # Introduction.
-                if player.name:
-                    screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
+                # if player.name:
+                #     screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
 
         elif choice == "2":  # Load game choice.
             try:
@@ -202,6 +199,7 @@ while run:
                                    map_game=map_game,
                                    time_init=time_init)
         map_control_handling(player=player, map_game=map_game)
+        map_game.refresh_npcs()
 
         # Autosave.
         save(player=player, map_game=map_game, time_init=time_init)  # Autosave.
@@ -503,8 +501,11 @@ while run:
             elif action == ["place"]:
                 screen = f"{player.place.name, player.last_place.name, player.last_entry.name}"
 
-            elif action == ["print", "coord"]:
+            elif action == ["place", "coord", "1"]:
                 screen = f"{map_game.coords_from_place(place=player.place)}"
+
+            elif action == ["place", "coord", "2"]:
+                screen = f"{player.place.x, player.place.y}"
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
                 #

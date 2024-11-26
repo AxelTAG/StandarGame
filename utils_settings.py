@@ -283,11 +283,12 @@ def init_map_setting(ms: dict):
     ms[coordstr(x=22, y=18)].entries["tower_of_eldra"].entries = {"tower_of_eldra_second_floor": second_floor}
 
     # (22, 27)
-    ms[coordstr(x=18, y=24)].description = ("Seaside hut, weathered wood and a thatched roof, filled with fishing "
-                                            "gear and seashells. The salty breeze drifts through, mingling with the "
-                                            "scent of dried fish.")
-    ms[coordstr(x=18, y=24)].name = "PLAINS"
-    ms[coordstr(x=18, y=24)].npc = ["fisherman brann"]
+    ms[coordstr(x=22, y=27)].description = ("Sandy shores meet grassy dunes, where a weathered hut stands, surrounded"
+                                            " by scattered driftwood and the soothing sound of crashing waves.")
+    ms[coordstr(x=22, y=27)].name = "COAST"
+    ms[coordstr(x=22, y=27)].npc = ["fisherman brann"]
+    ms[coordstr(x=22, y=27)].entries = {"coast_hut": ENTRIES["hut_22_27"]}
+    ms[coordstr(x=22, y=27)].entries["coast_hut"].leave_entry = ms[coordstr(x=22, y=27)]
 
     # (26, 15)
     ms[coordstr(x=26, y=15)].description = "Aquiri's portside entrance: Bustling harbor welcomes ships with salty " \
@@ -302,12 +303,20 @@ def init_map_setting(ms: dict):
                                            "essence of maritime tranquility."
     ms[coordstr(x=27, y=14)].name = "AQUIRI'S VILLAGE"
     ms[coordstr(x=27, y=14)].npc = ["fisherman marlin"]
+    ms[coordstr(x=27, y=14)].entries = {}
 
     # (27, 15)
     ms[coordstr(x=27, y=15)].description = "Seaside fishing hamlet, colorful boats bob gently in the harbor, while " \
                                            "weathered cottages line the shore of this picturesque coastal community."
-    ms[coordstr(x=27, y=15)].entries = {"inn": Entry(
-        items=["bed"])}
-    ms[coordstr(x=27, y=15)].entries["inn"].leave_entry = ms[coordstr(27, 15)]
+    ms[coordstr(x=27, y=15)].entries = {
+        "inn": ENTRIES["lyssias_inn"],
+        "thornes_ship": ENTRIES["thornes_ship"]}
+
+    ms[coordstr(x=27, y=15)].entries["thornes_ship"].leave_entry = ms[coordstr(x=27, y=15)]
+    ms[coordstr(x=27, y=15)].entries["inn"].leave_entry = ms[coordstr(x=27, y=15)]
+    ms[coordstr(x=27, y=15)].entries["inn"].entries = {
+        "first_room": ENTRIES["lyssias_first_room"],
+        "second_room": ENTRIES["lyssias_second_room"],
+        "third_room": ENTRIES["lyssias_third_room"]}
     ms[coordstr(x=27, y=15)].name = "AQUIRI'S VILLAGE"
     ms[coordstr(x=27, y=15)].npc = ["captain thorne", "merchant selena"]

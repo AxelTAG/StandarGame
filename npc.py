@@ -13,7 +13,7 @@ class Npc:
     npc_type: NpcTypes = field(default=None)
     messages: dict[int, list[str, str]] = field(default=None)
     answers: dict[int, str] = field(default=None)
-    leave_message = field(default=None)
+    leave_message: list[str] = field(default=None)
 
     # Merchants or Innkeepers.
     buy_items: dict[str, int] = field(default=None)

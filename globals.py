@@ -1868,4 +1868,15 @@ NPCS = {
                                   "Some say she wandered too far, but I fear the worst... The goblins have been "
                                   "lurking near the forest caves lately. It’s possible they’ve taken her. ",
                                   "I hope I’m wrong, but we need help before it’s too late."]}),
+
+    # Others.
+    "animal wild cat": Npc(name="animal wild cat",
+                           npc_type=NpcTypes.ANIMAL,
+                           place=["(0, 0)"],
+                           messages_morning={
+                               0: ["Purr... purr... purr... purr..."]},
+                           place_morning=["(0, 0)"],
+                           messages_night={
+                               0: ["Meow!"]},
+                           place_night=["(1, 1)"])
 }

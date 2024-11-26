@@ -156,6 +156,7 @@ class NpcTypes(Enum):
     VILLAGER = 81
     ASTRONOMER = 82
     CARAVANNER = 83
+    ANIMAL = 84
     WHISPERS = 471993
 
 

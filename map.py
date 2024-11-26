@@ -53,6 +53,9 @@ class Map:
             self.map_settings = tl_map_set(self.map_labels, biomes=self.biomes)
             init_map_setting(ms=self.map_settings)
 
+        if self.npcs is None:
+            self.npcs = {}
+
         self.x_len = len(self.map_labels) - 1
         self.y_len = len(self.map_labels[0]) - 1
 
@@ -98,7 +101,7 @@ class Map:
     def current_season(self):
         return [*Season][self.month // self.length_of_seasons]
 
-    def add_hours(self, hours_to_add: int):
+    def add_hours(self, hours_to_add: int) -> None:
         hours_sum = self.hour + hours_to_add
         if hours_sum < self.day_duration:
             self.hour = hours_sum
@@ -107,7 +110,7 @@ class Map:
             self.hour = hours_sum % self.day_duration
             self.add_days(days_to_add=hours_sum // self.day_duration)
 
-    def add_days(self, days_to_add: int):
+    def add_days(self, days_to_add: int) -> None:
         days_sum = self.day + days_to_add
         if days_sum <= self.month_duration:
             self.day = days_sum
@@ -116,7 +119,7 @@ class Map:
             self.day = days_sum % self.month_duration
             self.add_months(months_to_add=days_sum // self.month_duration)
 
-    def add_months(self, months_to_add: int):
+    def add_months(self, months_to_add: int) -> None:
         months_sum = self.month + months_to_add
         if months_sum < self.year_duration:
             self.month = months_sum
@@ -138,7 +141,7 @@ class Map:
         else:
             return self.night_start
 
-    def skip_to(self, time_of_day: int):
+    def skip_to(self, time_of_day: int) -> None:
         time_of_day_start = self.get_start_hour_tod(time_of_day=time_of_day)
 
         if self.hour < time_of_day_start:
@@ -174,3 +177,25 @@ class Map:
             if item in player.inventory.items.keys():
                 if self.is_major_date(date, self.current_date):
                     yield item
+
+    def add_npc(self, npc_key: str, npc: Npc) -> None:
+        self.npcs[npc_key] = npc
+
+    def place_from_list(self, place_list: list) -> Biome | Entry | None:
+        place = None
+        for site in place_list:
+            place = self.map_settings[site]
+        return place
+
+    def refresh_npcs(self) -> None:
+        for npc_key, npc in self.npcs.items():
+            place = None
+            if npc.place is not None:
+                place = self.place_from_list(place_list=npc.place)
+
+            if place is not None and npc_key in place.npc:
+                place.npc.remove(npc_key)
+
+            npc.refresh_temporal(hour=self.hour)
+            if npc.place is not None:
+                self.place_from_list(place_list=npc.place).npc.append(npc_key)

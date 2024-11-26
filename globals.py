@@ -434,6 +434,52 @@ ENTRIES = {
                     " to secure the uncertain safety within.",
         items=["bed"]),
 
+    "hut_22_27": Entry(
+        description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
+                    " The salty breeze drifts through, mingling with the scent of dried fish.",
+        items=["bed", "harpoon"],
+        name="BRANN'S SEASIDE HUT",
+        npc=["fisherman brann"]),
+
+    "hut_27_14_1": Entry(
+        description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
+                    " The salty breeze drifts through, mingling with the scent of dried fish.",
+        items=["bed", "harpoon", "fish_tuna", "fish_tuna", "bread"],
+        name="MARLIN'S HUT"),
+
+    "hut_27_14_2": Entry(
+        description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
+                    " The salty breeze drifts through, mingling with the scent of dried fish.",
+        items=["bed", "fish_tuna", "fish_sardine", "fish_ray"],
+        name="HUT"),
+
+    "lyssias_inn": Entry(
+        description="Coastal inn with weathered stone walls and a thatched roof, offering warm meals, cozy rooms, "
+                    "and ocean views through salt-crusted windows.",
+        name="LYSSIA'S INN",
+        npc=["innkeeper lyssia"]),
+
+    "lyssias_first_room": Entry(
+        description="A cozy room with a worn armchair by the fireplace, seashells arranged on the windowsill, "
+                    "and soft candlelight flickering across the walls.",
+        items=["bed", "bed"],
+        name="LYSSIA'S FIRST ROOM",
+        npc=[]),
+
+    "lyssias_second_room": Entry(
+        description="Simple room with a sturdy wooden bed, a small desk, and an open window letting in the scent"
+                    " of the sea.",
+        items=["bed", "bed"],
+        name="LYSSIA'S SECOND ROOM",
+        npc=[]),
+
+    "lyssias_third_room": Entry(
+        description="A spacious room with twin beds, a nautical map pinned to the wall, and a large chest at the "
+                    "foot of each bed.",
+        items=["bed", "bed"],
+        name="LYSSIA'S THIRD ROOM",
+        npc=[]),
+
     "mirabelles_inn": Entry(
         description="Warm hearth, wooden beams, and cozy furnishings create a welcoming "
                     "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
@@ -454,6 +500,14 @@ ENTRIES = {
         items=["bed"],
         name="MIRABELLE'S INN SMALL ROOM",
         req=["mirabelles_small_room_key"]),
+
+    "thornes_ship": Entry(
+        description="Weathered wood glistens with sea spray, ropes coil neatly, and seagulls circle overhead as the "
+                    "harbor hums with maritime activity.",
+        name="CAPTAIN THORNE'S SHIP",
+        items=["powder_keg"],
+        npc=["sailor kael"],
+        entry_type=EntryType.SHIP),
 
     "tower_of_eldra_floor_1": Entry(
         description="Simple bed beside a small desk, lit by a dim lantern. Personal belongings and handwritten"
@@ -807,18 +861,84 @@ ITEMS = {
                    buy_price=2,
                    sell_price=2),
 
-    "fishing_pole": Item(name="Fishing Pole",
-                         description="A sturdy pole for fishing. A useful tool for catching food.",
-                         attack=0,
-                         defense=0,
-                         precision=0,
-                         evasion=0,
+    "fish_flounder": Item(name="Fish Flounder",
+                          description="A flat fish that camouflages on sandy ocean floors to hunt.",
+                          pickable=True,
+                          consumable=True,
+                          buy_price=48,
+                          sell_price=40),
+
+    "fish_grouper": Item(name="Fish Grouper",
+                         description="A sturdy fish inhabiting reefs and rocky ocean floors.",
                          pickable=True,
-                         consumable=False,
-                         equippable=False,
-                         expiration=None,
-                         buy_price=25,
+                         consumable=True,
+                         buy_price=35,
                          sell_price=25),
+
+    "fish_hammerhead_shark": Item(name="Fish Hammerhead Shark",
+                                  description="A unique predator with a distinctive hammer-shaped head.",
+                                  pickable=True,
+                                  consumable=True,
+                                  buy_price=80,
+                                  sell_price=70),
+
+    "fish_mackerel": Item(name="Fish Mackerel",
+                          description="A swift, striped fish, commonly found in coastal schools.",
+                          pickable=True,
+                          consumable=True,
+                          buy_price=30,
+                          sell_price=23),
+
+    "fish_mahi-mahi": Item(name="Fish Mahi-Mahi",
+                           description="A vibrant-colored fish, known for its strength and leaping ability.",
+                           pickable=True,
+                           consumable=True,
+                           buy_price=25,
+                           sell_price=18),
+
+    "fish_ray": Item(name="Fish Ray",
+                     description="A flattened fish with wide fins and a venomous sting in its tail.",
+                     pickable=True,
+                     consumable=True,
+                     buy_price=60,
+                     sell_price=50),
+
+    "fish_sardine": Item(name="Fish Sardine",
+                         description="A small silvery fish, popular among anglers and vital to the marine ecosystem.",
+                         pickable=True,
+                         consumable=True,
+                         buy_price=46,
+                         sell_price=39),
+
+    "fish_snapper": Item(name="Fish Snapper",
+                         description="A white-fleshed fish, common in tropical and subtropical waters.",
+                         pickable=True,
+                         consumable=True,
+                         buy_price=36,
+                         sell_price=29),
+
+    "fish_swordfish": Item(name="Fish Swordfish",
+                           description="A large predator with a characteristic elongated sword-like snout.",
+                           pickable=True,
+                           consumable=True,
+                           buy_price=100,
+                           sell_price=60),
+
+    "fish_tuna": Item(name="Fish Tuna",
+                      description="A fast ocean fish, highly valued for its delicious and versatile meat.",
+                      pickable=True,
+                      consumable=True,
+                      buy_price=80,
+                      sell_price=60),
+
+    "fish_soup": Item(name="Soup",
+                      description="Warm and savory, a comforting dish that nourishes the body and soothes the soul.",
+                      pickable=True,
+                      consumable=True,
+                      equippable=False,
+                      expiration=None,
+                      buy_price=3,
+                      sell_price=2),
 
     "giant_red_potion": Item(name="Giant Red Potion",
                              description="A large red potion that restores a significant amount of health.",
@@ -898,33 +1018,6 @@ ITEMS = {
                  buy_price=1,
                  sell_price=1),
 
-    "telescope": Item(name="Telescope",
-                      description="A long-range viewing device.",
-                      attack=0,
-                      defense=0,
-                      precision=0,
-                      evasion=0,
-                      vision=0.5,
-                      pickable=True,
-                      consumable=False,
-                      equippable=False,
-                      expiration=None,
-                      buy_price=125,
-                      sell_price=125),
-
-    "torch": Item(name="Torch",
-                  description="A burning torch to light the way. Useful in dark places.",
-                  attack=0,
-                  defense=0,
-                  precision=0,
-                  evasion=0,
-                  pickable=True,
-                  consumable=True,
-                  equippable=False,
-                  expiration=None,
-                  buy_price=10,
-                  sell_price=10),
-
     "water": Item(name="Water",
                   description="A bottle of clean water. Refreshing and essential for survival.",
                   attack=0,
@@ -937,6 +1030,46 @@ ITEMS = {
                   expiration=None,
                   buy_price=1,
                   sell_price=1),
+
+    # Usable items
+    "fishing_pole": Item(name="Fishing Pole",
+                         description="A sturdy pole for fishing. A useful tool for catching food.",
+                         pickable=True,
+                         consumable=False,
+                         equippable=False,
+                         expiration=None,
+                         buy_price=150,
+                         sell_price=100),
+
+    "powder_keg": Item(name="Powder Keg",
+                       description="Volatile and dangerous, capable of causing great destruction with a "
+                                   "single spark.",
+                       pickable=True,
+                       consumable=False,
+                       equippable=False,
+                       droppable=False,
+                       expiration=None,
+                       buy_price=125,
+                       sell_price=125),
+
+    "telescope": Item(name="Telescope",
+                      description="A long-range viewing device.",
+                      vision=0.5,
+                      pickable=True,
+                      consumable=False,
+                      equippable=False,
+                      expiration=None,
+                      buy_price=125,
+                      sell_price=100),
+
+    "torch": Item(name="Torch",
+                  description="A burning torch to light the way. Useful in dark places.",
+                  pickable=True,
+                  consumable=True,
+                  equippable=False,
+                  expiration=None,
+                  buy_price=10,
+                  sell_price=10),
 
     # Places items.
     "bed": Item(name="Bed",
@@ -979,6 +1112,11 @@ ITEMS = {
                                      buy_price=5),
 
     # Others.
+    "marlins_fish_tuna": Item(name="Marlin's Fish Tuna",
+                              description="A fast ocean fish, highly valued for its delicious and versatile meat."
+                                          " Marlin gave it to you for his friend Brann.",
+                              droppable=False),
+
     "quit": Item(name="Quit",
                  description="This item ends the game session when used."),
 }
@@ -1438,11 +1576,21 @@ NPCS = {
     "fisherman marlin": Npc(name="fisherman marlin",
                             npc_type=NpcTypes.FISHERMAN,
                             messages={
-                                0: ["Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.",
-                                    "You know, my brother's a guard in the city, watches over the folks there. "
-                                    "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
-                                    "If you ever find yourself in Antina City, look for Guard Lorian. Tell him Marlin "
-                                    "from Aqiri says hello."]}),
+                                0: ["Ahoy, traveler!",
+                                    "I’ve got a delivery of fish for my friend down south. The waters there have been"
+                                    " tricky lately, so I’ve had to catch extra here in town.",
+                                    "Problem is, I’ve been so busy fishing, I haven’t found the time to make the"
+                                    " trip!"],
+                                1: ["Thank you for offering to help! I need you to deliver two tuna to my friend Brann "
+                                    "in the south. He’ll be waiting—it’s a special request.",
+                                    "Safe travels, and keep the fish fresh!"]},
+                            answers={
+                                1: "I can help you with the delivery"},
+                            leave_message=["Safe travels, friend! May the waters guide you to calm shores."]),
+
+    # "Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.", "You know, my brother's a guard in
+    # the city, watches over the folks there. " "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
+    # "If you ever find yourself in Antina City, look for Guard Lorian. Tell him Marlin " "from Aqiri says hello."
 
     "goblin griznuk": Npc(name="chief goblin griznuk",
                           npc_type=NpcTypes.MONSTER,
@@ -1464,6 +1612,29 @@ NPCS = {
                             0: ["Traveling solo, but tagging along with this fine caravan! Life’s a journey, after"
                                 " all, and laughter is my trade. Stuck here or not, the road’s more fun with a bit "
                                 "of mischief, wouldn’t you say?"]}),
+
+    "innkeeper lyssia": Npc(name="innkeeper lyssia",
+                            npc_type=NpcTypes.INNKEEPER,
+                            messages={
+                                0: ["Welcome to the Aquiri Harbor Inn, traveler! Need a place to rest or a hot meal?"
+                                    " Let me know how I can help."],
+                                1: ["Our rooms are quiet and cozy, perfect for a weary traveler. Just let me know if"
+                                    " you'd like to stay the night."],
+                                2: ["Are you looking to purchase some nourishment? What do you want?"]},
+                            answers={
+                                1: "I need to sleep",
+                                2: "Buy food"},
+                            buy_items={"bread": 2,
+                                       "cheese": 4,
+                                       "soap": 2,
+                                       "water": 1,
+                                       "bier": 2,
+                                       "fish_sardina": 3,
+                                       "quit": 0},
+                            buy_beds={"first_room": (12, "lyssias_first_room_key"),
+                                      "second_room": (8, "lyssias_second_room_key"),
+                                      "third_room": (5, "lyssias_third_room_key"),
+                                      "quit": (0, "quit")}),
 
     "innkeeper mirabelle": Npc(name="innkeeper mirabelle",
                                npc_type=NpcTypes.INNKEEPER,
@@ -1571,6 +1742,19 @@ NPCS = {
                            buy_items={"harpoon": 150, "hardened_leather_armor": 120, "red_potion": 10,
                                       "fishing_pole": 9999, "wood_shield": 50, "telescope": 200, "quit": 0}),
 
+    "sailor kael": Npc(name="Sailor Kael",
+                       npc_type=NpcTypes.SAILOR,
+                       messages={
+                           0: ["Hold it right there, traveler! This ship isn’t open to passengers. Captain’s orders—no "
+                               "exceptions!"]}),
+
+    "sailor rolan": Npc(name="Sailor Rolan",
+                        npc_type=NpcTypes.SAILOR,
+                        messages={
+                            0: ["We arrived in Aquiri not long ago, but who knows when we’ll leave. We spotted a "
+                                "dragon not far from here... it’s keeping us on edge.",
+                                "Better safe than sorry, eh?"]}),
+
     "traveler elara": Npc(
         name="traveler elara",
         npc_type=NpcTypes.TRAVELER,
@@ -1650,7 +1834,7 @@ NPCS = {
                                 0: ["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around "
                                     "and check. Secrets often hide where the eye does not linger.",
                                     "May the journey unveil the unseen, brave one."]}),
-
+    # Villager from Epiiat.
     "villager doran": Npc(name="villager doran",
                           npc_type=NpcTypes.VILLAGER,
                           messages={
@@ -1674,6 +1858,8 @@ NPCS = {
                                    "Some say she wandered too far, but I fear the worst... The goblins have been"
                                    " lurking near the forest caves lately. It’s possible they’ve taken her.",
                                    "I hope I’m wrong, but we need help before it’s too late."]}),
+
+    # Villager from Aquiri.
 
     "worker gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,

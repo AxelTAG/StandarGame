@@ -310,6 +310,13 @@ BIOMES = {
 }
 
 ENTRIES = {
+    "castle": Entry(
+        description="Majestic castle with towering spires and sturdy stone walls, adorned with banners. Its grand "
+                    "gates lead to vast halls echoing with Antina’s storied history.",
+        name="CASTLE SALOON",
+        npc=["lord aric"],
+        entry_type=EntryType.CASTLE),
+
     "cave_13_0": Entry(
         description="Echoing cave, shadows stretch across damp walls, while unsettling sounds resonate from unseen"
                     " depths, hinting at hidden creatures lurking within the dark.",
@@ -423,83 +430,113 @@ ENTRIES = {
         entry_type=EntryType.CAVE,
         hide={"visibility": False, "finding_chance": 0.9}),
 
+    "house_antina_mid": Entry(
+        description="Warm and inviting, the house features wooden beams, a stone hearth, neatly arranged furniture, "
+                    "and shelves lined with books and trinkets from city markets.",
+        name="MID HOUSE",
+        entry_type=EntryType.HOUSE),
+
     "hut_0_0": Entry(
         description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
                     "invites serenity amid nature's whispers.",
-        items=["bed", "short_sword", "bread", "apple"]),
+        items=["bed", "short_sword", "bread", "apple"],
+        entry_type=EntryType.HUT),
 
     "hut_1_23": Entry(
         description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
                     "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
                     " to secure the uncertain safety within.",
-        items=["bed"]),
+        items=["bed"],
+        entry_type=EntryType.HUT),
 
     "hut_22_27": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "harpoon"],
         name="BRANN'S SEASIDE HUT",
-        npc=["fisherman brann"]),
+        npc=["fisherman brann"],
+        entry_type=EntryType.HUT),
 
     "hut_27_14_1": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "harpoon", "fish_tuna", "fish_tuna", "bread"],
-        name="MARLIN'S HUT"),
+        name="MARLIN'S HUT",
+        entry_type=EntryType.HUT),
 
     "hut_27_14_2": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "fish_tuna", "fish_sardine", "fish_ray"],
-        name="HUT"),
+        name="HUT",
+        entry_type=EntryType.HUT),
 
     "lyssias_inn": Entry(
         description="Coastal inn with weathered stone walls and a thatched roof, offering warm meals, cozy rooms, "
                     "and ocean views through salt-crusted windows.",
         name="LYSSIA'S INN",
-        npc=["innkeeper lyssia"]),
+        npc=["innkeeper lyssia"],
+        entry_type=EntryType.INN),
 
     "lyssias_first_room": Entry(
         description="A cozy room with a worn armchair by the fireplace, seashells arranged on the windowsill, "
                     "and soft candlelight flickering across the walls.",
         items=["bed", "bed"],
         name="LYSSIA'S FIRST ROOM",
-        npc=[]),
+        npc=[],
+        entry_type=EntryType.ROOM),
 
     "lyssias_second_room": Entry(
         description="Simple room with a sturdy wooden bed, a small desk, and an open window letting in the scent"
                     " of the sea.",
         items=["bed", "bed"],
         name="LYSSIA'S SECOND ROOM",
-        npc=[]),
+        npc=[],
+        entry_type=EntryType.ROOM),
 
     "lyssias_third_room": Entry(
         description="A spacious room with twin beds, a nautical map pinned to the wall, and a large chest at the "
                     "foot of each bed.",
         items=["bed", "bed"],
         name="LYSSIA'S THIRD ROOM",
-        npc=[]),
+        npc=[],
+        entry_type=EntryType.ROOM),
 
     "mirabelles_inn": Entry(
         description="Warm hearth, wooden beams, and cozy furnishings create a welcoming "
                     "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
                     "find respite.",
         name="MIRABELLE'S INN",
-        npc=["innkeeper mirabelle", "villager doran"]),
+        npc=["innkeeper mirabelle", "villager doran"],
+        entry_type=EntryType.INN),
 
     "mirabelles_main_room": Entry(
         description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
                     "a warm hearth, rustic wooden beams, and snug furnishings.",
         items=["bed"],
         name="MIRABELLE'S INN MAIN ROOM",
-        req=["mirabelles_main_room_key"]),
+        req=["mirabelles_main_room_key"],
+        entry_type=EntryType.ROOM),
 
     "mirabelles_small_room": Entry(
         description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
                     "a warm hearth, rustic wooden beams, and snug furnishings.",
         items=["bed"],
         name="MIRABELLE'S INN SMALL ROOM",
-        req=["mirabelles_small_room_key"]),
+        req=["mirabelles_small_room_key"],
+        entry_type=EntryType.ROOM),
+
+    "temple": Entry(
+        description="Sunlit through stained glass, the temple's marble floors glisten. Golden icons and flickering "
+                    "candles evoke a serene, divine atmosphere.",
+        name="SANTUARY OF THE RADIANT FLAME"),
+
+    "the_golden_tankard_tavern": Entry(
+        description="Bustling with laughter and music, this lively tavern features polished oak tables, a "
+                    "roaring hearth, and the finest ale in Antina.",
+        name="THE GOLDEN TANKARD TAVERN",
+        npc=["tavern_keeper_rudrik"],
+        entry_type=EntryType.TAVERN),
 
     "thornes_ship": Entry(
         description="Weathered wood glistens with sea spray, ropes coil neatly, and seagulls circle overhead as the "
@@ -513,13 +550,15 @@ ENTRIES = {
         description="Simple bed beside a small desk, lit by a dim lantern. Personal belongings and handwritten"
                     "notes lie scattered across a worn rug.",
         items=["bed", "telescope", "notes"],
-        name="TOWER OF ELDRA FIRST FLOOR"),
+        name="TOWER OF ELDRA FIRST FLOOR",
+        entry_type=EntryType.TOWER),
 
     "tower_of_eldra_floor_2": Entry(
         description="Shelves packed with star charts and ancient tomes. A brass telescope points skyward, surrounded"
                     " by scattered scrolls and glowing crystal orbs.",
         items=["giant_telescope"],
         name="TOWER OF ELDRA SECOND FLOOR",
+        entry_type=EntryType.TOWER,
         npc=["astronomer quillon"],
         draw_map=True)
 }
@@ -1582,8 +1621,7 @@ NPCS = {
                                     "Problem is, I’ve been so busy fishing, I haven’t found the time to make the"
                                     " trip!"],
                                 1: ["Thank you for offering to help! I need you to deliver two tuna to my friend Brann "
-                                    "in the south. He’ll be waiting—it’s a special request.",
-                                    "Safe travels, and keep the fish fresh!"]},
+                                    "in the south. He’ll be waiting—it’s a special request."]},
                             answers={
                                 1: "I can help you with the delivery"},
                             leave_message=["Safe travels, friend! May the waters guide you to calm shores."]),
@@ -1747,10 +1785,10 @@ NPCS = {
                        messages_morning={
                            0: ["Hold it right there, traveler! This ship isn’t open to passengers. Captain’s orders—no "
                                "exceptions!"]},
-                       place_morning=["(27, 15)", "thornes_ship"],
+                       place_morning=[(27, 15), "thornes_ship"],
                        messages_night={
                            0: ["Zzz... Zzz... Hngh..."]},
-                       place_night=["(27, 15)", "inn", "third_room"]),
+                       place_night=[(27, 15), "inn", "third_room"]),
 
     "sailor rolan": Npc(name="Sailor Rolan",
                         npc_type=NpcTypes.SAILOR,
@@ -1758,6 +1796,17 @@ NPCS = {
                             0: ["We arrived in Aquiri not long ago, but who knows when we’ll leave. We spotted a "
                                 "dragon not far from here... it’s keeping us on edge.",
                                 "Better safe than sorry, eh?"]}),
+
+    "tavern_keeper_rudrik": Npc(name="TAVERN KEEPER RUDRIK",
+                                npc_type=NpcTypes.TAVERN_KEEPER,
+                                messages={
+                                    0: ["Welcome to The Golden Tankard, traveler! Take a seat and warm yourself by"
+                                        " the fire. We've got hearty stew and the finest ale in town."
+                                        " What'll it be—food, drink, or both?"],
+                                    1: ["What do you want to buy?"]},
+                                answers={
+                                    1: "Buy"},
+                                buy_items={"bread": 2, "cheese": 4, "soap": 2, "water": 1, "bier": 2, "quit": 0}),
 
     "traveler elara": Npc(
         name="traveler elara",
@@ -1810,19 +1859,21 @@ NPCS = {
 
     "traveler renan": Npc(name="traveler renan",
                           npc_type=NpcTypes.TRAVELER,
-                          messages={0: ["You look like you’ve seen your share of the road, friend. If you need rest, "
-                                        "look for an inn—there’s no better place to regain your strength.",
-                                        "A warm bed and a hearty meal can make all the difference before facing "
-                                        "whatever lies ahead."]}),
+                          messages={
+                              0: ["You look like you’ve seen your share of the road, friend. If you need rest, "
+                                  "look for an inn—there’s no better place to regain your strength.",
+                                  "A warm bed and a hearty meal can make all the difference before facing "
+                                  "whatever lies ahead."]}),
 
     "traveler seraph": Npc(name="traveler seraph",
                            npc_type=NpcTypes.TRAVELER,
-                           messages={0: ["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here "
-                                         "mentioned some caves to the north that might lead us across.",
-                                         "Aye, those caves are an option, but beware! Lately, they've become a haven "
-                                         "for Goblins and other foul creatures.",
-                                         "A perilous journey awaits, my friend. Tread "
-                                         "carefully if you choose that path."]}),
+                           messages={
+                               0: ["Ah, greetings, fellow wayfarer! Stuck, just like me, eh? Gorrick here "
+                                   "mentioned some caves to the north that might lead us across.",
+                                   "Aye, those caves are an option, but beware! Lately, they've become a haven "
+                                   "for Goblins and other foul creatures.",
+                                   "A perilous journey awaits, my friend. Tread "
+                                   "carefully if you choose that path."]}),
 
     "traveler sylas": Npc(name="traveler sylas",
                           npc_type=NpcTypes.TRAVELER,
@@ -1865,6 +1916,15 @@ NPCS = {
 
     # Villager from Aquiri.
 
+    # Villager from Antina.
+    "villager gareth": Npc(name="villager gareth",
+                           npc_type=NpcTypes.VILLAGER,
+                           messages={
+                               0: ["Ah, these must be from Marlin! He always sends the best catch. Thank you for"
+                                   " bringing them all the way here. It couldn’t have been an easy journey."]},
+                           place_morning=[(11, 18)],
+                           place_night=[(11, 18), "mid_house"]),
+
     "worker gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,
                           messages={
@@ -1876,11 +1936,11 @@ NPCS = {
     # Others.
     "animal wild cat": Npc(name="animal wild cat",
                            npc_type=NpcTypes.ANIMAL,
-                           place=["(0, 0)"],
+                           place=[(0, 0)],
                            messages_morning={
                                0: ["Purr... purr... purr... purr..."]},
-                           place_morning=["(0, 0)"],
+                           place_morning=[(0, 0)],
                            messages_night={
                                0: ["Meow!"]},
-                           place_night=["(1, 1)"])
+                           place_night=[(1, 1)])
 }

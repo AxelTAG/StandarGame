@@ -164,13 +164,34 @@ class Map:
         return year + 1, months, days
 
     def is_major_date(self, first_date: tuple[int, int, int], second_date: tuple[int, int, int]):
+        if first_date is None or second_date is None:
+            return None
+
         date_1 = (first_date[0] - 1) * self.year_duration_days + first_date[1] * self.month_duration + first_date[2]
         date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
-
         return date_1 < date_2
 
     def coords_from_place(self, place: Biome | Entry) -> tuple:
         return next((eval(k) for k, v in self.map_settings.items() if v == place), None)
+
+    def place_from_list(self, place_list: list) -> Biome | Entry | None:
+        place = self.map_settings[place_list[0]]
+        for site in place_list[1:]:
+            place = place.entries[site]
+        return place
+
+    def neighbors_from_coord(self, coord: tuple):
+        neighbors = []
+        x, y = coord
+        if y > 0:
+            neighbors.append(self.map_settings[(x, y - 1)])
+        if x < self.x_len:
+            neighbors.append(self.map_settings[(x + 1, y)])
+        if y < self.y_len:
+            neighbors.append(self.map_settings[(x, y + 1)])
+        if x > 0:
+            neighbors.append(self.map_settings[(x - 1, y)])
+        return neighbors
 
     def check_room_expiration(self, player: Player, npc: Npc) -> iter:
         for item, date in self.npcs[npc].room_expirations.items():
@@ -180,12 +201,6 @@ class Map:
 
     def add_npc(self, npc_key: str, npc: Npc) -> None:
         self.npcs[npc_key] = npc
-
-    def place_from_list(self, place_list: list) -> Biome | Entry | None:
-        place = self.map_settings[place_list[0]]
-        for site in place_list[1:]:
-            place = place.entries[site]
-        return place
 
     def refresh_npcs(self) -> None:
         for npc_key, npc in self.npcs.items():

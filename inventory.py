@@ -26,6 +26,22 @@ class Inventory:
         else:
             return False
 
+    def discard_item(self, item: str, quantity: int) -> bool:
+        if item in self.items.keys():
+            if self.items[item] >= quantity:
+                self.items[item] -= int(quantity)
+                if self.items[item] == 0:
+                    del self.items[item]
+                return True
+            else:
+                return False
+        else:
+            if item == "gold":
+                self.gold -= min([self.gold, quantity])
+                return True
+            else:
+                return False
+
     def drop_item(self, item: str, quantity: int) -> bool:
         if item in self.items.keys():
             if self.items[item] >= quantity:

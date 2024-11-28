@@ -8,7 +8,7 @@ from item import Item
 from map import Map
 from npc import Npc
 from player import Player
-from utils import coordstr, reset_map, text_ljust
+from utils import reset_map, text_ljust
 
 # External imports.
 import math
@@ -58,9 +58,9 @@ def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05
 
         elif choice_action in ["2", "3"]:  # Use object action.
             if choice_action == "2":
-                screen, object_used = use(player, player.slot1)
+                screen, object_used = use(player, map_game=map_game, item=player.slot1)
             if choice_action == "3":
-                screen, object_used = use(player, player.slot2)
+                screen, object_used = use(player, map_game=map_game, item=player.slot2)
 
         # Enemy attack.
         if enemy["hp"] > 0 and choice_action in ["0", "1", "2", "3"]:
@@ -91,7 +91,7 @@ def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05
             player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
             player.status = 0
             player.exp = 0
-            reset_map(ms=map_game.map_settings, keys=["(2, 1)", "(6, 2)"])
+            reset_map(ms=map_game.map_settings, keys=[(2, 1), (6, 2)])
 
             print(" GAME OVER")
             input(" > ")
@@ -204,12 +204,12 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
     if exploration_radius is None:
         exploration_radius = player.exploration_radius
 
-    player.map[player.y][player.x] = map_game.map_settings[coordstr(x=player.x, y=player.y)].color
+    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].color
 
     # Helper function to map specific coordinates.
     def map_tile(x: int, y: int):
         if 0 <= x < map_game.x_len and 0 <= y < map_game.y_len:
-            player.map[y][x] = map_game.map_settings[coordstr(x=x, y=y)].color
+            player.map[y][x] = map_game.map_settings[(x, y)].color
 
     # Map the boxes within the circular radius.
     for i in range(max(0, player.x - int(exploration_radius)),
@@ -354,13 +354,13 @@ def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
     if player.status == PlayerStatus.SURF.value and map_game.map_labels[y][x] not in ["sea", "river"]:
         player.status = PlayerStatus.WALK.value
 
-        map_game.map_settings[coordstr(x, y)].items.append("boat")
-        map_game.map_settings[coordstr(x, y)].description = map_game.map_settings[coordstr(x, y)].description.replace(
+        map_game.map_settings[(x, y)].items.append("boat")
+        map_game.map_settings[(x, y)].description = map_game.map_settings[(x, y)].description.replace(
             "Seaside with swaying palm trees, echoing waves, and vibrant life.",
             "Seaside with anchored boat, echoing waves and vibrant coastal life.")
 
-        if map_game.map_settings[coordstr(x, y)].description == "":
-            map_game.map_settings[coordstr(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
+        if map_game.map_settings[(x, y)].description == "":
+            map_game.map_settings[(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
                                                                  " coastal life.")
 
         map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
@@ -383,51 +383,51 @@ def move(player: Player,
     map_height, map_width = map_game.x_len, map_game.y_len
     tl_map, ms = map_game.map_labels, map_game.map_settings
     inventory = player.inventory.items
-    events = [*player.events.keys()]
+    events = [event for event in player.events.keys() if event == True]
 
     # Move North.
-    if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status
-            in ms[coordstr(x, y - 1)].status and mv == "1"):
+    if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].req) and player.status
+            in ms[(x, y - 1)].status and mv == "1"):
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             player.x, player.y = x, y - 1
-            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
+            player.set_place(place=map_game.map_settings[(player.x, player.y)])
             map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved North.", False
 
     # Move East.
     if (x < map_height and all(
-            req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status
-            in ms[coordstr(x + 1, y)].status and mv == "2"):
+            req in [*inventory.keys()] + events for req in ms[(x + 1, y)].req) and player.status
+            in ms[(x + 1, y)].status and mv == "2"):
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             player.x, player.y = x + 1, y
-            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
+            player.set_place(place=map_game.map_settings[(player.x, player.y)])
             map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved East.", False
 
     # Move South.
     if (y < map_width and all(
-            req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status
-            in ms[coordstr(x, y + 1)].status and mv == "3"):
+            req in [*inventory.keys()] + events for req in ms[(x, y + 1)].req) and player.status
+            in ms[(x, y + 1)].status and mv == "3"):
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             player.x, player.y = x, y + 1
-            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
+            player.set_place(place=map_game.map_settings[(player.x, player.y)])
             map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved South.", False
 
     # Move West.
-    if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status
-            in ms[coordstr(x - 1, y)].status and mv == "4"):
+    if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].req) and player.status
+            in ms[(x - 1, y)].status and mv == "4"):
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             player.x, player.y = x - 1, y
-            player.set_place(place=map_game.map_settings[coordstr(x=player.x, y=player.y)])
+            player.set_place(place=map_game.map_settings[(player.x, player.y)])
             map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
             return "You moved West.", False
 
@@ -728,13 +728,13 @@ def unequip(player: Player, item: str) -> str:
 
 # Use boat.
 def use_boat(player: Player, map_game: Map) -> str:
-    place = map_game.map_settings[coordstr(player.x, player.y)]
+    place = map_game.map_settings[(player.x, player.y)]
 
     if "boat" in place.items and player.status != PlayerStatus.SURF.value:
         player.status = PlayerStatus.SURF.value
         place.items.remove("boat")
 
-        if f"{(player.x, player.y)}" == "(6, 2)":
+        if f"{(player.x, player.y)}" == (6, 2):
             description = """Seaside with swaying palm trees, echoing waves, and vibrant life. A solitary figure stands 
             at the water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves
              and the boundless horizon stretching before them."""
@@ -753,7 +753,7 @@ def use_boat(player: Player, map_game: Map) -> str:
 
 
 # Use action (general).
-def use(player: Player, item: str) -> tuple[str, bool]:
+def use(player: Player, map_game: Map, item: str) -> tuple[str, bool]:
     if item == "gold":
         return f"You can't use {item.replace('_', ' ').title()}.", False
 
@@ -774,15 +774,27 @@ def use(player: Player, item: str) -> tuple[str, bool]:
             else:
                 return "Nothing done.", False
 
-            player.inventory.items[item] -= 1
+            player.inventory.discard_item(item=item, quantity=1)
 
             return f"{player.name}'s HP refilled to {player.hp}!", True
 
         elif "antidote" in item:
             player.heal_poisoning()
-            player.inventory.items[item] -= 1
+            player.inventory.discard_item(item=item, quantity=1)
 
             return "You have taken the antidote.", True
+
+        elif "powder_keg" in item:
+            explosion = False
+            for neighbor in map_game.neighbors_from_coord((player.x, player.y)):
+                if "rocks" in neighbor.req:
+                    neighbor.req.remove("rocks")
+                    player.inventory.discard_item(item=item, quantity=1)
+                    explosion = True
+            if explosion:
+                return "You have explode the keg powder on all the rocks.", True
+            else:
+                return "There is nothing to explode here.", False
 
         else:
             return "You can't use this item.", False

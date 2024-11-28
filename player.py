@@ -77,6 +77,9 @@ class Player:
         if len(self.name) > 12:
             self.name = self.name[:12]
 
+        if self.last_place is None:
+            self.last_place = Biome()
+
         if self.inventory is None:
             self.inventory = Inventory()
 
@@ -106,7 +109,11 @@ class Player:
                 "marlin_quests_2": False,
                 "marlin_quests_3": False,
                 "marlin_quests_4": False,
-                "lorian_permission": False,
+                "caravan_date_arrive": None,
+                "caravan_arrive": False,
+                "marlin_quests_5": False,
+                "marlin_quests_6": False,
+                "antinas_permission": False,
 
                 "win": False,
             }

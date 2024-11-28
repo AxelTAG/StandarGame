@@ -96,19 +96,19 @@ def draw_move(x: int, y: int, map_height: int, map_width: int, player: Player, t
     events = [*player.events.keys()]
     active_moves = [0, 0, 0, 0]
     if player.outside:
-        if y > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y - 1)].req) and player.status in ms[coordstr(x, y - 1)].status:
+        if y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].req) and player.status in ms[(x, y - 1)].status:
             if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
                 active_moves[0] = 1
 
-        if x < map_height and all(req in [*inventory.keys()] + events for req in ms[coordstr(x + 1, y)].req) and player.status in ms[coordstr(x + 1, y)].status:
+        if x < map_height and all(req in [*inventory.keys()] + events for req in ms[(x + 1, y)].req) and player.status in ms[(x + 1, y)].status:
             if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
                 active_moves[1] = 1
 
-        if y < map_width and all(req in [*inventory.keys()] + events for req in ms[coordstr(x, y + 1)].req) and player.status in ms[coordstr(x, y + 1)].status:
+        if y < map_width and all(req in [*inventory.keys()] + events for req in ms[(x, y + 1)].req) and player.status in ms[(x, y + 1)].status:
             if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
                 active_moves[2] = 1
 
-        if x > 0 and all(req in [*inventory.keys()] + events for req in ms[coordstr(x - 1, y)].req) and player.status in ms[coordstr(x - 1, y)].status:
+        if x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].req) and player.status in ms[(x - 1, y)].status:
             if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
                 active_moves[3] = 1
 
@@ -351,6 +351,15 @@ def load_map_set(ms: dict, setting: dict):
         i.__dict__.update(ii.__dict__)
 
 
+def suppress_output():
+    sys.stdout = open(os.devnull, 'w')
+
+
+def restore_output():
+    sys.stdout.close()
+    sys.stdout = sys.__stdout__
+
+
 # Print patron in column function.
 def patron_print(elements, n):
     patron = []
@@ -413,7 +422,7 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
     # Fill the dictionary
     for i in range(len(tl_map)):
         for j in range(len(tl_map[i])):
-            key = coordstr(j, i)
+            key = (j, i)
             value = copy.deepcopy(biomes[tl_map[i][j]])
             value.x, value.y = j, i
             dictionary[key] = value

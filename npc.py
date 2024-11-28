@@ -91,25 +91,29 @@ class Npc:
         current_temporal = self.current_temporal(hour=hour)
 
         if current_temporal == TimeOfDay.MORNING.value:
-            if self.messages_morning is None:
-                return
-            self.messages = self.messages_morning
-            self.place = self.place_morning
+            if self.messages_morning is not None:
+                self.messages = self.messages_morning
+            if self.place_morning is not None:
+                self.place = self.place_morning
+            return
 
         if current_temporal == TimeOfDay.AFTERNOON.value:
-            if self.messages_afternoon is None:
-                return
-            self.messages = self.messages_afternoon
-            self.place = self.place_afternoon
+            if self.messages_afternoon is not None:
+                self.messages = self.messages_afternoon
+            if self.place_afternoon:
+                self.place = self.place_afternoon
+            return
 
         if current_temporal == TimeOfDay.EVENING.value:
-            if self.messages_evening is None:
-                return
-            self.messages = self.messages_evening
-            self.place = self.place_evening
+            if self.messages_evening is not None:
+                self.messages = self.messages_evening
+            if self.place_evening is not None:
+                self.place = self.place_evening
+            return
 
         if current_temporal == TimeOfDay.NIGHT.value:
-            if self.messages_night is None:
-                return
-            self.messages = self.messages_night
-            self.place = self.place_night
+            if self.messages_night is not None:
+                self.messages = self.messages_night
+            if self.place_night is not None:
+                self.place = self.place_night
+            return

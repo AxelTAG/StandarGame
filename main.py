@@ -9,12 +9,16 @@ from enums import TimeOfDay
 from management import event_handler, map_control_handling, save
 from map import Map
 from player import Player
-from utils import (coordstr, import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
-                   find_full_name, get_hash)
+from utils import (import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
+                   find_full_name, get_hash, suppress_output, restore_output)
 
 # External imports.
-import random
 import matplotlib.pyplot as plt
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
+import pygame
+import random
 from datetime import datetime
 
 # Game variables.
@@ -30,10 +34,21 @@ standing = True
 # First screen massage.
 screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
 
+# Music background variables.
+pygame.mixer.init()
+pygame.mixer.music.load("./rsc/media/Echoes_of_the_Ancient_Lanes.mp3")  # Asegúrate de usar un archivo válido
+pygame.mixer.music.set_volume(0.5)
+
+
 # Main loop of the game.
 while run:
     # Menu loop.
     while menu:
+        # Music background.
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.play(-1)
+
+        # Screen
         clear()
         disp_title()
 
@@ -132,8 +147,8 @@ while run:
                                npcs=globals.NPCS.copy())
 
                 # Location setting.
-                map_game.map_settings[coordstr(x=0, y=0)].entries["hut"].name = player.name + "'s Hut"
-                player.place = map_game.map_settings[coordstr(x=0, y=0)].entries["hut"]
+                map_game.map_settings[(0, 0)].entries["hut"].name = player.name + "'s Hut"
+                player.place = map_game.map_settings[(0, 0)].entries["hut"]
 
                 # Introduction setting.
                 map_game.npcs["whispers"].messages[0] = [player.name + "...", player.name + "...",
@@ -169,7 +184,7 @@ while run:
                 if get_hash("cfg_save.pkl") != load_hash["hash"]:
                     raise OSError
 
-                player.place = map_game.map_settings[coordstr(player.x, player.y)]
+                player.place = map_game.map_settings[(player.x, player.y)]
                 player.outside = True
 
                 menu = False
@@ -189,6 +204,10 @@ while run:
 
         elif choice == "4":  # Quit option.
             quit()
+
+    if play:
+        # Music background.
+        pygame.mixer.music.stop()
 
     while play:
         # Time setting.
@@ -256,9 +275,9 @@ while run:
 
             elif action[0] in ["5", "6"]:  # Fast use object action.
                 if action[0] == "5":
-                    screen, _ = use(player=player, item=player.slot1)
+                    screen, _ = use(player=player, map_game=map_game, item=player.slot1)
                 if action[0] == "6":
-                    screen, _ = use(player=player, item=player.slot2)
+                    screen, _ = use(player=player, map_game=map_game, item=player.slot2)
                 standing = True
 
             elif action[0] == "assign":  # Assign action.
@@ -302,7 +321,7 @@ while run:
                     screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                place = map_game.map_settings["(22, 18)"].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]
+                place = map_game.map_settings[(22, 18)].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]
                 if player.place == place:
                     exploration_radius = 10
                 else:
@@ -443,7 +462,7 @@ while run:
                 standing = True
 
             elif action[0] == "use":  # Use object action.
-                screen, _ = use(player, "_".join(action[1:]))
+                screen, _ = use(player, map_game=map_game, item="_".join(action[1:]))
                 standing = True
 
             elif action[0] == "wait":  # Wait action.
@@ -474,7 +493,7 @@ while run:
             elif action[0] == "teleport":
                 player.x = int(action[1])
                 player.y = int(action[2])
-                player.place = map_game.map_settings[coordstr(x=player.x, y=player.y)]
+                player.place = map_game.map_settings[(player.x, player.y)]
                 standing = True
                 screen = "You teleported to " + str(player.x) + " " + str(player.y) + "."
 
@@ -485,7 +504,7 @@ while run:
             elif action == ["map_set"]:
                 for i in range(len(map_game.map_settings)):
                     for j in range(len(map_game.map_labels[i])):
-                        key = coordstr(j, i)
+                        key = (j, i)
                         print(key, map_game.map_settings[key].name, map_game.map_settings[key].description)
 
             elif action == ["lvl", "up"]:
@@ -506,6 +525,18 @@ while run:
 
             elif action == ["place", "coord", "2"]:
                 screen = f"{player.place.x, player.place.y}"
+
+            elif action == ["var"]:
+                screen = f"{locals().get('caravan_date_arrive')}"
+
+            elif action == ["date"]:
+                screen = f"{map_game.current_date}"
+
+            elif action[:2] == ["is", "major"]:
+                screen = f"{map_game.is_major_date(map_game.current_date, map_game.estimate_date(int(action[2])))}"
+
+            elif action == ["marlin", "hist"]:
+                screen = f"{map_game.npcs['fisherman marlin'].hist_messages}"
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
                 #

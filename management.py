@@ -34,10 +34,10 @@ def event_handler(player: Player,
         return play, menu
 
     # Event of Goblin Chief (2/3).
-    if (player.last_place == map_game.map_settings["(9, 4)"] and player.events["goblin_chief_crown"]
+    if (player.last_place == map_game.map_settings[(9, 4)] and player.events["goblin_chief_crown_1"]
             and not player.events["goblin_chief_crown_2"]):
         ENTRIES["sub_cave_2_2"].npc = []
-        map_game.map_settings["(10, 4)"].npc = ["mayor thorian", "mayors daughter maisie"]
+        map_game.map_settings[(10, 4)].npc = ["mayor thorian", "mayors daughter maisie"]
         map_game.npcs["mayor thorian"].reset_hist_messages()
 
         map_game.npcs["mayors daughter maisie"].messages = {
@@ -74,7 +74,7 @@ def event_handler(player: Player,
 
         player.events["goblin_chief_crown_3"] = True
 
-    # Event Fisherman Marlin quests (1/6).
+    # Event Fisherman Marlin quests (1/9).
     if not player.events["marlin_quests_1"] and map_game.npcs["fisherman marlin"].hist_messages[1]:
         player.inventory.add_item(item="marlins_fish_tuna", quantity=2)
 
@@ -85,20 +85,21 @@ def event_handler(player: Player,
             0: ["Ah, it’s you! Tell me, have you managed to deliver that fish to my friend in the south? I’ve been "
                 "wondering if it arrived fresh!"]}
 
+        map_game.npcs["fisherman marlin"].answers = {}
+
         map_game.npcs["fisherman brann"].messages = {
             0: ["Oh, by the tides! You’ve brought Marlin’s tuna, haven’t you? I wasn’t sure he’d manage to send it.",
                 "Thank you, traveler! This means more to me than you know."]}
 
         player.events["marlin_quests_1"] = True
 
-    # Event Fisherman Marlin quests (2/6).
+    # Event Fisherman Marlin quests (2/9).
     if all([player.events["marlin_quests_1"],
             not player.events["marlin_quests_2"],
             map_game.npcs["fisherman brann"].hist_messages[0]]):
         player.inventory.drop_item(item="marlins_fish_tuna", quantity=2)
 
         map_game.npcs["fisherman marlin"].reset_hist_messages()
-        map_game.npcs["fisherman brann"].reset_hist_messages()
 
         map_game.npcs["fisherman brann"].messages = {
             0: ["Ah, traveler! Good to see you again.",
@@ -109,81 +110,154 @@ def event_handler(player: Player,
                 "But now I’m worried about another shipment I sent with a caravan to Epiiat.",
                 "I haven’t heard back from them. Could you check on it for me? I’d be truly grateful."]}
 
-        map_game.npcs["fisherman marlin"].answers = {}
-
-        map_game.map_settings["(16, 5)"].npc = ["caravan leader darek", "caravenner lorien", "jester ralzo",
-                                                "traveler kaelen"]
+        map_game.map_settings[(16, 5)].npc = ["caravan leader darek", "caravenner lorien", "jester ralzo",
+                                              "traveler kaelen"]
 
         player.events["marlin_quests_2"] = True
 
-    # Event Fisherman Marlin quests (3/6).
+    # Event Fisherman Marlin quests (3/9).
     if all([player.events["marlin_quests_2"],
+            not player.events["marlin_quests_3"],
             map_game.npcs["fisherman marlin"].hist_messages[0]]):
-        map_game.npcs["fisherman marlin"].reset_hist_messages()
 
         map_game.npcs["fisherman marlin"].messages = {
             0: ["Thanks again for delivering that order to Brann! Now, there’s something else...",
                 "I’m worried about a shipment I sent with a caravan to Epiiat. I haven’t heard from them.",
                 "Could you check on them for me? I’d really appreciate it."]}
 
-    # Event Fisherman Marlin quests (4/6).
+    # Event Fisherman Marlin quests (4/9).
     if all([player.events["marlin_quests_2"],
+            not player.events["marlin_quests_3"],
             map_game.npcs["fisherman marlin"].hist_messages[0],
             map_game.npcs["caravan leader darek"].hist_messages[0]]):
         map_game.npcs["fisherman marlin"].reset_hist_messages()
 
         map_game.npcs["fisherman marlin"].messages = {
             0: ["A derrumbe in the valley? That explains the delay. Thank you for letting me know!",
-                "If you’re willing, could you bring some explosives to clear the way?",
+                "If you're willing, could you deliver them some explosives to clear the way?",
                 "I think I saw Captain Thorne loading some onto his ship recently. He might be able to help."]}
 
-    # # Event Fisherman Marlin quests (4/6).
-    # if all([player.events["marlin_quests_2"],
-    #         not player.events["marlin_quests_3"],
-    #         map_game.npcs["fisherman marlin"].hist_messages[0]]):
-    #     map_game.npcs["fisherman marlin"].reset_hist_messages()
-    #
-    #     map_game.npcs["fisherman marlin"].messages = {
-    #         0: ["Thanks again for delivering that order to Brann! Now, there’s something else...",
-    #             "I’m worried about a shipment I sent with a caravan to Epiiat. I haven’t heard from them.",
-    #             "Could you check on them for me? I’d really appreciate it."]}
-    #
-    #     player.events["marlin_quests_3"] = True
+        player.events["marlin_quests_3"] = True
 
-    # # Event of Guard Lorian and Fisherman Marlin. The message. First part (1/2).
-    # if map_game.npcs["fisherman marlin"].hist_messages[0]:
-    #     map_game.npcs["guard lorian"].messages = {
-    #         0: ["Halt, traveler! Hyrule City permits only those with proper credentials to pass these gates.",
-    #             "State your business and present your identification, or you shall not venture beyond.",
-    #             "The safety of our citizens is paramount, and we cannot afford to be lax in these trying times."],
-    #         1: ["Well, that old sea dog never forgets his family. Very well, you may pass. Tell him to visit when his "
-    #             "fishing tales become too much for the villagers.",
-    #             "Safe travels, adventurer."]}
-    #     map_game.npcs["guard lorian"].answers = {
-    #         1: "I have a message"}
-    #
-    #     player.events["message"] = True
-    #
-    #     return True, False
-    #
-    # # Event of Guard Lorian and Fisherman Marlin. The message. Second part (2/2).
-    # if player.events["message"] and map_game.npcs["guard lorian"].hist_messages[1]:
-    #     map_game.npcs["guard lorian"].messages = {
-    #         0: ["You've gained entry, but heed this counsel: Beyond the western outskirts lies uncharted territories"
-    #             " and lurking dangers.",
-    #             "Arm yourself well, noble traveler. The path is treacherous, and a sturdy sword or enchanted bow may"
-    #             " be your greatest allies.",
-    #             "Antina City rests in relative peace, but the world beyond is unpredictable. Safe travels, and may "
-    #             "your blade remain sharp against the shadows that may encroach upon your journey."]}
-    #     map_game.npcs["guard lorian"].reset_hist_messages()
-    #
-    #     player.events["permission"] = True
-    #
-    #     return True, False
+    # Event Fisherman Marlin quests (5/9).
+    if all(["rocks" not in map_game.map_settings[(15, 5)].req,
+            player.events["marlin_quests_3"],
+            not player.events["marlin_quests_4"]]):
+        map_game.npcs["fisherman marlin"].reset_hist_messages()
+
+        map_game.npcs["fisherman marlin"].messages = {
+            0: ["Ah, you've done it! The valley is clear at last. I can’t thank you enough for your help.",
+                "Here, take this as a token of my gratitude.",
+                "But before you go, I have one last favor to ask. Could you deliver this package to Antina for me?",
+                "Take these 3 tunas to a villager named Gareth. The guards won’t trouble you; this permit will grant "
+                "you passage.",
+                "Safe travels, my friend. Antina awaits!"]}
+
+        map_game.npcs["caravan leader darek"].messages = {
+            0: ["You’ve done us a great service, adventurer! Thanks to you, the road is clear, and we can finally "
+                "make our way to Epiiat. Safe travels, friend!"]}
+
+        map_game.npcs["caravenner lorien"].messages = {
+            0: ["At last, I’ll see Epiiat again! Thank you, traveler. It’s been too long since I walked its streets."]}
+
+        map_game.npcs["jester ralzo"].messages = {
+            0: ["Oh, glorious news! Back to Epiiat I go, ready to dazzle with my finest show! Care to attend,"
+                " traveler?"]}
+
+        map_game.npcs["traveler kaelen"].messages = {
+            0: ["Well done, traveler! You’ve handled that kegpowder with real skill. Not everyone could pull that off.",
+                "The road's better thanks to you!"]}
+
+        map_game.map_settings[(14, 5)].description = ("Desolate, silent valley, cracked earth stretches between "
+                                                      "imposing cliffs, where an eerie stillness envelops the barren "
+                                                      "landscape, untouched by the whispers of wind or the rustle"
+                                                      " of life.")
+
+        map_game.map_settings[(14, 5)].npc = []
+
+        player.events["caravan_date_arrive"] = map_game.estimate_date(days=3)
+        player.events["marlin_quests_4"] = True
+
+    # Event Fisherman Marlin quests (6/9).
+    if all([player.events["marlin_quests_4"],
+            not player.events["caravan_arrive"]]):
+        if map_game.is_major_date(first_date=player.events["caravan_date_arrive"], second_date=map_game.current_date):
+            map_game.npcs["caravan leader darek"].messages_morning = {
+                0: ["Safe and sound in Epiiat, thanks to you. The goods are delivered, and the road is clear. Well "
+                    "done, traveler."]}
+            map_game.npcs["caravan leader darek"].messages_evening = {
+                0: ["Night falls heavy in this cavern, but at least we're safe for now. You've earned a rest,"
+                    " traveler."]}
+            map_game.npcs["caravan leader darek"].place_morning = [(9, 5)]
+            map_game.npcs["caravan leader darek"].place_evening = [(9, 5), "inn", "main_room"]
+
+            map_game.npcs["caravenner lorien"].messages_morning = {
+                0: ["Ah, Epiiat... It's been too long. Feels good to be back. Thanks for making it happen, friend."]}
+            map_game.npcs["caravenner lorien"].messages_evening = {
+                0: ["Heh... y'know, every time I come to Epiiat, I feel... happy. It’s ‘cause of the mayor’s"
+                    " daughter.",
+                    "She’s... she’s wonderful. Don’t tell anyone, alright?"]}
+            map_game.npcs["caravenner lorien"].place_morning = [(9, 4)]
+            map_game.npcs["caravenner lorien"].place_evening = [(9, 5), "inn"]
+
+            map_game.npcs["jester ralzo"].messages_morning = {
+                0: ["Epiiat welcomes me once more! Time to lift spirits and stir laughter. Don’t miss my next act, "
+                    "hero!"]}
+            map_game.npcs["jester ralzo"].messages_night = {
+                0: ["A cavern’s as good a stage as any! Care to join us, hero? Music brightens even the darkest"
+                    " corners!"]}
+            map_game.npcs["jester ralzo"].place_morning = [(9, 5)]
+            map_game.npcs["jester ralzo"].place_night = [(9, 5), "inn"]
+
+            map_game.map_settings[(16, 5)].npc = []
+            player.events["caravan_arrive"] = True
+
+    # Event Fisherman Marlin quests (7/9).
+    if all([player.events["marlin_quests_4"],
+            not player.events["marlin_quests_5"],
+            map_game.npcs["fisherman marlin"].hist_messages[0]]):
+        map_game.npcs["fisherman marlin"].reset_hist_messages()
+
+        player.inventory.add_item(item="fishing_pole", quantity=1)
+        player.inventory.add_item(item="marlins_fish_tuna", quantity=3)
+
+        map_game.npcs["fisherman marlin"].messages = {
+            0: ["Ah, have you managed to deliver those tunas to Gareth yet?",
+                "I hope he’s gotten them by now. He's been waiting on those for quite some time. Let me know if you"
+                "ran into any trouble!"]}
+
+        player.events["marlin_quests_5"] = True
+        player.events["antinas_permission"] = True
+
+    # Event Fisherman Marlin quests (8/9).
+    if all([player.events["marlin_quests_5"],
+            not player.events["marlin_quests_6"],
+            map_game.npcs["villager gareth"].hist_messages[0]]):
+        map_game.npcs["fisherman marlin"].reset_hist_messages()
+
+        map_game.npcs["villager gareth"].messages = {
+            0: ["Ah, it’s you again! Always good to see a friendly face around here. How's the journey treating "
+                "you? Hopefully, the sea's been kinder today!"]}
+
+        map_game.npcs["fisherman marlin"].messages = {
+            0: ["Ah, you’ve delivered the tunas to Gareth! Thank you so much for handling that.",
+                "He’s a good friend of mine, and I’m glad you could help. I owe you one, adventurer.",
+                "If you ever need something from me, you know where to find me!"]}
+
+        player.events["marlin_quests_6"] = True
+
+        # Event Fisherman Marlin quests (9/9).
+    if all([player.events["marlin_quests_6"],
+            map_game.npcs["fisherman marlin"].hist_messages[0]]):
+
+        map_game.npcs["fisherman marlin"].messages_morning = {
+            0: ["Ah, it's a quiet day today. The sea's calm, but the fish are being stubborn.",
+                "Still, there's always something peaceful about being near the water.",
+                "If you’re ever in need of some good fish, you know where to find me."]}
 
     # Event batle with Dragon FireFrost after winning.
     if map_game.npcs["dragon firefrost"].hist_messages[0]:
-        play, menu, win = battle(player=player, enemy=MOBS["dragon"].copy(), ms=map_game.map_settings)
+        play, menu, win = battle(player=player, enemy=MOBS["dragon"].copy(), map_game=map_game)
         if win:
             map_game.npcs["dragon firefrost"].message = [
                 "Impressive. Today, the winds of fate favor you.",
@@ -195,12 +269,12 @@ def event_handler(player: Player,
 
             talk(npc=map_game.npcs["dragon firefrost"], player=player, map_game=map_game)
 
-            map_game.map_settings["(11, 24)"].description = ("Frozen valley, a pristine, snow-covered expanse where "
-                                                             "frost-kissed silence reigns. Glistening ice formations "
-                                                             "adorn the landscape, creating an ethereal and serene "
-                                                             "winter tableau in nature's icy embrace.")
-            map_game.map_settings["(11, 24)"].npc = []
-            map_game.map_settings["(0, 0)"].entries["hut"].items.append("origami_flowers")
+            map_game.map_settings[(11, 24)].description = ("Frozen valley, a pristine, snow-covered expanse where "
+                                                           "frost-kissed silence reigns. Glistening ice formations "
+                                                           "adorn the landscape, creating an ethereal and serene "
+                                                           "winter tableau in nature's icy embrace.")
+            map_game.map_settings[(11, 24)].npc = []
+            map_game.map_settings[(0, 0)].entries["hut"].items.append("origami_flowers")
             map_game.npcs["dragon firefrost"] = [[], [], [], [0]]
 
             return play, menu
@@ -226,9 +300,14 @@ def map_control_handling(player: Player,
                                       "it again if you plan on staying longer."])
 
     # Sailor Kael detention.
-    if "sailor kael" in player.place.npc and player.place == map_game.map_settings["(27, 15)"].entries["thornes_ship"]:
+    if "sailor kael" in player.place.npc and player.place == map_game.map_settings[(27, 15)].entries["thornes_ship"]:
         talk(npc=map_game.npcs["sailor kael"], player=player, map_game=map_game)
         player.set_place(place=player.last_place)
+
+    if "guard lorian" in player.last_place.npc and player.place == map_game.map_settings[(12, 17)]:
+        if not player.events["antinas_permission"]:
+            talk(npc=map_game.npcs["guard lorian"], player=player, map_game=map_game)
+            player.set_place(place=player.last_place)
 
 
 # Load game function.

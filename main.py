@@ -218,7 +218,8 @@ while run:
                                    map_game=map_game,
                                    time_init=time_init)
         map_control_handling(player=player, map_game=map_game)
-        map_game.refresh_npcs()
+        if not(map_game.current_date, map_game.hour) == (map_game.current_date, map_game.last_hour):
+            map_game.refresh_npcs()
 
         # Autosave.
         save(player=player, map_game=map_game, time_init=time_init)  # Autosave.
@@ -537,6 +538,9 @@ while run:
 
             elif action == ["marlin", "hist"]:
                 screen = f"{map_game.npcs['fisherman marlin'].hist_messages}"
+
+            elif action == ["last", "hour"]:
+                screen = f"{map_game.last_hour, map_game.hour}"
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
                 #

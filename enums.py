@@ -159,6 +159,7 @@ class NpcTypes(Enum):
     ASTRONOMER = 82
     CARAVANNER = 83
     ANIMAL = 84
+    ELDER = 85
     WHISPERS = 471993
 
 

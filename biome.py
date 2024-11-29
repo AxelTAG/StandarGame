@@ -92,21 +92,3 @@ class Entry(Biome):
 
         if self.hide is None:
             self.hide = {"visibility": True, "finding_chance": 0}
-
-    # @property
-    # def return_x(self):
-    #     current = self
-    #     while current.leave_entry:
-    #         current = current.leave_entry
-    #         if current.x is not None:
-    #             return current.x
-    #     return None
-    #
-    # @property
-    # def return_y(self):
-    #     current = self
-    #     while current.leave_entry:
-    #         current = current.leave_entry
-    #         if current.y is not None:
-    #             return current.y
-    #     return None

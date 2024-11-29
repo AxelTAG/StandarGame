@@ -34,50 +34,54 @@ def init_map_setting(ms: dict):
                              "captivated by the rhythmic dance of the waves and the boundless horizon " \
                              "stretching before them."
     ms[(5, 3)].items = ["boat"]
-    ms[(5, 3)].npc = ["captain zelian"]
 
     # (9, 4)
     ms[(9, 4)].description = ("Northern village entrance, sturdy gates open to a cozy haven, framed by "
                               "rolling hills and welcoming cottages.")
     ms[(9, 4)].name = "NORTHERN GATES"
-    ms[(9, 4)].npc = ["traveler thaldir"]
 
     # (9, 5)
     ms[(9, 5)].description = ("Inn district, cozy tavern, lively marketplace, and quaint cottages "
                               "surround the inviting town.")
-    ms[(9, 5)].entries = {"inn": ENTRIES["mirabelles_inn"]}
+    ms[(9, 5)].entries = {"inn": ENTRIES["mirabelles_inn"],
+                          "small_house": ENTRIES["house_epiiat_small"],
+                          "house": ENTRIES["house_epiiat_normal"]}
     ms[(9, 5)].entries["inn"].leave_entry = ms[(9, 5)]
     ms[(9, 5)].entries["inn"].entries = {"main_room": ENTRIES["mirabelles_main_room"],
                                          "small_room": ENTRIES["mirabelles_small_room"]}
     ms[(9, 5)].entries["inn"].entries["main_room"].leave_entry = ms[(9, 5)].entries["inn"]
     ms[(9, 5)].entries["inn"].entries["small_room"].leave_entry = ms[(9, 5)].entries["inn"]
-    ms[(9, 5)].npc = ["merchant bryson", "traveler sylas", "villager merrin", "traveler renan"]
+    ms[(9, 5)].entries["small_house"].leave_entry = ms[(9, 5)]
+    ms[(9, 5)].entries["house"].leave_entry = ms[(9, 5)]
 
     # (9, 17)
     ms[(9, 17)].description = ("Eastern gateway to Antina: Mighty arches frame the welcoming path, guiding"
                                " travelers through a bustling thoroughfare toward the heart of the "
                                "enchanting city.")
     ms[(9, 17)].name = "EASTERN GATES"
-    ms[(9, 17)].npc = ["traveler kaelin"]
 
     # (10, 4)
     ms[(10, 4)].description = "Village hub, Mayor's office, bustling square, and a quaint temple create the " \
                               "heart of community life."
     ms[(10, 4)].name = "TOWN CENTER"
-    ms[(10, 4)].npc = ["mayor thorian"]
+    ms[(10, 4)].entries = {"mayors_house": ENTRIES["house_epiiat_mayor"],
+                           "wooden_house": ENTRIES["house_epiiat_wooden"],
+                           "temple": ENTRIES["temple_epiiat"]}
+    ms[(10, 4)].entries["mayors_house"].leave_entry = ms[(10, 4)]
+    ms[(10, 4)].entries["wooden_house"].leave_entry = ms[(10, 4)]
+    ms[(10, 4)].entries["temple"].leave_entry = ms[(10, 4)]
 
     # (10, 5)
     ms[(10, 5)].description = ("Southern gateway, welcoming gates, cobblestone paths, and a charming,"
                                " serene atmosphere greet visitors.")
     ms[(10, 5)].name = "SOUTHERN GATES"
-    ms[(10, 5)].npc = ["traveler elara", "villager fira"]
 
     # (10, 16)
     ms[(10, 16)].description = ("Majestic spires pierce the sky, casting a divine aura over cobblestone"
                                 " squares. The sacred structure beckons pilgrims and whispers tales of"
                                 " ancient reverence")
-    ms[(10, 16)].name = "ANTINA'S CATHEDRAL"
-    ms[(10, 16)].entries = {"temple": ENTRIES["temple"]}
+    ms[(10, 16)].name = "ANTINA'S SANCTUARY"
+    ms[(10, 16)].entries = {"temple": ENTRIES["temple_antina"]}
     ms[(10, 16)].entries["temple"].leave_entry = ms[(10, 16)]
 
     # (10, 17)
@@ -113,23 +117,20 @@ def init_map_setting(ms: dict):
                                "squares, where knights, merchants, and mystics converge. Cobblestone streets " \
                                "wind through diverse districts, echoing with the city's vibrant heartbeat."
     ms[(11, 17)].name = "ANTINA'S MARKET"
-    ms[(11, 17)].npc = ["merchant roland"]
 
     # (11, 18)
     ms[(11, 18)].description = "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene" \
                                " enclave where the city's heartbeat echoes in the everyday rhythms of its" \
                                " residents."
-    ms[(11, 18)].entries = {"mid_house": ENTRIES["house_antina_mid"]}
+    ms[(11, 18)].entries = {"mid_house": ENTRIES["house_antina_gareth"]}
     ms[(11, 18)].entries["mid_house"].leave_entry = ms[(11, 18)]
     ms[(11, 18)].name = "ANTINA'S RESIDENTIAL QUARTER"
-    ms[(11, 18)].npc = ["villager gareth"]
 
     # (11, 24)
     ms[(11, 24)].description = "Frozen valley under the watchful gaze of a dragon, crystalized landscapes " \
                                "echo with the dragon's silent vigil, as icy winds and shimmering frost create" \
                                " an otherworldly ambiance."
     ms[(11, 24)].name = "FROSTVALE"
-    ms[(11, 24)].npc = ["dragon firefrost"]
 
     # (12, 16)
     ms[(12, 16)].description = "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene" \
@@ -149,7 +150,6 @@ def init_map_setting(ms: dict):
                                 " merchants peddle wares to the fervent spectators, creating an "
                                 "electrifying atmosphere.")
     ms[(12, 18)].name = "ANTINA'S ARENA"
-    ms[(12, 18)].npc = ["merchant elden"]
 
     # (13, 0)
     ms[(13, 0)].description = "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these " \
@@ -224,14 +224,12 @@ def init_map_setting(ms: dict):
     ms[(13, 17)].description = "Eastern city-state entrance: Towering gates adorned with intricate carvings," \
                                " guarded by vigilant sentinels, mark the grand entry to a thriving metropolis" \
                                " blending history and modernity."
-    ms[(13, 17)].npc = ["guard lorian", "traveler elinor"]
 
     # (14, 5)
     ms[(14, 5)].description = "Blocked valley passage, boulders from a recent landslide obstruct the way, as " \
                               "a diligent worker clears debris, striving to reopen this vital route amidst " \
                               "the rugged beauty of the scenic landscape."
     ms[(14, 5)].name = "VALLEY"
-    ms[(14, 5)].npc = ["worker gorrick", "traveler seraph"]
 
     # (15, 5)
     ms[(15, 5)].req = ["rocks"]
@@ -263,7 +261,6 @@ def init_map_setting(ms: dict):
     ms[(22, 27)].description = ("Sandy shores meet grassy dunes, where a weathered hut stands, surrounded"
                                 " by scattered driftwood and the soothing sound of crashing waves.")
     ms[(22, 27)].name = "COAST"
-    ms[(22, 27)].npc = ["fisherman brann"]
     ms[(22, 27)].entries = {"coast_hut": ENTRIES["hut_22_27"]}
     ms[(22, 27)].entries["coast_hut"].leave_entry = ms[(22, 27)]
 
@@ -279,14 +276,15 @@ def init_map_setting(ms: dict):
                                "lone fisherman casts his net into the glistening waters, capturing the " \
                                "essence of maritime tranquility."
     ms[(27, 14)].name = "AQUIRI'S VILLAGE"
-    ms[(27, 14)].npc = ["fisherman marlin"]
-    ms[(27, 14)].entries = {}
+    ms[(27, 14)].entries = {"marlins_hut": ENTRIES["house_aquiri_marlin"]}
 
     # (27, 15)
     ms[(27, 15)].description = "Seaside fishing hamlet, colorful boats bob gently in the harbor, while " \
                                "weathered cottages line the shore of this picturesque coastal community."
     ms[(27, 15)].entries = {
         "inn": ENTRIES["lyssias_inn"],
+        "house": ENTRIES["house_aquiri_normal"],
+        "coast_stone_house": ENTRIES["house_aquiri_stone"],
         "thornes_ship": ENTRIES["thornes_ship"]}
 
     ms[(27, 15)].entries["thornes_ship"].leave_entry = ms[(27, 15)]
@@ -300,4 +298,3 @@ def init_map_setting(ms: dict):
     ms[(27, 15)].entries["inn"].entries["second_room"].leave_entry = ms[(27, 15)].entries["inn"]
     ms[(27, 15)].entries["inn"].entries["third_room"].leave_entry = ms[(27, 15)].entries["inn"]
     ms[(27, 15)].name = "AQUIRI'S VILLAGE"
-    ms[(27, 15)].npc = ["captain thorne", "merchant selena"]

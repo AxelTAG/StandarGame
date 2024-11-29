@@ -28,18 +28,22 @@ class Npc:
     hour_morning: int = field(default=6)
     place_morning: list = field(default=None)
     messages_morning: list[int: list[str]] = field(default=None)
+    answers_morning: list[int: list[str]] = field(default=None)
 
     hour_afternoon: int = field(default=12)
     place_afternoon: list = field(default=None)
     messages_afternoon: list[int: list[str]] = field(default=None)
+    answers_afternoon: list[int: list[str]] = field(default=None)
 
     hour_evening: int = field(default=18)
     place_evening: list = field(default=None)
     messages_evening: list[int: list[str]] = field(default=None)
+    answers_evening: list[int: list[str]] = field(default=None)
 
     hour_night: int = field(default=22)
     place_night: list = field(default=None)
     messages_night: list[int: list[str]] = field(default=None)
+    answers_night: list[int: list[str]] = field(default=None)
 
     def __attrs_post_init__(self):
         if self.buy_beds is None:
@@ -72,7 +76,7 @@ class Npc:
 
     def current_temporal(self, hour: int) -> int:
         if self.hour_night < self.hour_morning:
-            if self.hour_night <= hour < self.hour_night:
+            if self.hour_night <= hour < self.hour_morning:
                 return TimeOfDay.NIGHT.value
 
         if self.hour_morning <= hour < self.hour_afternoon:
@@ -93,6 +97,8 @@ class Npc:
         if current_temporal == TimeOfDay.MORNING.value:
             if self.messages_morning is not None:
                 self.messages = self.messages_morning
+            if self.answers_morning is not None:
+                self.answers = self.answers_morning
             if self.place_morning is not None:
                 self.place = self.place_morning
             return
@@ -100,6 +106,8 @@ class Npc:
         if current_temporal == TimeOfDay.AFTERNOON.value:
             if self.messages_afternoon is not None:
                 self.messages = self.messages_afternoon
+            if self.answers_afternoon is not None:
+                self.answers = self.answers_afternoon
             if self.place_afternoon:
                 self.place = self.place_afternoon
             return
@@ -107,6 +115,8 @@ class Npc:
         if current_temporal == TimeOfDay.EVENING.value:
             if self.messages_evening is not None:
                 self.messages = self.messages_evening
+            if self.answers_evening is not None:
+                self.answers = self.answers_evening
             if self.place_evening is not None:
                 self.place = self.place_evening
             return
@@ -114,6 +124,8 @@ class Npc:
         if current_temporal == TimeOfDay.NIGHT.value:
             if self.messages_night is not None:
                 self.messages = self.messages_night
+            if self.answers_night is not None:
+                self.answers = self.answers_night
             if self.place_night is not None:
                 self.place = self.place_night
             return

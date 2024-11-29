@@ -42,6 +42,9 @@ class Map:
     x_len: int = field(init=False)
     y_len: int = field(init=False)
 
+    # Others.
+    last_hour: int = field(default=6)
+
     def __attrs_post_init__(self):
         if self.map_labels is None:
             self.map_labels = label_pixels("rsc/tile-00.png")
@@ -65,21 +68,7 @@ class Map:
 
     @property
     def current_time_of_day(self) -> int:
-        if self.night_start < self.morning_start:
-            if self.night_start <= self.hour < self.morning_start:
-                return TimeOfDay.NIGHT.value
-
-        if self.morning_start <= self.hour < self.afternoon_start:
-            return TimeOfDay.MORNING.value
-
-        elif self.afternoon_start <= self.hour < self.evening_start:
-            return TimeOfDay.AFTERNOON.value
-
-        elif self.evening_start <= self.hour < self.night_start:
-            return TimeOfDay.EVENING.value
-
-        else:
-            return TimeOfDay.NIGHT.value
+        return self.time_of_day_from_hour(hour=self.hour)
 
     @property
     def current_time_of_day_name(self) -> str:
@@ -101,7 +90,25 @@ class Map:
     def current_season(self):
         return [*Season][self.month // self.length_of_seasons]
 
+    def time_of_day_from_hour(self, hour: int) -> int:
+        if self.night_start < self.morning_start:
+            if self.night_start <= hour < self.morning_start:
+                return TimeOfDay.NIGHT.value
+
+        if self.morning_start <= hour < self.afternoon_start:
+            return TimeOfDay.MORNING.value
+
+        elif self.afternoon_start <= hour < self.evening_start:
+            return TimeOfDay.AFTERNOON.value
+
+        elif self.evening_start <= hour < self.night_start:
+            return TimeOfDay.EVENING.value
+
+        else:
+            return TimeOfDay.NIGHT.value
+
     def add_hours(self, hours_to_add: int) -> None:
+        self.last_hour = self.hour
         hours_sum = self.hour + hours_to_add
         if hours_sum < self.day_duration:
             self.hour = hours_sum
@@ -203,6 +210,13 @@ class Map:
         self.npcs[npc_key] = npc
 
     def refresh_npcs(self) -> None:
+        time_of_days, hours_time_of_days = [], []
+        for hour in [h % 24 for h in range(self.last_hour, self.hour + 1)]:
+            time_of_day = self.time_of_day_from_hour(hour=hour)
+            if time_of_day not in time_of_days:
+                time_of_days.append(time_of_day)
+                hours_time_of_days.append(hour)
+
         for npc_key, npc in self.npcs.items():
             place = None
             if npc.place is not None:
@@ -211,6 +225,8 @@ class Map:
             if place is not None and npc_key in place.npc:
                 place.npc.remove(npc_key)
 
-            npc.refresh_temporal(hour=self.hour)
+            for hour in hours_time_of_days:
+                npc.refresh_temporal(hour=hour)
+
             if npc.place is not None:
                 self.place_from_list(place_list=npc.place).npc.append(npc_key)

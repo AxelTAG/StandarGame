@@ -34,10 +34,9 @@ def event_handler(player: Player,
         return play, menu
 
     # Event of Goblin Chief (2/3).
-    if (player.last_place == map_game.map_settings[(9, 4)] and player.events["goblin_chief_crown_1"]
+    if ((player.last_place == map_game.map_settings[(9, 4)] or player.last_place == map_game.map_settings[(10, 5)])
+            and player.events["goblin_chief_crown_1"]
             and not player.events["goblin_chief_crown_2"]):
-        ENTRIES["sub_cave_2_2"].npc = []
-        map_game.map_settings[(10, 4)].npc = ["mayor thorian", "mayors daughter maisie"]
         map_game.npcs["mayor thorian"].reset_hist_messages()
 
         map_game.npcs["mayors daughter maisie"].messages = {
@@ -45,6 +44,10 @@ def event_handler(player: Player,
                 "If not for your help, I might have tried to escape through one of the hidden passages in the cave.",
                 "I saw them but had no chance to explore. Your courage saved me before I could take the risk.",
                 "I owe you my life."]}
+        map_game.npcs["mayors daughter maisie"].place = [(10, 4)]
+        map_game.npcs["mayors daughter maisie"].place_morning = [(10, 4)]
+        map_game.npcs["mayors daughter maisie"].place_evening = [(10, 4), "house_epiiat_mayor"]
+
         map_game.npcs["mayor thorian"].messages = {
             0: ["I’ve heard the tale from my daughter, Maisie. You rescued her from the clutches of those "
                 "vile goblins.",
@@ -110,8 +113,10 @@ def event_handler(player: Player,
                 "But now I’m worried about another shipment I sent with a caravan to Epiiat.",
                 "I haven’t heard back from them. Could you check on it for me? I’d be truly grateful."]}
 
-        map_game.map_settings[(16, 5)].npc = ["caravan leader darek", "caravenner lorien", "jester ralzo",
-                                              "traveler kaelen"]
+        map_game.npcs["caravan leader darek"].place = [(16, 5)]
+        map_game.npcs["caravenner lorien"].place = [(16, 5)]
+        map_game.npcs["jester ralzo"].place = [(16, 5)]
+        map_game.npcs["traveler kaelen"].place = [(16, 5)]
 
         player.events["marlin_quests_2"] = True
 
@@ -173,8 +178,6 @@ def event_handler(player: Player,
                                                       "landscape, untouched by the whispers of wind or the rustle"
                                                       " of life.")
 
-        map_game.map_settings[(14, 5)].npc = []
-
         player.events["caravan_date_arrive"] = map_game.estimate_date(days=3)
         player.events["marlin_quests_4"] = True
 
@@ -209,7 +212,6 @@ def event_handler(player: Player,
             map_game.npcs["jester ralzo"].place_morning = [(9, 5)]
             map_game.npcs["jester ralzo"].place_night = [(9, 5), "inn"]
 
-            map_game.map_settings[(16, 5)].npc = []
             player.events["caravan_arrive"] = True
 
     # Event Fisherman Marlin quests (7/9).

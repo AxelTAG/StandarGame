@@ -2,7 +2,7 @@
 # Locals imports.
 import globals
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
-    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map
+    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map, craft
 from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
                       disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
@@ -10,7 +10,7 @@ from management import event_handler, map_control_handling, save
 from map import Map
 from player import Player
 from utils import (import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
-                   find_full_name, get_hash, suppress_output, restore_output)
+                   find_full_name, get_hash)
 
 # External imports.
 import matplotlib.pyplot as plt
@@ -115,13 +115,11 @@ while run:
                     # Play variables.
                     standing = True
 
-                    # Player:
-                    player = Player()
-
                     screen = "Nothing done yet."
 
-                    while not check_name(player.name):
-                        player.name = input(" # What's your NAME, hero? ").title()
+                    player_name = ""
+                    while not check_name(player_name):
+                        player_name = input(" # What's your NAME, hero? ").title()
                     menu = False
                     play = True
 
@@ -132,9 +130,9 @@ while run:
                 print(" < NEW GAME >")
                 print()
 
-                player = Player()
-                while not check_name(player.name):
-                    player.name = input(" # What's your NAME, hero? ").title()
+                player_name = ""
+                while not check_name(player_name):
+                    player_name = input(" # What's your NAME, hero? ").title()
                 menu = False
                 play = True
 
@@ -144,11 +142,17 @@ while run:
                 # Map settings.
                 map_game = Map(mobs=globals.MOBS.copy(),
                                biomes=globals.BIOMES.copy(),
-                               npcs=globals.NPCS.copy())
+                               npcs=globals.NPCS.copy(),
+                               entries=globals.ENTRIES.copy())
+
+                # Player.
+                player = Player(name=player_name,
+                                place=map_game.map_settings[(0, 0)].entries["hut"],
+                                last_place=map_game.map_settings[(0, 0)].entries["hut"],
+                                last_entry=map_game.map_settings[(0, 0)].entries["hut"])
 
                 # Location setting.
                 map_game.map_settings[(0, 0)].entries["hut"].name = player.name + "'s Hut"
-                player.place = map_game.map_settings[(0, 0)].entries["hut"]
 
                 # Introduction setting.
                 map_game.npcs["whispers"].messages[0] = [player.name + "...", player.name + "...",
@@ -521,9 +525,6 @@ while run:
             elif action == ["place"]:
                 screen = f"{player.place.name, player.last_place.name, player.last_entry.name}"
 
-            elif action == ["place", "coord", "1"]:
-                screen = f"{map_game.coords_from_place(place=player.place)}"
-
             elif action == ["place", "coord", "2"]:
                 screen = f"{player.place.x, player.place.y}"
 
@@ -541,6 +542,9 @@ while run:
 
             elif action == ["last", "hour"]:
                 screen = f"{map_game.last_hour, map_game.hour}"
+
+            elif action[0] == "craft":
+                screen = craft(player=player, item="_".join(action[1:]))
 
             elif action[0] == "update":  # Admin action for update de game while devolping.
                 #

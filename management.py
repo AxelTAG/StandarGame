@@ -46,7 +46,7 @@ def event_handler(player: Player,
                 "I owe you my life."]}
         map_game.npcs["mayors daughter maisie"].place = [(10, 4)]
         map_game.npcs["mayors daughter maisie"].place_morning = [(10, 4)]
-        map_game.npcs["mayors daughter maisie"].place_evening = [(10, 4), "house_epiiat_mayor"]
+        map_game.npcs["mayors daughter maisie"].place_evening = [(10, 4), "mayors_house"]
 
         map_game.npcs["mayor thorian"].messages = {
             0: ["I’ve heard the tale from my daughter, Maisie. You rescued her from the clutches of those "
@@ -228,6 +228,13 @@ def event_handler(player: Player,
                 "I hope he’s gotten them by now. He's been waiting on those for quite some time. Let me know if you"
                 "ran into any trouble!"]}
 
+        map_game.npcs["traveler elinor"].messages = {
+            0: ["Oh, greetings, traveler!",
+                "I had planned to cross the sea on a ship, but it seems that won’t happen soon.",
+                "The sailors are too wary to sail with a dragon sighted nearby... Can’t say I blame them."]}
+
+        map_game.npcs["traveler elinor"].place = [(27, 14)]
+
         player.events["marlin_quests_5"] = True
         player.events["antinas_permission"] = True
 
@@ -261,6 +268,7 @@ def event_handler(player: Player,
     if map_game.npcs["dragon firefrost"].hist_messages[0]:
         play, menu, win = battle(player=player, enemy=MOBS["dragon"].copy(), map_game=map_game)
         if win:
+            # Dragon and valley.
             map_game.npcs["dragon firefrost"].message = [
                 "Impressive. Today, the winds of fate favor you.",
                 "I yield. But heed my words, for when the stars align in a different cosmic dance, I shall await you"
@@ -277,7 +285,55 @@ def event_handler(player: Player,
                                                            "winter tableau in nature's icy embrace.")
             map_game.map_settings[(11, 24)].npc = []
             map_game.map_settings[(0, 0)].entries["hut"].items.append("origami_flowers")
-            map_game.npcs["dragon firefrost"] = [[], [], [], [0]]
+            map_game.npcs["dragon firefrost"].place = None
+
+            # Antinas NPCs.
+            map_game.npcs["villager fenna"].messages_morning = {
+                0: ["The dragon left? How strange... I guess some things are meant to be.",
+                    "It would’ve been something to see it up close, but maybe it’s better this way."]}
+            map_game.npcs["villager fenna"].messages_evening = None
+            map_game.npcs["villager fenna"].messages_night = {
+                0: ["Zzz... zzz... zzz..."]}
+
+            map_game.npcs["villager garrek"].messages_morning = {
+                0: ["The animals are finally calm again. The dragon’s gone, but the memories of those tense days will "
+                    "stick with me for a while.",
+                    "Glad we made it through."]}
+            map_game.npcs["villager garrek"].messages_evening = None
+            map_game.npcs["villager garrek"].messages_night = {
+                0: ["Zzz... zzz... zzz... Snore..."]}
+
+            map_game.npcs["villager halden"].messages_morning = {
+                0: ["Well, it seems like the storm has passed. I knew the kingdom's protectors wouldn't let us down.",
+                    "I’ll sleep easier tonight, that’s for sure."]}
+            map_game.npcs["villager halden"].messages_evening = {
+                0: ["It feels good knowing the danger has passed. I'll sleep soundly tonight, for the first time"
+                    " in days.",
+                    "The air even feels calmer, like the world itself can finally breathe again."]}
+            map_game.npcs["villager halden"].messages_night = None
+
+            map_game.npcs["villager lyria"].messages_morning = {
+                0: ["I can't believe it's over... The dragon's gone? I don't know whether to feel relieved"
+                    " or... disappointed.",
+                    "It's strange, the air feels lighter now."]}
+            map_game.npcs["villager lyria"].messages_evening = {
+                0: ["I’m so glad it’s finally over... The dragon’s gone, and I can finally get some rest.",
+                    "It was a long, sleepless week. Now, I can sleep without worrying if we'll be next."]}
+
+            map_game.npcs["villager mirrel"].messages_morning = {
+                0: ["Thank the gods, it's gone... but I can't help but wonder if we'll be safe for long.",
+                    "Something tells me we’ve just gotten lucky."]}
+            map_game.npcs["villager mirrel"].messages_evening = {
+                0: ["I don’t know if I’ll ever fully forget those days... But I’m glad it’s behind us now.",
+                    "Time to rest and let the fear drift away, like the dragon."]}
+
+            map_game.npcs["villager orik"].messages_morning = {
+                0: ["Huh, the dragon's gone? Guess it's back to work then.",
+                    "Not that I’m complaining—this place is peaceful again. At least for now.",
+                    "Glad we made it through."]}
+            map_game.npcs["villager orik"].messages_night = None
+            map_game.npcs["villager orik"].messages_night = {
+                0: ["Hmmm... Hmmm... Zzzzz..."]}
 
             return play, menu
         else:

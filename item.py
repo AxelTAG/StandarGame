@@ -32,5 +32,29 @@ class Item:
     buy_price: int = field(default=None)
     sell_price: int = field(default=None)
 
+    # Buy/Sell price factors.
+    attack_price_factor: int = field(default=50)
+    defense_price_factor: int = field(default=40)
+    precision_price_factor: int = field(default=200)
+    evasion_price_factor: int = field(default=300)
+    deprecator_factor: float = field(default=0.4)
+    base_value: int = field(default=0)
+
+    # Crafting attributes.
+    crafting_materials: dict = field(default=None)
+
     def __attrs_post_init__(self):
         pass
+
+    @property
+    def get_buy_price(self):
+        attack_value = self.attack * self.attack_price_factor
+        defense_value = self.defense * self.defense_price_factor
+        precision_value = self.precision * self.precision_price_factor
+        evasion_value = self.evasion * self.evasion_price_factor
+
+        return attack_value + defense_value + precision_value + evasion_value + self.base_value
+
+    @property
+    def get_sell_price(self):
+        return self.get_buy_price * self.deprecator_factor

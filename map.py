@@ -38,6 +38,7 @@ class Map:
     map_settings: dict = field(default=None)
     npcs: dict = field(default=None)
     biomes: dict = field(default=None)
+    entries: dict = field(default=None)
     mobs: dict = field(default=None)
     x_len: int = field(init=False)
     y_len: int = field(init=False)
@@ -178,9 +179,6 @@ class Map:
         date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
         return date_1 < date_2
 
-    def coords_from_place(self, place: Biome | Entry) -> tuple:
-        return next((eval(k) for k, v in self.map_settings.items() if v == place), None)
-
     def place_from_list(self, place_list: list) -> Biome | Entry | None:
         place = self.map_settings[place_list[0]]
         for site in place_list[1:]:
@@ -230,3 +228,6 @@ class Map:
 
             if npc.place is not None:
                 self.place_from_list(place_list=npc.place).npc.append(npc_key)
+
+    def refresh_entries(self):
+        pass

@@ -40,7 +40,7 @@ def check_name(text: str, max_length: int = 12):
     if len(text) > max_length or text.isspace() or any(char.isdigit() for char in text):
         return False
 
-    # If it passes all checks, return True
+    # If it passes all checks, return True.
     return True
 
 

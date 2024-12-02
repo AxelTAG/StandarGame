@@ -89,6 +89,8 @@ def init_map_setting(ms: dict):
     ms[(10, 17)].description = "Antina's post-gate district, winding streets lead to residential quarters " \
                                "and training grounds. Stone structures bear the weight of history, weaving a" \
                                " tapestry of everyday life beyond the bustling entrance gates."
+    ms[(10, 17)].entries = {"potion_shop": ENTRIES["potion_shop_antina"]}
+    ms[(10, 17)].entries["potion_shop"].leave_entry = ms[(10, 17)]
 
     # (10, 18)
     ms[(10, 18)].description = "Cobbled lanes weave among lively taverns and cozy inns, offering weary " \
@@ -122,8 +124,14 @@ def init_map_setting(ms: dict):
     ms[(11, 18)].description = "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene" \
                                " enclave where the city's heartbeat echoes in the everyday rhythms of its" \
                                " residents."
-    ms[(11, 18)].entries = {"mid_house": ENTRIES["house_antina_gareth"]}
+    ms[(11, 18)].entries = {"mid_house": ENTRIES["house_antina_gareth"],
+                            "small_house": ENTRIES["house_antina_small"],
+                            "white_house": ENTRIES["house_antina_white"],
+                            "family_house": ENTRIES["house_antina_family"]}
     ms[(11, 18)].entries["mid_house"].leave_entry = ms[(11, 18)]
+    ms[(11, 18)].entries["small_house"].leave_entry = ms[(11, 18)]
+    ms[(11, 18)].entries["white_house"].leave_entry = ms[(11, 18)]
+    ms[(11, 18)].entries["family_house"].leave_entry = ms[(11, 18)]
     ms[(11, 18)].name = "ANTINA'S RESIDENTIAL QUARTER"
 
     # (11, 24)
@@ -137,6 +145,8 @@ def init_map_setting(ms: dict):
                                " enclave where the city's heartbeat echoes in the everyday rhythms of its " \
                                "residents."
     ms[(12, 16)].name = "ANTINA'S RESIDENTIAL QUARTER"
+    ms[(12, 16)].entries = {"edrions_house": ENTRIES["house_antina_edrion"],
+                            "arics_house": ENTRIES["house_antina_aric"]}
 
     # (12, 17)
     ms[(12, 17)].description = "Antina's post-gate district, winding streets lead to residential quarters and" \
@@ -150,6 +160,8 @@ def init_map_setting(ms: dict):
                                 " merchants peddle wares to the fervent spectators, creating an "
                                 "electrifying atmosphere.")
     ms[(12, 18)].name = "ANTINA'S ARENA"
+    ms[(12, 18)].entries = {"arena": ENTRIES["arena_antina"]}
+    ms[(12, 18)].entries["arena"].leave_entry = ms[(12, 18)]
 
     # (13, 0)
     ms[(13, 0)].description = "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these " \
@@ -276,19 +288,22 @@ def init_map_setting(ms: dict):
                                "lone fisherman casts his net into the glistening waters, capturing the " \
                                "essence of maritime tranquility."
     ms[(27, 14)].name = "AQUIRI'S VILLAGE"
-    ms[(27, 14)].entries = {"marlins_hut": ENTRIES["house_aquiri_marlin"]}
+    ms[(27, 14)].entries = {"marlins_hut": ENTRIES["house_aquiri_marlin"],
+                            "house": ENTRIES["house_aquiri_normal"]}
+    ms[(27, 14)].entries["marlins_hut"].leave_entry = ms[(27, 14)]
+    ms[(27, 14)].entries["house"].leave_entry = ms[(27, 14)]
 
     # (27, 15)
     ms[(27, 15)].description = "Seaside fishing hamlet, colorful boats bob gently in the harbor, while " \
                                "weathered cottages line the shore of this picturesque coastal community."
     ms[(27, 15)].entries = {
         "inn": ENTRIES["lyssias_inn"],
-        "house": ENTRIES["house_aquiri_normal"],
         "coast_stone_house": ENTRIES["house_aquiri_stone"],
         "thornes_ship": ENTRIES["thornes_ship"]}
 
-    ms[(27, 15)].entries["thornes_ship"].leave_entry = ms[(27, 15)]
     ms[(27, 15)].entries["inn"].leave_entry = ms[(27, 15)]
+    ms[(27, 15)].entries["coast_stone_house"].leave_entry = ms[(27, 15)]
+    ms[(27, 15)].entries["thornes_ship"].leave_entry = ms[(27, 15)]
 
     ms[(27, 15)].entries["inn"].entries = {
         "first_room": ENTRIES["lyssias_first_room"],
@@ -298,3 +313,12 @@ def init_map_setting(ms: dict):
     ms[(27, 15)].entries["inn"].entries["second_room"].leave_entry = ms[(27, 15)].entries["inn"]
     ms[(27, 15)].entries["inn"].entries["third_room"].leave_entry = ms[(27, 15)].entries["inn"]
     ms[(27, 15)].name = "AQUIRI'S VILLAGE"
+
+    # (27, 15)
+    ms[(27, 19)].entries = {
+        "cave": ENTRIES["cave_27_19"]}
+    ms[(27, 19)].entries["cave"].leave_entry = ms[(27, 19)]
+
+    ms[(27, 19)].entries["cave"].entries = {
+        "coast": ms[(27, 19)],
+        "plateu": ms[(23, 18)]}

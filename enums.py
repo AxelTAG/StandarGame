@@ -44,6 +44,7 @@ class EntryType(Enum):
     SHIP = 28
     ROOM = 29
     HOUSE = 30
+    POTION_SHOP = 31
 
 
 # Items.
@@ -67,7 +68,7 @@ class Months(Enum):
 
 
 class NpcTypes(Enum):
-    # Población general
+    # Población general.
     CAPTAIN = 0
     DRAGON = 1
     FISHERMAN = 2
@@ -120,7 +121,7 @@ class NpcTypes(Enum):
     ENGINEER = 49
     SPY = 50
 
-    # Nobleza y realeza
+    # Nobleza y realeza.
     BARON = 51
     BARONESS = 52
     VISCOUNT = 53
@@ -142,7 +143,7 @@ class NpcTypes(Enum):
     EMPEROR = 69
     EMPRESS = 70
 
-    # Corte real
+    # Corte real.
     ROYAL_ADVISOR = 71
     CHAMBERLAIN = 72
     COURT_MAGICIAN = 73

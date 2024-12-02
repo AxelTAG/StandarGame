@@ -67,6 +67,7 @@ class Entry(Biome):
 
     # Place attributes.
     draw_map: bool = field(default=False)
+    place: list = field(default=None)
 
     def __attrs_post_init__(self):
         if self.entries is None:

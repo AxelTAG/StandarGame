@@ -80,6 +80,9 @@ class Player:
         if self.last_place is None:
             self.last_place = Biome()
 
+        if self.last_entry is None:
+            self.last_entry = Entry()
+
         if self.inventory is None:
             self.inventory = Inventory()
 
@@ -115,7 +118,7 @@ class Player:
                 "marlin_quests_6": False,
                 "antinas_permission": False,
 
-                "win": False,
+                "dragon_win": False,
             }
 
     @property

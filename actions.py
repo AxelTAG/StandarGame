@@ -196,6 +196,29 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
     return text
 
 
+def craft(player: Player, item: str) -> str:
+    if item not in globals.ITEMS:
+        return "This item cannot be craft."
+
+    items = player.inventory.items
+    item_object = globals.ITEMS[item]
+    item_name = item_object.name
+
+    for mat, mat_amount in item_object.crafting_materials.items():
+        material_name = mat.replace("_", " ").title()
+        if mat not in items:
+            return f"You haven't {material_name} to craft {item_name}. You need {mat_amount} {material_name}."
+        if items[mat] < mat_amount:
+            return f"You haven't enough {material_name} to craft {item_name}. You need {mat_amount} {material_name}."
+
+    for mat, mat_amount in item_object.crafting_materials.items():
+        player.inventory.discard_item(item=mat, quantity=mat_amount)
+
+    player.inventory.add_item(item=item, quantity=1)
+
+    return f"You crafted a {item_object.name}."
+
+
 # Draw map action.
 def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploration_radius: float = None) -> str:
     if not player.place.draw_map:
@@ -261,8 +284,7 @@ def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
         if type(entrie_object) == Entry:
             player.outside = False
         elif type(entrie_object) == Biome:
-            coordinates = tuple(map_game.coords_from_place(place=entrie_object))
-            player.x, player.y = coordinates[0], coordinates[1]
+            player.x, player.y = entrie_object.x, entrie_object.y
             player.outside = True
         entrie_name = entrie_object.name
         player.set_place(entrie_object)
@@ -296,21 +318,17 @@ def equip(player: Player, item: str) -> str:
 
 # Exit action.
 def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
-    if type(player.place) == Biome:
+    if player.outside:
         return "You are outside.", True
 
     if player.place.leave_entry is None:
-        return "There aren't exits here.", True
+        place = player.last_place
+    else:
+        place = player.place.leave_entry
 
-    if not player.outside:
-        place_name = player.place.name
-        if type(player.place.leave_entry) == Entry:
-            player.set_place(player.place.leave_entry)
-        else:
-            player.set_place(player.place.leave_entry)
-            player.outside = True
+    player.set_place(place)
 
-        return f"You left the {place_name}.", False
+    return f"You left the {player.last_place.name}.", False
 
 
 # Explore action.
@@ -508,7 +526,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
 
                             if transactions:
                                 return transactions  # Returning transactions if buy or sell actions were done.
-                            elif npc.npc_type == "merchant":
+                            elif npc.npc_type == NpcTypes.MERCHANT or npc.npc_type == NpcTypes.TAVERN_KEEPER:
                                 return "Nothing done."  # If nothing was done.
                             else:
                                 return f"You talked with {npc.name.title()}."
@@ -522,7 +540,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
             npc.hist_messages[action_choice] = True  # Turning True message of NPC.
 
             # Talking with merchant.
-            if npc.npc_type == NpcTypes.MERCHANT:
+            if npc.npc_type == NpcTypes.MERCHANT or npc.npc_type == NpcTypes.TAVERN_KEEPER:
                 print()
                 if action_choice == 1:  # Buy option.
                     items, prices, n = [], [], 0
@@ -704,6 +722,9 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
 
                         except ValueError:
                             pass
+
+        if npc.npc_type == NpcTypes.ARTISAN:
+            pass
 
         elif npc.name == "whispers":
             return "You heard some whispers. "

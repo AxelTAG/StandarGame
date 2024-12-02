@@ -310,11 +310,16 @@ BIOMES = {
 }
 
 ENTRIES = {
+    "arena_antina": Entry(
+        description="Arena interior, grand stands circle a sandy pit, with torches lining the walls. Echoes "
+                    "of cheers and clashes fill the air.",
+        name="ANTINA'S ARENA",
+        entry_type=EntryType.CASTLE),
+
     "castle": Entry(
         description="Majestic castle with towering spires and sturdy stone walls, adorned with banners. Its grand "
                     "gates lead to vast halls echoing with Antina’s storied history.",
         name="CASTLE SALOON",
-        npc=["lord aric"],
         entry_type=EntryType.CASTLE),
 
     "cave_13_0": Entry(
@@ -326,6 +331,16 @@ ENTRIES = {
         fight=True,
         mobs=["goblin"],
         mobs_chances=[40],
+        req=["torch"]),
+
+    "cave_27_19": Entry(
+        description="...",
+        name="CAVE ENTRANCE",
+        hide={"visibility": False, "finding_chance": 0.60},
+        entry_type=EntryType.CAVE,
+        fight=True,
+        mobs=["slime"],
+        mobs_chances=[80],
         req=["torch"]),
 
     "sub_cave_1_0": Entry(
@@ -436,6 +451,42 @@ ENTRIES = {
         name="GARETH'S MID HOUSE",
         entry_type=EntryType.HOUSE),
 
+    "house_antina_aric": Entry(
+        description="Spacious home with elegant furniture, a grand chandelier, and shelves filled with books and "
+                    "ornaments reflecting wealth and sophistication.",
+        name="LORD ARIC'S HOUSE",
+        entry_type=EntryType.HOUSE),
+
+    "house_antina_edrion": Entry(
+        description="Luxurious house with velvet drapes, polished floors, and a cabinet displaying rare artifacts "
+                    "collected from distant lands.",
+        name="LORD EDRION'S HOUSE",
+        entry_type=EntryType.HOUSE),
+
+    "house_antina_edrion_room": Entry(
+        description="Luxurious house with velvet drapes, polished floors, and a cabinet displaying rare artifacts "
+                    "collected from distant lands.",
+        name="LORD EDRION'S HOUSE",
+        entry_type=EntryType.HOUSE),
+
+    "house_antina_white": Entry(
+        description="Modest dwelling with neatly arranged furniture, a small hearth, and colorful tapestries adding "
+                    "a touch of warmth to the stone walls.",
+        name="WHITEL HOUSE",
+        entry_type=EntryType.HOUSE),
+
+    "house_antina_family": Entry(
+        description="Bustling household with a large dining table, scattered toys, and a lively, lived-in "
+                    "atmosphere beneath high wooden beams.",
+        name="FAMILY HOUSE",
+        entry_type=EntryType.HOUSE),
+
+    "house_antina_small": Entry(
+        description="Quiet home with a simple bed, a writing desk, and potted plants by the window overlooking "
+                    "the bustling city streets.",
+        name="SMALL HOUSE",
+        entry_type=EntryType.HOUSE),
+
     "house_aquiri_marlin": Entry(
         description="Weathered wooden hut with fishing nets hanging by the door, a small table inside, and the scent "
                     "of fresh-caught fish lingering.",
@@ -524,7 +575,6 @@ ENTRIES = {
                     "and soft candlelight flickering across the walls.",
         items=["bed"],
         name="LYSSIA'S FIRST ROOM",
-        npc=[],
         entry_type=EntryType.ROOM),
 
     "lyssias_second_room": Entry(
@@ -532,7 +582,6 @@ ENTRIES = {
                     " of the sea.",
         items=["bed"],
         name="LYSSIA'S SECOND ROOM",
-        npc=[],
         entry_type=EntryType.ROOM),
 
     "lyssias_third_room": Entry(
@@ -540,7 +589,6 @@ ENTRIES = {
                     "foot of each bed.",
         items=["bed", "bed"],
         name="LYSSIA'S THIRD ROOM",
-        npc=[],
         entry_type=EntryType.ROOM),
 
     "mirabelles_inn": Entry(
@@ -566,6 +614,12 @@ ENTRIES = {
         name="MIRABELLE'S INN SMALL ROOM",
         req=["mirabelles_small_room_key"],
         entry_type=EntryType.ROOM),
+
+    "potion_shop_antina": Entry(
+        description="Shelves brimming with glowing bottles, dried herbs hanging from beams, and a bubbling cauldron "
+                    "in the corner adding to the mystical ambiance.",
+        name="MYSTIC VIALS",
+        entry_type=EntryType.POTION_SHOP),
 
     "temple_antina": Entry(
         description="Sunlit through stained glass, the temple's marble floors glisten. Golden icons and flickering "
@@ -638,6 +692,21 @@ ITEMS = {
                      expiration=None,
                      buy_price=200,
                      sell_price=40),
+
+    "bone_shield": Item(name="Bone Shield",
+                        description="Basic defense with sharp edges, deals damage but lacks durability in "
+                                    "tough battles.",
+                        attack=1,
+                        defense=1,
+                        precision=0,
+                        evasion=0,
+                        body_part=BodyPart.LEFT_HAND,
+                        pickable=True,
+                        consumable=False,
+                        equippable=True,
+                        expiration=None,
+                        buy_price=130,
+                        sell_price=50),
 
     "chainmail_armor": Item(name="Chainmail Armor",
                             description=("Sturdy armor made of interlocked rings. Offers great protection for the "
@@ -1116,6 +1185,17 @@ ITEMS = {
                   sell_price=1),
 
     # Usable items
+    "explorer_telescope": Item(name="Explorer Telescope",
+                               description="Enhanced vision, revealing distant lands with greater clarity and detail than"
+                                           " a regular telescope.",
+                               vision=1,
+                               pickable=True,
+                               consumable=False,
+                               equippable=False,
+                               expiration=None,
+                               buy_price=250,
+                               sell_price=85),
+
     "fishing_pole": Item(name="Fishing Pole",
                          description="A sturdy pole for fishing. A useful tool for catching food.",
                          pickable=True,
@@ -1136,6 +1216,17 @@ ITEMS = {
                        buy_price=125,
                        sell_price=125),
 
+    "rope": Item(name="Rope",
+                 description="Sturdy and versatile, perfect for climbing, tying, or creating pathways in "
+                             "rugged terrains.",
+                 pickable=True,
+                 consumable=False,
+                 equippable=False,
+                 expiration=None,
+                 buy_price=30,
+                 sell_price=20,
+                 crafting_materials={"giant_silk": 10, "slime_balls": 15}),
+
     "telescope": Item(name="Telescope",
                       description="A long-range viewing device.",
                       vision=0.5,
@@ -1149,7 +1240,7 @@ ITEMS = {
     "torch": Item(name="Torch",
                   description="A burning torch to light the way. Useful in dark places.",
                   pickable=True,
-                  consumable=True,
+                  consumable=False,
                   equippable=False,
                   expiration=None,
                   buy_price=10,
@@ -1271,7 +1362,7 @@ MOBS = {
         "poison": 0,
         "c_poison": 0,
         "esc": 0,
-        "items": {"none": None},
+        "items": {"scales": 8},
         "dc_items": [1],
         "exp": 250,
     },
@@ -1390,7 +1481,7 @@ MOBS = {
         "poison": 2,
         "c_poison": 40,
         "esc": 50,
-        "items": {"gold": 10, "bone_sword": 1, "bone_shiel": 1, "none": None},
+        "items": {"gold": 10, "bone_sword": 1, "bone_shield": 1, "none": None},
         "dc_items": [0.5, 0.6, 0.7, 1],
         "exp": 4
     },
@@ -1762,12 +1853,21 @@ NPCS = {
 
     "lord aric": Npc(name="lord aric",
                      npc_type=NpcTypes.LORD,
-                     messages={
+                     messages_morning={
                          0: ["Greetings, traveler. Alas, these are troubled times for our fair city.",
                              "Just days past, a dragon's shadow darkened our skies. Fear lingers in the hearts of our "
                              "citizens. The safety of Antina is at stake, and our once-stalwart walls now seem "
                              "fragile.",
                              "May the goddesses watch over us and protect us."]}),
+
+    "marquis edrion": Npc(name="marquis edrion",
+                          npc_type=NpcTypes.MARQUIS,
+                          messages_morning={
+                              0: ["A dragon... now of all times? As if these endless skirmishes weren’t burden enough.",
+                                  "What cruel twist of fate is this?"]},
+                          messages_night={
+                              0: ["Zzzzz... zzzz... uhgzz..."]},
+                          place_morning=[(12, 16), "edrions_house"]),
 
     "mayor thorian": Npc(name="mayor thorian",
                          npc_type=NpcTypes.MAYOR,
@@ -1875,7 +1975,7 @@ NPCS = {
                                 "dragon not far from here... it’s keeping us on edge.",
                                 "Better safe than sorry, eh?"]}),
 
-    "tavern_keeper_rudrik": Npc(name="TAVERN KEEPER RUDRIK",
+    "tavern keeper rudrik": Npc(name="TAVERN KEEPER RUDRIK",
                                 npc_type=NpcTypes.TAVERN_KEEPER,
                                 messages={
                                     0: ["Welcome to The Golden Tankard, traveler! Take a seat and warm yourself by"
@@ -2011,8 +2111,72 @@ NPCS = {
                            messages={
                                0: ["Ah, these must be from Marlin! He always sends the best catch. Thank you for"
                                    " bringing them all the way here. It couldn’t have been an easy journey."]},
-                           place_morning=[(11, 18)],
+                           place_morning=[(10, 16)],
                            place_night=[(11, 18), "mid_house"]),
+
+    "villager fenna": Npc(name="villager fenna",
+                          npc_type=NpcTypes.VILLAGER,
+                          messages_morning={
+                              0: ["Dragons are majestic creatures, aren’t they? I wish I could see one with "
+                                  "my own eyes... from afar, of course!"]},
+                          messages_evening={
+                              0: ["The stars look so bright tonight. If the dragon is out there, I hope it’s "
+                                  "somewhere far away.",
+                                  "I can’t help but dream of seeing one up close, though."]},
+                          place_morning=[(11, 18), "white_house"]),
+
+    "villager garrek": Npc(name="villager garrek",
+                           npc_type=NpcTypes.VILLAGER,
+                           messages_morning={
+                               0: ["A dragon could spell disaster for our crops and livestock... I can’t sleep "
+                                   "thinking about it."]},
+                           messages_evening={
+                               0: ["They say a dragon was spotted near the hills... Do you think it will come here?"]},
+                           place_morning=[(11, 17)],
+                           place_evening=[(11, 18), "white_house"]),
+
+    "villager halden": Npc(name="villager halden",
+                           npc_type=NpcTypes.VILLAGER,
+                           messages_morning={
+                               0: ["A dragon, eh? Curious sight indeed. Haven’t seen one since the old tales of "
+                                   "my youth."]},
+                           messages_night={
+                               0: ["Strange, isn't it? The night feels heavier... Maybe the dragon's watching over "
+                                   "us, or maybe it's the calm before the storm."]},
+                           place_morning=[(10, 17)],
+                           place_night=[(10, 18), "tavern"]),
+
+    "villager lyria": Npc(name="villager lyria",
+                          npc_type=NpcTypes.VILLAGER,
+                          messages_morning={
+                              0: ["They say a dragon was spotted near the hills... Do you think it will come here?"]},
+                          messages_evening={
+                              0: ["I can't shake off the thought of that dragon... It's so quiet tonight, almost "
+                                  "eerie. Do you think it could be out there, watching us?"]},
+                          place_morning=[(11, 18)],
+                          place_evening=[(11, 18), "family_house"]),
+
+    "villager mirrel": Npc(name="villager mirrel",
+                           npc_type=NpcTypes.VILLAGER,
+                           messages_morning={
+                               0: ["If the rumors are true, the kingdom’s knights better step up. We need protection "
+                                   "now more than ever."]},
+                           messages_evening={
+                               0: ["I can barely sleep, thinking of the danger we might be in. I hope the soldiers "
+                                   "are preparing... They better be, or we'll all be in trouble."]},
+                           place_morning=[(11, 17)],
+                           place_evening=[(12, 17)]),
+
+    "villager orik": Npc(name="villager orik",
+                         npc_type=NpcTypes.VILLAGER,
+                         messages_morning={
+                             0: ["Bah! Dragons or not, life goes on. Let the royals deal with it. I’ve got fields "
+                                 "to tend."]},
+                         messages_evening={
+                             0: ["I can't shake off the thought of that dragon... It's so quiet tonight, almost "
+                                 "eerie. Do you think it could be out there, watching us?"]},
+                         place_morning=[(11, 17)],
+                         place_evening=[(11, 18), "family_house"]),
 
     "worker gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,

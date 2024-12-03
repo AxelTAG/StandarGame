@@ -196,27 +196,30 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
     return text
 
 
-def craft(player: Player, item: str) -> str:
+def craft(player: Player, item: str, quantity: int) -> tuple[str, bool]:
     if item not in globals.ITEMS:
-        return "This item cannot be craft."
+        return "This item cannot be craft.", False
 
     items = player.inventory.items
     item_object = globals.ITEMS[item]
     item_name = item_object.name
-
     for mat, mat_amount in item_object.crafting_materials.items():
         material_name = mat.replace("_", " ").title()
+        mat_amount_total = mat_amount * quantity
         if mat not in items:
-            return f"You haven't {material_name} to craft {item_name}. You need {mat_amount} {material_name}."
-        if items[mat] < mat_amount:
-            return f"You haven't enough {material_name} to craft {item_name}. You need {mat_amount} {material_name}."
+            answer = f"You haven't {material_name} to craft {item_name}. You need {mat_amount_total} {material_name}."
+            return answer, False
+        if items[mat] < mat_amount * quantity:
+            answser = (f"You haven't enough {material_name} to craft {item_name}."
+                       f" You need {mat_amount_total} {material_name}.")
+            return answser, False
 
     for mat, mat_amount in item_object.crafting_materials.items():
-        player.inventory.discard_item(item=mat, quantity=mat_amount)
+        player.inventory.discard_item(item=mat, quantity=mat_amount * quantity)
 
-    player.inventory.add_item(item=item, quantity=1)
+    player.inventory.add_item(item=item, quantity=quantity)
 
-    return f"You crafted a {item_object.name}."
+    return f"You crafted {quantity} {item_object.name}.", True
 
 
 # Draw map action.
@@ -379,7 +382,7 @@ def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
 
         if map_game.map_settings[(x, y)].description == "":
             map_game.map_settings[(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
-                                                                 " coastal life.")
+                                                         " coastal life.")
 
         map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
         return "You have land."
@@ -723,8 +726,52 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                         except ValueError:
                             pass
 
-        if npc.npc_type == NpcTypes.ARTISAN:
-            pass
+            if npc.npc_type == NpcTypes.ARTISAN:
+                print()
+                if action_choice == 1:  # Craft option.
+                    items, prices, n = [], [], 0
+
+                    for item, value in npc.crafting_items.items():
+                        item_object = globals.ITEMS[item]
+                        item_name = item.replace("_", " ").title()
+
+                        print(
+                            f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
+
+                        items.append(item)
+                        prices.append(value)
+                        n += 1
+                    print(f"      {n + 1}) Quit.")
+                    print()
+                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
+
+                    while True:
+                        try:
+                            item = int(input(" " * 4 + "# ")) - 1
+                            if 0 <= item < len(items):
+                                item_name = items[item].replace('_', ' ').title()
+                                if item >= len(items):  # Quit condition.
+                                    break
+                                print()
+                                print(f"{' ' * 4}How many {item_name} do you want to craft?")
+                                while True:
+                                    try:
+                                        quantity = int(input(f"{' ' * 4}# "))
+                                        transaction, transaction_status = craft(player=player,
+                                                                                item=items[item],
+                                                                                quantity=quantity)
+                                        transactions += transaction
+                                        break
+                                    except ValueError:
+                                        break
+                                break
+                            else:
+                                break
+                        except ValueError:
+                            pass
+
+                else:
+                    return "Nothing done."
 
         elif npc.name == "whispers":
             return "You heard some whispers. "

@@ -316,6 +316,12 @@ ENTRIES = {
         name="ANTINA'S ARENA",
         entry_type=EntryType.CASTLE),
 
+    "artisan_shop": Entry(
+        description="A workshop filled with the clanging of metal, tools neatly arranged on wooden racks, "
+                    "and half-finished crafts displayed under flickering lantern light.",
+        name="HAMMER & HEARTH",
+        entry_type=EntryType.MARKET),
+
     "castle": Entry(
         description="Majestic castle with towering spires and sturdy stone walls, adorned with banners. Its grand "
                     "gates lead to vast halls echoing with Antina’s storied history.",
@@ -658,6 +664,19 @@ ENTRIES = {
                     " by scattered scrolls and glowing crystal orbs.",
         items=["giant_telescope"],
         name="TOWER OF ELDRA SECOND FLOOR",
+        entry_type=EntryType.TOWER,
+        draw_map=True),
+
+    "tower_of_karun_floor_1": Entry(
+        description="Simple ground floor, with a modest bed, scattered maps, and a warm hearth where the astronomer "
+                    "rests after long nights.",
+        name="TOWER OF KARUN FIRST FLOOR",
+        entry_type=EntryType.TOWER),
+
+    "tower_of_karun_floor_2": Entry(
+        description="Upper floor filled with star charts and celestial books, a large telescope pointing toward "
+                    "the heavens, and intricate brass instruments for stargazing.",
+        name="TOWER OF KARUN SECOND FLOOR",
         entry_type=EntryType.TOWER,
         draw_map=True)
 }
@@ -1244,7 +1263,8 @@ ITEMS = {
                   equippable=False,
                   expiration=None,
                   buy_price=10,
-                  sell_price=10),
+                  sell_price=10,
+                  crafting_materials={"stick": 1, "giant_silk": 1, "slime_balls": 1}),
 
     # Places items.
     "bed": Item(name="Bed",
@@ -1660,6 +1680,19 @@ MOBS = {
 # NPCs.
 
 NPCS = {
+    "artisan brenwick": Npc(name="artisan brenwick",
+                            npc_type=NpcTypes.ARTISAN,
+                            messages={
+                                0: ["Ah, greetings, wanderer! Need something crafted? I’ve got the tools and the "
+                                    "talent!"],
+                                1: ["Excellent! So, what’ll it be, traveler? A weapon, armor, or something special?"]},
+                            answers={
+                                1: "I need craft something"},
+                            place=[(1, 13), "artisan_shop"],
+                            crafting_items={
+                                "rope": 25,
+                                "torch": 15}),
+
     "astronomer quillon": Npc(name="astronomer quillon",
                               npc_type=NpcTypes.ASTRONOMER,
                               messages_afternoon={

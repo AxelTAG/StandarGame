@@ -15,6 +15,13 @@ def init_map_setting(ms: dict):
     ms[(0, 0)].name = "ISLAND"
 
     # (1, 23)
+    ms[(1, 13)].description = ("Rolling highlands with windswept grass, a sturdy artisan’s cabin billowing smoke from "
+                               "its forge, and a tall stone tower overlooking the vast horizon.")
+    ms[(1, 13)].name = "HIGHLANDS"
+    ms[(1, 13)].entries = {"artisan_shop": ENTRIES["artisan_shop"]}
+    ms[(1, 13)].entries["artisan_shop"].leave_entry = ms[(1, 13)]
+
+    # (1, 23)
     ms[(1, 23)].description = ("Isolated shelter amid dangers, where rustling leaves and distant howls "
                                "suggest that safety within is uncertain at best.")
     ms[(1, 23)].entries = {"hut": ENTRIES["hut_1_23"]}
@@ -27,6 +34,14 @@ def init_map_setting(ms: dict):
     # (2, 1)
     ms[(2, 1)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
     ms[(2, 1)].items = ["boat"]
+
+    # (2, 12)
+    ms[(2, 12)].description = ("Rolling highlands with windswept grass, a sturdy artisan’s cabin billowing smoke from "
+                               "its forge, and a tall stone tower overlooking the vast horizon.")
+    ms[(2, 12)].name = "HIGHLANDS"
+    ms[(2, 12)].entries = {"tower": ENTRIES["tower_of_karun_floor_1"]}
+    ms[(2, 12)].entries["tower"].leave_entry = ms[(2, 12)]
+    ms[(2, 12)].entries["tower"].entries = {"second_floor": ENTRIES["tower_of_karun_floor_2"]}
 
     # (5, 3)
     ms[(5, 3)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary" \

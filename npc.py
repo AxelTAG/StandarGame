@@ -21,6 +21,9 @@ class Npc:
     buy_beds: dict[str, tuple[int, str]] = field(default=None)
     room_expirations: dict[str, tuple] = field(default=None)
 
+    # Crafting items.
+    crafting_items: dict[str, int] = field(default=None)
+
     # Talking attributes.
     hist_messages: dict = field(init=False)
 

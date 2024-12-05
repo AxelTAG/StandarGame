@@ -6,6 +6,7 @@ from displays import disp_battle, disp_talk_answers, disp_talk_tw
 from enums import EntryType, NpcTypes, PlayerStatus, TimeOfDay
 from item import Item
 from map import Map
+from mob import Mob
 from npc import Npc
 from player import Player
 from utils import reset_map, text_ljust
@@ -26,22 +27,26 @@ def get_item(item_name: str) -> Item:
 
 
 # Battle action.
-def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05) -> tuple[bool, bool, int]:
+def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05) -> tuple[bool, bool, int]:
     screen = "Defeat the enemy!"
     play = True
     menu = False
     fight = True
-
     hours_to_add = 0
+
     while fight:
-        disp_battle(player, enemy, screen)
+        disp_battle(player=player,
+                    enemy=enemy,
+                    text=screen)
         choice_action = input(" # ")  # User choice action.
         object_used = True
-        screen = "."  # Clearing text output screen.
+        screen = "Nothing done."  # Clearing text output screen.
         hours_to_add += player.place.pace * pace_factor
 
         if choice_action == "0":  # Escape option.
-            escape = random.choices([True, False], [enemy["esc"], 100 - enemy["esc"]], k=1)
+            escape = random.choices([True, False],
+                                    weights=[enemy.escape_chance, 100 - enemy.escape_chance],
+                                    k=1)
             if escape[0]:
                 fight = False
                 screen = "You have escaped."
@@ -49,10 +54,10 @@ def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05
                 screen = "You have not escaped."
 
         elif choice_action == "1":  # Attack option.
-            if player.precision * (1 - enemy["eva"]) > random.random():
-                USER_DMG = max(int(int(player.attack) - int(enemy["def"])), 0)
-                enemy["hp"] -= USER_DMG
-                screen = " " + player.name + " dealt " + str(USER_DMG) + " damage to the " + enemy["name"] + "."
+            if player.precision * (1 - enemy.evasion) > random.random():
+                USER_DMG = max(int(int(player.attack) - int(enemy.defense)), 0)
+                enemy.hp -= USER_DMG
+                screen = " " + player.name + " dealt " + str(USER_DMG) + " damage to the " + enemy.name + "."
             else:
                 screen = " " + player.name + " fail the attack."
 
@@ -63,26 +68,25 @@ def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05
                 screen, object_used = use(player, map_game=map_game, item=player.slot2)
 
         # Enemy attack.
-        if enemy["hp"] > 0 and choice_action in ["0", "1", "2", "3"]:
-            if enemy["pre"] * (1 - player.evasion) > random.random() and object_used:
-                ENEMY_ATK = [[enemy["atk"], enemy["atk"] * enemy["c_coef"]],
-                             [100 - enemy["c_chance"], enemy["c_chance"]]]
+        if enemy.hp > 0 and choice_action in ["0", "1", "2", "3"]:
+            if enemy.precision * (1 - player.evasion) > random.random() and object_used:
+                ENEMY_ATK = [[enemy.attack, enemy.attack * enemy.critical_coeficient],
+                             [100 - enemy.critical_chance, enemy.critical_chance]]
                 ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(player.defense)), 0)
                 player.hp -= ENEMY_DMG
-                screen += "\n " + enemy["name"] + " dealt " + str(ENEMY_DMG) + " damage to " + player.name + "."
-                if enemy["poison"] > 0 and enemy["c_poison"] > random.random() and player.poison == 0:
-                    player.poison = enemy["poison"]
-                    screen += "\n " + enemy["name"] + " has poisoned you."
+                screen += "\n " + enemy.name + " dealt " + str(ENEMY_DMG) + " damage to " + player.name + "."
+                if enemy.poison > 0 and enemy.poison_chance > random.random() and player.poison == 0:
+                    player.poison = enemy.poison
+                    screen += "\n " + enemy.name + " has poisoned you."
             else:
-                screen += "\n " + enemy["name"] + " fail the attack."
+                screen += "\n " + enemy.name + " fail the attack."
         input(" > ")
 
         # Logic of fight status or result.
         # Lose.
         if player.hp <= 0:
-            disp_battle(player, enemy, screen)
-            screen += "\n " + enemy["name"] + " defeated " + player.name + "..."
-            disp_battle(player, enemy, screen)
+            screen += "\n " + enemy.name + " defeated " + player.name + "..."
+            disp_battle(player=player, enemy=enemy, text=screen)
             input(" > ")
 
             # Setting reinit.
@@ -98,35 +102,36 @@ def battle(player: Player, map_game: Map, enemy: dict, pace_factor: float = 0.05
             return play, menu, 0
 
         # Win.
-        if enemy["hp"] <= 0:
-            screen += "\n " + "You defeated the " + enemy["name"] + "!"
+        if enemy.hp <= 0:
+            screen += "\n " + "You defeated the " + enemy.name + "!"
             fight = False
             map_game.add_hours(hours_to_add=int(hours_to_add))
 
             # Drop items logic and exp gain.
-            if enemy["items"]:
-                drop_quantity = random.randint(1, len(enemy["items"])) - 1
-                drop_items = list(
-                    set(random.choices([*enemy["items"].keys()], cum_weights=enemy["dc_items"], k=drop_quantity)))
+            if enemy.items:
+                drop_quantity = random.randint(1, len(enemy.items)) - 1
+                drop_items = list(set(random.choices([*enemy.items.keys()],
+                                                     cum_weights=enemy.items_drop_chances,
+                                                     k=drop_quantity)))
 
                 for item in drop_items:
                     if item == "gold":
-                        player.inventory.gold += enemy["items"][item]
-                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_",
-                                                                                                      " ").title() + "."
+                        player.inventory.gold += enemy.items[item]
+                        screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."
                     elif item != "none" and item in player.inventory.items.keys():
-                        player.inventory.items[item] += enemy["items"][item]
-                        screen += "\n You've found " + str(enemy["items"][item]) + " " + item.replace("_",
-                                                                                                      " ").title() + "."
+                        player.inventory.items[item] += enemy.items[item]
+                        screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."
                     elif item != "none":
-                        player.inventory.items[item] = enemy["items"][item]
+                        player.inventory.items[item] = enemy.items[item]
 
-            screen += "\n You have gained " + str(enemy["exp"]) + " experience."
+            screen += "\n You have gained " + str(enemy.experience) + " experience."
 
-            if player.add_exp(enemy["exp"]):
+            if player.add_exp(enemy.experience):
                 screen += "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
 
-    disp_battle(player, enemy, screen)
+    disp_battle(player=player,
+                enemy=enemy,
+                text=screen)
     input(" > ")
 
     return play, menu, 1
@@ -156,15 +161,14 @@ def buy(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool
     :rtype: tuple[str, bool]
     """
     item_name = item.replace('_', ' ').title()
-    inventory = player.inventory
-    items = player.inventory.items
-    if inventory.gold >= price * quantity:
+    if player.inventory.gold >= price * quantity:
         try:
-            items[item] += quantity
+            player.add_item(item=item, quantity=quantity)
 
         except KeyError:
-            items[item] = quantity
-        inventory.gold -= price * quantity
+            player.inventory.items[item] = 0
+            player.add_item(item=item, quantity=quantity)
+        player.inventory.gold -= price * quantity
 
         return f"You buy {quantity} {item_name}.", True
 
@@ -217,7 +221,7 @@ def craft(player: Player, item: str, quantity: int) -> tuple[str, bool]:
     for mat, mat_amount in item_object.crafting_materials.items():
         player.inventory.discard_item(item=mat, quantity=mat_amount * quantity)
 
-    player.inventory.add_item(item=item, quantity=quantity)
+    player.add_item(item=item, quantity=quantity)
 
     return f"You crafted {quantity} {item_object.name}.", True
 
@@ -466,7 +470,7 @@ def pick_up(player: Player, item: str) -> str:
     item_name = " ".join(item.split("_")).title()
     if item in player.place.items:
         if item in globals.ITEMS.keys() and globals.ITEMS[item].pickable:
-            player.inventory.add_item(item=item, quantity=1)  # Adding item to inventory.
+            player.add_item(item=item, quantity=1)  # Adding item to inventory.
             player.place.items.remove(item)  # Removing item from place.
 
             return f"You pick up {item_name}."
@@ -836,7 +840,7 @@ def use(player: Player, map_game: Map, item: str) -> tuple[str, bool]:
             elif item == "red_potion":
                 player.heal(amount=25)
 
-            elif item == "litle_red_potion":
+            elif item == "little_red_potion":
                 player.heal(amount=10)
 
             else:

@@ -28,8 +28,8 @@ def init_map_setting(ms: dict):
     ms[(1, 23)].entries["hut"].leave_entry = ms[(1, 23)]
 
     # (2, 0)
-    ms[(2, 0)].mobs = ["litle slime", "slime", "poisonous slime"]
-    ms[(2, 0)].mobs_chances = [5, 30, 50]
+    ms[(2, 0)].mobs = ["litle slime", "slime"]
+    ms[(2, 0)].mobs_chances = [20, 50]
 
     # (2, 1)
     ms[(2, 1)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."

@@ -64,6 +64,15 @@ class Map:
         self.y_len = len(self.map_labels[0]) - 1
 
     @property
+    def get_hours(self):
+        sum_days = (self.day - 1)
+        sum_months_days = self.month * self.month_duration
+        sum_year_days = (self.year - 1) * self.year_duration_days
+        sum_all_days = sum_days + sum_months_days + sum_year_days
+
+        return sum_all_days * 24 + self.hour
+
+    @property
     def current_date(self) -> tuple[int, int, int]:
         return self.year, self.month, self.day
 

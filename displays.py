@@ -3,8 +3,9 @@
 import globals
 
 from biome import Biome
-from enums import Season, Months, TimeOfDay, WeekDays
+from enums import Months
 from map import Map
+from mob import Mob
 from player import Player
 from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter
 
@@ -24,7 +25,7 @@ def disp_bar(n: int = 18, disp: bool = True) -> str:
 
 
 # Battle display.
-def disp_battle(player: Player, enemy: dict, text: str) -> None:
+def disp_battle(player: Player, enemy: Mob, text: str) -> None:
     width = 36
     clear()
     disp_title()
@@ -38,15 +39,18 @@ def disp_battle(player: Player, enemy: dict, text: str) -> None:
     u_atk = "\n ATTACK: " + str(int(player.attack))
 
     # Text lines for text2.
-    e_name = "ENEMY: " + enemy["name"]
-    e_hp = "\n HP: " + str(int(enemy["hp"])) + " / " + str(enemy["hpmax"])
-    e_hpbar = "\n " + "█" * int(25 * (enemy["hp"] / enemy["hpmax"])) + "-" * (25 - int(25 * (max(enemy["hp"], 0) / enemy["hpmax"]))) + "|"
+    e_name = "ENEMY: " + enemy.name
+    e_hp = "\n HP: " + str(int(enemy.hp)) + " / " + str(enemy.hpmax)
+    e_hpbar = "\n " + "█" * int(25 * (enemy.hp / enemy.hpmax)) + "-" * (25 - int(25 * (max(enemy.hp, 0) / enemy.hpmax))) + "|"
 
     # Text lines for text3.
     o_escape = "0 - ESCAPE"
     o_attack = "\n1 - ATTACK"
-    o_slot1 = "\n 2 - " + player.slot1.upper() + " [" + str(player.inventory.items[player.slot1.lower().replace(" ", "_")]) + "]"
-    o_slot2 = "\n 3 - " + player.slot2.upper() + " [" + str(player.inventory.items[player.slot2.lower().replace(" ", "_")]) + "]"
+
+    slot1_quantity = str(player.inventory.items[player.slot1]) if player.has(player.slot1) else "0"
+    slot2_quantity = str(player.inventory.items[player.slot2]) if player.has(player.slot2) else "0"
+    o_slot1 = "\n 2 - " + player.slot1.upper() + " [" + slot1_quantity + "]"
+    o_slot2 = "\n 3 - " + player.slot2.upper() + " [" + slot2_quantity + "]"
 
     text1 = u_name + u_hp + u_hpbar + u_atk
     text2 = e_name + e_hp + e_hpbar
@@ -145,9 +149,13 @@ def disp_play(player: Player,
     else:
         t_status = "\nSTATUS: HEALTHY"
 
+    # Belt items.
+    slot1_quantity = str(player.inventory.items[player.slot1]) if player.has(player.slot1) else "0"
+    slot2_quantity = str(player.inventory.items[player.slot2]) if player.has(player.slot2) else "0"
+
     t_gold = "\nGOLD: " + str(player.inventory.gold)
-    t_item1 = "\n5 - " + player.slot1.replace("_", " ").upper() + ": " + str(player.inventory.items[player.slot1.lower().replace(" ", "_")])
-    t_item2 = "\n6 - " + player.slot2.replace("_", " ").upper() + ": " + str(player.inventory.items[player.slot2.lower().replace(" ", "_")])
+    t_item1 = "\n5 - " + player.slot1.replace("_", " ").upper() + ": " + slot1_quantity
+    t_item2 = "\n6 - " + player.slot2.replace("_", " ").upper() + ": " + slot2_quantity
 
     # Text4.1 lines.
     prim_stats = "PRIM. STATS: "

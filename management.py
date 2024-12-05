@@ -2,7 +2,7 @@
 # Local imports.
 from actions import battle, talk
 from displays import disp_talk_tw
-from enums import NpcTypes, TimeOfDay
+from enums import NpcTypes
 from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
@@ -20,7 +20,7 @@ def event_handler(player: Player,
     if player.place == ENTRIES["sub_cave_2_2"] and not player.events["goblin_chief_crown_1"]:
         talk(npc=map_game.npcs["goblin griznuk"], player=player, map_game=map_game)
 
-        play, menu, win = battle(player=player, enemy=MOBS["goblin chief"], map_game=map_game)
+        play, menu, win = battle(player=player, enemy=MOBS["goblin chief"].copy(), map_game=map_game)
 
         if win:
             talk(npc=map_game.npcs["mayors daughter maisie"], player=player, map_game=map_game)
@@ -63,7 +63,7 @@ def event_handler(player: Player,
                 "We’ve all been on edge since she went missing. It feels like a dark cloud has finally "
                 "lifted from Epiiat."]}
 
-        player.inventory.add_item(item="hardened_leather_armor", quantity=1)
+        player.add_item(item="hardened_leather_armor", quantity=1)
         player.events["goblin_chief_crown_2"] = True
 
     # Event of Goblin Chief (3/3).
@@ -79,7 +79,7 @@ def event_handler(player: Player,
 
     # Event Fisherman Marlin quests (1/9).
     if not player.events["marlin_quests_1"] and map_game.npcs["fisherman marlin"].hist_messages[1]:
-        player.inventory.add_item(item="marlins_fish_tuna", quantity=2)
+        player.add_item(item="marlins_fish_tuna", quantity=2)
 
         map_game.npcs["fisherman marlin"].reset_hist_messages()
         map_game.npcs["fisherman brann"].reset_hist_messages()
@@ -220,8 +220,8 @@ def event_handler(player: Player,
             map_game.npcs["fisherman marlin"].hist_messages[0]]):
         map_game.npcs["fisherman marlin"].reset_hist_messages()
 
-        player.inventory.add_item(item="fishing_pole", quantity=1)
-        player.inventory.add_item(item="marlins_fish_tuna", quantity=3)
+        player.add_item(item="fishing_pole", quantity=1)
+        player.add_item(item="marlins_fish_tuna", quantity=3)
 
         map_game.npcs["fisherman marlin"].messages = {
             0: ["Ah, have you managed to deliver those tunas to Gareth yet?",

@@ -2,13 +2,11 @@
 # Local imports.
 from globals import ITEMS
 
-# External imports.
-
 
 class Inventory:
     def __init__(self, items=None, gold: int = 5):
         if items is None:
-            items = {"red_potion": 2, "litle_red_potion": 2}
+            items = {"red_potion": 2, "little_red_potion": 2}
 
         self.items = items
         self.gold = gold

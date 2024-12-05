@@ -13,13 +13,14 @@ from utils import (import_player, import_settings, draw_move, load_dict_from_txt
                    find_full_name, get_hash)
 
 # External imports.
+import copy
 import matplotlib.pyplot as plt
 import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
-import pygame
 import random
 from datetime import datetime
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+import pygame
+
 
 # Game variables.
 run = True
@@ -209,9 +210,14 @@ while run:
         elif choice == "4":  # Quit option.
             quit()
 
+
+    # Previous setting before init play.
     if play:
         # Music background.
         pygame.mixer.music.stop()
+
+        # Set hours.
+        hours = map_game.get_hours
 
     while play:
         # Time setting.
@@ -221,12 +227,17 @@ while run:
         play, menu = event_handler(player=player,
                                    map_game=map_game,
                                    time_init=time_init)
-        map_control_handling(player=player, map_game=map_game)
-        if not(map_game.current_date, map_game.hour) == (map_game.current_date, map_game.last_hour):
+        map_control_handling(player=player,
+                             map_game=map_game)
+
+        if not(map_game.get_hours == hours):
             map_game.refresh_npcs()
+        hours = map_game.get_hours
 
         # Autosave.
-        save(player=player, map_game=map_game, time_init=time_init)  # Autosave.
+        save(player=player,
+             map_game=map_game,
+             time_init=time_init)  # Autosave.
         clear()
 
         # Fight chances of moving, and player status refreshing.
@@ -235,8 +246,12 @@ while run:
             if player.place.fight and player.place.mobs:
                 if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                     enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
-                    play, menu, win = battle(player=player, map_game=map_game, enemy=map_game.mobs[enemy].copy())
-                    save(player=player, map_game=map_game, time_init=time_init)
+                    play, menu, win = battle(player=player,
+                                             map_game=map_game,
+                                             enemy=copy.deepcopy(map_game.mobs[enemy]))
+                    save(player=player,
+                         map_game=map_game,
+                         time_init=time_init)
 
             # Player status refresh.
             player.refresh_status()
@@ -517,7 +532,7 @@ while run:
 
             elif action[:2] == ["add", "item"]:
                 quantity = 1 if len(action) < 4 else int(action[3])
-                player.inventory.add_item(item=action[2], quantity=quantity)
+                player.add_item(item=action[2], quantity=quantity)
 
             elif action == ["events"]:
                 screen = f"{player.events}"

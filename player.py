@@ -63,8 +63,9 @@ class Player:
     # Inventory attributes.
     inventory: Inventory = field(default=None)
     slot1: str = field(default="red_potion")
-    slot2: str = field(default="litle_red_potion")
+    slot2: str = field(default="little_red_potion")
     equip: dict = field(default=None)
+    item_limits: dict = field(default=None)
 
     # Map attributes.
     map: np.array = field(default=None)
@@ -85,6 +86,11 @@ class Player:
 
         if self.inventory is None:
             self.inventory = Inventory()
+
+        if self.item_limits is None:
+            self.item_limits = {"little_red_potion": 5,
+                                "red_potion": 5,
+                                "giant_red_potion": 5}
 
         if self.map is None:
             self.map = np.zeros(shape=(32, 32, 4), dtype=np.uint8)
@@ -209,7 +215,16 @@ class Player:
             self.outside = True
         self.place = place
 
+    # Player inventory methods.
     def has(self, item: str, amount: int = None) -> bool:
         if amount is None:
             amount = 1
         return item in self.inventory.items.keys() and self.inventory.items[item] >= amount
+
+    def add_item(self, item: str, quantity: int = 1):
+        if item in self.item_limits:
+            if self.inventory.items[item] + quantity >= self.item_limits[item]:
+                self.inventory.items[item] = self.item_limits[item]
+        else:
+            self.inventory.add_item(item=item, quantity=quantity)
+    

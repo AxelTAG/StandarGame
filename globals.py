@@ -1494,6 +1494,11 @@ ITEMS = {
                                           " Marlin gave it to you for his friend Brann.",
                               droppable=False),
 
+    "dragon_scales": Item(name="Dragon Scales",
+                          description="A fast ocean fish, highly valued for its delicious and versatile meat."
+                                      " Marlin gave it to you for his friend Brann.",
+                          droppable=False),
+
     "quit": Item(name="Quit",
                  description="This item ends the game session when used."),
 }
@@ -2104,12 +2109,12 @@ NPCS = {
                                 "What tales might you bring to inspire the bards?"]},
                         tracks={
                             0: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
-                            1: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            1: "./rsc/media/Echoes_of_the_Undead.mp3",
                             2: "./rsc/media/Under_Two_Moons.mp3",
                             3: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
-                            4: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            4: "./rsc/media/Whispers_of_the_Moons.mp3",
                             5: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
-                            6: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            6: "./rsc/media/Whispers_of_the_Moons.mp3",
                             7: "./rsc/media/Under_Two_Moons.mp3",
                         }),
 
@@ -2425,6 +2430,13 @@ NPCS = {
                                 answers={
                                     1: "Buy"},
                                 buy_items={"bread": 2, "cheese": 4, "soap": 2, "water": 1, "bier": 2, "quit": 0}),
+
+    "traveler_clara": Npc(name="traveler clara",
+                          npc_type=NpcTypes.TRAVELER,
+                          messages={
+                              0: ["Hello there, traveler. It's always good to LISTEN, you know.",
+                                  "There's wisdom in hearing others' stories. I'm Clara, by the way."]},
+                          place=[(9, 5), "inn"]),
 
     "traveler_elara": Npc(
         name="traveler elara",

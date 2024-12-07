@@ -142,7 +142,7 @@ while run:
             if play:
                 # Stop of background musin.
                 pygame.mixer.music.stop()
-                time.sleep(3)
+                time.sleep(1.5)
 
                 # Initial settings.
                 # Map settings.

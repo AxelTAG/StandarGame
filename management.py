@@ -1,16 +1,16 @@
 # Imports.
 # Local imports.
-import copy
-
 from actions import battle, talk
 from displays import disp_talk_tw
 from enums import NpcTypes
 from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
-from utils import export_dict_to_txt, get_hash, export_player
+from utils import export_dict_to_txt, get_hash, export_player, clear
 
 # External imports.
+import copy
+import time
 from datetime import datetime
 
 
@@ -351,14 +351,33 @@ def event_handler(player: Player,
             map_game.npcs["villager_orik"].messages_night = {
                 0: ["Hmmm... Hmmm... Zzzzz..."]}
 
+            map_game.npcs["captain_thorne"].messages_morning = {
+                0: ["Ahoy, traveler! With the skies clear and the dragon gone, we’re ready to set sail east to "
+                    "the port city of Veylan.",
+                    "I’m Captain Thorne—prepare yourself, the journey awaits!"]}
+            map_game.npcs["captain_thorne"].reset_hist_messages()
+
+            map_game.npcs["whispers"].messages = {
+                0: [f"The dream has ended, {player.name}.",
+                    "Veylan opens a world of possibilities—if you’re ready to see them."]}
+
             player.add_item(item="dragon_scales", quantity=8)
             player.events["dragon_win"] = True
 
             return play, menu
+
         else:
             map_game.npcs["dragon_firefrost"].reset_hist_messages()
             save(player=player, map_game=map_game, time_init=time_init)
             return play, menu
+
+    # Event captain Thorne travel.
+    if map_game.npcs["captain_thorne"].hist_messages[0] and player.events["dragon_win"]:
+        clear()
+        time.sleep(1.5)
+        talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
+
+        return False, True
 
     return True, False
 

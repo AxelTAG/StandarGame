@@ -13,8 +13,11 @@ from utils import reset_map, text_ljust
 
 # External imports.
 import math
+import os
 import random
 
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+import pygame
 
 # ----------------------------------------------------------------------------------------------------
 # Utiliy functions.
@@ -179,7 +182,7 @@ def buy(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool
 # Check action.
 def check(player: Player = None, item: str = None, inventory: bool = False) -> str:
     if player is None or item is None:
-        return f"What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
+        return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
 
     if item in player.place.items or (inventory and item in player.inventory.items.keys()):
         if item in globals.ITEMS.keys():
@@ -189,7 +192,7 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
             text = f"You observe nothing."
 
     elif item == "":
-        text = f"What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items at the inventory."
+        text = "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items at the inventory."
 
     elif item in globals.ITEMS.keys():
         text = f"There is no {globals.ITEMS[item].name} here."
@@ -397,6 +400,26 @@ def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
 
         else:
             return "You aren't in a boat."
+
+
+def listen(player: Player, map_game: Map, entitie: str) -> str:
+    entitie_name = entitie.replace("_", " ").title()
+    if entitie in player.place.items:
+        track = globals.ITEMS[entitie].tracks[map_game.current_week_day]
+        if track is not None:
+            pygame.mixer.music.load(track)
+            pygame.mixer.music.play(0)
+        return f"You are listening to {entitie_name}."
+
+    if entitie in player.place.npc:
+        track = map_game.npcs[entitie].tracks[map_game.current_week_day]
+        if track is not None:
+            pygame.mixer.music.load(track)
+            pygame.mixer.music.play(0)
+            return f"You are listening to {entitie_name}."
+        return f"You listen nothing special from {entitie_name}."
+
+    return f"You cannot listen something from {entitie_name}."
 
 
 # Move function.

@@ -57,6 +57,9 @@ class Inventory:
                 return False
 
     @property
-    def item_objects(self):
+    def get_item_objects(self):
         for item in self.items.keys():
             yield ITEMS[item]
+
+    def get_item_object(self, item: str):
+        return ITEMS[item]

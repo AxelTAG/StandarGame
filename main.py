@@ -1,8 +1,10 @@
 # Imports.
 # Locals imports.
+import time
+
 import globals
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
-    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map, craft
+    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map, craft, listen
 from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
                       disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
@@ -18,9 +20,9 @@ import matplotlib.pyplot as plt
 import os
 import random
 from datetime import datetime
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
-
 
 # Game variables.
 run = True
@@ -35,11 +37,9 @@ standing = True
 # First screen massage.
 screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
 
-# Music background variables.
+# Music background.
 pygame.mixer.init()
-pygame.mixer.music.load("./rsc/media/Echoes_of_the_Ancient_Lanes.mp3")  # Asegúrate de usar un archivo válido
 pygame.mixer.music.set_volume(0.5)
-
 
 # Main loop of the game.
 while run:
@@ -47,6 +47,7 @@ while run:
     while menu:
         # Music background.
         if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load("./rsc/media/Echoes_of_the_Ancient_Lanes.mp3")
             pygame.mixer.music.play(-1)
 
         # Screen
@@ -74,9 +75,9 @@ while run:
             print()
             print(" 1) Follow your path.")
             print(" 2) Trace your path with: 'map' and 'draw map'.")
-            print(" 3) Many action are allowed ('use', 'enter', 'talk', 'explore', etc.) try them "
+            print(" 3) Many action are allowed ('use', 'enter', 'talk', 'look around', etc.) try them "
                   "\n    to find your path.")
-            print(" 4) Remember: sleeping ('sleep to') in a bed, will charge your energy.")
+            print(" 4) Remember: sleeping in a bed, will charge your energy.")
             print()
             rules = False
             choice = ""
@@ -139,6 +140,10 @@ while run:
 
             # Introduction of new game.
             if play:
+                # Stop of background musin.
+                pygame.mixer.music.stop()
+                time.sleep(3)
+
                 # Initial settings.
                 # Map settings.
                 map_game = Map(mobs=globals.MOBS.copy(),
@@ -156,23 +161,23 @@ while run:
                 map_game.map_settings[(0, 0)].entries["hut"].name = player.name + "'s Hut"
 
                 # Introduction setting.
-                map_game.npcs["whispers"].messages[0] = [player.name + "...", player.name + "...",
-                                                         "...your destiny awaits.",
-                                                         "Follow the whispers of the wind, and come to me.",
-                                                         "Secrets untold and"
-                                                         " challenges unknown lie ahead.",
-                                                         "Trust in the unseen path...",
-                                                         "... come to me."]
+                map_game.npcs["whispers"].messages = {
+                    0: [player.name + "...", player.name + "...",
+                        "...your destiny awaits.",
+                        "Follow the whispers of the wind, and come to me.",
+                        "Secrets untold and challenges unknown lie ahead.",
+                        "Trust in the unseen path...",
+                        "... come to me."]}
 
                 # Dragon Firefrost setting.
-                map_game.npcs["dragon firefrost"].messages = [player.name + "...", "You finally come to me...",
-                                                              "Destiny calls ""for a dance of fire and frost between "
-                                                              "us...",
-                                                              "Ready your blade..."]
+                map_game.npcs["dragon_firefrost"].messages = {
+                    0: [player.name + "...", "You finally come to me...",
+                        "Destiny calls for a dance of fire and frost between us...",
+                        "Ready your blade..."]}
 
                 # Introduction.
-                # if player.name:
-                #     screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
+                if player.name:
+                    screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
 
         elif choice == "2":  # Load game choice.
             try:
@@ -210,11 +215,10 @@ while run:
         elif choice == "4":  # Quit option.
             quit()
 
-
     # Previous setting before init play.
     if play:
         # Music background.
-        pygame.mixer.music.stop()
+        action = ["nothing"]
 
         # Set hours.
         hours = map_game.get_hours
@@ -230,9 +234,12 @@ while run:
         map_control_handling(player=player,
                              map_game=map_game)
 
-        if not(map_game.get_hours == hours):
+        if not (map_game.get_hours == hours):
             map_game.refresh_npcs()
         hours = map_game.get_hours
+
+        if action[0] != "listen":
+            pygame.mixer.music.stop()
 
         # Autosave.
         save(player=player,
@@ -272,7 +279,7 @@ while run:
                                      tl_map=map_game.map_labels,
                                      ms=map_game.map_settings),
                       screen_text=screen,
-                      width=36)
+                      width=38)
 
             # Input action.
             print()
@@ -287,7 +294,10 @@ while run:
                 save(player=player, map_game=map_game, time_init=time_init)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
-                if player.outside:
+                if not player.move_available:
+                    screen = "You're carrying too much weight to move."
+
+                elif player.outside:
                     screen, standing = move(player=player, map_game=map_game, mv=action[0])
 
                 else:
@@ -316,10 +326,6 @@ while run:
                         player.resistance += 1
                         player.st_points -= 1
                         screen = "You have assigned a skill point to resistance."
-                    # elif action[1] in ["dexterity", "dex"]:
-                    #     user_stats["b_dex"] += 1
-                    #     user_stats["hability_points"] -= 1
-                    #     screen = "You have assigned a skill point to dexterity."
                     elif action[1] in ["vitality", "vit"]:
                         player.vitality += 1
                         player.st_points -= 1
@@ -392,7 +398,12 @@ while run:
                 standing = False
 
             elif action[0] == "listen":  # Listen action.
-                screen = "You don't hear anything special."
+                entities = player.place.npc + player.place.items
+                entitie_name = find_full_name(partial_name=" ".join(action[2:]).lower(), names_list=entities)
+                if len(action) <= 1:
+                    screen = "What do you want to listen? LISTEN TO something."
+                else:
+                    screen = listen(player=player, map_game=map_game, entitie=entitie_name)
 
             elif action == ["look", "around"]:  # Look around action.
                 look_around(player=player, map_game=map_game)
@@ -417,8 +428,8 @@ while run:
             elif action[0] == "slot1":  # Selection slot1 action.
                 item_select = "_".join(action[1:])
                 item_object = get_item(item_name=item_select)
-                if item_object.consumable or item_object.equippable and item_select in player.inventory.items.keys():
-                    player.slot1 = " ".join(action[1:]).title()
+                if (item_object.consumable or item_object.equippable) and item_select in player.inventory.items.keys():
+                    player.slot1 = item_select
                 else:
                     screen = f"You cannot equip {item_object.name} in the belt."
                 standing = True
@@ -427,7 +438,7 @@ while run:
                 item_select = "_".join(action[1:])
                 item_object = get_item(item_name=item_select)
                 if item_object.consumable or item_object.equippable and item_select in player.inventory.items.keys():
-                    player.slot2 = " ".join(action[1:]).title()
+                    player.slot2 = item_select
                 else:
                     screen = f"You cannot equip {item_object.name} in the belt."
                 standing = True
@@ -531,7 +542,7 @@ while run:
                 player.lvl_up()
 
             elif action[:2] == ["add", "item"]:
-                quantity = 1 if len(action) < 4 else int(action[3])
+                quantity = 1 if len(action) == 3 else int(action[3])
                 player.add_item(item=action[2], quantity=quantity)
 
             elif action == ["events"]:
@@ -561,15 +572,5 @@ while run:
             elif action[0] == "craft":
                 screen = craft(player=player, item="_".join(action[1:]))
 
-            elif action[0] == "update":  # Admin action for update de game while devolping.
-                #
-                # map_set.updatplayer.exp += 1000
-                #                 # player.inventory.add_item("telescope", 1)
-                #                 # player.inventory.add_item("torch", 1)
-                #                 # player.inventory.add_item("gold", 100)e(globals.MAP_SETTING_INIT)
-                # player.events["message"] = False
-                # player.events["permission"] = False
-                # npc["fisherman marlin"][3][0] = True
-                screen = "Map updated."
             else:
                 standing = True

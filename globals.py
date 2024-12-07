@@ -570,11 +570,48 @@ ENTRIES = {
         name="HUT",
         entry_type=EntryType.HUT),
 
+    "aliras_inn": Entry(
+        description="Warm and inviting, the inn’s interior features polished wooden beams, a roaring hearth, and "
+                    "a bustling common room filled with travelers sharing tales over hearty meals.",
+        name="ALIRA'S INN",
+        req="",
+        entry_type=EntryType.INN),
+
+    "aliras_first_room": Entry(
+        description="A luxurious suite with velvet curtains, a canopy bed, and a private fireplace, exuding comfort "
+                    "and refinement.",
+        items=["bed"],
+        name="ALIRA'S FIRST ROOM",
+        req=["aliras_first_room_key"],
+        entry_type=EntryType.ROOM),
+
+    "aliras_second_room": Entry(
+        description="A cozy room with a soft feather bed, a small writing desk, and a balcony overlooking the "
+                    "bustling streets.",
+        items=["bed"],
+        name="ALIRA'S SECOND ROOM",
+        req=["aliras_second_room_key"],
+        entry_type=EntryType.ROOM),
+
+    "aliras_third_room": Entry(
+        description="A modest room with twin beds, a faded rug, and an old map of the city pinned to the wall.",
+        items=["bed", "bed"],
+        name="ALIRA'S THIRD ROOM",
+        req=["aliras_third_room_key"],
+        entry_type=EntryType.ROOM),
+
+    "aliras_fourth_room": Entry(
+        description="A basic but clean room with a single bed, a sturdy chest for belongings, and a small window "
+                    "letting in morning light.",
+        items=["bed", "bed"],
+        name="ALIRA'S FOURTH ROOM",
+        req=["aliras_fourth_room_key"],
+        entry_type=EntryType.ROOM),
+
     "lyssias_inn": Entry(
         description="Coastal inn with weathered stone walls and a thatched roof, offering warm meals, cozy rooms, "
                     "and ocean views through salt-crusted windows.",
         name="LYSSIA'S INN",
-        npc=["innkeeper lyssia"],
         entry_type=EntryType.INN),
 
     "lyssias_first_room": Entry(
@@ -582,6 +619,7 @@ ENTRIES = {
                     "and soft candlelight flickering across the walls.",
         items=["bed"],
         name="LYSSIA'S FIRST ROOM",
+        req=["lyssias_first_room_key"],
         entry_type=EntryType.ROOM),
 
     "lyssias_second_room": Entry(
@@ -589,6 +627,7 @@ ENTRIES = {
                     " of the sea.",
         items=["bed"],
         name="LYSSIA'S SECOND ROOM",
+        req=["lyssias_second_room_key"],
         entry_type=EntryType.ROOM),
 
     "lyssias_third_room": Entry(
@@ -596,6 +635,7 @@ ENTRIES = {
                     "foot of each bed.",
         items=["bed", "bed"],
         name="LYSSIA'S THIRD ROOM",
+        req=["lyssias_third_room_key"],
         entry_type=EntryType.ROOM),
 
     "mirabelles_inn": Entry(
@@ -603,7 +643,7 @@ ENTRIES = {
                     "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
                     "find respite.",
         name="MIRABELLE'S INN",
-        npc=["innkeeper mirabelle", "villager doran"],
+        npc=["innkeeper_mirabelle", "villager_doran"],
         entry_type=EntryType.INN),
 
     "mirabelles_main_room": Entry(
@@ -650,7 +690,6 @@ ENTRIES = {
                     "harbor hums with maritime activity.",
         name="CAPTAIN THORNE'S SHIP",
         items=["powder_keg"],
-        npc=["sailor kael"],
         entry_type=EntryType.SHIP),
 
     "tower_of_eldra_floor_1": Entry(
@@ -690,6 +729,7 @@ ITEMS = {
                 defense=0,
                 precision=0,
                 evasion=0,
+                weight=5,
                 body_part=BodyPart.RIGHT_HAND,
                 pickable=True,
                 consumable=False,
@@ -705,6 +745,7 @@ ITEMS = {
                      defense=0,
                      precision=0,
                      evasion=0,
+                     weight=5,
                      body_part=BodyPart.RIGHT_HAND,
                      pickable=True,
                      consumable=False,
@@ -720,6 +761,7 @@ ITEMS = {
                         defense=1,
                         precision=0,
                         evasion=0,
+                        weight=3,
                         body_part=BodyPart.LEFT_HAND,
                         pickable=True,
                         consumable=False,
@@ -728,6 +770,21 @@ ITEMS = {
                         buy_price=130,
                         sell_price=50),
 
+    "bone_sword": Item(name="Bone Sword",
+                       description="Lightweight and sharp, crafted from bone, it strikes swiftly but lacks durability.",
+                       attack=4,
+                       defense=0,
+                       precision=-10,
+                       evasion=0,
+                       weight=3,
+                       body_part=BodyPart.LEFT_HAND,
+                       pickable=True,
+                       consumable=False,
+                       equippable=True,
+                       expiration=None,
+                       buy_price=100,
+                       sell_price=50),
+
     "chainmail_armor": Item(name="Chainmail Armor",
                             description=("Sturdy armor made of interlocked rings. Offers great protection for the "
                                          "chest."),
@@ -735,6 +792,7 @@ ITEMS = {
                             defense=3,
                             precision=0,
                             evasion=0,
+                            weight=15,
                             body_part=BodyPart.CHEST,
                             pickable=True,
                             consumable=False,
@@ -750,6 +808,7 @@ ITEMS = {
                                    defense=2,
                                    precision=0,
                                    evasion=0,
+                                   weight=8,
                                    body_part=BodyPart.CHEST,
                                    pickable=True,
                                    consumable=False,
@@ -764,6 +823,7 @@ ITEMS = {
                     defense=0,
                     precision=0,
                     evasion=0.1,
+                    weight=4,
                     body_part=BodyPart.RIGHT_HAND,
                     pickable=True,
                     consumable=False,
@@ -776,6 +836,7 @@ ITEMS = {
                         description="Solid iron shield. Blocks incoming attacks with ease.",
                         attack=0,
                         defense=3,
+                        weight=10,
                         precision=0,
                         evasion=0,
                         body_part=BodyPart.LEFT_HAND,
@@ -792,6 +853,7 @@ ITEMS = {
                       defense=0,
                       precision=0.15,
                       evasion=0.30,
+                      weight=3,
                       body_part=BodyPart.RIGHT_HAND,
                       pickable=True,
                       consumable=False,
@@ -806,6 +868,7 @@ ITEMS = {
                           defense=1,
                           precision=0,
                           evasion=0,
+                          weight=5,
                           body_part=BodyPart.CHEST,
                           pickable=True,
                           consumable=False,
@@ -820,6 +883,7 @@ ITEMS = {
                           defense=1,
                           precision=0,
                           evasion=0,
+                          weight=2,
                           body_part=BodyPart.LEGS,
                           pickable=True,
                           consumable=False,
@@ -834,6 +898,7 @@ ITEMS = {
                       defense=0,
                       precision=0.05,
                       evasion=0,
+                      weight=9,
                       body_part=BodyPart.RIGHT_HAND,
                       pickable=True,
                       consumable=False,
@@ -848,6 +913,7 @@ ITEMS = {
                        defense=2,
                        precision=0,
                        evasion=0,
+                       weight=6,
                        body_part=BodyPart.LEGS,
                        pickable=True,
                        consumable=False,
@@ -862,6 +928,7 @@ ITEMS = {
                         defense=4,
                         precision=0,
                         evasion=0,
+                        weight=15,
                         body_part=BodyPart.CHEST,
                         pickable=True,
                         consumable=False,
@@ -870,13 +937,44 @@ ITEMS = {
                         buy_price=700,
                         sell_price=200),
 
+    "rusty_shield": Item(name="Rusty Shield",
+                         description="Dented and weak, offers minimal protection but tells tales of bygone battles.",
+                         attack=0,
+                         defense=2,
+                         precision=0,
+                         evasion=0,
+                         weight=6,
+                         body_part=BodyPart.RIGHT_HAND,
+                         pickable=True,
+                         consumable=False,
+                         equippable=True,
+                         expiration=None,
+                         buy_price=150,
+                         sell_price=50),
+
+    "rusty_sword": Item(name="Rusty Sword",
+                        description="Worn and brittle, unreliable in battle but holds echoes of a warrior's past.",
+                        attack=2,
+                        defense=0,
+                        precision=0.05,
+                        evasion=0,
+                        weight=6,
+                        body_part=BodyPart.RIGHT_HAND,
+                        pickable=True,
+                        consumable=False,
+                        equippable=True,
+                        expiration=None,
+                        buy_price=150,
+                        sell_price=50),
+
     "short_sword": Item(name="Short Sword",
                         description=("A trusty Short Sword, swift and precise, ideal for close-quarter battles against "
                                      "foes in the wild."),
                         attack=1,
                         defense=0,
-                        precision=0,
+                        precision=0.05,
                         evasion=0,
+                        weight=3,
                         body_part=BodyPart.RIGHT_HAND,
                         pickable=True,
                         consumable=False,
@@ -891,6 +989,7 @@ ITEMS = {
                   defense=0,
                   precision=0.05,
                   evasion=0.15,
+                  weight=6,
                   body_part=BodyPart.RIGHT_HAND,
                   pickable=True,
                   consumable=False,
@@ -905,6 +1004,7 @@ ITEMS = {
                          defense=3,
                          precision=0,
                          evasion=0,
+                         weight=9,
                          body_part=BodyPart.LEFT_HAND,
                          pickable=True,
                          consumable=False,
@@ -917,8 +1017,9 @@ ITEMS = {
                   description="A balanced sword. Reliable for close combat with decent attack power.",
                   attack=3,
                   defense=0,
-                  precision=0.05,
+                  precision=0.1,
                   evasion=0,
+                  weight=6,
                   body_part=BodyPart.RIGHT_HAND,
                   pickable=True,
                   consumable=False,
@@ -933,6 +1034,7 @@ ITEMS = {
                          defense=4,
                          precision=0,
                          evasion=0,
+                         weight=11,
                          body_part=BodyPart.LEFT_HAND,
                          pickable=True,
                          consumable=False,
@@ -947,6 +1049,7 @@ ITEMS = {
                         defense=1,
                         precision=0,
                         evasion=0,
+                        weight=5,
                         body_part=BodyPart.LEFT_HAND,
                         pickable=True,
                         consumable=False,
@@ -962,6 +1065,7 @@ ITEMS = {
                   defense=0,
                   precision=0,
                   evasion=0,
+                  weight=0.1,
                   pickable=True,
                   consumable=True,
                   equippable=False,
@@ -975,6 +1079,7 @@ ITEMS = {
                      defense=0,
                      precision=0,
                      evasion=0,
+                     weight=0.1,
                      pickable=True,
                      consumable=True,
                      equippable=False,
@@ -988,6 +1093,7 @@ ITEMS = {
                            defense=0,
                            precision=0,
                            evasion=0,
+                           weight=0.05,
                            pickable=True,
                            consumable=False,
                            equippable=False,
@@ -1001,6 +1107,7 @@ ITEMS = {
                  defense=0,
                  precision=0,
                  evasion=0,
+                 weight=0.1,
                  pickable=True,
                  consumable=True,
                  equippable=False,
@@ -1014,6 +1121,7 @@ ITEMS = {
                   defense=0,
                   precision=0,
                   evasion=0,
+                  weight=0.3,
                   pickable=True,
                   consumable=True,
                   equippable=False,
@@ -1027,6 +1135,7 @@ ITEMS = {
                    defense=0,
                    precision=0,
                    evasion=0,
+                   weight=0.3,
                    pickable=True,
                    consumable=True,
                    equippable=False,
@@ -1036,6 +1145,7 @@ ITEMS = {
 
     "fish_flounder": Item(name="Fish Flounder",
                           description="A flat fish that camouflages on sandy ocean floors to hunt.",
+                          weight=0.5,
                           pickable=True,
                           consumable=True,
                           buy_price=48,
@@ -1043,6 +1153,7 @@ ITEMS = {
 
     "fish_grouper": Item(name="Fish Grouper",
                          description="A sturdy fish inhabiting reefs and rocky ocean floors.",
+                         weight=0.5,
                          pickable=True,
                          consumable=True,
                          buy_price=35,
@@ -1050,6 +1161,7 @@ ITEMS = {
 
     "fish_hammerhead_shark": Item(name="Fish Hammerhead Shark",
                                   description="A unique predator with a distinctive hammer-shaped head.",
+                                  weight=1,
                                   pickable=True,
                                   consumable=True,
                                   buy_price=80,
@@ -1057,6 +1169,7 @@ ITEMS = {
 
     "fish_mackerel": Item(name="Fish Mackerel",
                           description="A swift, striped fish, commonly found in coastal schools.",
+                          weight=1,
                           pickable=True,
                           consumable=True,
                           buy_price=30,
@@ -1064,6 +1177,7 @@ ITEMS = {
 
     "fish_mahi-mahi": Item(name="Fish Mahi-Mahi",
                            description="A vibrant-colored fish, known for its strength and leaping ability.",
+                           weight=1,
                            pickable=True,
                            consumable=True,
                            buy_price=25,
@@ -1071,6 +1185,7 @@ ITEMS = {
 
     "fish_ray": Item(name="Fish Ray",
                      description="A flattened fish with wide fins and a venomous sting in its tail.",
+                     weight=1,
                      pickable=True,
                      consumable=True,
                      buy_price=60,
@@ -1078,6 +1193,7 @@ ITEMS = {
 
     "fish_sardine": Item(name="Fish Sardine",
                          description="A small silvery fish, popular among anglers and vital to the marine ecosystem.",
+                         weight=1,
                          pickable=True,
                          consumable=True,
                          buy_price=46,
@@ -1085,6 +1201,7 @@ ITEMS = {
 
     "fish_snapper": Item(name="Fish Snapper",
                          description="A white-fleshed fish, common in tropical and subtropical waters.",
+                         weight=1,
                          pickable=True,
                          consumable=True,
                          buy_price=36,
@@ -1092,6 +1209,7 @@ ITEMS = {
 
     "fish_swordfish": Item(name="Fish Swordfish",
                            description="A large predator with a characteristic elongated sword-like snout.",
+                           weight=2,
                            pickable=True,
                            consumable=True,
                            buy_price=100,
@@ -1099,6 +1217,7 @@ ITEMS = {
 
     "fish_tuna": Item(name="Fish Tuna",
                       description="A fast ocean fish, highly valued for its delicious and versatile meat.",
+                      weight=1,
                       pickable=True,
                       consumable=True,
                       buy_price=80,
@@ -1106,6 +1225,7 @@ ITEMS = {
 
     "fish_soup": Item(name="Soup",
                       description="Warm and savory, a comforting dish that nourishes the body and soothes the soul.",
+                      weight=0.5,
                       pickable=True,
                       consumable=True,
                       equippable=False,
@@ -1115,6 +1235,7 @@ ITEMS = {
 
     "giant_red_potion": Item(name="Giant Red Potion",
                              description="A large red potion that restores a significant amount of health.",
+                             weight=0.5,
                              attack=0,
                              defense=0,
                              precision=0,
@@ -1128,6 +1249,7 @@ ITEMS = {
 
     "giant_silk": Item(name="Giant Silk",
                        description="Silk from a giant spider. Valuable for crafting or trading.",
+                       weight=0.5,
                        attack=0,
                        defense=0,
                        precision=0,
@@ -1141,6 +1263,7 @@ ITEMS = {
 
     "little_red_potion": Item(name="Little Red Potion",
                               description="A small potion that restores a minor amount of health.",
+                              weight=0.2,
                               attack=0,
                               defense=0,
                               precision=0,
@@ -1154,6 +1277,7 @@ ITEMS = {
 
     "red_potion": Item(name="Red Potion",
                        description="A standard red potion to restore health during battle.",
+                       weight=0.3,
                        attack=0,
                        defense=0,
                        precision=0,
@@ -1167,6 +1291,7 @@ ITEMS = {
 
     "slime_balls": Item(name="Slime Balls",
                         description="Gooey remnants of a defeated slime. Maybe useful, but hard to tell.",
+                        weight=0.2,
                         attack=0,
                         defense=0,
                         precision=0,
@@ -1180,10 +1305,8 @@ ITEMS = {
 
     "soup": Item(name="Soup",
                  description="A warm bowl of hearty soup, perfect for cold, weary adventurers.",
-                 attack=0,
-                 defense=0,
-                 precision=0,
-                 evasion=0,
+                 weight=0.4,
+
                  pickable=True,
                  consumable=False,
                  equippable=False,
@@ -1193,10 +1316,7 @@ ITEMS = {
 
     "water": Item(name="Water",
                   description="A bottle of clean water. Refreshing and essential for survival.",
-                  attack=0,
-                  defense=0,
-                  precision=0,
-                  evasion=0,
+                  weight=1,
                   pickable=True,
                   consumable=True,
                   equippable=False,
@@ -1206,9 +1326,10 @@ ITEMS = {
 
     # Usable items
     "explorer_telescope": Item(name="Explorer Telescope",
-                               description="Enhanced vision, revealing distant lands with greater clarity and detail than"
-                                           " a regular telescope.",
+                               description="Enhanced vision, revealing distant lands with greater clarity and detail "
+                                           "than a regular telescope.",
                                vision=1,
+                               weight=1,
                                pickable=True,
                                consumable=False,
                                equippable=False,
@@ -1218,6 +1339,7 @@ ITEMS = {
 
     "fishing_pole": Item(name="Fishing Pole",
                          description="A sturdy pole for fishing. A useful tool for catching food.",
+                         weight=1,
                          pickable=True,
                          consumable=False,
                          equippable=False,
@@ -1228,6 +1350,7 @@ ITEMS = {
     "powder_keg": Item(name="Powder Keg",
                        description="Volatile and dangerous, capable of causing great destruction with a "
                                    "single spark.",
+                       weight=5,
                        pickable=True,
                        consumable=False,
                        equippable=False,
@@ -1239,6 +1362,7 @@ ITEMS = {
     "rope": Item(name="Rope",
                  description="Sturdy and versatile, perfect for climbing, tying, or creating pathways in "
                              "rugged terrains.",
+                 weight=2,
                  pickable=True,
                  consumable=False,
                  equippable=False,
@@ -1250,6 +1374,7 @@ ITEMS = {
     "telescope": Item(name="Telescope",
                       description="A long-range viewing device.",
                       vision=0.5,
+                      weight=1,
                       pickable=True,
                       consumable=False,
                       equippable=False,
@@ -1259,6 +1384,7 @@ ITEMS = {
 
     "torch": Item(name="Torch",
                   description="A burning torch to light the way. Useful in dark places.",
+                  weight=1,
                   pickable=True,
                   consumable=False,
                   equippable=False,
@@ -1270,6 +1396,7 @@ ITEMS = {
     # Places items.
     "bed": Item(name="Bed",
                 description="Simple yet soft, promising warmth and restful sleep in humble surroundings",
+                weight=75,
                 attack=0,
                 defense=0,
                 precision=0,
@@ -1283,27 +1410,81 @@ ITEMS = {
 
     "boat": Item(name="Boat",
                  description="A sturdy sooden ship crafted to brave the seas, steady against waves and fierce winds.",
+                 weight=500,
                  buy_price=1000,
                  sell_price=700),
 
     "giant_telescope": Item(name="Giant Telescope",
                             description="Giant Telescope, towering and precise, reveals distant lands and secrets "
-                                        "hidden among the stars."),
+                                        "hidden among the stars.",
+                            weight=700),
 
     "origame_flowers": Item(name="Origame Flowers",
                             description="Paper flowers, seem to have something inside the stem, but you can't get it "
-                                        "out with your fingers, you need a long stick."),
+                                        "out with your fingers, you need a long stick.",
+                            weight=0.05),
 
     # Innkeeper room keys.
+    "aliras_first_room_key": Item(name="Lyssia's First Room Key",
+                                  description="Polished and ornate, grants access to a refined room in a bustling"
+                                              " metropolis.",
+                                  weight=0.05,
+                                  expiration=30,
+                                  buy_price=15),
+
+    "aliras_second_room_key": Item(name="Lyssia's Second Room Key",
+                                   description="Polished and ornate, grants access to a refined room in a bustling"
+                                               " metropolis.",
+                                   weight=0.05,
+                                   expiration=30,
+                                   buy_price=10),
+
+    "aliras_third_room_key": Item(name="Lyssia's Third Room Key",
+                                  description="Polished and ornate, grants access to a refined room in a bustling"
+                                              " metropolis.",
+                                  weight=0.05,
+                                  expiration=30,
+                                  buy_price=8),
+
+    "aliras_fourth_room_key": Item(name="Lyssia's Fourth Room Key",
+                                   description="Polished and ornate, grants access to a refined room in a bustling"
+                                               " metropolis.",
+                                   weight=0.05,
+                                   expiration=30,
+                                   buy_price=8),
+
+    "lyssias_first_room_key": Item(name="Lyssia's First Room Key",
+                                   description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
+                                               " ocean waves.",
+                                   weight=0.05,
+                                   expiration=30,
+                                   buy_price=12),
+
+    "lyssias_second_room_key": Item(name="Lyssia's Second Room Key",
+                                    description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
+                                                " ocean waves.",
+                                    weight=0.05,
+                                    expiration=30,
+                                    buy_price=8),
+
+    "lyssias_third_room_key": Item(name="Lyssia's Third Room Key",
+                                   description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
+                                               " ocean waves.",
+                                   weight=0.05,
+                                   expiration=30,
+                                   buy_price=5),
+
     "mirabelles_small_room_key": Item(name="Mirabelle's Small Room Key",
                                       description="Small room key, worn and simple, granting access to a modest inn"
                                                   " chamber.",
+                                      weight=0.05,
                                       expiration=30,
                                       buy_price=3),
 
     "mirabelles_main_room_key": Item(name="Mirabelle's Small Room Key",
                                      description="Small room key, worn and simple, granting access to a modest inn"
                                                  " chamber.",
+                                     weight=0.05,
                                      expiration=30,
                                      buy_price=5),
 
@@ -1384,7 +1565,7 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=0,
-        items={"scales": 8},
+        items={"none": None},
         items_drop_chances=[1],
         experience=250
     ),
@@ -1821,7 +2002,7 @@ MOBS = {
 # NPCs.
 
 NPCS = {
-    "artisan brenwick": Npc(name="artisan brenwick",
+    "artisan_brenwick": Npc(name="artisan brenwick",
                             npc_type=NpcTypes.ARTISAN,
                             messages={
                                 0: ["Ah, greetings, wanderer! Need something crafted? I’ve got the tools and the "
@@ -1834,7 +2015,7 @@ NPCS = {
                                 "rope": 25,
                                 "torch": 15}),
 
-    "astronomer aldric": Npc(name="astronomer aldric",
+    "astronomer_aldric": Npc(name="astronomer aldric",
                              npc_type=NpcTypes.ASTRONOMER,
                              messages_afternoon={
                                  0: ["Oh, a visitor? I didn’t expect anyone up here... You must be curious "
@@ -1874,7 +2055,7 @@ NPCS = {
                              leave_message=["Farewell, traveler! May the stars guide your path, and perhaps we’ll "
                                             "meet again under Karûn’s glow."]),
 
-    "astronomer quillon": Npc(name="astronomer quillon",
+    "astronomer_quillon": Npc(name="astronomer quillon",
                               npc_type=NpcTypes.ASTRONOMER,
                               messages_afternoon={
                                   0: ["Oh my, a visitor? It’s rare for anyone to make it up here. Welcome to the Tower"
@@ -1910,14 +2091,29 @@ NPCS = {
                               answers_morning={},
                               place_morning=[(22, 18), "tower_of_eldra"]),
 
-    "whispers": Npc(name="whispers",
-                    npc_type=NpcTypes.WHISPERS,
-                    messages={0: ["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind,"
-                                                                                     " and come to me.",
-                                  "Secrets untold and challenges unknown lie ahead.",
-                                  "Trust in the unseen path...", "... come to me."]}),
+    "bard_lyricus": Npc(name="bard lyricus",
+                        npc_type=NpcTypes.BARD,
+                        place=[(9, 5), "inn"],
+                        messages_morning={
+                            0: ["Ah, greetings, traveler! Come by the inn tonight—I’ll be performing songs to lift "
+                                "weary spirits.",
+                                "Don’t miss it!"]},
+                        messages_evening={
+                            0: ["Greetings, traveler! Tonight, I shall sing of heroes and their grand deeds.",
+                                "Perhaps, if you achieve great fame one day, I’ll compose songs about you too.",
+                                "What tales might you bring to inspire the bards?"]},
+                        tracks={
+                            0: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            1: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            2: "./rsc/media/Under_Two_Moons.mp3",
+                            3: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            4: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            5: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            6: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
+                            7: "./rsc/media/Under_Two_Moons.mp3",
+                        }),
 
-    "captain thorne": Npc(name="captain thorne",
+    "captain_thorne": Npc(name="captain thorne",
                           npc_type=NpcTypes.CAPTAIN,
                           messages_morning={
                               0: ["Ahoy, traveler. I'm Captain Thorne.",
@@ -1932,7 +2128,7 @@ NPCS = {
                                   " troubling, isn’t it?"]},
                           place_night=[(27, 15), "inn", "first_room"]),
 
-    "captain zelian": Npc(name="captain zelian",
+    "captain_zelian": Npc(name="captain zelian",
                           npc_type=NpcTypes.CAPTAIN,
                           messages={
                               0: ["Ah, the sea, a fickle friend and fierce foe.",
@@ -1942,14 +2138,14 @@ NPCS = {
                                   "yourself, adventurer."]},
                           place=[(5, 3)]),
 
-    "caravan leader darek": Npc(name="Caravan Leader Darek",
+    "caravan_leader_darek": Npc(name="Caravan Leader Darek",
                                 npc_type=NpcTypes.CARAVAN_LEADER,
                                 messages={
                                     0: ["We’re stuck here, traveler. The path through the valley to Epiiat is "
                                         "blocked by a landslide. Until the rubble is cleared, there’s no way forward.",
                                         "It’s put quite the halt to our journey."]}),
 
-    "caravenner lorien": Npc(name="Caravanner Lorien",
+    "caravenner_lorien": Npc(name="Caravanner Lorien",
                              npc_type=NpcTypes.CARAVANNER,
                              messages={
                                  0: ["Epiiat... It’s been years since I last visited. A quiet little place, if I "
@@ -1957,23 +2153,23 @@ NPCS = {
                                      "I was looking forward to seeing it again, but with this landslide, who knows "
                                      "when we’ll get through."]}),
 
-    "dragon firefrost": Npc(name="dragon firefrost",
+    "dragon_firefrost": Npc(name="dragon firefrost",
                             npc_type=NpcTypes.DRAGON,
                             messages={
-                                0: ["Elina...",
+                                0: ["Hero...",
                                     "You finally come to me...",
                                     "Destiny calls for a dance of fire and frost between us...",
                                     "Ready your blade..."]},
                             place=[(11, 24)]),
 
-    "elder lirian": Npc(name="elder lirian",
+    "elder_lirian": Npc(name="elder lirian",
                         npc_type=NpcTypes.ELDER,
                         messages={
                             0: ["Welcome, traveler, to the humble temple of Epiiat. These walls whisper of ancient "
                                 "prayers. May you find solace here."]},
                         place_morning=[(10, 4), "temple"]),
 
-    "fisherman brann": Npc(name="fisherman brann",
+    "fisherman_brann": Npc(name="fisherman brann",
                            npc_type=NpcTypes.FISHERMAN,
                            messages={
                                0: ["You there, traveler... Have you come from the port?",
@@ -1984,7 +2180,7 @@ NPCS = {
                            place_morning=[(22, 27)],
                            place_evening=[(22, 27), "coast_hut"]),
 
-    "fisherman marlin": Npc(name="fisherman marlin",
+    "fisherman_marlin": Npc(name="fisherman marlin",
                             npc_type=NpcTypes.FISHERMAN,
                             messages={
                                 0: ["Ahoy, traveler!",
@@ -2004,12 +2200,12 @@ NPCS = {
     # the city, watches over the folks there. " "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
     # "If you ever find yourself in Antina City, look for Guard Lorian. Tell him Marlin " "from Aqiri says hello."
 
-    "goblin griznuk": Npc(name="chief goblin griznuk",
+    "goblin_griznuk": Npc(name="chief goblin griznuk",
                           npc_type=NpcTypes.MONSTER,
                           messages={
                               0: ["Grraaak... hssssk!", "Zilgruk!", "Fwaahh!"]}),
 
-    "guard lorian": Npc(name="guard lorian",
+    "guard_lorian": Npc(name="guard lorian",
                         npc_type=NpcTypes.GUARD,
                         messages={
                             0: ["Halt, traveler! Antina City permits only those with proper credentials to pass "
@@ -2019,14 +2215,40 @@ NPCS = {
                                 "trying times."]},
                         place_morning=[(13, 17)]),
 
-    "jester ralzo": Npc(name="jester ralzo",
+    "jester_ralzo": Npc(name="jester ralzo",
                         npc_type=NpcTypes.JESTER,
                         messages={
                             0: ["Traveling solo, but tagging along with this fine caravan! Life’s a journey, after"
                                 " all, and laughter is my trade. Stuck here or not, the road’s more fun with a bit "
                                 "of mischief, wouldn’t you say?"]}),
 
-    "innkeeper lyssia": Npc(name="innkeeper lyssia",
+    "innkeeper_alira": Npc(name="innkeeper alira",
+                           npc_type=NpcTypes.INNKEEPER,
+                           messages={
+                               0: ["Welcome, traveler! I’m Alira, keeper of this fine inn. Do you need a room to "
+                                   "rest or perhaps a meal to fill your belly?"],
+                               1: ["Our rooms are cozy and warm, perfect for a weary traveler. Would you like to "
+                                   "stay the night?"],
+                               2: ["Feeling hungry? We've got hearty meals to fill you up. What will it be?"]},
+                           answers={
+                               1: "I need to sleep",
+                               2: "Buy food"},
+                           buy_items={"bread": 2,
+                                      "cheese": 4,
+                                      "soap": 2,
+                                      "water": 1,
+                                      "bier": 2,
+                                      "wine": 3,
+                                      "fish_sardina": 3,
+                                      "quit": 0},
+                           buy_beds={"first_room": (15, "aliras_first_room_key"),
+                                     "second_room": (10, "aliras_second_room_key"),
+                                     "third_room": (8, "aliras_third_room_key"),
+                                     "fourth room": (8, "aliras_third_room_key"),
+                                     "quit": (0, "quit")},
+                           place=[(10, 18), "inn"]),
+
+    "innkeeper_lyssia": Npc(name="innkeeper lyssia",
                             npc_type=NpcTypes.INNKEEPER,
                             messages={
                                 0: ["Welcome to the Aquiri Harbor Inn, traveler! Need a place to rest or a hot meal?"
@@ -2047,9 +2269,10 @@ NPCS = {
                             buy_beds={"first_room": (12, "lyssias_first_room_key"),
                                       "second_room": (8, "lyssias_second_room_key"),
                                       "third_room": (5, "lyssias_third_room_key"),
-                                      "quit": (0, "quit")}),
+                                      "quit": (0, "quit")},
+                            place=[(27, 15), "inn"]),
 
-    "innkeeper mirabelle": Npc(name="innkeeper mirabelle",
+    "innkeeper_mirabelle": Npc(name="innkeeper mirabelle",
                                npc_type=NpcTypes.INNKEEPER,
                                messages={
                                    0: ["Step into Mirabelle's Inn, weary wanderer. Here, amidst the tranquility of "
@@ -2063,27 +2286,30 @@ NPCS = {
                                buy_items={"bread": 2, "cheese": 4, "soap": 2, "water": 1, "bier": 2, "quit": 0},
                                buy_beds={"main_room": (5, "mirabelles_main_room_key"),
                                          "small_room": (3, "mirabelles_small_room_key"),
-                                         "quit": (0, "quit")}),
+                                         "quit": (0, "quit")},
+                               place=[(9, 5), "inn"]),
 
-    "lord aric": Npc(name="lord aric",
+    "lord_aric": Npc(name="lord aric",
                      npc_type=NpcTypes.LORD,
                      messages_morning={
                          0: ["Greetings, traveler. Alas, these are troubled times for our fair city.",
                              "Just days past, a dragon's shadow darkened our skies. Fear lingers in the hearts of our "
                              "citizens. The safety of Antina is at stake, and our once-stalwart walls now seem "
                              "fragile.",
-                             "May the goddesses watch over us and protect us."]}),
+                             "May the goddesses watch over us and protect us."]},
+                     place_morning=[(11, 16)],
+                     place_night=[(12, 16), "arics_house"]),
 
-    "marquis edrion": Npc(name="marquis edrion",
+    "marquis_edrion": Npc(name="marquis edrion",
                           npc_type=NpcTypes.MARQUIS,
                           messages_morning={
                               0: ["A dragon... now of all times? As if these endless skirmishes weren’t burden enough.",
                                   "What cruel twist of fate is this?"]},
                           messages_night={
                               0: ["Zzzzz... zzzz... uhgzz..."]},
-                          place_morning=[(12, 16), "edrions_house"]),
+                          place=[(12, 16), "edrions_house"]),
 
-    "mayor thorian": Npc(name="mayor thorian",
+    "mayor_thorian": Npc(name="mayor thorian",
                          npc_type=NpcTypes.MAYOR,
                          messages={
                              0: ["Welcome to Epiiat, traveler.",
@@ -2095,7 +2321,7 @@ NPCS = {
                          place_morning=[(10, 4), "mayors_house"],
                          place_night=[(10, 4), "temple"]),
 
-    "mayors daughter maisie": Npc(name="mayor's daughter maisie",
+    "mayors_daughter_maisie": Npc(name="mayor's daughter maisie",
                                   npc_type=NpcTypes.MAYORS_DAUGHTER,
                                   messages={0: ["You... you saved me! I feared I'd never escape Griznuk's clutches.",
                                                 "My father, the mayor, will want to thank you properly. Please, come"
@@ -2105,7 +2331,7 @@ NPCS = {
                                   place=[(13, 0), "cave_entrance", "cave_pit", "cave_basin", "cave_gallery",
                                          "chiefs_cave", "goblin_chief_bedroom"]),
 
-    "merchant bryson": Npc(name="merchant bryson",
+    "merchant_bryson": Npc(name="merchant bryson",
                            npc_type=NpcTypes.MERCHANT,
                            messages={
                                0: ["Ah, welcome, welcome! Peruse my wares, brave one. From enchanted potions to sturdy"
@@ -2124,7 +2350,7 @@ NPCS = {
                                       "quit": 0},
                            place=[(9, 5)]),
 
-    "merchant elden": Npc(name="merchant elden",
+    "merchant_elden": Npc(name="merchant elden",
                           npc_type=NpcTypes.MERCHANT,
                           messages={0: ["Hail, warrior! Seek the finest blades and armor in Antina? Forge Master Elden "
                                         "crafts each piece with skill and care. From gleaming swords to resilient "
@@ -2140,7 +2366,7 @@ NPCS = {
                                      "spike_shield": 150, "tower_shield": 150, "quit": 0},
                           place=[(12, 18)]),
 
-    "merchant roland": Npc(name="merchant roland",
+    "merchant_roland": Npc(name="merchant roland",
                            npc_type=NpcTypes.MERCHANT,
                            messages={0: ["Greetings, noble traveler! Step into Roland's Emporium, where treasures and "
                                          "trinkets await your discerning eye. From potions to weapons, my wares are "
@@ -2156,7 +2382,7 @@ NPCS = {
                                       "iron_shield": 150, "torch": 20, "quit": 0},
                            place_morning=[(11, 17)]),
 
-    "merchant selena": Npc(name="merchant selena",
+    "merchant_selena": Npc(name="merchant selena",
                            npc_type=NpcTypes.MERCHANT,
                            messages={
                                0: ["Ahoy, brave one! Step right up and behold the treasures of Aqiri's Market!",
@@ -2172,7 +2398,7 @@ NPCS = {
                                       "fishing_pole": 200, "wood_shield": 50, "telescope": 200, "quit": 0},
                            place=[(27, 15)]),
 
-    "sailor kael": Npc(name="Sailor Kael",
+    "sailor_kael": Npc(name="Sailor Kael",
                        npc_type=NpcTypes.SAILOR,
                        messages_morning={
                            0: ["Hold it right there, traveler! This ship isn’t open to passengers. Captain’s orders—no "
@@ -2182,14 +2408,14 @@ NPCS = {
                            0: ["Zzz... Zzz... Hngh..."]},
                        place_night=[(27, 15), "inn", "third_room"]),
 
-    "sailor rolan": Npc(name="Sailor Rolan",
+    "sailor_rolan": Npc(name="Sailor Rolan",
                         npc_type=NpcTypes.SAILOR,
                         messages={
                             0: ["We arrived in Aquiri not long ago, but who knows when we’ll leave. We spotted a "
                                 "dragon not far from here... it’s keeping us on edge.",
                                 "Better safe than sorry, eh?"]}),
 
-    "tavern keeper rudrik": Npc(name="TAVERN KEEPER RUDRIK",
+    "tavern_keeper_rudrik": Npc(name="TAVERN KEEPER RUDRIK",
                                 npc_type=NpcTypes.TAVERN_KEEPER,
                                 messages={
                                     0: ["Welcome to The Golden Tankard, traveler! Take a seat and warm yourself by"
@@ -2200,7 +2426,7 @@ NPCS = {
                                     1: "Buy"},
                                 buy_items={"bread": 2, "cheese": 4, "soap": 2, "water": 1, "bier": 2, "quit": 0}),
 
-    "traveler elara": Npc(
+    "traveler_elara": Npc(
         name="traveler elara",
         npc_type=NpcTypes.TRAVELER,
         messages={
@@ -2223,7 +2449,7 @@ NPCS = {
             3: "What about the western reaches? Have you ventured there?"},
         place_morning=[(10, 5)]),
 
-    "traveler elinor": Npc(name="traveler elinor",
+    "traveler_elinor": Npc(name="traveler elinor",
                            npc_type=NpcTypes.TRAVELER,
                            messages={
                                0: ["Alas, the city gates remain closed to me. But fear not, fellow wanderer!",
@@ -2234,14 +2460,14 @@ NPCS = {
                                    "for there is always another path to tread."]},
                            place=[(13, 17)]),
 
-    "traveler kaelen": Npc(name="traveler kaelin",
+    "traveler_kaelen": Npc(name="traveler kaelen",
                            npc_type=NpcTypes.TRAVELER,
                            messages={
                                0: ["You know, if we had some explosives, those rocks would be gone in no time.",
                                    "Do you, by chance, carry any? It’d make clearing this path a lot easier."]},
                            place=[(9, 17)]),
 
-    "traveler kaelin": Npc(name="traveler kaelin",
+    "traveler_kaelin": Npc(name="traveler kaelin",
                            npc_type=NpcTypes.TRAVELER,
                            messages={
                                0: ["Hail, fellow wanderer. I've treaded the southern realms, through the treacherous "
@@ -2272,7 +2498,7 @@ NPCS = {
                                    "carefully if you choose that path."]},
                            place=[(14, 5)]),
 
-    "traveler sylas": Npc(name="traveler sylas",
+    "traveler_sylas": Npc(name="traveler sylas",
                           npc_type=NpcTypes.TRAVELER,
                           messages={
                               0: ["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration.",
@@ -2281,7 +2507,7 @@ NPCS = {
                                   "you."]},
                           place=[(9, 5)]),
 
-    "traveler thaldir": Npc(name="traveler thaldir",
+    "traveler_thaldir": Npc(name="traveler thaldir",
                             npc_type=NpcTypes.TRAVELER,
                             messages={
                                 0: ["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around "
@@ -2290,14 +2516,14 @@ NPCS = {
                             place=[(9, 4)]),
 
     # Villager from Epiiat.
-    "villager doran": Npc(name="villager doran",
+    "villager_doran": Npc(name="villager_doran",
                           npc_type=NpcTypes.VILLAGER,
                           messages={
                               0: ["Ah, nothing like a good drink and a hot meal after a long day. The bard's song"
                                   " tonight is a fine one—fills the air with tales of heroes and lost treasures.",
                                   "Sit and listen a while, friend. The road can wait a moment longer, can’t it?"]}),
 
-    "villager fira": Npc(name="villager fira",
+    "villager_fira": Npc(name="villager fira",
                          npc_type=NpcTypes.VILLAGER,
                          messages={
                              0: ["Oh, traveler, have you heard? The mayor’s daughter, Maisie, hasn’t been seen "
@@ -2308,7 +2534,7 @@ NPCS = {
                          place_morning=[(10, 5)],
                          place_evening=[(10, 4), "wooden_house"]),
 
-    "villager merrin": Npc(name="villager merrin",
+    "villager_merrin": Npc(name="villager merrin",
                            npc_type=NpcTypes.VILLAGER,
                            messages={
                                0: ["Oh, traveler, have you heard? The mayor’s daughter, Elara, has gone missing.",
@@ -2320,7 +2546,7 @@ NPCS = {
     # Villager from Aquiri.
 
     # Villager from Antina.
-    "villager gareth": Npc(name="villager gareth",
+    "villager_gareth": Npc(name="villager gareth",
                            npc_type=NpcTypes.VILLAGER,
                            messages={
                                0: ["Ah, these must be from Marlin! He always sends the best catch. Thank you for"
@@ -2328,7 +2554,7 @@ NPCS = {
                            place_morning=[(10, 16)],
                            place_night=[(11, 18), "mid_house"]),
 
-    "villager fenna": Npc(name="villager fenna",
+    "villager_fenna": Npc(name="villager fenna",
                           npc_type=NpcTypes.VILLAGER,
                           messages_morning={
                               0: ["Dragons are majestic creatures, aren’t they? I wish I could see one with "
@@ -2339,7 +2565,7 @@ NPCS = {
                                   "I can’t help but dream of seeing one up close, though."]},
                           place_morning=[(11, 18), "white_house"]),
 
-    "villager garrek": Npc(name="villager garrek",
+    "villager_garrek": Npc(name="villager garrek",
                            npc_type=NpcTypes.VILLAGER,
                            messages_morning={
                                0: ["A dragon could spell disaster for our crops and livestock... I can’t sleep "
@@ -2349,7 +2575,7 @@ NPCS = {
                            place_morning=[(11, 17)],
                            place_evening=[(11, 18), "white_house"]),
 
-    "villager halden": Npc(name="villager halden",
+    "villager_halden": Npc(name="villager halden",
                            npc_type=NpcTypes.VILLAGER,
                            messages_morning={
                                0: ["A dragon, eh? Curious sight indeed. Haven’t seen one since the old tales of "
@@ -2360,7 +2586,7 @@ NPCS = {
                            place_morning=[(10, 17)],
                            place_night=[(10, 18), "tavern"]),
 
-    "villager lyria": Npc(name="villager lyria",
+    "villager_lyria": Npc(name="villager lyria",
                           npc_type=NpcTypes.VILLAGER,
                           messages_morning={
                               0: ["They say a dragon was spotted near the hills... Do you think it will come here?"]},
@@ -2370,7 +2596,7 @@ NPCS = {
                           place_morning=[(11, 18)],
                           place_evening=[(11, 18), "family_house"]),
 
-    "villager mirrel": Npc(name="villager mirrel",
+    "villager_mirrel": Npc(name="villager mirrel",
                            npc_type=NpcTypes.VILLAGER,
                            messages_morning={
                                0: ["If the rumors are true, the kingdom’s knights better step up. We need protection "
@@ -2381,7 +2607,7 @@ NPCS = {
                            place_morning=[(11, 17)],
                            place_evening=[(12, 17)]),
 
-    "villager orik": Npc(name="villager orik",
+    "villager_orik": Npc(name="villager orik",
                          npc_type=NpcTypes.VILLAGER,
                          messages_morning={
                              0: ["Bah! Dragons or not, life goes on. Let the royals deal with it. I’ve got fields "
@@ -2392,7 +2618,7 @@ NPCS = {
                          place_morning=[(11, 17)],
                          place_evening=[(11, 18), "family_house"]),
 
-    "worker gorrick": Npc(name="worker gorrick",
+    "worker_gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,
                           messages={
                               0: ["Oh, traveler, have you heard? The mayor’s daughter, Elara, has gone missing.",
@@ -2401,8 +2627,15 @@ NPCS = {
                                   "I hope I’m wrong, but we need help before it’s too late."]},
                           place=[(14, 5)]),
 
+    "whispers": Npc(name="whispers",
+                    npc_type=NpcTypes.WHISPERS,
+                    messages={0: ["Elina...", "Elina...", "...your destiny awaits.", "Follow the whispers of the wind,"
+                                                                                     " and come to me.",
+                                  "Secrets untold and challenges unknown lie ahead.",
+                                  "Trust in the unseen path...", "... come to me."]}),
+
     # Others.
-    "animal wild cat": Npc(name="animal wild cat",
+    "animal_wild_cat": Npc(name="animal wild cat",
                            npc_type=NpcTypes.ANIMAL,
                            place=[(0, 0)],
                            messages_morning={

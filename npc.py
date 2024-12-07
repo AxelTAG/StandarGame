@@ -48,6 +48,9 @@ class Npc:
     messages_night: list[int: list[str]] = field(default=None)
     answers_night: list[int: list[str]] = field(default=None)
 
+    # Listen attributes.
+    tracks: dict = field(default=None)
+
     def __attrs_post_init__(self):
         if self.buy_beds is None:
             self.buy_beds = {}
@@ -66,6 +69,10 @@ class Npc:
 
         if self.room_expirations is None:
             self.room_expirations = {}
+
+        if self.tracks is not None:
+            for key in range(0, 8):
+                self.tracks.setdefault(key, None)
 
         # Talking attributes.
         self.hist_messages = {}

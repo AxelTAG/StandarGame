@@ -49,8 +49,8 @@ def disp_battle(player: Player, enemy: Mob, text: str) -> None:
 
     slot1_quantity = str(player.inventory.items[player.slot1]) if player.has(player.slot1) else "0"
     slot2_quantity = str(player.inventory.items[player.slot2]) if player.has(player.slot2) else "0"
-    o_slot1 = "\n 2 - " + player.slot1.upper() + " [" + slot1_quantity + "]"
-    o_slot2 = "\n 3 - " + player.slot2.upper() + " [" + slot2_quantity + "]"
+    o_slot1 = "\n 2 - " + player.slot1.replace("_", " ").upper() + " [" + slot1_quantity + "]"
+    o_slot2 = "\n 3 - " + player.slot2.replace("_", " ").upper() + " [" + slot2_quantity + "]"
 
     text1 = u_name + u_hp + u_hpbar + u_atk
     text2 = e_name + e_hp + e_hpbar
@@ -126,10 +126,10 @@ def disp_play(player: Player,
               mdir: list,
               screen_text: str,
               width: int) -> None:
-    print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
-    print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
-    print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
-    print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
+    print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
+    print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
+    print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
+    print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
     t_loc = "LOCATION: " + player.place.name.upper()
     t_reg = "\n REGION: " + reg.upper()
     t_coord = "\n COORD: " + str(x) + " " + str(y)
@@ -163,6 +163,7 @@ def disp_play(player: Player,
     t_def = "\nDEFENSE:   " + str(int(player.defense))
     t_eva = "\nEVASION:   " + str(int(player.evasion * 100)) + "%"
     t_pre = "\nPRECISION: " + str(int(player.precision * 100)) + "%"
+    t_weight = "\nWEIGHT:    " + str(int(player.current_weight)) + "/" + str(int(player.weight_carry))
 
     # Text4.2 lines.
     sec_stats = " SEC. STATS:"
@@ -175,7 +176,7 @@ def disp_play(player: Player,
     text1 = t_loc + t_reg + t_coord + "\n." + t_time + t_week_day + t_month_year
     text2 = player.place.description
     text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + t_status + t_gold
-    text41 = prim_stats + t_atk + t_def + t_eva + t_pre
+    text41 = prim_stats + t_atk + t_def + t_eva + t_pre + t_weight
     text42 = sec_stats + t_str + t_res + t_agi + t_vit
     text4 = "\n".join(text_2_col(text41, text42, int(width / 2 - 2), "|", False))
     text5 = "0 - SAVE AND QUIT"
@@ -236,7 +237,7 @@ def disp_talk(place) -> str:
     if place.npc:
         msg = "You want to talk to:"
         for i, npc in enumerate(place.npc):
-            msg += "\n - " + npc.title()
+            msg += "\n - " + npc.replace("_", " ").title()
         return msg
     else:
         return "No one is here."

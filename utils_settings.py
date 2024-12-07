@@ -111,8 +111,20 @@ def init_map_setting(ms: dict):
     ms[(10, 18)].description = "Cobbled lanes weave among lively taverns and cozy inns, offering weary " \
                                "travelers respite. A symphony of laughter, music, and clinking tankards fills" \
                                " the air, creating an inviting atmosphere."
-    ms[(10, 18)].entries = {"tavern": ENTRIES["the_golden_tankard_tavern"]}
+    ms[(10, 18)].entries = {"tavern": ENTRIES["the_golden_tankard_tavern"],
+                            "inn": ENTRIES["aliras_inn"]}
     ms[(10, 18)].entries["tavern"].leave_entry = ms[(10, 18)]
+    ms[(10, 18)].entries["inn"].leave_entry = ms[(10, 18)]
+    ms[(10, 18)].entries["inn"].entries = {
+        "first_room": ENTRIES["aliras_first_room"],
+        "second_room": ENTRIES["aliras_second_room"],
+        "third_room": ENTRIES["aliras_third_room"],
+        "fourth_room": ENTRIES["aliras_fourth_room"]}
+    ms[(10, 18)].entries["inn"].entries["first_room"].leave_entry = ms[(10, 18)].entries["inn"]
+    ms[(10, 18)].entries["inn"].entries["second_room"].leave_entry = ms[(10, 18)].entries["inn"]
+    ms[(10, 18)].entries["inn"].entries["third_room"].leave_entry = ms[(10, 18)].entries["inn"]
+    ms[(10, 18)].entries["inn"].entries["fourth_room"].leave_entry = ms[(10, 18)].entries["inn"]
+
     ms[(10, 18)].name = "ANTINA'S TAVERN DISTRICT"
 
     # (11, 15)
@@ -223,7 +235,6 @@ def init_map_setting(ms: dict):
     sub_cave_2_1.entries = {"goblin_chief_bedroom": sub_cave_2_2,
                             "cave_gallery": sub_cave_3_0}
     sub_cave_2_2.entries = {"chiefs_cave": sub_cave_2_1}
-    sub_cave_2_2.npc = ["mayors daughter maisie"]
 
     sub_cave_2_3.entries = {"big_cave": sub_cave_1_2,
                             "cave_passageway_exit": sub_cave_3_1,

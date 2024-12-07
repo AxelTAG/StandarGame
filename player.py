@@ -1,5 +1,6 @@
 # Imports.
 # Local imports.
+import inventory
 from biome import Biome, Entry
 from enums import BodyPart, PlayerStatus
 from inventory import Inventory
@@ -23,8 +24,11 @@ class Player:
     exp: int = field(default=0)  # Actual experience points.
     expmax: int = field(default=10)  # Max experience points for level up.
 
+    hungry: int = field(default=100)
+    thirsty: int = field(default=100)
     status: int = field(default=PlayerStatus.WALK.value)
     poison: int = field(default=0)
+    freezing: int = field(default=0)
 
     # Player basis attributes.
     b_hpmax: int = field(default=25)
@@ -32,6 +36,7 @@ class Player:
     b_defense: int = field(default=1)
     b_evasion: float = field(default=0)
     b_precision: float = field(default=0.6)
+    b_weight_carry: float = field(default=5)
 
     # Stats attributes.
     strength: int = field(default=0)
@@ -153,7 +158,20 @@ class Player:
 
     @property
     def exploration_radius(self):
-        return self.vision + sum([item.vision for item in self.inventory.item_objects])
+        return self.vision + sum([item.vision for item in self.inventory.get_item_objects])
+
+    @property
+    def weight_carry(self):
+        return self.strength * 2.5 + self.b_weight_carry
+
+    @property
+    def current_weight(self):
+        return sum([self.inventory.get_item_object(item=item).weight * quantity
+                    for item, quantity in self.inventory.items.items()])
+
+    @property
+    def move_available(self):
+        return True if self.current_weight <= self.weight_carry else False
 
     def heal(self, amount: int) -> None:
         if self.hp + amount < self.hpmax:
@@ -221,10 +239,19 @@ class Player:
             amount = 1
         return item in self.inventory.items.keys() and self.inventory.items[item] >= amount
 
-    def add_item(self, item: str, quantity: int = 1):
+    def add_item(self, item: str, quantity: int = 1) -> None:
         if item in self.item_limits:
+            if item not in self.inventory.items:
+                if quantity >= self.item_limits[item]:
+                    self.inventory.items[item] = self.item_limits[item]
+                    return
+                else:
+                    self.inventory.items[item] = quantity
+                    return
             if self.inventory.items[item] + quantity >= self.item_limits[item]:
                 self.inventory.items[item] = self.item_limits[item]
+            else:
+                self.inventory.items[item] = quantity
         else:
             self.inventory.add_item(item=item, quantity=quantity)
     

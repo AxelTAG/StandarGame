@@ -18,6 +18,7 @@ class Item:
     precision: float = field(default=0)
     evasion: float = field(default=0)
     vision: float = field(default=0)
+    weight: float = field(default=0)
 
     body_part: BodyPart = field(default=None)
 

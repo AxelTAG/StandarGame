@@ -36,7 +36,7 @@ class Map:
     map_labels: list = field(default=None)
     map_init_settings: dict = field(default=None)
     map_settings: dict = field(default=None)
-    npcs: dict = field(default=None)
+    npcs: dict[str, Npc] = field(default=None)
     biomes: dict = field(default=None)
     entries: dict = field(default=None)
     mobs: dict = field(default=None)

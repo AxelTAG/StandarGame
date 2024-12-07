@@ -643,7 +643,7 @@ ENTRIES = {
                     "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
                     "find respite.",
         name="MIRABELLE'S INN",
-        npc=["innkeeper_mirabelle", "villager_doran"],
+        npc=["innkeeper_mirabelle"],
         entry_type=EntryType.INN),
 
     "mirabelles_main_room": Entry(
@@ -2096,6 +2096,22 @@ NPCS = {
                               answers_morning={},
                               place_morning=[(22, 18), "tower_of_eldra"]),
 
+    "bard_caelan": Npc(name="bard caelan",
+                       npc_type=NpcTypes.BARD,
+                       place=[(10, 18), "tavern"],
+                       messages_morning={
+                           0: ["Ah, greetings, traveler! I am Caelan, a humble bard. Do you seek a tale or a tune?"]},
+                       tracks={
+                           0: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           1: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           2: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           3: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           4: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           5: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           6: "./rsc/media/Echoes_of_the_Undead.mp3",
+                           7: "./rsc/media/Echoes_of_the_Undead.mp3",
+                       }),
+
     "bard_lyricus": Npc(name="bard lyricus",
                         npc_type=NpcTypes.BARD,
                         place=[(9, 5), "inn"],
@@ -2109,8 +2125,8 @@ NPCS = {
                                 "What tales might you bring to inspire the bards?"]},
                         tracks={
                             0: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
-                            1: "./rsc/media/Echoes_of_the_Undead.mp3",
-                            2: "./rsc/media/Under_Two_Moons.mp3",
+                            1: "./rsc/media/Under_Two_Moons.mp3",
+                            2: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
                             3: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
                             4: "./rsc/media/Whispers_of_the_Moons.mp3",
                             5: "./rsc/media/The_Blue_Foxs_Fortune.mp3",
@@ -2530,10 +2546,15 @@ NPCS = {
     # Villager from Epiiat.
     "villager_doran": Npc(name="villager_doran",
                           npc_type=NpcTypes.VILLAGER,
-                          messages={
+                          messages_morning={
+                              0: ["Zzzz... zzz... Zzzz...",
+                                  "Ugh... uphg...",
+                                  "Zzzz... zzz..."]},
+                          messages_night={
                               0: ["Ah, nothing like a good drink and a hot meal after a long day. The bard's song"
                                   " tonight is a fine one—fills the air with tales of heroes and lost treasures.",
-                                  "Sit and listen a while, friend. The road can wait a moment longer, can’t it?"]}),
+                                  "Sit and listen a while, friend. The road can wait a moment longer, can’t it?"]},
+                          place=[(9, 5), "inn"]),
 
     "villager_fira": Npc(name="villager fira",
                          npc_type=NpcTypes.VILLAGER,

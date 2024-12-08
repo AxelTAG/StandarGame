@@ -29,8 +29,10 @@ class Biome:
     x: int = field(default=None)
     y: int = field(default=None)
 
-    # Place climate attributes.
+    # Place climate and bioma attributes.
     temperature: int = field(default=15)
+    water: bool = field(default=False)
+    fishs: list = field(default=None)
 
     def __attrs_post_init__(self):
         if self.entries is None:

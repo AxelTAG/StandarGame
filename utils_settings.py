@@ -28,7 +28,7 @@ def init_map_setting(ms: dict):
     ms[(1, 23)].entries["hut"].leave_entry = ms[(1, 23)]
 
     # (2, 0)
-    ms[(2, 0)].mobs = ["litle slime", "slime"]
+    ms[(2, 0)].mobs = ["little slime", "slime"]
     ms[(2, 0)].mobs_chances = [20, 50]
 
     # (2, 1)

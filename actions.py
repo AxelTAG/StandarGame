@@ -19,11 +19,14 @@ import random
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 
+
 # ----------------------------------------------------------------------------------------------------
 # Utiliy functions.
-def get_item(item_name: str) -> Item:
+def get_item(item_name: str) -> Item | bool:
     if item_name in globals.ITEMS.keys():
         return globals.ITEMS[item_name]
+    else:
+        return False
 
 
 # ----------------------------------------------------------------------------------------------------
@@ -260,19 +263,61 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
     return "You have explored the area and mapped it out."
 
 
+def drink(player: Player, item: str) -> str:
+    item_name = item.replace("_", "_").title()
+    item_object = get_item(item_name=item)
+
+    if not item_object:
+        return f"You don't have {item_name}."
+
+    if item not in player.inventory.items or player.inventory.items[item] <= 0:
+        return f"You don't have {item_name}."
+
+    if not item_object.edible:
+        return f"{item_object.name} is not edible."
+
+    player.add_hungry(amount=item_object.hungry_refill)
+    player.add_thirsty(amount=item_object.thirsty_refill)
+    player.inventory.discard_item(item=item, quantity=1)
+    return f"You have eaten {item_object.name}."
+
+
 # Drop action.
 def drop(player: Player, item: str, quantity: int = 1) -> str:
     item_name = item.replace("_", " ")
-    item_object = globals.ITEMS[item]
+    item_object = get_item(item_name=item)
+
+    if not item_object:
+        return f"You don't have {item_name}."
 
     if not item_object.droppable:
         return f"You can't drop {item_object.name}."
 
     if player.inventory.drop_item(item=item, quantity=quantity):
+        player.place.items.append(item)
         return f"You drop {quantity} {item_name.title()}."
 
     else:
         return f"You don't have {quantity} {item_name}."
+
+
+def eat(player: Player, item: str) -> str:
+    item_name = item.replace("_", "_").title()
+    item_object = get_item(item_name=item)
+
+    if not item_object:
+        return f"You don't have {item_name}."
+
+    if item not in player.inventory.items or player.inventory.items[item] <= 0:
+        return f"You don't have {item_name}."
+
+    if not item_object.edible:
+        return f"{item_object.name} is not edible."
+
+    player.add_hungry(amount=item_object.hungry_refill)
+    player.add_thirsty(amount=item_object.thirsty_refill)
+    player.inventory.discard_item(item=item, quantity=1)
+    return f"You have eaten {item_object.name}."
 
 
 # Enter action.
@@ -314,16 +359,15 @@ def equip(player: Player, item: str) -> str:
     if item not in player.inventory.items.keys() or item_object is None:
         return f"You don't have {item_name}."
 
-    elif not item_object.equippable:
+    if not item_object.equippable:
         return f"You can't equip {item_object.name}."
 
-    elif player.equip[item_object.body_part] is not None:
+    if player.equip[item_object.body_part] is not None:
         return f"You already have an item equipped. UNEQUIP {item_object.body_part.name}."
 
-    else:
-        player.equip[item_object.body_part] = item_object
-        player.inventory.drop_item(item=item, quantity=1)
-        return f"You have equip {item_object.name}."
+    player.equip[item_object.body_part] = item_object
+    player.inventory.drop_item(item=item, quantity=1)
+    return f"You have equip {item_object.name}."
 
 
 # Exit action.
@@ -367,6 +411,26 @@ def explore(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
             return "You explore the zone but you found nothing."
     map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
     return f"You explore the zone but you found nothing."
+
+
+def fish(player: Player, map_game: Map, pace_factor: float = 0.3) -> str:
+    if not any([item.fishing for item in player.inventory.get_item_objects]):
+        return "You need a fishingpole to fish."
+
+    if not player.place.water:
+        return "You cannot fish here."
+
+    probability = 0.95 if player.place.name is not "SEA" else 0.99
+    if random.random() > probability:
+        fish_caught = random.choices(player.place.fishs, k=1)[0]
+        fish_caught_name = fish_caught.replace("_", " ").title()
+        player.add_item(item=fish_caught, quantity=1)
+        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+        return f"You have caught a {fish_caught_name}."
+
+    else:
+        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+        return "You haven't caught anything."
 
 
 # Heal action.

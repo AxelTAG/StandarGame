@@ -1,10 +1,8 @@
 # Imports.
 # Locals imports.
-import time
-
 import globals
 from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
-    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map, craft, listen
+    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map, craft, listen, eat, drink, fish
 from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
                       disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
@@ -12,13 +10,14 @@ from management import event_handler, map_control_handling, save
 from map import Map
 from player import Player
 from utils import (import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
-                   find_full_name, get_hash)
+                   find_full_name, get_hash, reset_map)
 
 # External imports.
 import copy
 import matplotlib.pyplot as plt
 import os
 import random
+import time
 from datetime import datetime
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -235,7 +234,30 @@ while run:
                              map_game=map_game)
 
         if not (map_game.get_hours == hours):
+            # Map refresh.
             map_game.refresh_npcs()
+
+            # Player status refresh.
+            player.refresh_status()
+            player.refresh_hungry(hour=map_game.get_hours, last_hour=hours)
+            player.refresh_thirsty(hour=map_game.get_hours, last_hour=hours)
+
+        # Setting reinit.
+        if player.hp <= 0:
+            play = False
+            menu = True
+            player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
+            player.status = 0
+            player.poison = 0
+            player.hungry = 48
+            player.thirsty = 48
+            player.exp = 0
+            reset_map(ms=map_game.map_settings, keys=[(2, 1), (6, 2)])
+            print()
+            print("    YOU HAVE DIED")
+            print("    GAME OVER")
+            input("     > ")
+
         hours = map_game.get_hours
 
         if action[0] != "listen":
@@ -259,9 +281,6 @@ while run:
                     save(player=player,
                          map_game=map_game,
                          time_init=time_init)
-
-            # Player status refresh.
-            player.refresh_status()
 
         if play:
             # Draw of general stats.
@@ -347,13 +366,24 @@ while run:
                     screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                place = map_game.map_settings[(22, 18)].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]
-                if player.place == place:
+                tower_of_eldra = map_game.map_settings[(22, 18)].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]
+                tower_of_karun = map_game.map_settings[(2, 12)].entries["tower"].entries["second_floor"]
+                if player.place == tower_of_eldra:
+                    exploration_radius = 10
+                elif player.place == tower_of_karun:
                     exploration_radius = 10
                 else:
                     exploration_radius = player.exploration_radius
 
                 screen = draw_map(player=player, map_game=map_game, exploration_radius=exploration_radius)
+
+            elif action[0] == "drink":
+                item = "_".join(action[1:])
+                if len(action) == 1:
+                    screen = "DRINK ITEM to eat something."
+                else:
+                    screen = drink(player=player, item=item)
+                    standing = False
 
             elif action[0] == "drop":  # Drop action.
                 try:  # Converting input in proper clases and form.
@@ -366,6 +396,14 @@ while run:
                     screen = disp_drop()  # Printing drop instructions.
                 except IndexError:
                     screen = disp_drop()  # Printing drop instructions.
+
+            elif action[0] == "eat":
+                item = "_".join(action[1:])
+                if len(action) == 1:
+                    screen = "EAT ITEM to eat something."
+                else:
+                    screen = eat(player=player, item=item)
+                    standing = False
 
             elif action[0] == "enter":  # Enter action.
                 if len(action) <= 2:
@@ -392,6 +430,10 @@ while run:
             elif action[0] == "explore":  # Explore action:
                 screen = explore(player=player, map_game=map_game)
                 standing = False if player.outside else True
+
+            elif action[0] == "fish":
+                screen = fish(player=player, map_game=map_game)
+                standing = False
 
             elif action[0] == "land":  # Land action.
                 screen = land(player=player, map_game=map_game)
@@ -509,68 +551,6 @@ while run:
                     else:
                         screen = f"{action[2].title()} is not a time of day."
                         standing = True
-
-            # --------------------------------------------------------------------------------------------------------
-
-            # # Admin commands.
-            elif action[0] == "estimate":  # Estimate date.
-                screen = f"{map_game.estimate_date(days=int(action[1]))}"
-                standing = True
-
-            elif action[0] == "calendar":  # Calendar.
-                screen = f"{map_game.day, map_game.month, map_game.year}"
-                standing = True
-
-            elif action[0] == "teleport":
-                player.x = int(action[1])
-                player.y = int(action[2])
-                player.place = map_game.map_settings[(player.x, player.y)]
-                standing = True
-                screen = "You teleported to " + str(player.x) + " " + str(player.y) + "."
-
-            elif action == ["time", "played"]:
-                player.refresh_time_played(datetime.now(), time_init)
-                screen = str(player.time_played)
-
-            elif action == ["map_set"]:
-                for i in range(len(map_game.map_settings)):
-                    for j in range(len(map_game.map_labels[i])):
-                        key = (j, i)
-                        print(key, map_game.map_settings[key].name, map_game.map_settings[key].description)
-
-            elif action == ["lvl", "up"]:
-                player.lvl_up()
-
-            elif action[:2] == ["add", "item"]:
-                quantity = 1 if len(action) == 3 else int(action[3])
-                player.add_item(item=action[2], quantity=quantity)
-
-            elif action == ["events"]:
-                screen = f"{player.events}"
-
-            elif action == ["place"]:
-                screen = f"{player.place.name, player.last_place.name, player.last_entry.name}"
-
-            elif action == ["place", "coord", "2"]:
-                screen = f"{player.place.x, player.place.y}"
-
-            elif action == ["var"]:
-                screen = f"{locals().get('caravan_date_arrive')}"
-
-            elif action == ["date"]:
-                screen = f"{map_game.current_date}"
-
-            elif action[:2] == ["is", "major"]:
-                screen = f"{map_game.is_major_date(map_game.current_date, map_game.estimate_date(int(action[2])))}"
-
-            elif action == ["marlin", "hist"]:
-                screen = f"{map_game.npcs['fisherman marlin'].hist_messages}"
-
-            elif action == ["last", "hour"]:
-                screen = f"{map_game.last_hour, map_game.hour}"
-
-            elif action[0] == "craft":
-                screen = craft(player=player, item="_".join(action[1:]))
 
             else:
                 standing = True

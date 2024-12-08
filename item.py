@@ -27,7 +27,10 @@ class Item:
     consumable: bool = field(default=False)
     equippable: bool = field(default=False)
     droppable: bool = field(default=True)
+    edible: bool = field(default=False)
+    drinkable: bool = field(default=False)
     expiration: int | None = field(default=None)
+    fishing: bool = field(default=False)
 
     # Buy/Sell prices.
     buy_price: int = field(default=None)
@@ -43,6 +46,10 @@ class Item:
 
     # Crafting attributes.
     crafting_materials: dict = field(default=None)
+
+    # Eating and drinking attributes.
+    hungry_refill: int = field(default=0)
+    thirsty_refill: int = field(default=0)
 
     def __attrs_post_init__(self):
         pass

@@ -191,6 +191,12 @@ class Player:
         if self.poison > 0:
             self.hp -= self.poison
 
+        if self.hungry < 10:
+            self.hp -= 1
+
+        if self.thirsty < 10:
+            self.hp -= 1
+
     def equip_item(self, item: Item) -> None:
         if item.equippable and self.equip[item.body_part] is None:
             self.equip[item.body_part] = item
@@ -254,4 +260,27 @@ class Player:
                 self.inventory.items[item] = quantity
         else:
             self.inventory.add_item(item=item, quantity=quantity)
-    
+
+    def refresh_hungry(self, hour: int, last_hour: int) -> None:
+        if self.hungry > 0:
+            self.hungry -= hour - last_hour
+        else:
+            self.hungry = 0
+
+    def refresh_thirsty(self, hour: int, last_hour: int) -> None:
+        if self.thirsty > 0:
+            self.thirsty -= (hour - last_hour) // 2
+        else:
+            self.thirsty = 0
+
+    def add_hungry(self, amount: int) -> None:
+        if self.hungry + amount > 100:
+            self.hungry = 100
+        else:
+            self.hungry += amount
+
+    def add_thirsty(self, amount: int) -> None:
+        if self.thirsty + amount > 100:
+            self.thirsty = 100
+        else:
+            self.thirsty += amount

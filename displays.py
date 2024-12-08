@@ -144,10 +144,16 @@ def disp_play(player: Player,
     t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
 
     # Status text.
+    t_status_types = []
     if player.poison > 0:
-        t_status = "\nSTATUS: POISONED [" + str(player.poison) + "]"
-    else:
-        t_status = "\nSTATUS: HEALTHY"
+        t_status_types.append(f"POISONED [{player.poison}]")
+    if player.hungry <= 10:
+        t_status_types.append(f"HUNGRY")
+    if player.thirsty <= 10:
+        t_status_types.append(f"THIRSTY")
+    if not t_status_types:
+        t_status_types.append(f"HEALTHY")
+    t_status = f"\nSTATUS: {' '.join(t_status_types)}"
 
     # Belt items.
     slot1_quantity = str(player.inventory.items[player.slot1]) if player.has(player.slot1) else "0"

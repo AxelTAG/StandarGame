@@ -9,8 +9,7 @@ from enums import TimeOfDay
 from management import event_handler, map_control_handling, save
 from map import Map
 from player import Player
-from utils import (import_player, import_settings, draw_move, load_dict_from_txt, clear, check_name,
-                   find_full_name, get_hash, reset_map)
+from utils import import_player, draw_move, load_dict_from_txt, clear, check_name, find_full_name, get_hash, reset_map
 
 # External imports.
 import copy
@@ -185,14 +184,13 @@ while run:
                 print(" < LOAD GAME >")
                 print()
 
+                load_hash = load_dict_from_txt("cfg_hash.txt")
+                if not get_hash("cfg_save.pkl") == load_hash["hash"]:
+                    raise OSError
+
                 # Loading inventory, user stats and map settings.
                 player = import_player("cfg_save.pkl")
                 map_game = import_player("cfg_map.pkl")
-                load_setting = import_settings("cfg_setting.pkl")
-                load_hash = load_dict_from_txt("cfg_hash.txt")
-                if get_hash("cfg_save.pkl") != load_hash["hash"]:
-                    raise OSError
-
                 player.place = map_game.map_settings[(player.x, player.y)]
                 player.outside = True
 
@@ -551,6 +549,10 @@ while run:
                     else:
                         screen = f"{action[2].title()} is not a time of day."
                         standing = True
+
+            elif action == ["udpate", "game"]:
+
+                screen = "Game is updated."
 
             else:
                 standing = True

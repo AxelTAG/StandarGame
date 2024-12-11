@@ -269,7 +269,7 @@ BIOMES = {
         pace=10,
         water=True,
         fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
-             "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
+               "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
         status=[PlayerStatus.SURF.value]),
 
     "snow": Biome(
@@ -1130,6 +1130,20 @@ ITEMS = {
                  hungry_refill=5,
                  thirsty_refill=20),
 
+    "boar_tusk": Item(name="Boar Tusk",
+                      description="Curved and sturdy, used for crafting or as a symbol of primal strength.",
+                      weight=0.2,
+                      pickable=True,
+                      buy_price=15,
+                      sell_price=10),
+
+    "bones": Item(name="Bones",
+                  description="Brittle remains of the fallen, useful for crafting or as a grim reminder of mortality.",
+                  weight=0.5,
+                  pickable=True,
+                  buy_price=15,
+                  sell_price=10),
+
     "bread": Item(name="Bread",
                   description="A crusty loaf of bread, filling and freshly baked for hungry travelers.",
                   attack=0,
@@ -1230,15 +1244,15 @@ ITEMS = {
                      thirsty_refill=10),
 
     "fish_sabalo": Item(name="Fish Sabalo",
-                         description="A plump, silvery catch, prized for its rich flavor and hearty nourishment.",
-                         weight=0.5,
-                         pickable=True,
-                         consumable=True,
-                         edible=True,
-                         buy_price=20,
-                         sell_price=15,
-                         hungry_refill=20,
-                         thirsty_refill=3),
+                        description="A plump, silvery catch, prized for its rich flavor and hearty nourishment.",
+                        weight=0.5,
+                        pickable=True,
+                        consumable=True,
+                        edible=True,
+                        buy_price=20,
+                        sell_price=15,
+                        hungry_refill=20,
+                        thirsty_refill=3),
 
     "fish_sardine": Item(name="Fish Sardine",
                          description="A small silvery fish, popular among anglers and vital to the marine ecosystem.",
@@ -1339,6 +1353,14 @@ ITEMS = {
                               buy_price=2,
                               sell_price=2),
 
+    "poison_gland": Item(name="Poison Gland",
+                         description="A toxic organ, harvested to craft potent poisons or deadly alchemical "
+                                     "concoctions.",
+                         weight=0.3,
+                         pickable=True,
+                         buy_price=20,
+                         sell_price=15),
+
     "red_potion": Item(name="Red Potion",
                        description="A standard red potion to restore health during battle.",
                        weight=0.3,
@@ -1352,6 +1374,14 @@ ITEMS = {
                        expiration=None,
                        buy_price=5,
                        sell_price=5),
+
+    "rotten_flesh": Item(name="Boar Tusk",
+                         description="Decayed and foul, a remnant of the cursed, unsuitable for consumption but "
+                                     "oddly useful.",
+                         weight=0.5,
+                         pickable=True,
+                         buy_price=15,
+                         sell_price=10),
 
     "slime_balls": Item(name="Slime Balls",
                         description="Gooey remnants of a defeated slime. Maybe useful, but hard to tell.",
@@ -1393,6 +1423,20 @@ ITEMS = {
                   sell_price=1,
                   hungry_refill=0,
                   thirsty_refill=40),
+
+    "wolf_claw": Item(name="Boar Tusk",
+                      description="Sharp and deadly, a prized material for weapons or a trophy of a fierce hunt.",
+                      weight=0.2,
+                      pickable=True,
+                      buy_price=15,
+                      sell_price=10),
+
+    "wolf_fur": Item(name="Boar Tusk",
+                     description="Thick and warm, ideal for crafting durable garments or insulating against harsh cold.",
+                     weight=5,
+                     pickable=True,
+                     buy_price=30,
+                     sell_price=25),
 
     # Usable items
     "explorer_telescope": Item(name="Explorer Telescope",
@@ -1595,8 +1639,8 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=40,
-        items={"gold": 15, "red_potion": 1, "none": None},
-        items_drop_chances=[0.5, 0.7, 1],
+        items={"gold": 15, "red_potion": 1, "antidote": 1, "none": None},
+        items_drop_chances=[0.5, 0.7, 0.8, 1],
         experience=4
     ),
     "basilisk": Mob(
@@ -1629,8 +1673,8 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=40,
-        items={"gold": 20, "red_potion": 1, "wood_shield": 1, "none": None},
-        items_drop_chances=[0.5, 0.6, 0.65, 1],
+        items={"gold": 20, "red_potion": 1, "wood_shield": 1, "antidote": 1, "none": None},
+        items_drop_chances=[0.5, 0.6, 0.65, 0.75, 1],
         experience=6
     ),
 
@@ -1663,7 +1707,7 @@ MOBS = {
         critical_coeficient=1.7,
         critical_chance=20,
         poison=3,
-        poison_chance=60,
+        poison_chance=30,
         escape_chance=50,
         items={"none": None},
         items_drop_chances=[1],
@@ -1735,8 +1779,8 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=45,
-        items={"gold": 5, "little_red_potion": 1, "red_potion": 1, "none": None},
-        items_drop_chances=[0.5, 0.7, 0.75, 1],
+        items={"gold": 5, "little_red_potion": 1, "red_potion": 1, "antidote": 1, "none": None},
+        items_drop_chances=[0.5, 0.7, 0.75, 0.8, 1],
         experience=3,
     ),
 
@@ -1771,8 +1815,8 @@ MOBS = {
         poison=2,
         poison_chance=40,
         escape_chance=50,
-        items={"gold": 10, "little_red_potion": 1, "bone_sword": 1, "bone_shield": 1, "none": None},
-        items_drop_chances=[0.5, 0.6, 0.7, 0.8, 1],
+        items={"gold": 10, "little_red_potion": 1, "bone_sword": 1, "bone_shield": 1, "antidote": 1, "none": None},
+        items_drop_chances=[0.5, 0.6, 0.7, 0.75, 0.8, 1],
         experience=4,
     ),
 
@@ -1841,7 +1885,7 @@ MOBS = {
         critical_coeficient=1.2,
         critical_chance=30,
         poison=1,
-        poison_chance=40,
+        poison_chance=30,
         escape_chance=50,
         items={"slime_balls": 2, "none": None},
         items_drop_chances=[0.4, 1],
@@ -1858,7 +1902,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.4,
         critical_chance=15,
-        poison=5,
+        poison=2,
         poison_chance=50,
         escape_chance=25,
         items={"giant_silk": 1, "poison_gland": 1, "none": None},
@@ -1933,8 +1977,8 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=0,
-        items={"gold": 20, "red_potion": 1, "none": None},
-        items_drop_chances=[0.5, 0.7, 1],
+        items={"gold": 20, "red_potion": 1, "antidote": 1, "none": None},
+        items_drop_chances=[0.5, 0.7, 0.8, 1],
         experience=5,
     ),
 

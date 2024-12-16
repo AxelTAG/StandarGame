@@ -222,7 +222,7 @@ def disp_play(player: Player,
 
 # Show inventory display.
 def disp_show_inventory(player: Player):
-    items = [(item, quantity) for item, quantity in player.inventory.items.items() if not player.inventory.items[item] <= 0]
+    items = [(item, quantity) for item, quantity in player.inventory.items.items()]
     text = "INVENTORY:"
     for item, quantity in items:
         text += "\n - " + item.replace("_", " ").title() + ": " + str(quantity)

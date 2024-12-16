@@ -81,6 +81,7 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
                 ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(player.defense)), 0)
                 player.hp -= ENEMY_DMG
                 screen += "\n " + enemy.name + " dealt " + str(ENEMY_DMG) + " damage to " + player.name + "."
+
                 if enemy.poison > 0 and enemy.poison_chance > random.random() and player.poison == 0:
                     player.poison = enemy.poison
                     screen += "\n " + enemy.name + " has poisoned you."
@@ -100,6 +101,9 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
             menu = True
             player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
             player.status = 0
+            player.poison = 0
+            player.hungry = 48
+            player.thirsty = 48
             player.exp = 0
             reset_map(ms=map_game.map_settings, keys=[(2, 1), (6, 2)])
 
@@ -279,7 +283,7 @@ def drink(player: Player, item: str) -> str:
     player.add_hungry(amount=item_object.hungry_refill)
     player.add_thirsty(amount=item_object.thirsty_refill)
     player.inventory.discard_item(item=item, quantity=1)
-    return f"You have eaten {item_object.name}."
+    return f"You have drunk {item_object.name}."
 
 
 # Drop action.
@@ -420,7 +424,7 @@ def fish(player: Player, map_game: Map, pace_factor: float = 0.3) -> str:
     if not player.place.water:
         return "You cannot fish here."
 
-    probability = 0.95 if player.place.name is not "SEA" else 0.99
+    probability = 0.95 if player.place.name != "SEA" else 0.99
     if random.random() > probability:
         fish_caught = random.choices(player.place.fishs, k=1)[0]
         fish_caught_name = fish_caught.replace("_", " ").title()
@@ -586,7 +590,7 @@ def sell(player: Player, item: str, quantity: int, price: int) -> str:
     item_name = item.replace("_", " ").title()
     try:
         if items[item] >= quantity:
-            items[item] -= quantity
+            player.inventory.discard_item(item=item, quantity=quantity)
             inventory.gold += quantity * price
             return f"You sell {quantity} {item_name}. You earn {quantity * price} gold."
 
@@ -641,13 +645,12 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
 
                     for item, value in npc.buy_items.items():
                         item_name = item.replace("_", " ").title()
-                        if item != "quit":
-                            print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold.")
-                        else:
-                            print(f"{' ' * 6}{n + 1}) {item_name}")
+                        print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold.")
                         items.append(item)
                         prices.append(value)
                         n += 1
+
+                    print(f"{' ' * 6}{n + 1}) Quit.")
                     print()
                     print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
 
@@ -688,13 +691,13 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
 
                         line_text = text_ljust(msg=f"{n + 1}) {item_object.name} x {item_object.sell_price} gold.",
                                                width=30)
-                        print(f"{' ' * 6}{line_text[0]}[{player.inventory.items[item]}]")
+                        print(f"{' ' * 6}{line_text[0]} [{player.inventory.items[item]}]")
 
                         items.append(item)
                         prices.append(item_object.sell_price)
                         n += 1
+
                     print(f"{' ' * 6}{n + 1}) Quit.")
-                    items.append("quit")
                     print()
                     print(f"{' ' * 6}GOLD: {player.inventory.gold}.\n")
 
@@ -703,7 +706,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                             item = int(input(f"{' ' * 4}# ")) - 1
                             if 0 <= item < len(items):
                                 item_name = items[item].replace("_", " ").title()
-                                if item >= len(items) - 1:  # Quit condition.
+                                if item >= len(items):  # Quit condition.
                                     break
                                 print()
                                 print(f"{' ' * 4}How many {item_name} do you want to sell?")
@@ -732,14 +735,12 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                     n = 0
                     for item, value in npc.buy_beds.items():
                         item_name = item.replace("_", " ").title()
-                        if item != "quit":
-                            print(f"{' ' * 6}{n + 1}) {item_name} x {value[0]} gold.")
-
-                        else:
-                            print(f"{' ' * 6}{n + 1}) {item_name}")
+                        print(f"{' ' * 6}{n + 1}) {item_name} x {value[0]} gold.")
                         items.append(value[1])
                         prices.append(value[0])
                         n += 1
+
+                    print(f"      {n + 1}) Quit.")
                     print()
                     print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
 
@@ -747,7 +748,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                         try:
                             item = int(input(f"{' ' * 4}# ")) - 1
                             if 0 <= item < len(items):
-                                if item >= len(items) - 1:  # Quit condition.
+                                if item >= len(items):  # Quit condition.
                                     break
 
                                 transaction, transaction_status = buy(player=player,
@@ -776,22 +777,20 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                     n = 0
                     for item, value in npc.buy_items.items():
                         item_name = item.replace("_", " ").title()
-                        if item != "quit":
-                            print(f"{' ' * 6}{n + 1}) {item_name}  x {value} gold.")
-
-                        else:
-                            print(f"{' ' * 6}{n + 1}) {item_name}")
+                        print(f"{' ' * 6}{n + 1}) {item_name}  x {value} gold.")
                         items.append(item)
                         prices.append(value)
                         n += 1
+
+                    print(f"      {n + 1}) Quit.")
                     print()
                     print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
 
                     while True:
                         try:
-                            item = int(input(f"{' ' * 4}'# '")) - 1
+                            item = int(input(f"{' ' * 4}# ")) - 1
                             if 0 <= item < len(items):
-                                if item >= len(items) - 1:  # Quit condition.
+                                if item >= len(items):  # Quit condition.
                                     break
                                 print()
                                 item_name = items[item].replace('_', ' ').title()
@@ -825,13 +824,11 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                     for item, value in npc.crafting_items.items():
                         item_object = globals.ITEMS[item]
                         item_name = item.replace("_", " ").title()
-
-                        print(
-                            f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
-
+                        print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
                         items.append(item)
                         prices.append(value)
                         n += 1
+
                     print(f"      {n + 1}) Quit.")
                     print()
                     print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")

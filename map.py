@@ -207,7 +207,7 @@ class Map:
             neighbors.append(self.map_settings[(x - 1, y)])
         return neighbors
 
-    def check_room_expiration(self, player: Player, npc: Npc) -> iter:
+    def check_room_expiration(self, player: Player, npc: str) -> iter:
         for item, date in self.npcs[npc].room_expirations.items():
             if item in player.inventory.items.keys():
                 if self.is_major_date(date, self.current_date):

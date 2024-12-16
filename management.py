@@ -1,5 +1,6 @@
 # Imports.
 # Local imports.
+import globals
 from actions import battle, talk
 from displays import disp_talk_tw
 from enums import NpcTypes
@@ -19,7 +20,10 @@ def event_handler(player: Player,
                   map_game: Map,
                   time_init: datetime) -> tuple[int, int]:
     # Event of Goblin Chief (1/3).
-    if player.place == ENTRIES["sub_cave_2_2"] and not player.events["goblin_chief_crown_1"]:
+    goblin_chiefs_bedroom = map_game.place_from_list([(13, 0), "cave_entrance", "cave_pit", "cave_basin",
+                                                      "cave_gallery", "chiefs_cave", "goblin_chief_bedroom"])
+
+    if player.place == goblin_chiefs_bedroom and not player.events["goblin_chief_crown_1"]:
         talk(npc=map_game.npcs["goblin_griznuk"], player=player, map_game=map_game)
 
         play, menu, win = battle(player=player, enemy=copy.deepcopy(MOBS["goblin chief"]), map_game=map_game)
@@ -394,6 +398,7 @@ def map_control_handling(player: Player,
                              message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
                                       "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to rent "
                                       "it again if you plan on staying longer."])
+                del map_game.npcs[npc].room_expirations[key]
 
     # Sailor Kael detention.
     if "sailor_kael" in player.place.npc and player.place == map_game.map_settings[(27, 15)].entries["thornes_ship"]:
@@ -427,3 +432,22 @@ def save(player: Player,
 
     # Hash saving (export to dict).
     export_dict_to_txt(dictionary={"hash": get_hash(path_usavepkl)}, file_path=path_hsave)
+
+
+def update(player: Player, map_game: Map, option: str) -> tuple[str, Player, Map]:
+    """
+    Updates class Player and class Map.
+
+    :param player:
+    :param map_game:
+    :return:
+    """
+    if option == "map_npcs":
+        map_game.npcs = globals.NPCS.copy()
+        return "Update succesfully.", player, map_game
+
+    if option == "map_mobs":
+        map_game.mobs = globals.MOBS.copy()
+        return "Update succesfully.", player, map_game
+
+    return "Nothing done.", player, map_game

@@ -6,7 +6,7 @@ from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait,
 from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
                       disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
-from management import event_handler, map_control_handling, save
+from management import event_handler, map_control_handling, save, update
 from map import Map
 from player import Player
 from utils import import_player, draw_move, load_dict_from_txt, clear, check_name, find_full_name, get_hash, reset_map
@@ -372,7 +372,7 @@ while run:
                     exploration_radius = 10
                 else:
                     exploration_radius = player.exploration_radius
-
+                standing = False
                 screen = draw_map(player=player, map_game=map_game, exploration_radius=exploration_radius)
 
             elif action[0] == "drink":
@@ -550,9 +550,20 @@ while run:
                         screen = f"{action[2].title()} is not a time of day."
                         standing = True
 
-            elif action == ["udpate", "game"]:
+            # --- admin commans.
 
-                screen = "Game is updated."
+            elif action[0] == "events":
+                screen = f"{player.events}"
+
+            elif action[0] == "estimate":
+                screen = f"{map_game.estimate_date(days=int(action[1]))}"
+
+            elif action[0] == "update":
+                opt = "_".join(action[1:])
+                screen, player, map_game = update(player=player, map_game=map_game, option=opt)
+
+            elif action[0] == "innkeepers_exp":
+                screen = f"{map_game.npcs['innkeeper_mirabelle'].room_expirations}"
 
             else:
                 standing = True

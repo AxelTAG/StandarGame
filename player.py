@@ -149,8 +149,8 @@ class Player:
 
     @property
     def precision(self) -> float:
-        item_evasion_sum = sum(item.precision for item in self.equip.values() if item is Item)
-        return self.b_precision + self.agility * self.precision_factor + item_evasion_sum
+        item_precision_sum = sum(item.precision for item in self.equip.values() if isinstance(item, Item))
+        return self.b_precision + self.agility * self.precision_factor + item_precision_sum
 
     @property
     def hpmax(self) -> int:

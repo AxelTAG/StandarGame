@@ -565,5 +565,8 @@ while run:
             elif action[0] == "innkeepers_exp":
                 screen = f"{map_game.npcs['innkeeper_mirabelle'].room_expirations}"
 
+            elif action[0] == "precision":
+                screen = f"{player.precision}"
+
             else:
                 standing = True

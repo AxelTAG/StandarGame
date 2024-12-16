@@ -398,6 +398,8 @@ def map_control_handling(player: Player,
                              message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
                                       "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to rent "
                                       "it again if you plan on staying longer."])
+
+            for key in expirated_room_keys:
                 del map_game.npcs[npc].room_expirations[key]
 
     # Sailor Kael detention.

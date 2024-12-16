@@ -73,7 +73,7 @@ def event_handler(player: Player,
         player.events["goblin_chief_crown_2"] = True
 
     # Event of Goblin Chief (3/3).
-    if (player.events["goblin_chief_crown_2"] and map_game.npcs["mayorthorian"].hist_messages[0]
+    if (player.events["goblin_chief_crown_2"] and map_game.npcs["mayor_thorian"].hist_messages[0]
             and not player.events["goblin_chief_crown_3"]):
         map_game.npcs["mayor_thorian"].messages = {
             0: ["It’s rare to find such selfless bravery in these dark times. Thanks to you, my daughter is "

@@ -1,8 +1,8 @@
 # Imports.
 # Locals imports.
 import globals
-from actions import drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, \
-    unequip, use, use_boat, check, get_item, exit_entry, look_around, draw_map, craft, listen, eat, drink, fish
+from actions import (drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, unequip,
+                     use, use_boat, check, get_item, exit_entry, look_around, draw_map, listen, eat, drink, fish)
 from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
                       disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
@@ -440,7 +440,7 @@ while run:
             elif action[0] == "listen":  # Listen action.
                 entities = player.place.npc + player.place.items
                 entitie_name = find_full_name(partial_name=" ".join(action[2:]).lower(), names_list=entities)
-                if len(action) <= 1:
+                if len(action) <= 2:
                     screen = "What do you want to listen? LISTEN TO something."
                 else:
                     screen = listen(player=player, map_game=map_game, entitie=entitie_name)

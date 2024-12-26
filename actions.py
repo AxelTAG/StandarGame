@@ -125,14 +125,14 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
                                                      k=drop_quantity)))
 
                 for item in drop_items:
+                    if item == "none":
+                        continue
                     if item == "gold":
-                        player.inventory.gold += enemy.items[item]
+                        player.add_item(item="gold", quantity=enemy.items[item])
                         screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."
-                    elif item != "none" and item in player.inventory.items.keys():
-                        player.inventory.items[item] += enemy.items[item]
+                    else:
+                        player.add_item(item=item, quantity=enemy.items[item])
                         screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."
-                    elif item != "none":
-                        player.inventory.items[item] = enemy.items[item]
 
             screen += "\n You have gained " + str(enemy.experience) + " experience."
 
@@ -472,6 +472,9 @@ def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
 
 def listen(player: Player, map_game: Map, entitie: str) -> str:
     entitie_name = entitie.replace("_", " ").title()
+    if entitie_name == "":
+        return "You need to specify a name/thing."
+
     if entitie in player.place.items:
         track = globals.ITEMS[entitie].tracks[map_game.current_week_day]
         if track is not None:

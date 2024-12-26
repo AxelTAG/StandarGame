@@ -501,7 +501,7 @@ while run:
                         standing = True
 
             elif action[0] == "talk":  # Talk action.
-                npc_name = find_full_name(partial_name=" ".join(action[2:]).lower(), names_list=player.place.npc)
+                npc_name = find_full_name(partial_name="_".join(action[2:]).lower(), names_list=player.place.npc)
 
                 if len(action) <= 2:
                     screen = disp_talk(player.place)

@@ -146,6 +146,10 @@ def export_settings(setting: object, path: str) -> None:
 
 
 def find_full_name(partial_name: str, names_list: list) -> str | None:
+    for name in names_list:
+        if name == partial_name:
+            return partial_name
+
     matching_names = [name for name in names_list if partial_name.lower() in name.lower()]
 
     if len(matching_names) != 1:

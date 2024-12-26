@@ -253,7 +253,7 @@ def init_map_setting(ms: dict):
                             "goblin_dining_gallery": sub_cave_3_2,
                             "cave_passageway_entrance": sub_cave_2_3}
     sub_cave_3_2.entries = {"cave_passageway_entrance": sub_cave_2_3,
-                            "goblin_dining_gallery": sub_cave_3_2}
+                            "cave_passageway_exit": sub_cave_3_1}
     sub_cave_4_0.entries = {"cave_passageway_exit": sub_cave_3_1,
                             "surface": ms[(19, 0)]}
 

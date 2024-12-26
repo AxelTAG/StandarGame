@@ -412,7 +412,7 @@ ENTRIES = {
     "sub_cave_2_3": Entry(
         description="Cave passage, narrow and winding, with jagged walls and low ceilings. The air is damp, filled "
                     "with the faint sound of scurrying feet and the occasional echo of distant growls.",
-        name="CAVE PASSAGE ENTRANCE",
+        name="CAVE PASSAGEWAY ENTRANCE",
         entry_type=EntryType.CAVE,
         fight=True,
         mobs=["goblin", "goblin war"],
@@ -440,7 +440,7 @@ ENTRIES = {
     "sub_cave_3_1": Entry(
         description="Cave passage, narrow and winding, with jagged walls and low ceilings. The air is damp, filled "
                     "with the faint sound of scurrying feet and the occasional echo of distant growls.",
-        name="CAVE PASSAGE EXIT",
+        name="CAVE PASSAGEWAY EXIT",
         entry_type=EntryType.CAVE,
         fight=True,
         mobs=["goblin", "goblin war"],

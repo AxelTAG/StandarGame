@@ -93,9 +93,12 @@ class Player:
             self.inventory = Inventory()
 
         if self.item_limits is None:
-            self.item_limits = {"little_red_potion": 5,
-                                "red_potion": 5,
-                                "giant_red_potion": 5}
+            self.item_limits = {
+                "little_red_potion": 5,
+                "red_potion": 5,
+                "giant_red_potion": 5,
+                "antidote": 10
+            }
 
         if self.map is None:
             self.map = np.zeros(shape=(32, 32, 4), dtype=np.uint8)

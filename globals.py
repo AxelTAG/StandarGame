@@ -2810,7 +2810,7 @@ NPCS = {
     "worker_gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,
                           messages={
-                              0: ["Oh, traveler, have you heard? The mayor’s daughter, Elara, has gone missing.",
+                              0: ["Oh, traveler, have you heard? The mayor’s daughter, Maisie, has gone missing.",
                                   "Some say she wandered too far, but I fear the worst... The goblins have been "
                                   "lurking near the forest caves lately. It’s possible they’ve taken her. ",
                                   "I hope I’m wrong, but we need help before it’s too late."]},

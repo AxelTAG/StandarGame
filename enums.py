@@ -3,7 +3,6 @@
 from enum import Enum, auto
 
 
-# Body parts.
 class BodyPart(Enum):
     HEAD = 0
     CHEST = 1
@@ -47,7 +46,11 @@ class EntryType(Enum):
     POTION_SHOP = 31
 
 
-# Items.
+class FirstMessages(Enum):
+    MSG1 = "Nothing done yet."
+    MSG2 = "Waiting for commands."
+
+
 class Items(Enum):
     RED_POTION = auto()
     LITLE_RED_POTION = auto()

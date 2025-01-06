@@ -280,7 +280,9 @@ def init_map_setting(ms: dict):
     # (22, 1)
     ms[(22, 1)].description = "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the" \
                               " forest stands as a silent witness to nature's reclamation."
-    ms[(22, 1)].name = "DARK FOREST"
+    ms[(22, 1)].name = "FOREST"
+    ms[(22, 1)].entries = {"hut": ENTRIES["hut_22_1"]}
+    ms[(22, 1)].entries["hut"].leave_entry = ms[(22, 1)]
 
     # (22, 18)
     first_floor = ENTRIES["tower_of_eldra_floor_1"]

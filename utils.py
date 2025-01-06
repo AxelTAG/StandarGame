@@ -244,7 +244,7 @@ def import_settings(path: str):
         return pickle.load(archivo)
 
 
-# Functions that returns tile map of a image, depending de colors.
+# Functions that returns tile map of an image, depend on colors.
 def label_pixels(img_path: str) -> list:
     # Open the image.
     img = Image.open(img_path, mode="r")

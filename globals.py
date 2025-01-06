@@ -10,6 +10,9 @@ from npc import Npc
 WIDTH = 92
 HEIGHT = 32
 
+#Music settings.
+MUSIC_VOLUME = 0.5
+
 # Patron.
 PATRON = [" / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  ", " / /\  ", "/ /\ \ ", "\ \/ / ", " \/ /  "]
 
@@ -109,8 +112,8 @@ BIOMES = {
         description="Thick trees, vibrant flora, wildlife, hidden trails, and lurking danger in this treacherous "
                     "forest realm.",
         fight=True,
-        mobs=["bandit", "spectral foxshade", "poison spider"],
-        mobs_chances=[20, 1, 5],
+        mobs=["bandit", "spectral foxshade", "poison spider", "wild boar"],
+        mobs_chances=[20, 1, 5, 5],
         name="FOREST",
         req=[],
         pace=6,
@@ -201,6 +204,19 @@ BIOMES = {
         req=["climbing tools"],
         pace=10,
         status=[PlayerStatus.WALK.value]),
+
+    "ocean": Biome(
+        color=(47, 56, 176, 255),
+        description="...",
+        fight=False,
+        mobs=[],
+        mobs_chances=[],
+        name="OCEAN",
+        pace=18,
+        water=True,
+        fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
+               "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
+        status=[PlayerStatus.SURF.value]),
 
     "plains": Biome(
         color=(181, 230, 29, 255),
@@ -559,6 +575,13 @@ ENTRIES = {
         items=["bed"],
         entry_type=EntryType.HUT),
 
+    "hut_22_1": Entry(
+        description="Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the "
+                    "forest stands as a silent witness to nature's reclamation.",
+        items=["bed", "rusty_sword"],
+        name="ABANDONED HUT",
+        entry_type=EntryType.HUT),
+
     "hut_22_27": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
@@ -747,7 +770,7 @@ ITEMS = {
                 buy_price=200,
                 sell_price=150),
 
-    "bludgeon": Item(name="Axe",
+    "bludgeon": Item(name="Bludgeon",
                      description="Hefty Bludgeon blunt and brutal, ideal for stunning foes with a single, "
                                  "powerful blow.",
                      attack=2,
@@ -965,7 +988,7 @@ ITEMS = {
                         description="Worn and brittle, unreliable in battle but holds echoes of a warrior's past.",
                         attack=2,
                         defense=0,
-                        precision=0.05,
+                        precision=0.00,
                         evasion=0,
                         weight=6,
                         body_part=BodyPart.RIGHT_HAND,
@@ -973,7 +996,7 @@ ITEMS = {
                         consumable=False,
                         equippable=True,
                         expiration=None,
-                        buy_price=150,
+                        buy_price=100,
                         sell_price=50),
 
     "short_sword": Item(name="Short Sword",
@@ -1149,7 +1172,8 @@ ITEMS = {
                       weight=0.2,
                       pickable=True,
                       buy_price=15,
-                      sell_price=10),
+                      sell_price=10,
+                      hungry_refill=30),
 
     "bones": Item(name="Bones",
                   description="Brittle remains of the fallen, useful for crafting or as a grim reminder of mortality.",
@@ -1649,7 +1673,7 @@ MOBS = {
         critical_chance=20,
         poison=0,
         poison_chance=0,
-        escape_chance=40,
+        escape_chance=0.4,
         items={"gold": 15, "red_potion": 1, "antidote": 1, "none": None},
         items_drop_chances=[0.5, 0.7, 0.8, 1],
         experience=4
@@ -1658,7 +1682,7 @@ MOBS = {
         name="Basilisk",
         hp=80,
         hpmax=80,
-        attack=12,
+        attack=19,
         defense=8,
         evasion=0.6,
         precision=0.7,
@@ -1669,13 +1693,13 @@ MOBS = {
         escape_chance=20,
         items={"basilisk_fangs": 2, "none": None},
         items_drop_chances=[0.7, 1],
-        experience=10
+        experience=14
     ),
     "climbing goblin": Mob(
         name="Climbing Goblin",
         hp=35,
         hpmax=35,
-        attack=7,
+        attack=14,
         defense=4,
         evasion=0.3,
         precision=0.8,
@@ -1686,14 +1710,14 @@ MOBS = {
         escape_chance=40,
         items={"gold": 20, "red_potion": 1, "wood_shield": 1, "antidote": 1, "none": None},
         items_drop_chances=[0.5, 0.6, 0.65, 0.75, 1],
-        experience=6
+        experience=10
     ),
 
     "dragon": Mob(
         name="Dragon FireFrost",
         hp=150,
         hpmax=150,
-        attack=20,
+        attack=30,
         defense=10,
         evasion=0.5,
         precision=0.9,
@@ -1711,35 +1735,35 @@ MOBS = {
         name="Dryad",
         hp=20,
         hpmax=20,
-        attack=7,
+        attack=12,
         defense=10,
         evasion=0.6,
         precision=0.9,
         critical_coeficient=1.7,
         critical_chance=20,
         poison=3,
-        poison_chance=30,
+        poison_chance=0.33,
         escape_chance=50,
         items={"none": None},
         items_drop_chances=[1],
-        experience=6
+        experience=12
     ),
     "giant blind spider": Mob(
         name="Giant Blind Spider",
         hp=70,
         hpmax=70,
-        attack=10,
+        attack=20,
         defense=5,
         evasion=0.6,
         precision=0.8,
         critical_coeficient=1.5,
         critical_chance=20,
         poison=5,
-        poison_chance=50,
+        poison_chance=0.5,
         escape_chance=5,
         items={"giant_silk": 1, "none": None},
         items_drop_chances=[0.5, 1],
-        experience=10
+        experience=15
     ),
     "giant slime": Mob(
         name="Giant Slime",
@@ -1763,18 +1787,18 @@ MOBS = {
         name="Giant Spider",
         hp=70,
         hpmax=70,
-        attack=10,
+        attack=14,
         defense=5,
         evasion=0.3,
         precision=0.65,
         critical_coeficient=1.6,
         critical_chance=15,
         poison=1,
-        poison_chance=15,
+        poison_chance=0.15,
         escape_chance=30,
         items={"giant_silk": 1, "red_potion": 1, "none": None},
         items_drop_chances=[0.6, 0.8, 1],
-        experience=8,
+        experience=11,
     ),
 
     "goblin": Mob(
@@ -1799,8 +1823,8 @@ MOBS = {
         name="Goblin Chief",
         hp=75,
         hpmax=75,
-        attack=7,
-        defense=3,
+        attack=12,
+        defense=6,
         evasion=0.4,
         precision=0.6,
         critical_coeficient=1.3,
@@ -1817,14 +1841,14 @@ MOBS = {
         name="Goblin Hunter",
         hp=35,
         hpmax=35,
-        attack=4,
+        attack=7,
         defense=2,
         evasion=0.5,
         precision=0.7,
         critical_coeficient=1.5,
         critical_chance=60,
         poison=2,
-        poison_chance=15,
+        poison_chance=0.15,
         escape_chance=50,
         items={"gold": 10, "little_red_potion": 1, "bone_sword": 1, "bone_shield": 1, "antidote": 1, "none": None},
         items_drop_chances=[0.5, 0.6, 0.7, 0.75, 0.8, 1],
@@ -1835,25 +1859,25 @@ MOBS = {
         name="Goblin War Chief",
         hp=60,
         hpmax=60,
-        attack=7,
-        defense=4,
+        attack=15,
+        defense=6,
         evasion=0.5,
         precision=0.7,
-        critical_coeficient=1.5,
+        critical_coeficient=1.2,
         critical_chance=30,
         poison=0,
         poison_chance=0,
         escape_chance=35,
         items={"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1, "none": None},
         items_drop_chances=[0.8, 0.85, 0.90, 0.95, 1],
-        experience=8,
+        experience=812,
     ),
 
     "goblin war": Mob(
         name="War Goblin",
         hp=35,
         hpmax=35,
-        attack=4,
+        attack=6,
         defense=3,
         evasion=0.4,
         precision=0.7,
@@ -1896,7 +1920,7 @@ MOBS = {
         critical_coeficient=1.2,
         critical_chance=30,
         poison=1,
-        poison_chance=15,
+        poison_chance=0.15,
         escape_chance=50,
         items={"slime_balls": 2, "none": None},
         items_drop_chances=[0.4, 1],
@@ -1914,7 +1938,7 @@ MOBS = {
         critical_coeficient=1.4,
         critical_chance=15,
         poison=2,
-        poison_chance=25,
+        poison_chance=0.25,
         escape_chance=50,
         items={"giant_silk": 1, "poison_gland": 1, "none": None},
         items_drop_chances=[0.4, 0.6, 1],
@@ -1943,8 +1967,8 @@ MOBS = {
         name="Skeleton Warrior",
         hp=40,
         hpmax=40,
-        attack=7,
-        defense=4,
+        attack=20,
+        defense=12,
         evasion=0.3,
         precision=0.7,
         critical_coeficient=1.3,
@@ -1954,7 +1978,7 @@ MOBS = {
         escape_chance=10,
         items={"bone_sword": 1, "bone_shield": 1, "none": None},
         items_drop_chances=[0.6, 0.6, 1],
-        experience=10,
+        experience=13,
     ),
 
     "slime": Mob(
@@ -2006,15 +2030,16 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=100,
-        items={"gold": 50, "none": None},
+        items={"gold": 100, "none": None},
         items_drop_chances=[0.9, 1],
-        experience=15,
+        experience=25,
+        escape_mob_probability=0.5,
     ),
     "spectrum": Mob(
         name="Spectrum",
         hp=40,
         hpmax=40,
-        attack=10,
+        attack=17,
         defense=0,
         evasion=0.8,
         precision=0.8,
@@ -2025,32 +2050,32 @@ MOBS = {
         escape_chance=20,
         items={"none": None},
         items_drop_chances=[1],
-        experience=12,
+        experience=16,
     ),
     "troll": Mob(
         name="Troll",
         hp=50,
         hpmax=50,
-        attack=7,
-        defense=4,
+        attack=15,
+        defense=8,
         evasion=0.2,
         precision=0.75,
-        critical_coeficient=1.6,
+        critical_coeficient=1.4,
         critical_chance=20,
         poison=0,
         poison_chance=0,
         escape_chance=50,
         items={"gold": 15, "red_potion": 1, "bludgeon": 1, "none": None},
         items_drop_chances=[0.5, 0.6, 0.65, 1],
-        experience=6,
+        experience=12,
     ),
 
     "undead warrior": Mob(
         name="Undead Warrior",
         hp=50,
         hpmax=50,
-        attack=8,
-        defense=6,
+        attack=16,
+        defense=12,
         evasion=0.2,
         precision=0.7,
         critical_coeficient=1.6,
@@ -2060,7 +2085,7 @@ MOBS = {
         escape_chance=10,
         items={"gold": 20, "rusty_sword": 1, "rusty_shield": 1, "none": None},
         items_drop_chances=[0.4, 0.6, 0.8, 1],
-        experience=8,
+        experience=16,
     ),
 
     "watchful goblin": Mob(
@@ -2097,6 +2122,7 @@ MOBS = {
         items={"boar_tusk": 2, "none": None},
         items_drop_chances=[0.4, 1],
         experience=3,
+        escape_mob_probability=0.4
     ),
 
     "young dragon": Mob(
@@ -2112,9 +2138,9 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=5,
-        items={"dragon_scales": 3, "none": None},
+        items={"dragon_scales": 2, "none": None},
         items_drop_chances=[0.7, 1],
-        experience=100,
+        experience=30,
     ),
 
     "zombie": Mob(
@@ -2128,7 +2154,7 @@ MOBS = {
         critical_coeficient=1.2,
         critical_chance=5,
         poison=3,
-        poison_chance=5,
+        poison_chance=0.05,
         escape_chance=5,
         items={"rotten_flesh": 3, "none": None},
         items_drop_chances=[0.5, 1],
@@ -2392,7 +2418,7 @@ NPCS = {
                                       "water": 1,
                                       "bier": 2,
                                       "wine": 3,
-                                      "fish_sardina": 3},
+                                      "fish_sardine": 3},
                            buy_beds={"first_room": (15, "aliras_first_room_key"),
                                      "second_room": (10, "aliras_second_room_key"),
                                      "third_room": (8, "aliras_third_room_key"),
@@ -2415,7 +2441,7 @@ NPCS = {
                                        "soup": 2,
                                        "water": 1,
                                        "bier": 2,
-                                       "fish_sardina": 3},
+                                       "fish_sardine": 3},
                             buy_beds={"first_room": (12, "lyssias_first_room_key"),
                                       "second_room": (8, "lyssias_second_room_key"),
                                       "third_room": (5, "lyssias_third_room_key")},

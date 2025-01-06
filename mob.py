@@ -29,3 +29,6 @@ class Mob:
     items: dict = field(default=None)
     items_drop_chances: list = field(default=None)
     experience: int = field(default=0)
+
+    # Others.
+    escape_mob_probability: float = field(default=0)

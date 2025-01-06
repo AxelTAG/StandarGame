@@ -10,7 +10,7 @@ from npc import Npc
 WIDTH = 92
 HEIGHT = 32
 
-#Music settings.
+# Music settings.
 MUSIC_VOLUME = 0.5
 
 # Patron.

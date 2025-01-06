@@ -217,17 +217,17 @@ class Player:
         else:
             return False
 
-    def lvl_up(self) -> None:
-        self.lvl += 1
+    def lvl_up(self, quantity: int = 1) -> None:
+        self.lvl += quantity
         self.exp = 0
-        self.expmax = 10 * self.lvl
-        self.st_points += 3
+        self.expmax = 10 * self.lvl + self.lvl ** 2
+        self.st_points += 3 * quantity
 
-        self.b_hpmax += 2
-        self.b_attack += 0.4
-        self.b_defense += 0.20
-        self.b_precision += 0.005
-        self.b_evasion += 0.01
+        self.b_hpmax += 2 * quantity
+        self.b_attack += 0.4 * quantity
+        self.b_defense += 0.20 * quantity
+        self.b_precision += 0.005 * quantity
+        self.b_evasion += 0.01 * quantity
 
     def set_place(self, place: Biome | Entry) -> None:
         if type(self.place) == Entry:

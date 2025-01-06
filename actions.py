@@ -74,6 +74,14 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
                 screen, object_used = use(player, map_game=map_game, item=player.slot2)
 
         # Enemy attack.
+        if enemy.escape_mob_probability > random.random():
+            screen += "\n " + enemy.name + " has escaped"
+            disp_battle(player=player,
+                        enemy=enemy,
+                        text=screen)
+            input(" > ")
+            return play, menu, 1
+
         if enemy.hp > 0 and choice_action in ["0", "1", "2", "3"]:
             if enemy.precision * (1 - player.evasion) > random.random() and object_used:
                 ENEMY_ATK = [[enemy.attack, enemy.attack * enemy.critical_coeficient],
@@ -99,7 +107,8 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
             # Setting reinit.
             play = False
             menu = True
-            player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
+            player.hp = int(player.hpmax)
+            player.set_place(place=map_game.map_settings[(player.x_cp, player.y_cp)])
             player.status = 0
             player.poison = 0
             player.hungry = 48
@@ -119,8 +128,8 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
 
             # Drop items logic and exp gain.
             if enemy.items:
-                drop_quantity = random.randint(1, len(enemy.items)) - 1
-                drop_items = list(set(random.choices([*enemy.items.keys()],
+                drop_quantity = random.randint(a=1, b=len(enemy.items)) - 1
+                drop_items = list(set(random.choices(population=[*enemy.items.keys()],
                                                      cum_weights=enemy.items_drop_chances,
                                                      k=drop_quantity)))
 
@@ -256,7 +265,7 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
                    min(map_game.x_len, player.x + int(exploration_radius) + 1)):
         for j in range(max(0, player.y - int(exploration_radius)),
                        min(map_game.y_len, player.y + int(exploration_radius) + 1)):
-            # Verificar si la casilla está dentro del círculo
+            # Checks if the cell is inside de circunference.
             if math.sqrt((player.x - i) ** 2 + (player.y - j) ** 2) <= exploration_radius:
                 map_tile(i, j)
 
@@ -343,7 +352,6 @@ def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
         if type(entrie_object) == Entry:
             player.outside = False
         elif type(entrie_object) == Biome:
-            player.x, player.y = entrie_object.x, entrie_object.y
             player.outside = True
         entrie_name = entrie_object.name
         player.set_place(entrie_object)

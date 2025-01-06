@@ -446,11 +446,11 @@ def update(player: Player, map_game: Map, option: str) -> tuple[str, Player, Map
     """
     if option == "map_npcs":
         map_game.npcs = globals.NPCS.copy()
-        return "Update succesfully.", player, map_game
+        return "Update NPCS MAP succesfully.", player, map_game
 
     if option == "map_mobs":
         map_game.mobs = globals.MOBS.copy()
-        return "Update succesfully.", player, map_game
+        return "Update MOBS MAP succesfully.", player, map_game
 
     if option == "player":
         new_player = Player(name=player.name,
@@ -494,10 +494,48 @@ def update(player: Player, map_game: Map, option: str) -> tuple[str, Player, Map
                             slot1=player.slot1,
                             slot2=player.slot2,
                             equip=player.equip,
-                            item_limits=player.item_limits,
                             map=player.map,
                             events=player.events,
                             time_played=player.time_played)
         return "Player class updated.", new_player, map_game
 
+    if option == "map_13_0":
+        sub_cave_2_3 = ENTRIES["sub_cave_2_3"]
+        sub_cave_3_1 = ENTRIES["sub_cave_3_1"]
+        map_game.map_settings[(13, 0)].entries["big_cave"].entries["passageway_cave_entrance"].entries["goblin_dining_gallery"].entries = {"cave_passageway_entrance": sub_cave_2_3, "cave_passageway_exit": sub_cave_3_1}
+        return "Update MAP 13 0 succesfully.", player, map_game
+
     return "Nothing done.", player, map_game
+
+
+def repair(player: Player, map_game: Map):
+    map_game.npcs["mayor_thorian"].reset_hist_messages()
+
+    map_game.npcs["mayors_daughter_maisie"].messages = {
+        0: ["Thank you, brave one!",
+            "If not for your help, I might have tried to escape through one of the hidden passages in the cave.",
+            "I saw them but had no chance to explore. Your courage saved me before I could take the risk.",
+            "I owe you my life."]}
+    map_game.npcs["mayors_daughter_maisie"].place = [(10, 4)]
+    map_game.npcs["mayors_daughter_maisie"].place_morning = [(10, 4)]
+    map_game.npcs["mayors_daughter_maisie"].place_evening = [(10, 4), "mayors_house"]
+
+    map_game.npcs["mayor_thorian"].messages = {
+        0: ["I’ve heard the tale from my daughter, Maisie. You rescued her from the clutches of those "
+            "vile goblins.",
+            "I thank you, not as a mayor, but as a father. Our village owes you a debt we cannot repay.",
+            "Please, accept this reward—a small token of our gratitude. Epiiat's doors are always open to you,"
+            " brave soul."]}
+    map_game.npcs["villager_merrin"].messages = {
+        0: ["You did it! You brought Maisie back safely. I can’t thank you enough.",
+            "The whole village has been in distress since she went missing. You’ve given us hope again, brave one.",
+            "We’ll not forget what you’ve done for Epiiat."]}
+    map_game.npcs["villager_fira"].messages = {
+        0: ["I just heard the news—Maisie is safe and back home. What a blessing for the whole village.",
+            "We’ve all been on edge since she went missing. It feels like a dark cloud has finally "
+            "lifted from Epiiat."]}
+    map_game.npcs["mayor_thorian"].messages = {
+        0: ["It’s rare to find such selfless bravery in these dark times. Thanks to you, my daughter is "
+            "safe, and Epiiat breathes easier tonight.",
+            "I must ensure the village knows of this deed; tales of courage like this must be remembered.",
+            "May the gods guide that your steps, wherever the road may lead."]}

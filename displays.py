@@ -12,7 +12,11 @@ from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewr
 
 # Assign display.
 def disp_assign(st: int) -> str:
-    return "Assign skill point (" + str(st) + ") to:\n- Strength (STR)\n- Agility (AGI) \n- Resistance (RES) \n- Vitality (VIT)"
+    return f"Assign skill point ({st}) to:\n- Strength (STR)\n- Agility (AGI)\n- Resistance (RES)\n- Vitality (V IT)"
+
+
+def disp_attack() -> str:
+    return "Use ATTACK ENEMY to attack an enemy."
 
 
 # Bar display
@@ -105,15 +109,54 @@ def disp_equip(equip: dict) -> str:
     return text
 
 
+def disp_load_game() -> None:
+    print(" < LOAD GAME >")
+    print()
+
+
+def disp_main_screen():
+    print(" < MENU >")
+    print()
+    print(" 1 - NEW GAME")
+    print(" 2 - LOAD GAME")
+    print(" 3 - RULES")
+    print(" 4 - OPTIONS")
+    print(" 5 - QUIT GAME")
+    print()
+
+
+def disp_new_game(existent_player: Player = None) -> None:
+    if existent_player is None:
+        print(" < NEW GAME >")
+        print()
+    else:
+        print(" < NEW GAME >")
+        print()
+        print(" There is already a game existing, do you want to delete it?")
+        print()
+        print(f" NAME: {existent_player.name} / LVL: {existent_player.lvl}")
+        print()
+        print(" 1 - Yes")
+        print(" 2 - No")
+        print()
+
+
 # Look around action.
-def disp_look_around(place) -> str:
+def disp_look_around(place: Biome) -> str:
     items = place.items
+    mobs = place.mobs_respawned
+
+    if not items and not mobs:
+        return "Nothing special here."
+
+    text = "You have looked around and found:"
     if items:
-        text = "You have looked around and found:"
         for item in items:
             text += "\n - " + item.replace("_", " ").title() + "."
-    else:
-        text = "Nothing special here."
+
+    if mobs:
+        for mob in mobs:
+            text += "\n - " + mob.replace("_", " ").title() + "."
     return text
 
 
@@ -218,6 +261,21 @@ def disp_play(player: Player,
 
     for i, line in enumerate(cmp_text):
         print(" " + patron[i] + line + "  " + patron[i])
+
+
+def disp_rules() -> None:
+    print()
+    print()
+    print(" < RULES >")
+    print()
+    print(" I'm the creator of this game and these are the rules.")
+    print()
+    print(" 1) Follow your path.")
+    print(" 2) Trace your path with: 'map' and 'draw map'.")
+    print(" 3) Many action are allowed ('use', 'enter', 'talk', 'look around', etc.) try them "
+          "\n    to find your path.")
+    print(" 4) Remember: sleeping in a bed, will charge your energy.")
+    print()
 
 
 # Show inventory display.

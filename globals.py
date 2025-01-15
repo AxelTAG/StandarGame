@@ -29,10 +29,7 @@ BIOMES = {
         color=(180, 110, 60, 255),
         description="...",
         fight=True,
-        mobs=[],
-        mobs_chances=[],
         name="...",
-        req=[],
         pace=4,
         status=[PlayerStatus.WALK.value]),
 
@@ -1870,7 +1867,7 @@ MOBS = {
         escape_chance=35,
         items={"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1, "none": None},
         items_drop_chances=[0.8, 0.85, 0.90, 0.95, 1],
-        experience=812,
+        experience=12,
     ),
 
     "goblin war": Mob(

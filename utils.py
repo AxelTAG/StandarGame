@@ -232,18 +232,6 @@ def get_label(x: int, y: int, matrix: np.array) -> str:
     return label
 
 
-# Import player function.
-def import_player(path: str):
-    with open(path, 'rb') as archivo:
-        return pickle.load(archivo)
-
-
-# Import settings function.
-def import_settings(path: str):
-    with open(path, 'rb') as archivo:
-        return pickle.load(archivo)
-
-
 # Functions that returns tile map of an image, depend on colors.
 def label_pixels(img_path: str) -> list:
     # Open the image.
@@ -429,6 +417,8 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
             key = (j, i)
             value = copy.deepcopy(biomes[tl_map[i][j]])
             value.x, value.y = j, i
+            value.mobs_respawned = []
+            value.respawn_mobs(day=value.mobs_respawn_time)
             dictionary[key] = value
 
     return dictionary

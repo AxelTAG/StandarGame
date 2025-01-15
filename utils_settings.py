@@ -1,6 +1,5 @@
 # Imports.
 # Local imports.
-from biome import Entry
 from globals import ENTRIES
 
 
@@ -42,7 +41,8 @@ def init_map_setting(ms: dict):
     ms[(2, 12)].entries = {"tower": ENTRIES["tower_of_karun_floor_1"]}
     ms[(2, 12)].entries["tower"].leave_entry = ms[(2, 12)]
     ms[(2, 12)].entries["tower"].entries = {"second_floor": ENTRIES["tower_of_karun_floor_2"]}
-
+    ms[(2, 12)].entries["tower"].entries["second_floor"].items = ["giant_telescope"]
+ 
     # (5, 3)
     ms[(5, 3)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary" \
                              " figure stands at the water's edge, gazing out into the vastness of the sea, " \
@@ -296,6 +296,9 @@ def init_map_setting(ms: dict):
     ms[(22, 18)].name = "PLATEAU"
     ms[(22, 18)].entries = {"tower_of_eldra": first_floor}
     ms[(22, 18)].entries["tower_of_eldra"].entries = {"tower_of_eldra_second_floor": second_floor}
+
+    # (22, 18)
+    ms[(24, 18)].entries = {"cave": ENTRIES["cave_27_19"]}
 
     # (22, 27)
     ms[(22, 27)].description = ("Sandy shores meet grassy dunes, where a weathered hut stands, surrounded"

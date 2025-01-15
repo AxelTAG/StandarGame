@@ -1,16 +1,17 @@
 # Imports.
 # Local imports.
 import globals
+import utils
 from actions import battle, talk
 from displays import disp_talk_tw
 from enums import NpcTypes
 from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
-from utils import export_dict_to_txt, get_hash, export_player, clear
 
 # External imports.
 import copy
+import pickle
 import time
 from datetime import datetime
 
@@ -377,13 +378,29 @@ def event_handler(player: Player,
 
     # Event captain Thorne travel.
     if map_game.npcs["captain_thorne"].hist_messages[0] and player.events["dragon_win"]:
-        clear()
+        utils.clear()
         time.sleep(1.5)
         talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
 
         return False, True
 
     return True, False
+
+
+def import_player(path: str) -> Player | None:
+    try:
+        with open(path, 'rb') as archivo:
+            return pickle.load(archivo)
+    except FileNotFoundError:
+        return None
+
+
+def import_map(path: str) -> Map | None:
+    try:
+        with open(path, 'rb') as archivo:
+            return pickle.load(archivo)
+    except FileNotFoundError:
+        return None
 
 
 def map_control_handling(player: Player,
@@ -413,10 +430,26 @@ def map_control_handling(player: Player,
             player.set_place(place=player.last_place)
 
 
-# Load game function.
-def load_game(path_usavepkl: str = "cfg_save.pkl", path_msave: str = "cfg_map.txt",
-              path_settingpkl: str = "cfg_setting.pkl", path_hsave: str = "cfg_hash.txt"):
-    pass
+def load(path_usavepkl: str = "cfg_save.pkl",
+         path_msave: str = "cfg_map.pkl",
+         path_hsave: str = "cfg_hash.txt",
+         check_hash: bool = True):
+    """Loads game."""
+    if check_hash:
+        load_hash = utils.load_dict_from_txt(path_hsave)
+        if not utils.get_hash("cfg_save.pkl") == load_hash["hash"]:
+            return False, " Corrupted file.", None, None
+
+    player = import_player(path_usavepkl)
+    map_game = import_map(path_msave)
+
+    if player is None:
+        return False, " Player have been not found.", None, None
+
+    if map_game is None:
+        return False, " Player map file have been not found.", None, None
+
+    return True, f" Welcome back {player.name}.", player, map_game
 
 
 # Save function.
@@ -429,11 +462,11 @@ def save(player: Player,
     player.refresh_time_played(datetime.now(), time_init)
 
     # Inventory, user stats and map setting saving (export to txt).
-    export_player(player, path_usavepkl)
-    export_player(map_game, path_mappkl)
+    utils.export_player(player, path_usavepkl)
+    utils.export_player(map_game, path_mappkl)
 
     # Hash saving (export to dict).
-    export_dict_to_txt(dictionary={"hash": get_hash(path_usavepkl)}, file_path=path_hsave)
+    utils.export_dict_to_txt(dictionary={"hash": utils.get_hash(path_usavepkl)}, file_path=path_hsave)
 
 
 def update(player: Player, map_game: Map, option: str) -> tuple[str, Player, Map]:
@@ -509,33 +542,4 @@ def update(player: Player, map_game: Map, option: str) -> tuple[str, Player, Map
 
 
 def repair(player: Player, map_game: Map):
-    map_game.npcs["mayor_thorian"].reset_hist_messages()
-
-    map_game.npcs["mayors_daughter_maisie"].messages = {
-        0: ["Thank you, brave one!",
-            "If not for your help, I might have tried to escape through one of the hidden passages in the cave.",
-            "I saw them but had no chance to explore. Your courage saved me before I could take the risk.",
-            "I owe you my life."]}
-    map_game.npcs["mayors_daughter_maisie"].place = [(10, 4)]
-    map_game.npcs["mayors_daughter_maisie"].place_morning = [(10, 4)]
-    map_game.npcs["mayors_daughter_maisie"].place_evening = [(10, 4), "mayors_house"]
-
-    map_game.npcs["mayor_thorian"].messages = {
-        0: ["I’ve heard the tale from my daughter, Maisie. You rescued her from the clutches of those "
-            "vile goblins.",
-            "I thank you, not as a mayor, but as a father. Our village owes you a debt we cannot repay.",
-            "Please, accept this reward—a small token of our gratitude. Epiiat's doors are always open to you,"
-            " brave soul."]}
-    map_game.npcs["villager_merrin"].messages = {
-        0: ["You did it! You brought Maisie back safely. I can’t thank you enough.",
-            "The whole village has been in distress since she went missing. You’ve given us hope again, brave one.",
-            "We’ll not forget what you’ve done for Epiiat."]}
-    map_game.npcs["villager_fira"].messages = {
-        0: ["I just heard the news—Maisie is safe and back home. What a blessing for the whole village.",
-            "We’ve all been on edge since she went missing. It feels like a dark cloud has finally "
-            "lifted from Epiiat."]}
-    map_game.npcs["mayor_thorian"].messages = {
-        0: ["It’s rare to find such selfless bravery in these dark times. Thanks to you, my daughter is "
-            "safe, and Epiiat breathes easier tonight.",
-            "I must ensure the village knows of this deed; tales of courage like this must be remembered.",
-            "May the gods guide that your steps, wherever the road may lead."]}
+    pass

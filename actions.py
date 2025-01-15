@@ -31,9 +31,13 @@ def get_item(item_name: str) -> Item | bool:
 
 # ----------------------------------------------------------------------------------------------------
 
+def attack(player: Player, map_game: Map, mob: Mob) -> str:
+    play, menu, win = battle(player=player, map_game=map_game, enemy=mob, pace_factor=.05)
+    return play, menu, win
+
 
 # Battle action.
-def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05) -> tuple[bool, bool, int]:
+def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.025) -> tuple[bool, bool, bool]:
     screen = "Defeat the enemy!"
     play = True
     menu = False
@@ -49,13 +53,18 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
         screen = "Nothing done."  # Clearing text output screen.
         hours_to_add += player.place.pace * pace_factor
 
+        # Actions.
         if choice_action == "0":  # Escape option.
             escape = random.choices([True, False],
                                     weights=[enemy.escape_chance, 100 - enemy.escape_chance],
                                     k=1)
             if escape[0]:
-                fight = False
                 screen = "You have escaped."
+                disp_battle(player=player,
+                            enemy=enemy,
+                            text=screen)
+                input(" > ")
+                return play, menu, False
             else:
                 screen = "You have not escaped."
 
@@ -80,7 +89,7 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
                         enemy=enemy,
                         text=screen)
             input(" > ")
-            return play, menu, 1
+            return play, menu, False
 
         if enemy.hp > 0 and choice_action in ["0", "1", "2", "3"]:
             if enemy.precision * (1 - player.evasion) > random.random() and object_used:
@@ -118,7 +127,7 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
 
             print(" GAME OVER")
             input(" > ")
-            return play, menu, 0
+            return play, menu, False
 
         # Win.
         if enemy.hp <= 0:
@@ -148,12 +157,12 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.05)
             if player.add_exp(enemy.experience):
                 screen += "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
 
-    disp_battle(player=player,
-                enemy=enemy,
-                text=screen)
-    input(" > ")
+            disp_battle(player=player,
+                        enemy=enemy,
+                        text=screen)
+            input(" > ")
 
-    return play, menu, 1
+            return play, menu, True
 
 
 # Buy action.
@@ -563,7 +572,10 @@ def move(player: Player,
 
 # Look around action.
 def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None:
-    hours_to_add = int(player.place.pace * pace_factor)
+    if player.outside:
+        hours_to_add = int(player.place.pace * pace_factor * 2)
+    else:
+        hours_to_add = int(player.place.pace * pace_factor)
     map_game.add_hours(hours_to_add=hours_to_add)
 
 

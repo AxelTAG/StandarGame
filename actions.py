@@ -31,7 +31,7 @@ def get_item(item_name: str) -> Item | bool:
 
 # ----------------------------------------------------------------------------------------------------
 
-def attack(player: Player, map_game: Map, mob: Mob) -> str:
+def attack(player: Player, map_game: Map, mob: Mob) -> tuple[bool, bool, bool]:
     play, menu, win = battle(player=player, map_game=map_game, enemy=mob, pace_factor=.05)
     return play, menu, win
 

@@ -411,7 +411,7 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
     # Create empty dict.
     dictionary = {}
 
-    # Fill the dictionary
+    # Fill the dictionary.
     for i in range(len(tl_map)):
         for j in range(len(tl_map[i])):
             key = (j, i)

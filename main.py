@@ -1,16 +1,15 @@
 # Imports.
 # Locals imports.
 import globals
+import displays
 import enums
+import management
+import actions
 from actions import (drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, unequip,
                      use, use_boat, check, get_item, exit_entry, look_around, draw_map, listen, eat, drink, fish)
-from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
-                      disp_show_inventory, disp_drop, disp_look_around)
-from enums import TimeOfDay
-from management import event_handler, map_control_handling, save, update, repair
 from map import Map
 from player import Player
-from utils import import_player, draw_move, load_dict_from_txt, clear, check_name, find_full_name, get_hash, reset_map
+from utils import draw_move, clear, check_name, find_full_name, reset_map
 
 # External imports.
 import copy
@@ -32,9 +31,7 @@ rules = False
 # Play variables.
 fight = False
 standing = True
-
-# First screen massage.
-screen = random.choices(population=[msg.value for msg in enums.FirstMessages], weights=[1, 1], k=1)[0]
+admin = False
 
 # Music background.
 pygame.mixer.init()
@@ -49,93 +46,41 @@ while run:
             pygame.mixer.music.load("./rsc/media/Echoes_of_the_Ancient_Lanes.mp3")
             pygame.mixer.music.play(-1)
 
-        # Screen
+        # Main screen.
         clear()
-        disp_title()
-
-        print(" < MENU >")
-        print()
-        print(" 1 - NEW GAME")
-        print(" 2 - LOAD GAME")
-        print(" 3 - RULES")
-        print(" 4 - QUIT GAME")
-        print()
+        displays.disp_title()
+        displays.disp_main_screen()
 
         # Rules.
         if rules:
             clear()
-            disp_title()
-
-            print()
-            print()
-            print(" < RULES >")
-            print()
-            print(" I'm the creator of this game and these are the rules.")
-            print()
-            print(" 1) Follow your path.")
-            print(" 2) Trace your path with: 'map' and 'draw map'.")
-            print(" 3) Many action are allowed ('use', 'enter', 'talk', 'look around', etc.) try them "
-                  "\n    to find your path.")
-            print(" 4) Remember: sleeping in a bed, will charge your energy.")
-            print()
+            displays.disp_title()
+            displays.disp_rules()
             rules = False
             choice = ""
             input(" > ")
-        else:
-            choice = input(" # ")
+
+        # Choice selection.
+        choice = input(" # ")
 
         # New game choice.
         if choice == "1":
             clear()
-            try:
-                load_setting = import_player("cfg_save.pkl")
-                L_NAME = load_setting.name
-                L_HP = load_setting.hp
-                L_HPMAX = load_setting.hpmax
-                L_LVL = load_setting.lvl
-                L_EXP = load_setting.exp
-                L_EXPMAX = load_setting.expmax
+            displays.disp_title()
+            existent_player = management.import_player("cfg_save.pkl")
+            displays.disp_new_game(existent_player=existent_player)
 
-                disp_title()
-
-                print(" < NEW GAME >")
-                print()
-                print(" There is already a game existing, do you want to delete it?")
-                print()
-                print(" NAME: " + str(L_NAME) + " / LVL: " + str(L_LVL))
-                print()
-                print(" 1 - Yes")
-                print(" 2 - No")
-                print()
+            action_choice = "1"
+            if existent_player:
                 action_choice = input(" # ")
 
-                if action_choice == "2":
-                    pass
-
-                elif action_choice == "1":
-                    # Play variables.
-                    standing = True
-
-                    screen = "Nothing done yet."
-
-                    player_name = ""
-                    while not check_name(player_name):
-                        player_name = input(" # What's your NAME, hero? ").title()
-                    menu = False
-                    play = True
-
-            except:
-                clear()
-                disp_title()
-
-                print(" < NEW GAME >")
+            player_name = ""
+            while not check_name(player_name):
                 print()
+                player_name = input(" # What's your NAME, hero? ").title()
 
-                player_name = ""
-                while not check_name(player_name):
-                    player_name = input(" # What's your NAME, hero? ").title()
-                menu = False
-                play = True
+            menu = False
+            play = True
 
             # Introduction of new game.
             if play:
@@ -175,86 +120,55 @@ while run:
                         "Ready your blade..."]}
 
                 # Introduction.
-                if player.name:
-                    screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
+                # if player.name:
+                #     screen = talk(npc=map_game.npcs["whispers"], player=player, map_game=map_game)
 
         elif choice == "2":  # Load game choice.
-            try:
-                clear()
-                disp_title()
-                print(" < LOAD GAME >")
-                print()
+            clear()
+            displays.disp_title()
+            displays.disp_load_game()
 
-                load_hash = load_dict_from_txt("cfg_hash.txt")
-                if not get_hash("cfg_save.pkl") == load_hash["hash"]:
-                    raise OSError
+            load_state, load_msg, player, map_game = management.load(check_hash=False)
 
-                # Loading inventory, user stats and map settings.
-                player = import_player("cfg_save.pkl")
-                map_game = import_player("cfg_map.pkl")
-
-                if player.has(item="fish_sardina"):
-                    player.inventory.add_item(item="gold", quantity=3 * player.inventory.items["fish_sardina"])
-                    player.inventory.drop_item(item="fish_sardina", quantity=player.inventory.items["fish_sardina"])
-                    map_game.npcs["innkeeper_alira"].buy_items = {"bread": 1,
-                                                                  "cheese": 2,
-                                                                  "soup": 2,
-                                                                  "water": 1,
-                                                                  "bier": 2,
-                                                                  "wine": 3,
-                                                                  "fish_sardine": 3}
-
-                    map_game.npcs["innkeeper_lyssia"].buy_items = {"bread": 1,
-                                                                   "cheese": 2,
-                                                                   "soup": 2,
-                                                                   "water": 1,
-                                                                   "bier": 2,
-                                                                   "fish_sardine": 3}
-                    map_game.mobs = globals.MOBS.copy()
-
+            if load_state:
                 menu = False
                 play = True
 
-                print(" Welcome back " + player.name + ".")
-                input(" > ")
-
-            except OSError:
-                print(" No loadable save file or corrupt file.")
-                play = False
-                print()
-                input(" > ")
+            print(load_msg)
+            input(" > ")
 
         elif choice == "3":  # Show rules option.
             rules = True
 
         elif choice == "4":  # Quit option.
+            pass
+
+        elif choice == "5":  # Quit option.
             quit()
 
     # Previous setting before init play.
     if play:
+        # First screen massage.
+        screen = random.choices(population=[msg.value for msg in enums.FirstMessages], weights=[1, 1], k=1)[0]
+
         # Music background.
         action = ["nothing"]
 
         # Set hours.
         hours = map_game.get_hours
 
-        # Admin.
-        admin = False
-
     while play:
         # Time setting.
         time_init = datetime.now()
 
         # Event handler and map control.
-        play, menu = event_handler(player=player,
-                                   map_game=map_game,
-                                   time_init=time_init)
-        map_control_handling(player=player,
-                             map_game=map_game)
+        play, menu = management.event_handler(player=player, map_game=map_game, time_init=time_init)
+        management.map_control_handling(player=player, map_game=map_game)
 
         if not (map_game.get_hours == hours):
             # Map refresh.
             map_game.refresh_npcs()
+            map_game.refresh_biomes()
 
             # Player status refresh.
             player.refresh_status()
@@ -283,53 +197,56 @@ while run:
             pygame.mixer.music.stop()
 
         # Autosave.
-        save(player=player,
-             map_game=map_game,
-             time_init=time_init)  # Autosave.
+        management.save(player=player,
+                        map_game=map_game,
+                        time_init=time_init)  # Autosave.
         clear()
 
         # Fight chances of moving, and player status refreshing.
         if not standing:
             # Fight.
-            if player.place.fight and player.place.mobs:
+            if player.place.fight and player.place.mobs_respawned:
                 if random.randint(a=0, b=100) < max(player.place.mobs_chances):
-                    enemy = random.choices(player.place.mobs, player.place.mobs_chances, k=1)[0]
+                    enemy = random.choices(player.place.mobs_respawned, k=1)[0]
                     play, menu, win = battle(player=player,
                                              map_game=map_game,
                                              enemy=copy.deepcopy(map_game.mobs[enemy]))
-                    save(player=player,
-                         map_game=map_game,
-                         time_init=time_init)
+                    if win:
+                        player.place.mobs_respawned.remove(enemy)
+                    management.save(player=player,
+                                    map_game=map_game,
+                                    time_init=time_init)
 
         if play:
             # Draw of general stats.
             clear()
-            disp_play(player=player,
-                      map_game=map_game,
-                      reg="NAIWAT",
-                      x=player.x,
-                      y=player.y,
-                      mdir=draw_move(x=player.x,
-                                     y=player.y,
-                                     map_height=map_game.x_len,
-                                     map_width=map_game.y_len,
-                                     player=player,
-                                     tl_map=map_game.map_labels,
-                                     ms=map_game.map_settings),
-                      screen_text=screen,
-                      width=38)
+            displays.disp_play(player=player,
+                               map_game=map_game,
+                               reg="NAIWAT",
+                               x=player.x,
+                               y=player.y,
+                               mdir=draw_move(x=player.x,
+                                              y=player.y,
+                                              map_height=map_game.x_len,
+                                              map_width=map_game.y_len,
+                                              player=player,
+                                              tl_map=map_game.map_labels,
+                                              ms=map_game.map_settings),
+                               screen_text=screen,
+                               width=38)
 
             # Input action.
             print()
             action = input(" " * 2 + "# ").lower().split()
             if not action:
                 action = ["None"]
+                standing = True
 
             # Action ejecution.
             if action[0] == "0":  # Save game.
                 play = False
                 menu = True
-                save(player=player, map_game=map_game, time_init=time_init)
+                management.save(player=player, map_game=map_game, time_init=time_init)
 
             if action[0] in ["1", "2", "3", "4"]:  # Move action.
                 if not player.move_available:
@@ -350,7 +267,7 @@ while run:
 
             elif action[0] == "assign":  # Assign action.
                 if len(action) < 2:
-                    screen = disp_assign(player.st_points)
+                    screen = displays.disp_assign(player.st_points)
                 elif player.st_points:
                     if action[1] in ["strength", "str"]:
                         player.strength += 1
@@ -373,6 +290,26 @@ while run:
                 else:
                     "That is not posible."
                 standing = True
+
+            elif action[0] == "attack":  # Attack action.
+                if len(action) == 1:
+                    screen = displays.disp_attack()
+                else:
+                    win = False
+                    mob = " ".join(action[1:])
+                    if mob in map_game.mobs.keys():
+                        play, menu, win = actions.attack(player=player,
+                                                         map_game=map_game,
+                                                         mob=copy.deepcopy(map_game.mobs[mob]))
+
+                        if win:
+                            player.place.mobs_respawned.remove(mob)
+                        else:
+                            management.save(player=player,
+                                            map_game=map_game,
+                                            time_init=time_init)
+                    else:
+                        screen = f"There is no {mob} here."
 
             elif action[0] == "check":  # Check action.
                 if len(action) == 1:
@@ -413,9 +350,9 @@ while run:
                     standing = True
 
                 except ValueError:
-                    screen = disp_drop()  # Printing drop instructions.
+                    screen = displays.disp_drop()  # Printing drop instructions.
                 except IndexError:
-                    screen = disp_drop()  # Printing drop instructions.
+                    screen = displays.disp_drop()  # Printing drop instructions.
 
             elif action[0] == "eat":
                 item = "_".join(action[1:])
@@ -427,7 +364,7 @@ while run:
 
             elif action[0] == "enter":  # Enter action.
                 if len(action) <= 2:
-                    screen = disp_enter(player.place)
+                    screen = displays.disp_enter(player.place)
                     standing = True
 
                 else:
@@ -437,7 +374,7 @@ while run:
 
             elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                 if len(action) <= 1:
-                    screen = disp_equip(player.equip)
+                    screen = displays.disp_equip(player.equip)
                     standing = True
 
                 else:
@@ -469,7 +406,8 @@ while run:
 
             elif action == ["look", "around"]:  # Look around action.
                 look_around(player=player, map_game=map_game)
-                screen = disp_look_around(player.place)
+                screen = displays.disp_look_around(player.place)
+                standing = False
 
             elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
                 player.map[player.y][player.x] = globals.PINK
@@ -477,14 +415,14 @@ while run:
                 plt.imshow(player.map)
                 plt.title("Map")
                 plt.show()
-                player.map[player.y][player.x] = player.place.color
+                player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].color
                 standing = True
 
             elif action[:2] == ["pick", "up"]:  # Pick up action.
                 screen = pick_up(player=player, item="_".join(action[2:]))
 
             elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
-                screen = disp_show_inventory(player)
+                screen = displays.disp_show_inventory(player)
                 standing = True
 
             elif action[0] == "slot1":  # Selection slot1 action.
@@ -507,14 +445,14 @@ while run:
 
             elif action[0] == "sleep":  # Sleep action.
                 if len(action) <= 2:
-                    screen = disp_sleep(player.x, player.y, player.place)
+                    screen = displays.disp_sleep(player.x, player.y, player.place)
                     standing = True
 
                 else:
-                    if action[2] in [tod.name.lower() for tod in TimeOfDay]:
+                    if action[2] in [tod.name.lower() for tod in enums.TimeOfDay]:
                         screen = sleep_in_bed(player=player,
                                               map_game=map_game,
-                                              time_of_day=TimeOfDay[action[2].upper()].value)
+                                              time_of_day=enums.TimeOfDay[action[2].upper()].value)
                         player.x_cp, player.y_cp = player.x, player.y
                         standing = True
 
@@ -526,7 +464,7 @@ while run:
                 npc_name = find_full_name(partial_name="_".join(action[2:]).lower(), names_list=player.place.npc)
 
                 if len(action) <= 2:
-                    screen = disp_talk(player.place)
+                    screen = displays.disp_talk(player.place)
                     standing = True
 
                 elif npc_name is None:
@@ -543,7 +481,7 @@ while run:
 
             elif action[0] == "unequip":  # Unequip action.
                 if len(action) <= 1:
-                    screen = disp_equip(player.equip)
+                    screen = displays.disp_equip(player.equip)
                     standing = True
 
                 else:
@@ -560,13 +498,13 @@ while run:
 
             elif action[0] == "wait":  # Wait action.
                 if len(action) <= 2:
-                    screen = disp_wait()
+                    screen = displays.disp_wait()
                     standing = True
 
                 else:
-                    if action[2] in [tod.name.lower() for tod in TimeOfDay]:
+                    if action[2] in [tod.name.lower() for tod in enums.TimeOfDay]:
                         screen = wait(map_game=map_game,
-                                      time_of_day=TimeOfDay[action[2].upper()].value)
+                                      time_of_day=enums.TimeOfDay[action[2].upper()].value)
                         standing = False
                     else:
                         screen = f"{action[2].title()} is not a time of day."
@@ -596,10 +534,13 @@ while run:
 
                 elif action[0] == "update":
                     opt = "_".join(action[1:])
-                    screen, player, map_game = update(player=player, map_game=map_game, option=opt)
+                    screen, player, map_game = management.update(player=player, map_game=map_game, option=opt)
 
                 elif action[0] == "repair":
-                    repair(player=player, map_game=map_game)
+                    map_game.map_settings[(24, 18)].entries = {
+                        "cave": map_game.map_settings[(27, 19)].entries["cave"]
+                    }
+                    map_game.map_settings[(24, 18)].entries["cave"].leave_entry = map_game.map_settings[(24, 18)]
                     screen = "Game repaired."
         else:
             standing = True

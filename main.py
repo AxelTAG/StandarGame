@@ -22,6 +22,8 @@ from datetime import datetime
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 
+
+
 # Game variables.
 run = True
 menu = True
@@ -32,6 +34,12 @@ rules = False
 fight = False
 standing = True
 admin = False
+
+# Enter screen.
+displays.clear()
+displays.disp_logo(width=60)
+print(" < PRESS ENTER > ".center(60))
+input()
 
 # Music background.
 pygame.mixer.init()

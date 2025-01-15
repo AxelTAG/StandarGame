@@ -1,12 +1,13 @@
 # Imports.
 # Locals imports.
 import globals
+import enums
 from actions import (drop, enter, equip, explore, land, move, sleep_in_bed, wait, talk, battle, pick_up, unequip,
                      use, use_boat, check, get_item, exit_entry, look_around, draw_map, listen, eat, drink, fish)
 from displays import (disp_play, disp_sleep, disp_talk, disp_title, disp_wait, disp_enter, disp_assign, disp_equip,
                       disp_show_inventory, disp_drop, disp_look_around)
 from enums import TimeOfDay
-from management import event_handler, map_control_handling, save, update
+from management import event_handler, map_control_handling, save, update, repair
 from map import Map
 from player import Player
 from utils import import_player, draw_move, load_dict_from_txt, clear, check_name, find_full_name, get_hash, reset_map
@@ -33,11 +34,11 @@ fight = False
 standing = True
 
 # First screen massage.
-screen = random.choices(population=["Nothing done yet.", "Waiting for commands."], weights=[50, 50], k=1)[0]
+screen = random.choices(population=[msg.value for msg in enums.FirstMessages], weights=[1, 1], k=1)[0]
 
 # Music background.
 pygame.mixer.init()
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(globals.MUSIC_VOLUME)
 
 # Main loop of the game.
 while run:
@@ -191,8 +192,25 @@ while run:
                 # Loading inventory, user stats and map settings.
                 player = import_player("cfg_save.pkl")
                 map_game = import_player("cfg_map.pkl")
-                player.place = map_game.map_settings[(player.x, player.y)]
-                player.outside = True
+
+                if player.has(item="fish_sardina"):
+                    player.inventory.add_item(item="gold", quantity=3 * player.inventory.items["fish_sardina"])
+                    player.inventory.drop_item(item="fish_sardina", quantity=player.inventory.items["fish_sardina"])
+                    map_game.npcs["innkeeper_alira"].buy_items = {"bread": 1,
+                                                                  "cheese": 2,
+                                                                  "soup": 2,
+                                                                  "water": 1,
+                                                                  "bier": 2,
+                                                                  "wine": 3,
+                                                                  "fish_sardine": 3}
+
+                    map_game.npcs["innkeeper_lyssia"].buy_items = {"bread": 1,
+                                                                   "cheese": 2,
+                                                                   "soup": 2,
+                                                                   "water": 1,
+                                                                   "bier": 2,
+                                                                   "fish_sardine": 3}
+                    map_game.mobs = globals.MOBS.copy()
 
                 menu = False
                 play = True
@@ -219,6 +237,9 @@ while run:
 
         # Set hours.
         hours = map_game.get_hours
+
+        # Admin.
+        admin = False
 
     while play:
         # Time setting.
@@ -364,7 +385,8 @@ while run:
                     screen = check(player=player, item="_".join(action[1:]))
 
             elif action == ["draw", "map"]:  # Update of map action.
-                tower_of_eldra = map_game.map_settings[(22, 18)].entries["tower_of_eldra"].entries["tower_of_eldra_second_floor"]
+                tower_of_eldra = map_game.map_settings[(22, 18)].entries["tower_of_eldra"].entries[
+                    "tower_of_eldra_second_floor"]
                 tower_of_karun = map_game.map_settings[(2, 12)].entries["tower"].entries["second_floor"]
                 if player.place == tower_of_eldra:
                     exploration_radius = 10
@@ -551,22 +573,33 @@ while run:
                         standing = True
 
             # --- admin commans.
+            if action[0] == "poweradmin":
+                admin = True
 
-            elif action[0] == "events":
-                screen = f"{player.events}"
+            if admin:
+                if action[0] == "events":
+                    screen = f"{player.events}"
 
-            elif action[0] == "estimate":
-                screen = f"{map_game.estimate_date(days=int(action[1]))}"
+                elif action[0] == "estimate":
+                    screen = f"{map_game.estimate_date(days=int(action[1]))}"
 
-            elif action[0] == "update":
-                opt = "_".join(action[1:])
-                screen, player, map_game = update(player=player, map_game=map_game, option=opt)
+                elif action[:2] == ["lvl", "up"]:
+                    player.lvl_up()
+                    screen = f"{map_game.estimate_date(days=int(action[1]))}"
 
-            elif action[0] == "innkeepers_exp":
-                screen = f"{map_game.npcs['innkeeper_mirabelle'].room_expirations}"
+                elif action[0] == "precision":
+                    screen = f"{player.precision}"
 
-            elif action[0] == "precision":
-                screen = f"{player.precision}"
+                elif action[0] == "teleport":
+                    player.set_place(map_game.map_settings[(int(action[1]), int(action[2]))])
+                    screen = f"You have teleported to {action[1]} {action[2]}."
 
-            else:
-                standing = True
+                elif action[0] == "update":
+                    opt = "_".join(action[1:])
+                    screen, player, map_game = update(player=player, map_game=map_game, option=opt)
+
+                elif action[0] == "repair":
+                    repair(player=player, map_game=map_game)
+                    screen = "Game repaired."
+        else:
+            standing = True

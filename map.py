@@ -238,5 +238,6 @@ class Map:
             if npc.place is not None:
                 self.place_from_list(place_list=npc.place).npc.append(npc_key)
 
-    def refresh_entries(self):
-        pass
+    def refresh_biomes(self):
+        for biome in self.map_settings.values():
+            biome.refresh_biome(day=self.day, season=self.current_season)

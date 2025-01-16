@@ -1,6 +1,8 @@
 # Imports.
 # Local imports.
 # External imports.
+import random
+
 from attrs import define, field
 
 
@@ -27,6 +29,7 @@ class Mob:
     escape_chance: float = field(default=50)
 
     hostile: bool = field(default=True)
+    visibility: float = field(default=1)
 
     # Drop attributes.
     items: dict = field(default=None)
@@ -39,3 +42,14 @@ class Mob:
     def __attrs_post_init__(self):
         if self.hpmax is None:
             self.hpmax = self.hp
+
+    def is_visible(self) -> bool:
+        return random.random() >= self.visibility
+
+    def drop_items(self) -> list:
+        quantity = random.randint(a=1, b=len(self.items)) - 1
+        items = list(set(random.choices(population=[*self.items.keys()],
+                                        cum_weights=self.items_drop_chances,
+                                        k=quantity)))
+
+        return items

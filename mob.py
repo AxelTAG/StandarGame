@@ -10,6 +10,7 @@ class Mob:
     name: str = field(default=None)
     hp: int = field(default=None)
     hpmax: int = field(default=None)
+    description: str = field(default="...")
 
     # Combats attributes.
     attack: int = field(default=0)
@@ -25,6 +26,8 @@ class Mob:
 
     escape_chance: float = field(default=50)
 
+    hostile: bool = field(default=True)
+
     # Drop attributes.
     items: dict = field(default=None)
     items_drop_chances: list = field(default=None)
@@ -32,3 +35,7 @@ class Mob:
 
     # Others.
     escape_mob_probability: float = field(default=0)
+
+    def __attrs_post_init__(self):
+        if self.hpmax is None:
+            self.hpmax = self.hp

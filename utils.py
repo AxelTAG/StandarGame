@@ -343,6 +343,15 @@ def load_map_set(ms: dict, setting: dict):
         i.__dict__.update(ii.__dict__)
 
 
+def get_drop_odds(desired_odds: list, drop_len: int = None) -> list:
+    if drop_len is None:
+        drop_len = len(desired_odds)
+    odds = []
+    for odd in desired_odds:
+        odds.append(1 / ((1 / (odd / (drop_len - 1))) / drop_len))
+    return odds
+
+
 def suppress_output():
     sys.stdout = open(os.devnull, 'w')
 

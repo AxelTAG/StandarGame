@@ -23,7 +23,6 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 
 
-
 # Game variables.
 run = True
 menu = True
@@ -78,17 +77,18 @@ while run:
             existent_player = management.import_player("cfg_save.pkl")
             displays.disp_new_game(existent_player=existent_player)
 
-            action_choice = "1"
+            action_choice = ""
             if existent_player:
                 action_choice = input(" # ")
 
-            player_name = ""
-            while not check_name(player_name):
-                print()
-                player_name = input(" # What's your NAME, hero? ").title()
+            if existent_player is None or action_choice == "1":
+                player_name = ""
+                while not check_name(player_name):
+                    print()
+                    player_name = input(" # What's your NAME, hero? ").title()
 
-            menu = False
-            play = True
+                menu = False
+                play = True
 
             # Introduction of new game.
             if play:

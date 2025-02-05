@@ -132,19 +132,11 @@ def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.025
         # Win.
         if enemy.hp <= 0:
             screen += "\n " + "You defeated the " + enemy.name + "!"
-            fight = False
             map_game.add_hours(hours_to_add=int(hours_to_add))
 
             # Drop items logic and exp gain.
             if enemy.items:
-                drop_quantity = random.randint(a=1, b=len(enemy.items)) - 1
-                drop_items = list(set(random.choices(population=[*enemy.items.keys()],
-                                                     cum_weights=enemy.items_drop_chances,
-                                                     k=drop_quantity)))
-
-                for item in drop_items:
-                    if item == "none":
-                        continue
+                for item in enemy.drop_items():
                     if item == "gold":
                         player.add_item(item="gold", quantity=enemy.items[item])
                         screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."

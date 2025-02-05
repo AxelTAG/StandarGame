@@ -1,6 +1,7 @@
 # Imports.
 # Local imports.
 from player import Player
+from globals import ITEMS
 
 # Externals imports.
 import copy
@@ -156,6 +157,11 @@ def find_full_name(partial_name: str, names_list: list) -> str | None:
         return None
 
     return matching_names[0]
+
+
+def get_item_objects(items: list[str]):
+    for item in items:
+        yield ITEMS[item]
 
 
 # Hash generator of txt file.

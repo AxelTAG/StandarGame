@@ -46,10 +46,28 @@ class Mob:
     def is_visible(self) -> bool:
         return random.random() >= self.visibility
 
+    def get_drop_odds(self, desired_odds: list = None, drop_len: int = None) -> list:
+        if desired_odds is None:
+            desired_odds = self.items_drop_chances
+
+        if drop_len is None:
+            drop_len = len(desired_odds)
+
+        if drop_len == 0:
+            return []
+
+        if drop_len == 1:
+            return desired_odds
+
+        odds = []
+        for odd in desired_odds:
+            odds.append(1 / ((1 / (odd / (drop_len - 1))) / drop_len))
+        return odds
+
     def drop_items(self) -> list:
         quantity = random.randint(a=1, b=len(self.items)) - 1
         items = list(set(random.choices(population=[*self.items.keys()],
-                                        cum_weights=self.items_drop_chances,
+                                        cum_weights=self.get_drop_odds(),
                                         k=quantity)))
 
         return items

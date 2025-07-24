@@ -60,6 +60,7 @@ class Player:
     place: Biome | Entry = field(default=None)
     last_place: Biome | Entry = field(default=None)
     last_entry: Entry = field(default=None)
+    standing: bool = field(default=True)
 
     # Lvl up attributes.
     st_points: int = field(default=0)

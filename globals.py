@@ -26,6 +26,18 @@ PINK = (255, 105, 180, 255)
 
 # Bioms of map.
 BIOMES = {
+    "ash-covered rocky": Biome(
+        color=(120, 110, 100, 255),
+        description="Charred stones lie buried beneath layers of gray ash. The air is dry and still, carrying the "
+                    "scent of cooled volcanic fire.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="ASH-COVERED ROCKY",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
     "building": Biome(
         color=(180, 110, 60, 255),
         description="...",
@@ -69,6 +81,18 @@ BIOMES = {
         fishs=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
         status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
 
+    "cold island steppe": Biome(
+        color=(145, 145, 120, 255),
+        description="Flat, treeless plains stretch beneath gray skies, covered in frost-kissed grasses and swept by"
+                    " relentless coastal winds from the surrounding sea.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="COLD ISLAND STEPPE",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
     "dark forest": Biome(
         color=(22, 118, 51, 255),
         description="Shadowy forest of peril, twisted trees loom overhead, their gnarled branches casting eerie "
@@ -91,6 +115,56 @@ BIOMES = {
         name="DEATH VALLEY",
         req=[],
         pace=7,
+        status=[PlayerStatus.WALK.value]),
+
+    "deep ocean": Biome(
+        color=(47, 56, 176, 255),
+        description="Dark, cold waters stretch endlessly, illuminated only by bioluminescent creatures. Pressure "
+                    "crushes all but the hardiest life in this mysterious abyss.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="DEEP OCEAN",
+        pace=18,
+        water=True,
+        fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
+               "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
+        status=[PlayerStatus.SURF.value]),
+
+    "desert": Biome(
+        color=(210, 180, 100, 255),
+        description="Vast, sun-scorched land with cracked earth, scattered cacti, and distant mirages. Wind sweeps "
+                    "through dunes, whispering across the barren, unforgiving landscape.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="DESERT",
+        req=[],
+        pace=10,
+        status=[PlayerStatus.WALK.value]),
+
+    "desert mountains": Biome(
+        color=(140, 100, 60, 255),
+        description="Rugged, sunbaked peaks rise from dry valleys, their rocky faces carved by wind. Sparse vegetation "
+                    "clings to life in the harsh, arid terrain.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="DESERT MOUNTAINS",
+        req=[],
+        pace=10,
+        status=[PlayerStatus.WALK.value]),
+
+    "dunes": Biome(
+        color=(210, 180, 140, 255),
+        description="Endless waves of golden sand rise and fall under scorching sun, shaped by wind into ever-changing "
+                    "ridges in a silent, arid expanse.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="DUNES",
+        req=[],
+        pace=8,
         status=[PlayerStatus.WALK.value]),
 
     "fields": Biome(
@@ -129,6 +203,34 @@ BIOMES = {
         pace=6,
         water=True,
         fishs=["fish_sabalo"],
+        status=[PlayerStatus.WALK.value]),
+
+    "frozen coast": Biome(
+        color=(230, 240, 240, 255),
+        description="Snow-covered beaches meet icy waves, where frost clings to driftwood and sea spray freezes "
+                    "mid-air under a pale, wintry sky.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="FROZEN COAST",
+        req=[],
+        pace=9,
+        water=True,
+        fishs=[],
+        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
+
+    "frozen sea": Biome(
+        color=(120, 180, 250, 255),
+        description="Vast, cracked ice sheets stretch to the horizon, with jagged floes and silent, frigid waters "
+                    "trapped beneath a pale, icy expanse.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="FROZEN SEA",
+        req=[],
+        pace=9,
+        water=True,
+        fishs=[],
         status=[PlayerStatus.WALK.value]),
 
     "gates": Biome(
@@ -180,6 +282,18 @@ BIOMES = {
         req=[],
         status=[PlayerStatus.WALK.value]),
 
+    "incandescent lava": Biome(
+        color=(255, 100, 40, 255),
+        description="Blazing currents flow between blackened crags, casting an intense red glow. The air trembles "
+                    "with heat, and the ground hisses beneath every step.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="INCANDESCENT LAVA",
+        req=[],
+        pace=7,
+        status=[PlayerStatus.WALK.value]),
+
     "island": Biome(
         color=(201, 237, 92, 255),
         description="Island rainforest, dense foliage, vibrant biodiversity, and cascading waterfalls characterize "
@@ -190,6 +304,18 @@ BIOMES = {
         name="ISLAND",
         req=[],
         pace=4,
+        status=[PlayerStatus.WALK.value]),
+
+    "molten surface": Biome(
+        color=(210, 70, 25, 255),
+        description="Rivers of glowing lava snake through scorched ground, heat distorting the air as fiery cracks "
+                    "pulse with dangerous, untamed energy.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="MOLTEN SURFACE",
+        req=[],
+        pace=7,
         status=[PlayerStatus.WALK.value]),
 
     "mountains": Biome(
@@ -203,9 +329,35 @@ BIOMES = {
         pace=10,
         status=[PlayerStatus.WALK.value]),
 
+    "oasis": Biome(
+        color=(47, 56, 176, 255),
+        description="A tranquil haven in the desert, with cool, clear water.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="OASIS",
+        pace=18,
+        water=True,
+        fishs=[],
+        status=[PlayerStatus.SURF.value]),
+
+    "oasis vegetation": Biome(
+        color=(47, 56, 176, 255),
+        description="Lush palms and vibrant greenery surround a clear water pool, offering life and shade amid the "
+                    "surrounding arid desert sands.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="OASIS",
+        pace=18,
+        water=False,
+        fishs=[],
+        status=[PlayerStatus.WALK.value]),
+
     "ocean": Biome(
         color=(47, 56, 176, 255),
-        description="...",
+        description="Endless waves shimmer beneath the sun, teeming with life below the surface, where deep currents "
+                    "carry secrets of the mysterious blue expanse.",
         fight=False,
         mobs=[],
         mobs_chances=[],
@@ -273,6 +425,30 @@ BIOMES = {
         req=["wings"],
         status=[PlayerStatus.WALK.value]),
 
+    "rocky desert": Biome(
+        color=(140, 100, 60, 255),
+        description="Jagged stones and scattered boulders dominate the harsh terrain, with dry winds sweeping through "
+                    "canyons under a blazing, unforgiving sun.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="ROCKY DESERT",
+        req=[],
+        pace=10,
+        status=[PlayerStatus.WALK.value]),
+
+    "shrubland": Biome(
+        color=(145, 140, 80, 255),
+        description="Thorny bushes and hardy plants sprawl across dry, uneven ground, alive with rustling leaves, "
+                    "darting creatures, and the scent of sun-warmed earth.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="SHRUBLAND",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
     "sea": Biome(
         color=(63, 72, 204, 255),
         description="Nothing important.",
@@ -286,6 +462,18 @@ BIOMES = {
                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
         status=[PlayerStatus.SURF.value]),
 
+    "seleran forest": Biome(
+        color=(15, 180, 10, 255),
+        description="Time drifts slowly here—leaves hang mid-fall, whispers echo endlessly, and the air shimmers with "
+                    "ancient, motionless magic frozen between moments.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="SELERAN FOREST",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
     "snow": Biome(
         color=(250, 250, 250, 255),
         description="Nothing important.",
@@ -294,6 +482,54 @@ BIOMES = {
         mobs_chances=[],
         name="SNOW",
         req=["snow clothing"],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
+    "snowy forest": Biome(
+        color=(220, 230, 230, 255),
+        description="Tall, frost-covered pines stand silent under heavy snow. Footsteps crunch softly, and mist drifts "
+                    "between the trunks in the frozen stillness.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="SNOWY FOREST",
+        req=["snow clothing"],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
+    "snowy mountains": Biome(
+        color=(240, 250, 250, 255),
+        description="Jagged peaks cloaked in white, icy winds howl through pine-covered slopes under a pale,"
+                    " sunlit sky.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="SNOWY MOUNTAINS",
+        req=["snow clothing"],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
+    "snowy covered steppe": Biome(
+        color=(220, 220, 220, 255),
+        description="Frozen grasslands stretch endlessly, blanketed in snow and silence, where only the wind and"
+                    " occasional tracks hint at life enduring the cold.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="SNOW-COVERED STEPPE",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
+    "steppe": Biome(
+        color=(165, 165, 80, 255),
+        description="Endless grasslands ripple in the wind, dotted with hardy shrubs and scattered stones beneath a"
+                    " wide, ever-changing sky.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="STEPPE",
+        req=[],
         pace=8,
         status=[PlayerStatus.WALK.value]),
 
@@ -316,6 +552,30 @@ BIOMES = {
         mobs=[],
         mobs_chances=[],
         name="VALLEY",
+        req=[],
+        pace=5,
+        status=[PlayerStatus.WALK.value]),
+
+    "volcanic mountain": Biome(
+        color=(90, 75, 65, 255),
+        description="Towering peak crowned with smoke and ash, its slopes scarred by ancient lava flows and"
+                    " trembling with the rumble of fiery power below.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="VOLCANIC MOUNTAIN",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
+    "volcanic rock": Biome(
+        color=(90, 75, 65, 255),
+        description="Charred, blackened terrain of jagged lava stone and steaming fissures, where heat radiates from "
+                    "the ground and few dare to tread.",
+        fight=True,
+        mobs=[],
+        mobs_chances=[],
+        name="VOLCANIC ROCK",
         req=[],
         pace=5,
         status=[PlayerStatus.WALK.value]),

@@ -39,13 +39,15 @@ def disp_battle(player: Player, enemy: Mob, text: str) -> None:
     # Text lines for text1.
     u_name = player.name
     u_hp = "\n HP: " + str(int(player.hp)) + " / " + str(player.hpmax)
-    u_hpbar = "\n " + "█" * int(25 * (player.hp / player.hpmax)) + "-" * (25 - int(25 * (max(player.hp, 0) / player.hpmax))) + "|"
+    u_hpbar = "\n " + "█" * int(25 * (player.hp / player.hpmax)) + "-" * (
+            25 - int(25 * (max(player.hp, 0) / player.hpmax))) + "|"
     u_atk = "\n ATTACK: " + str(int(player.attack))
 
     # Text lines for text2.
     e_name = "ENEMY: " + enemy.name
     e_hp = "\n HP: " + str(int(enemy.hp)) + " / " + str(enemy.hpmax)
-    e_hpbar = "\n " + "█" * int(25 * (enemy.hp / enemy.hpmax)) + "-" * (25 - int(25 * (max(enemy.hp, 0) / enemy.hpmax))) + "|"
+    e_hpbar = "\n " + "█" * int(25 * (enemy.hp / enemy.hpmax)) + "-" * (
+            25 - int(25 * (max(enemy.hp, 0) / enemy.hpmax))) + "|"
 
     # Text lines for text3.
     o_escape = "0 - ESCAPE"
@@ -107,6 +109,11 @@ def disp_equip(equip: dict) -> str:
         else:
             text += f"\n- {body_part_name}: None."
     return text
+
+
+def disp_intro(width: int = 60) -> None:
+    disp_logo(width=width)
+    print(" < PRESS ENTER > ".center(width))
 
 
 def disp_load_game() -> None:
@@ -197,8 +204,10 @@ def disp_play(player: Player,
               screen_text: str,
               width: int) -> None:
     print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
-    print(" / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
-    print(" \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
+    print(
+        " / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
+    print(
+        " \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
     print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
     t_loc = "LOCATION: " + player.place.name.upper()
     t_reg = "\n REGION: " + reg.upper()
@@ -209,9 +218,11 @@ def disp_play(player: Player,
 
     t_name = "NAME: " + player.name.upper()
     t_hp = "\nHP: " + str(int(player.hp)) + "/" + str(player.hpmax)
-    t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
+    t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (
+            20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
     t_lvl = "\nEXP: " + str(player.exp) + "/" + str(player.expmax) + " | LVL: " + str(player.lvl)
-    t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
+    t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (
+            11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
 
     # Status text.
     t_status_types = []

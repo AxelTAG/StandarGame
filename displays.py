@@ -299,8 +299,8 @@ def disp_rules() -> None:
     print()
     print(" 1) Follow your path.")
     print(" 2) Trace your path with: 'map' and 'draw map'.")
-    print(" 3) Many action are allowed ('use', 'enter', 'talk', 'look around', etc.) try them "
-          "\n    to find your path.")
+    print(" 3) Many actions are allowed ('use', 'enter', 'talk', 'look around', etc.), \n"
+          "    and others you'll have to discover along your journey.")
     print(" 4) Remember: sleeping in a bed, will charge your energy.")
     print()
 

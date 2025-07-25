@@ -111,6 +111,13 @@ def disp_equip(equip: dict) -> str:
     return text
 
 
+def disp_game_loss() -> None:
+    print()
+    print("    YOU HAVE DIED")
+    print("    GAME OVER")
+    input("     > ")
+
+
 def disp_intro(width: int = 60) -> None:
     disp_logo(width=width)
     print(" < PRESS ENTER > ".center(width))

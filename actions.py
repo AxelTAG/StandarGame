@@ -119,6 +119,7 @@ def battle(player: Player,
             # Setting reinit.
             play = False
             menu = True
+            win = False
             player.hp = int(player.hpmax)
             player.set_place(place=map_game.map_settings[(player.x_cp, player.y_cp)])
             player.status = 0
@@ -130,7 +131,7 @@ def battle(player: Player,
 
             print(" GAME OVER")
             input(" > ")
-            return play, menu, False
+            return play, menu, win
 
         # Win.
         if enemy.hp <= 0:

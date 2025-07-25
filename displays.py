@@ -12,7 +12,7 @@ from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewr
 
 # Assign display.
 def disp_assign(st: int) -> str:
-    return f"Assign skill point ({st}) to:\n- Strength (STR)\n- Agility (AGI)\n- Resistance (RES)\n- Vitality (V IT)"
+    return f"Assign skill point ({st}) to:\n- Strength (STR)\n- Agility (AGI)\n- Resistance (RES)\n- Vitality (VIT)"
 
 
 def disp_attack() -> str:

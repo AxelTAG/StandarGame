@@ -44,8 +44,12 @@ class Game:
     admin: bool = field(default=False)
 
     # Existent player.
-    existent_player: Player = field(default=None)
-    player_name: str = field(default=None)
+    existent_player: Player = field(init=False)
+    player_name: str = field(init=False)
+
+    # Settings.
+    music_volume: float = field(default=0.5)
+    fadeout: int = field(default=2000)
 
     def __attrs_post_init__(self):
         # Init pygame music.
@@ -56,8 +60,7 @@ class Game:
         self.loaded_game = False
 
         # Existent player.
-        if self.existent_player is None:
-            self.existent_player = management.import_player(path="./cfg_save.pkl")
+        self.existent_player = management.import_player(path="./cfg_save.pkl")
 
     def show_intro(self) -> None:
         # Enter screen.
@@ -147,12 +150,12 @@ class Game:
         if self.loaded_game:
             player = self.existent_player
             map_game = self.mapgame
+            self.first_setting = False
 
         # Introduction of new game.
         if self.first_setting:
             # Stop of background music.
-            self.stop_music()
-            time.sleep(1.5)
+            self.stop_music(fadeout=self.fadeout)
 
             # Initial settings.
             # Map settings.
@@ -210,10 +213,10 @@ class Game:
 
             # Event handler and map control.
             self.play, self.menu = management.event_handler(player=player,
-                                                            map_game=map_game,
+                                                            mapgame=map_game,
                                                             time_init=time_init)
             management.map_control_handling(player=player,
-                                            map_game=map_game)
+                                            mapgame=map_game)
 
             if not (map_game.get_hours == hours):
                 # Map refresh.
@@ -229,26 +232,20 @@ class Game:
 
             # Setting reinit.
             if player.hp <= 0:
-                self.play = False
-                self.menu = True
-                player.hp, player.x, player.y = int(player.hpmax), player.x_cp, player.y_cp
-                player.status = 0
-                player.poison = 0
-                player.hungry = 48
-                player.thirsty = 48
-                player.exp = 0
-                reset_map(ms=map_game.map_settings,
-                          keys=[(2, 1), (6, 2)])
+                management.reinit(player=player,
+                                  mapgame=map_game)
                 displays.disp_game_loss()
 
+            # Getting hours.
             hours = map_game.get_hours
 
+            # Stop of music if not listen.
             if action[0] != "listen":
-                pygame.mixer.music.stop()
+                self.stop_music(fadeout=self.fadeout)
 
             # Autosave.
             management.save(player=player,
-                            map_game=map_game,
+                            mapgame=map_game,
                             time_init=time_init)  # Autosave.
             clear()
 
@@ -258,13 +255,13 @@ class Game:
                 if player.place.fight and player.place.mobs_respawned:
                     if random.randint(a=0, b=100) < max(player.place.mobs_chances):
                         enemy = random.choices(player.place.mobs_respawned, k=1)[0]
-                        play, menu, win = battle(player=player,
-                                                 map_game=map_game,
-                                                 enemy=copy.deepcopy(map_game.mobs[enemy]))
+                        self.play, self.menu, win = battle(player=player,
+                                                           map_game=map_game,
+                                                           enemy=copy.deepcopy(map_game.mobs[enemy]))
                         if win:
                             player.place.mobs_respawned.remove(enemy)
                         management.save(player=player,
-                                        map_game=map_game,
+                                        mapgame=map_game,
                                         time_init=time_init)
 
             if self.play:
@@ -296,7 +293,7 @@ class Game:
                 if action[0] == "0":  # Save game.
                     self.play = False
                     self.menu = True
-                    management.save(player=player, map_game=map_game, time_init=time_init)
+                    management.save(player=player, mapgame=map_game, time_init=time_init)
 
                 if action[0] in ["1", "2", "3", "4"]:  # Move action.
                     if not player.move_available:
@@ -347,16 +344,13 @@ class Game:
                     else:
                         mob = " ".join(action[1:])
                         if player.place.has_mob_respawned(mob=mob):
-                            play, menu, win = actions.attack(player=player,
-                                                             map_game=map_game,
-                                                             mob=copy.deepcopy(map_game.mobs[mob]))
+                            _, _, win = actions.attack(player=player,
+                                                       map_game=map_game,
+                                                       mob=copy.deepcopy(map_game.mobs[mob]))
 
                             if win:
                                 player.place.mobs_respawned.remove(mob)
-                            else:
-                                management.save(player=player,
-                                                map_game=map_game,
-                                                time_init=time_init)
+                                screen = f"You attacked {mob}."
                         else:
                             screen = f"There is no {mob} here."
 
@@ -585,7 +579,7 @@ class Game:
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])
-                        screen, player, map_game = management.update(player=player, map_game=map_game, option=opt)
+                        screen, player, map_game = management.update(player=player, mapgame=map_game, option=opt)
 
                     elif action[0] == "repair":
                         map_game.map_settings[(24, 18)].entries = {
@@ -617,7 +611,7 @@ class Game:
     def play_music(filepath: str,
                    volume: float = globals.MUSIC_VOLUME,
                    bucle: bool = False,
-                   busy: bool = False):
+                   busy: bool = False) -> None:
         if busy:
             if pygame.mixer.music.get_busy():
                 return
@@ -627,11 +621,14 @@ class Game:
             pygame.mixer.music.play(-1)
 
     @staticmethod
-    def stop_music():
+    def stop_music(fadeout: int = 0) -> None:
+        if fadeout:
+            pygame.mixer.music.fadeout(fadeout)
+            return
         pygame.mixer.music.stop()
 
     @staticmethod
-    def set_music_volume(volume: float):
+    def set_music_volume(volume: float) -> None:
         pygame.mixer.music.set_volume(volume=volume)
 
 

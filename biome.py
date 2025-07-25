@@ -97,6 +97,9 @@ class Biome:
         for _ in range(quantity):
             self.mobs_respawned.extend(random.choices(self.mobs, weights=self.mobs_chances, k=1))
 
+    def has_mob_respawned(self, mob: str) -> bool:
+        return mob in self.mobs_respawned
+
     def refresh_biome(self, day: int, season: Season):
         self.refresh_temperature(season=season)
         self.respawn_mobs(day=day)

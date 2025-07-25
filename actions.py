@@ -37,7 +37,10 @@ def attack(player: Player, map_game: Map, mob: Mob) -> tuple[bool, bool, bool]:
 
 
 # Battle action.
-def battle(player: Player, map_game: Map, enemy: Mob, pace_factor: float = 0.025) -> tuple[bool, bool, bool]:
+def battle(player: Player,
+           map_game: Map,
+           enemy: Mob,
+           pace_factor: float = 0.025) -> tuple[bool, bool, bool]:
     screen = "Defeat the enemy!"
     play = True
     menu = False

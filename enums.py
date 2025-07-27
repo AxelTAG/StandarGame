@@ -1,6 +1,12 @@
 # Imports.
+# Local imports.
+from globals import BIOMES
+
 # External imports.
 from enum import Enum, auto
+
+
+BiomeTypes = Enum(value="BiomeType", names=list(BIOMES.keys()))
 
 
 class BodyPart(Enum):
@@ -170,6 +176,7 @@ class NpcTypes(Enum):
 class PlayerStatus(Enum):
     WALK = 0
     SURF = 1
+    FLY = 2
 
 
 # Seasons.

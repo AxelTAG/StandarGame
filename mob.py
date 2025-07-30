@@ -1,5 +1,4 @@
 # Imports.
-# Local imports.
 # External imports.
 import random
 
@@ -13,6 +12,12 @@ class Mob:
     hp: int = field(default=None)
     hpmax: int = field(default=None)
     description: str = field(default="...")
+    id: int = field(default=None)
+
+    # Place attributes.
+    movable: bool = field(default=True)
+    movable_biomes: list[int] = field(default=None)
+    move_chance: float = field(default=0)
 
     # Combats attributes.
     attack: int = field(default=0)
@@ -46,6 +51,9 @@ class Mob:
     def is_visible(self) -> bool:
         return random.random() >= self.visibility
 
+    def is_mobile(self) -> bool:
+        return self.movable
+
     def get_drop_odds(self, desired_odds: list = None, drop_len: int = None) -> list:
         if desired_odds is None:
             desired_odds = self.items_drop_chances
@@ -71,3 +79,23 @@ class Mob:
                                         k=quantity)))
 
         return items
+
+    def move(self, place) -> bool:
+        if self.is_mobile():
+            if place.id in self.movable_biomes:
+                return True
+        return False
+
+    def random_move(self, places: list) -> None:
+        if not self.movable_biomes:
+            return
+
+        if not self.move_chance > random.random():
+            return
+
+        places = list(filter(lambda x: x.id in self.movable_biomes, places))
+        if places:
+            place = random.choices(places, k=1)[0]
+            if self.move(place=place):
+                return place
+        return

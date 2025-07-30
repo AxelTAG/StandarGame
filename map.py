@@ -54,7 +54,8 @@ class Map:
             pass
 
         if self.map_settings is None:
-            self.map_settings = tl_map_set(self.map_labels, biomes=self.biomes)
+            self.map_settings = tl_map_set(tl_map=self.map_labels,
+                                           biomes=self.biomes)
             init_map_setting(ms=self.map_settings)
 
         if self.npcs is None:
@@ -240,4 +241,6 @@ class Map:
 
     def refresh_biomes(self):
         for biome in self.map_settings.values():
-            biome.refresh_biome(day=self.day, season=self.current_season)
+            biome.refresh_biome(day=self.day,
+                                season=self.current_season,
+                                neighboors=self.neighbors_from_coord(coord=biome.coordinates))

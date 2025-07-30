@@ -1,21 +1,22 @@
 # Imports.
 # Locals imports.
-import globals
 import displays
 import enums
+import globals
 import management
-import actions
+
 from actions import *
+from inventory import Inventory
 from map import Map
 from player import Player
-from utils import draw_move, clear, check_name, find_full_name, reset_map
+from utils import draw_move, clear, check_name, find_full_name
+from world import *
 
 # External imports.
 import copy
 import matplotlib.pyplot as plt
 import os
 import random
-import time
 from attrs import define, field
 from datetime import datetime
 
@@ -54,7 +55,7 @@ class Game:
     def __attrs_post_init__(self):
         # Init pygame music.
         pygame.mixer.init()
-        pygame.mixer.music.set_volume(globals.MUSIC_VOLUME)
+        pygame.mixer.music.set_volume(self.music_volume)
 
         # Game variables.
         self.loaded_game = False
@@ -71,7 +72,7 @@ class Game:
     def show_menu(self) -> None:
         # Music background.
         self.play_music(filepath="./rsc/media/Echoes_of_the_Ancient_Lanes.mp3",
-                        volume=globals.MUSIC_VOLUME,
+                        volume=self.music_volume,
                         bucle=True,
                         busy=True)
 
@@ -159,16 +160,17 @@ class Game:
 
             # Initial settings.
             # Map settings.
-            map_game = Map(mobs=globals.MOBS.copy(),
-                           biomes=globals.BIOMES.copy(),
-                           npcs=globals.NPCS.copy(),
-                           entries=globals.ENTRIES.copy())
+            map_game = Map(mobs=copy.deepcopy(MOBS),
+                           biomes=copy.deepcopy(BIOMES),
+                           npcs=copy.deepcopy(NPCS),
+                           entries=copy.deepcopy(ENTRIES))
 
             # Player.
             player = Player(name=self.player_name,
                             place=map_game.map_settings[(0, 0)].entries["hut"],
                             last_place=map_game.map_settings[(0, 0)].entries["hut"],
-                            last_entry=map_game.map_settings[(0, 0)].entries["hut"])
+                            last_entry=map_game.map_settings[(0, 0)].entries["hut"],
+                            inventory=Inventory(item_base=ITEMS))
 
             # Location setting.
             map_game.map_settings[(0, 0)].entries["hut"].name = player.name + "'s Hut"
@@ -189,7 +191,7 @@ class Game:
                     "Ready your blade..."]}
 
             # Introduction.
-            if player.name:
+            if player.name and player.name.lower() != "tester":
                 screen = talk(npc=map_game.npcs["whispers"],
                               player=player,
                               map_game=map_game)
@@ -234,6 +236,7 @@ class Game:
             if player.hp <= 0:
                 management.reinit(player=player,
                                   mapgame=map_game)
+                self.play, self.menu = False, True
                 displays.disp_game_loss()
 
             # Getting hours.
@@ -257,9 +260,11 @@ class Game:
                         enemy = random.choices(player.place.mobs_respawned, k=1)[0]
                         self.play, self.menu, win = battle(player=player,
                                                            map_game=map_game,
-                                                           enemy=copy.deepcopy(map_game.mobs[enemy]))
+                                                           enemy=enemy)
                         if win:
-                            player.place.mobs_respawned.remove(enemy)
+                            player.place.remove_mob_respawned(mob=enemy)
+                            screen += f"\nYou battled width {enemy.name}."
+                            del enemy
                         management.save(player=player,
                                         mapgame=map_game,
                                         time_init=time_init)
@@ -342,17 +347,23 @@ class Game:
                     if len(action) == 1:
                         screen = displays.disp_attack()
                     else:
-                        mob = " ".join(action[1:])
-                        if player.place.has_mob_respawned(mob=mob):
-                            _, _, win = actions.attack(player=player,
-                                                       map_game=map_game,
-                                                       mob=copy.deepcopy(map_game.mobs[mob]))
+                        mob = "_".join(action[1:])
+                        if mob in MOBS:
+                            if player.place.has_mob_respawned(mob_id=MobTypes[mob].value):
+                                mob = player.place.get_mob(mob_id=MobTypes[mob].value)
+                                _, _, win = attack(player=player,
+                                                   map_game=map_game,
+                                                   mob=mob)
 
-                            if win:
-                                player.place.mobs_respawned.remove(mob)
-                                screen = f"You attacked {mob}."
+                                if win:
+                                    player.place.remove_mob_respawned(mob=mob)
+                                    screen = f"You attacked {mob.name}."
+                                    del mob
+                            else:
+                                screen = f"There is no {mob.replace('_', ' ')} here."
                         else:
-                            screen = f"There is no {mob} here."
+                            screen = f"There is no {mob.replace('_', ' ')} here.1"
+                    player.standing = True
 
                 elif action[0] == "check":  # Check action.
                     if len(action) == 1:
@@ -576,6 +587,13 @@ class Game:
                     elif action[0] == "teleport":
                         player.set_place(map_game.map_settings[(int(action[1]), int(action[2]))])
                         screen = f"You have teleported to {action[1]} {action[2]}."
+
+                    elif action[:2] == ["mob", "quantity"]:
+                        screen = f"There {len(player.place.mobs_respawned)} mobs."
+
+                    elif action[:2] == ["remove", "mob"]:
+                        player.place.remove_mob_respawned(mob_id=int(action[2]))
+                        screen = f"There {len(player.place.mobs_respawned)} mobs."
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])

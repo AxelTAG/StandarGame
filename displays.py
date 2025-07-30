@@ -12,7 +12,7 @@ from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewr
 
 # Assign display.
 def disp_assign(st: int) -> str:
-    return f"Assign skill point ({st}) to:\n- Strength (STR)\n- Agility (AGI)\n- Resistance (RES)\n- Vitality (VIT)"
+    return f"Assign skill point ({st}) to: \n- Strength (STR)\n- Agility (AGI)\n- Resistance (RES)\n- Vitality (VIT)"
 
 
 def disp_attack() -> str:
@@ -197,7 +197,7 @@ def disp_look_around(place: Biome) -> str:
 
     if mobs:
         for mob in mobs:
-            text += "\n - " + mob.replace("_", " ").title() + "."
+            text += "\n - " + mob.name.title() + "."
     return text
 
 
@@ -334,9 +334,9 @@ def disp_show_inventory(player: Player):
 
 
 # Sleep options display.
-def disp_sleep(x: int, y: int, place: Biome) -> str:
+def disp_sleep(place: Biome) -> str:
     if "bed" in place.items:
-        return "You want to sleep to:\n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Night"
+        return "You want to sleep to: \n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Night"
     else:
         return "There is no bed here."
 

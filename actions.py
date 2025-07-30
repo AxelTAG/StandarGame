@@ -1,6 +1,5 @@
 # Imports.
 # Internal imports.
-import globals
 from biome import Biome, Entry
 from displays import disp_battle, disp_talk_answers, disp_talk_tw
 from enums import EntryType, NpcTypes, PlayerStatus, TimeOfDay
@@ -10,6 +9,7 @@ from mob import Mob
 from npc import Npc
 from player import Player
 from utils import reset_map, text_ljust
+from world import ITEMS
 
 # External imports.
 import math
@@ -23,8 +23,8 @@ import pygame
 # ----------------------------------------------------------------------------------------------------
 # Utiliy functions.
 def get_item(item_name: str) -> Item | bool:
-    if item_name in globals.ITEMS.keys():
-        return globals.ITEMS[item_name]
+    if item_name in ITEMS.keys():
+        return ITEMS[item_name]
     else:
         return False
 
@@ -206,8 +206,8 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
         return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
 
     if item in player.place.items or (inventory and item in player.inventory.items.keys()):
-        if item in globals.ITEMS.keys():
-            text = globals.ITEMS[item].description
+        if item in ITEMS.keys():
+            text = ITEMS[item].description
 
         else:
             text = f"You observe nothing."
@@ -215,8 +215,8 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
     elif item == "":
         text = "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items at the inventory."
 
-    elif item in globals.ITEMS.keys():
-        text = f"There is no {globals.ITEMS[item].name} here."
+    elif item in ITEMS.keys():
+        text = f"There is no {ITEMS[item].name} here."
 
     else:
         text = f"There is no {item.title()} here."
@@ -225,11 +225,11 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
 
 
 def craft(player: Player, item: str, quantity: int) -> tuple[str, bool]:
-    if item not in globals.ITEMS:
+    if item not in ITEMS:
         return "This item cannot be craft.", False
 
     items = player.inventory.items
-    item_object = globals.ITEMS[item]
+    item_object = ITEMS[item]
     item_name = item_object.name
     for mat, mat_amount in item_object.crafting_materials.items():
         material_name = mat.replace("_", " ").title()
@@ -489,7 +489,7 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
         return "You need to specify a name/thing."
 
     if entitie in player.place.items:
-        track = globals.ITEMS[entitie].tracks[map_game.current_week_day]
+        track = ITEMS[entitie].tracks[map_game.current_week_day]
         if track is not None:
             pygame.mixer.music.load(track)
             pygame.mixer.music.play(0)
@@ -579,7 +579,7 @@ def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None
 def pick_up(player: Player, item: str) -> str:
     item_name = " ".join(item.split("_")).title()
     if item in player.place.items:
-        if item in globals.ITEMS.keys() and globals.ITEMS[item].pickable:
+        if item in ITEMS.keys() and ITEMS[item].pickable:
             player.add_item(item=item, quantity=1)  # Adding item to inventory.
             player.place.items.remove(item)  # Removing item from place.
 
@@ -778,7 +778,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                                 if transaction_status:
                                     disp_talk_tw(npc=npc,
                                                  message=["Perfect. Keep this key, until 30 days."])
-                                    expiration_date = globals.ITEMS[items[item]].expiration
+                                    expiration_date = ITEMS[items[item]].expiration
                                     npc.room_expirations[items[item]] = map_game.estimate_date(days=expiration_date)
                                 else:
                                     disp_talk_tw(npc=npc,
@@ -841,7 +841,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                     items, prices, n = [], [], 0
 
                     for item, value in npc.crafting_items.items():
-                        item_object = globals.ITEMS[item]
+                        item_object = ITEMS[item]
                         item_name = item.replace("_", " ").title()
                         print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
                         items.append(item)

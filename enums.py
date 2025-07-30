@@ -1,12 +1,6 @@
 # Imports.
-# Local imports.
-from globals import BIOMES
-
 # External imports.
 from enum import Enum, auto
-
-
-BiomeTypes = Enum(value="BiomeType", names=list(BIOMES.keys()))
 
 
 class BodyPart(Enum):

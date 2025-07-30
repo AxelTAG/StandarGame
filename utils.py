@@ -1,7 +1,7 @@
 # Imports.
 # Local imports.
 from player import Player
-from globals import ITEMS
+from world import *
 
 # Externals imports.
 import copy
@@ -54,7 +54,7 @@ def clear():
 
 
 # Coast reset.
-def reset_map(ms: dict, keys: list) -> dict:
+def reset_map(ms: dict, keys: list):
     ms[keys[0]].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
     ms[keys[0]].items = ["boat"]
 
@@ -255,58 +255,8 @@ def label_pixels(img_path: str) -> list:
         for x in range(width):
             # Get the color of the pixel at coordinates (x, y)
             color = img.getpixel((x, y))
-            if color == (180, 110, 60, 255):  # Building.
-                label = "building"
-            elif color == (54, 54, 54, 255):  # Canyon.
-                label = "canyon"
-            elif color == (1, 1, 1, 255):  # Cave.
-                label = "cave"
-            elif color == (239, 228, 176, 255):  # Coast.
-                label = "coast"
-            elif color == (22, 118, 51, 255):  # Dark Forest.
-                label = "dark forest"
-            elif color == (148, 148, 148, 255):  # Death Valley.
-                label = "death valley"
-            elif color == (115, 231, 29, 255):  # Fields.
-                label = "fields"
-            elif color == (34, 177, 76, 255):  # Forest.
-                label = "forest"
-            elif color == (120, 186, 252, 255):  # Frostvale.
-                label = "frostvale"
-            elif color == (200, 191, 231, 255):  # Gates.
-                label = "gates"
-            elif color == (195, 195, 195, 255):  # Highlands.
-                label = "highlands"
-            elif color == (78, 185, 32, 255):  # Hills.
-                label = "hills"
-            elif color == (185, 122, 87, 255):  # Hut.
-                label = "hut"
-            elif color == (201, 237, 92, 255):  # Island.
-                label = "island"
-            elif color == (127, 127, 127, 255):  # Mountains.
-                label = "mountains"
-            elif color == (181, 230, 29, 255):  # Plains.
-                label = "plains"
-            elif color == (82, 249, 11, 255):  # Plateau.
-                label = "plateau"
-            elif color == (255, 0, 0, 255):  # Red.
-                label = "red"
-            elif color == (0, 162, 232, 255):  # River.
-                label = "river"
-            elif color == (85, 80, 85, 255):  # Rocks.
-                label = "rocks"
-            elif color == (63, 72, 204, 255):  # Sea.
-                label = "sea"
-            elif color == (250, 250, 250, 255):  # Snow.
-                label = "snow"
-            elif color == (170, 105, 70, 255):  # Town.
-                label = "town"
-            elif color == (167, 167, 167, 255):  # Valley.
-                label = "valley"
-            elif color == (128, 255, 255, 255):  # Water.
-                label = "water"
-            else:
-                label = "red"
+            biome = next((b for b in BIOMES.values() if b.color == color), None)
+            label = BiomeTypes(biome.id).name if biome else "red"
 
             # Assign a label based on the color.
             img_row.append(label)
@@ -431,11 +381,11 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
         for j in range(len(tl_map[i])):
             key = (j, i)
             value = copy.deepcopy(biomes[tl_map[i][j]])
-            value.x, value.y = j, i
+            value.set_x(j)
+            value.set_y(i)
             value.mobs_respawned = []
             value.respawn_mobs(day=value.mobs_respawn_time)
             dictionary[key] = value
-
     return dictionary
 
 

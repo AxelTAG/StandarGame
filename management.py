@@ -1,13 +1,11 @@
 # Imports.
 # Local imports.
-import globals
 import utils
 from actions import battle, talk
 from displays import disp_talk_tw
-from enums import NpcTypes
-from globals import ENTRIES, MOBS
 from map import Map
 from player import Player
+from world import *
 
 # External imports.
 import copy
@@ -498,11 +496,11 @@ def update(player: Player,
     Updates class Player and class Map.
     """
     if option == "map_npcs":
-        mapgame.npcs = globals.NPCS.copy()
+        mapgame.npcs = NPCS.copy()
         return "Update NPCS MAP succesfully.", player, mapgame
 
     if option == "map_mobs":
-        mapgame.mobs = globals.MOBS.copy()
+        mapgame.mobs = MOBS.copy()
         return "Update MOBS MAP succesfully.", player, mapgame
 
     if option == "player":

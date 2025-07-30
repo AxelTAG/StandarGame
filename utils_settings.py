@@ -1,6 +1,6 @@
 # Imports.
 # Local imports.
-from globals import ENTRIES
+from world import ENTRIES
 
 
 # INIT MAP SETTING function that initialized the settings of map biomes.

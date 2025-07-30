@@ -1,6 +1,5 @@
 # Imports.
 # Local imports.
-import inventory
 from biome import Biome, Entry
 from enums import BodyPart, PlayerStatus
 from inventory import Inventory

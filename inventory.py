@@ -1,15 +1,16 @@
 # Imports.
 # Local imports.
-from globals import ITEMS
+# External imports.
 
 
 class Inventory:
-    def __init__(self, items=None, gold: int = 5):
+    def __init__(self, items=None, gold: int = 5, item_base: dict = None):
         if items is None:
             items = {"red_potion": 2, "little_red_potion": 2}
 
         self.items = items
         self.gold = gold
+        self.item_base = item_base
 
     def add_item(self, item: str, quantity: int) -> bool:
         if item == "gold":
@@ -59,7 +60,7 @@ class Inventory:
     @property
     def get_item_objects(self):
         for item in self.items.keys():
-            yield ITEMS[item]
+            yield self.item_base[item]
 
     def get_item_object(self, item: str):
-        return ITEMS[item]
+        return self.item_base[item]

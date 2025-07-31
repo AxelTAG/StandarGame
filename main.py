@@ -61,7 +61,7 @@ class Game:
         self.loaded_game = False
 
         # Existent player.
-        self.existent_player = management.import_player(path="./cfg_save.pkl")
+        self.existent_player = management.import_player(path="./save/cfg_save.pkl")
 
     def show_intro(self) -> None:
         # Enter screen.
@@ -262,9 +262,8 @@ class Game:
                                                            map_game=map_game,
                                                            enemy=enemy)
                         if win:
-                            player.place.remove_mob_respawned(mob=enemy)
-                            screen += f"\nYou battled width {enemy.name}."
-                            del enemy
+                            screen += f"\n You battled width {enemy.name}."
+
                         management.save(player=player,
                                         mapgame=map_game,
                                         time_init=time_init)
@@ -356,9 +355,7 @@ class Game:
                                                    mob=mob)
 
                                 if win:
-                                    player.place.remove_mob_respawned(mob=mob)
                                     screen = f"You attacked {mob.name}."
-                                    del mob
                             else:
                                 screen = f"There is no {mob.replace('_', ' ')} here."
                         else:

@@ -8,7 +8,7 @@ from map import Map
 from mob import Mob
 from npc import Npc
 from player import Player
-from utils import reset_map, text_ljust
+from utils import reset_map, text_ljust, underscores
 from world import ITEMS
 
 # External imports.
@@ -31,8 +31,13 @@ def get_item(item_name: str) -> Item | bool:
 
 # ----------------------------------------------------------------------------------------------------
 
-def attack(player: Player, map_game: Map, mob: Mob) -> tuple[bool, bool, bool]:
-    play, menu, win = battle(player=player, map_game=map_game, enemy=mob, pace_factor=.05)
+def attack(player: Player,
+           map_game: Map,
+           mob: Mob) -> tuple[bool, bool, bool]:
+    play, menu, win = battle(player=player,
+                             map_game=map_game,
+                             enemy=mob,
+                             pace_factor=.05)
     return play, menu, win
 
 
@@ -44,6 +49,7 @@ def battle(player: Player,
     screen = "Defeat the enemy!"
     play = True
     menu = False
+    win = False
     fight = True
     hours_to_add = 0
 
@@ -60,14 +66,14 @@ def battle(player: Player,
         if choice_action == "0":  # Escape option.
             escape = random.choices([True, False],
                                     weights=[enemy.escape_chance, 100 - enemy.escape_chance],
-                                    k=1)
-            if escape[0]:
+                                    k=1)[0]
+            if escape:
                 screen = "You have escaped."
                 disp_battle(player=player,
                             enemy=enemy,
                             text=screen)
                 input(" > ")
-                return play, menu, False
+                return play, menu, win
             else:
                 screen = "You have not escaped."
 
@@ -75,9 +81,9 @@ def battle(player: Player,
             if player.precision * (1 - enemy.evasion) > random.random():
                 USER_DMG = max(int(int(player.attack) - int(enemy.defense)), 0)
                 enemy.hp -= USER_DMG
-                screen = " " + player.name + " dealt " + str(USER_DMG) + " damage to the " + enemy.name + "."
+                screen = f" {player.name} dealt {USER_DMG} damage to the {enemy.name}."
             else:
-                screen = " " + player.name + " fail the attack."
+                screen = f" {player.name} fail the attack."
 
         elif choice_action in ["2", "3"]:  # Use object action.
             if choice_action == "2":
@@ -87,12 +93,12 @@ def battle(player: Player,
 
         # Enemy attack.
         if enemy.escape_mob_probability > random.random():
-            screen += "\n " + enemy.name + " has escaped"
+            screen += f"\n {enemy.name} has escaped."
             disp_battle(player=player,
                         enemy=enemy,
                         text=screen)
             input(" > ")
-            return play, menu, False
+            return play, menu, win
 
         if enemy.hp > 0 and choice_action in ["0", "1", "2", "3"]:
             if enemy.precision * (1 - player.evasion) > random.random() and object_used:
@@ -135,30 +141,31 @@ def battle(player: Player,
 
         # Win.
         if enemy.hp <= 0:
-            screen += "\n " + "You defeated the " + enemy.name + "!"
+            win = True
+            screen += f"\nYou defeated the {enemy.name}!"
             map_game.add_hours(hours_to_add=int(hours_to_add))
 
-            # Drop items logic and exp gain.
+            # Drop items logic and experience gain.
             if enemy.items:
                 for item in enemy.drop_items():
-                    if item == "gold":
-                        player.add_item(item="gold", quantity=enemy.items[item])
-                        screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."
-                    else:
-                        player.add_item(item=item, quantity=enemy.items[item])
-                        screen += "\n You've found " + str(enemy.items[item]) + " " + item.replace("_", " ").title() + "."
+                    item_name = underscores(text=item, delete=True)
+                    player.add_item(item=item, quantity=enemy.items[item])
+                    screen += f"\n You've found {enemy.items[item]} {item_name}."
 
-            screen += "\n You have gained " + str(enemy.experience) + " experience."
+            screen += f"\n You have gained {enemy.experience} experience."
 
             if player.add_exp(enemy.experience):
-                screen += "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
+                screen += " You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
+
+            # Remove of mob at biome.
+            player.place.remove_mob_respawned(mob=enemy)
 
             disp_battle(player=player,
                         enemy=enemy,
                         text=screen)
             input(" > ")
 
-            return play, menu, True
+            return play, menu, win
 
 
 # Buy action.

@@ -429,14 +429,14 @@ def map_control_handling(player: Player,
             player.set_place(place=player.last_place)
 
 
-def load(path_usavepkl: str = "cfg_save.pkl",
-         path_msave: str = "cfg_map.pkl",
-         path_hsave: str = "cfg_hash.txt",
+def load(path_usavepkl: str = "./save/cfg_save.pkl",
+         path_msave: str = "./save/cfg_map.pkl",
+         path_hsave: str = "./save/cfg_hash.txt",
          check_hash: bool = True) -> tuple[bool, str, Player | None, Map | None]:
     """Checks corruption of files and finally loads game."""
     if check_hash:
         load_hash = utils.load_dict_from_txt(path_hsave)
-        if not utils.get_hash("cfg_save.pkl") == load_hash["hash"]:
+        if not utils.get_hash("./save/cfg_save.pkl") == load_hash["hash"]:
             return False, " Corrupted file.", None, None
 
     player = import_player(path_usavepkl)
@@ -475,9 +475,9 @@ def repair(player: Player, mapgame: Map):
 def save(player: Player,
          mapgame: Map,
          time_init: datetime,
-         path_usavepkl: str = "cfg_save.pkl",
-         path_mappkl: str = "cfg_map.pkl",
-         path_hsave: str = "cfg_hash.txt") -> None:
+         path_usavepkl: str = "./save/cfg_save.pkl",
+         path_mappkl: str = "./save/cfg_map.pkl",
+         path_hsave: str = "./save/cfg_hash.txt") -> None:
     """Saves game."""
     player.refresh_time_played(datetime.now(), time_init)
 

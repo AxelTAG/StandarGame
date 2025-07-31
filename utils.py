@@ -395,3 +395,9 @@ def typewriter(text: str, speed: float = 0.01) -> None:
         sys.stdout.write(char)
         sys.stdout.flush()
         time.sleep(speed)
+
+
+def underscores(text: str, delete: bool = False) -> str:
+    if delete:
+        return text.replace("_", " ")
+    return text.replace(" ", "_")

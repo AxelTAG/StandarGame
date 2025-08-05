@@ -49,6 +49,7 @@ class Game:
     player_name: str = field(init=False)
 
     # Settings.
+    autosave: bool = field(default=False)
     music_volume: float = field(default=0.5)
     fadeout: int = field(default=2000)
 
@@ -167,13 +168,13 @@ class Game:
 
             # Player.
             player = Player(name=self.player_name,
-                            place=map_game.map_settings[(0, 0)].entries["hut"],
-                            last_place=map_game.map_settings[(0, 0)].entries["hut"],
-                            last_entry=map_game.map_settings[(0, 0)].entries["hut"],
+                            place=map_game.map_settings[(12, 24)].entries["hut"],
+                            last_place=map_game.map_settings[(12, 24)].entries["hut"],
+                            last_entry=map_game.map_settings[(12, 24)].entries["hut"],
                             inventory=Inventory(item_base=ITEMS))
 
             # Location setting.
-            map_game.map_settings[(0, 0)].entries["hut"].name = player.name + "'s Hut"
+            map_game.map_settings[(12, 24)].entries["hut"].name = player.name + "'s Hut"
 
             # Introduction setting.
             map_game.npcs["whispers"].messages = {
@@ -239,6 +240,10 @@ class Game:
                 self.play, self.menu = False, True
                 displays.disp_game_loss()
 
+                management.save(player=player,
+                                mapgame=map_game,
+                                time_init=time_init)
+
             # Getting hours.
             hours = map_game.get_hours
 
@@ -247,9 +252,10 @@ class Game:
                 self.stop_music(fadeout=self.fadeout)
 
             # Autosave.
-            management.save(player=player,
-                            mapgame=map_game,
-                            time_init=time_init)  # Autosave.
+            if self.autosave:
+                management.save(player=player,
+                                mapgame=map_game,
+                                time_init=time_init)  # Autosave.
             clear()
 
             # Fight chances of moving, and player status refreshing.
@@ -257,16 +263,13 @@ class Game:
                 # Fight.
                 if player.place.fight and player.place.mobs_respawned:
                     if random.randint(a=0, b=100) < max(player.place.mobs_chances):
+
                         enemy = random.choices(player.place.mobs_respawned, k=1)[0]
                         self.play, self.menu, win = battle(player=player,
                                                            map_game=map_game,
                                                            enemy=enemy)
                         if win:
                             screen += f"\n You battled width {enemy.name}."
-
-                        management.save(player=player,
-                                        mapgame=map_game,
-                                        time_init=time_init)
 
             if self.play:
                 # Draw of general stats.
@@ -373,9 +376,9 @@ class Game:
                         screen = check(player=player, item="_".join(action[1:]))
 
                 elif action == ["draw", "map"]:  # Update of map action.
-                    tower_of_eldra = map_game.map_settings[(22, 18)].entries["tower_of_eldra"].entries[
+                    tower_of_eldra = map_game.map_settings[(34, 42)].entries["tower_of_eldra"].entries[
                         "tower_of_eldra_second_floor"]
-                    tower_of_karun = map_game.map_settings[(2, 12)].entries["tower"].entries["second_floor"]
+                    tower_of_karun = map_game.map_settings[(14, 36)].entries["tower"].entries["second_floor"]
                     if player.place == tower_of_eldra:
                         exploration_radius = 10
                     elif player.place == tower_of_karun:
@@ -462,9 +465,23 @@ class Game:
 
                 elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
                     player.map[player.y][player.x] = globals.PINK
-                    plt.figure(player.name + "'s map")
-                    plt.imshow(player.map)
-                    plt.title("Map")
+
+                    fig, ax = plt.subplots()
+                    ax.imshow(player.map, origin='upper', interpolation='nearest')
+                    ax.set_title(player.name + "'s Map")
+
+                    zoom_size = 32
+                    x, y = player.x, player.y
+
+                    half = zoom_size // 2
+                    x_start = max(0, x - half)
+                    x_end = min(player.map.shape[1], x + half)
+                    y_start = max(0, y - half)
+                    y_end = min(player.map.shape[0], y + half)
+
+                    ax.set_xlim(x_start, x_end)
+                    ax.set_ylim(y_end, y_start)
+
                     plt.show()
                     player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].color
                     player.standing = True
@@ -597,11 +614,11 @@ class Game:
                         screen, player, map_game = management.update(player=player, mapgame=map_game, option=opt)
 
                     elif action[0] == "repair":
-                        map_game.map_settings[(24, 18)].entries = {
-                            "cave": map_game.map_settings[(27, 19)].entries["cave"]
+                        map_game.map_settings[(36, 42)].entries = {
+                            "cave": map_game.map_settings[(49, 43)].entries["cave"]
                         }
-                        map_game.map_settings[(24, 18)].entries["cave"].leave_entry = map_game.map_settings[
-                            (24, 18)]
+                        map_game.map_settings[(36, 42)].entries["cave"].leave_entry = map_game.map_settings[
+                            (36, 42)]
                         screen = "Game repaired."
             else:
                 player.standing = True

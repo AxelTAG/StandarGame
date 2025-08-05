@@ -19,7 +19,7 @@ def event_handler(player: Player,
                   mapgame: Map,
                   time_init: datetime) -> tuple[int, int]:
     # Event of Goblin Chief (1/3).
-    goblin_chiefs_bedroom = mapgame.place_from_list([(13, 0), "cave_entrance", "cave_pit", "cave_basin",
+    goblin_chiefs_bedroom = mapgame.place_from_list([(25, 24), "cave_entrance", "cave_pit", "cave_basin",
                                                      "cave_gallery", "chiefs_cave", "goblin_chief_bedroom"])
 
     if player.place == goblin_chiefs_bedroom and not player.events["goblin_chief_crown_1"]:
@@ -39,7 +39,7 @@ def event_handler(player: Player,
         return play, menu
 
     # Event of Goblin Chief (2/3).
-    if ((player.last_place == mapgame.map_settings[(9, 4)] or player.last_place == mapgame.map_settings[(10, 5)])
+    if ((player.last_place == mapgame.map_settings[(21, 28)] or player.last_place == mapgame.map_settings[(22, 29)])
             and player.events["goblin_chief_crown_1"]
             and not player.events["goblin_chief_crown_2"]):
         mapgame.npcs["mayor_thorian"].reset_hist_messages()
@@ -49,9 +49,9 @@ def event_handler(player: Player,
                 "If not for your help, I might have tried to escape through one of the hidden passages in the cave.",
                 "I saw them but had no chance to explore. Your courage saved me before I could take the risk.",
                 "I owe you my life."]}
-        mapgame.npcs["mayors_daughter_maisie"].place = [(10, 4)]
-        mapgame.npcs["mayors_daughter_maisie"].place_morning = [(10, 4)]
-        mapgame.npcs["mayors_daughter_maisie"].place_evening = [(10, 4), "mayors_house"]
+        mapgame.npcs["mayors_daughter_maisie"].place = [(22, 28)]
+        mapgame.npcs["mayors_daughter_maisie"].place_morning = [(22, 28)]
+        mapgame.npcs["mayors_daughter_maisie"].place_evening = [(22, 28), "mayors_house"]
 
         mapgame.npcs["mayor_thorian"].messages = {
             0: ["I’ve heard the tale from my daughter, Maisie. You rescued her from the clutches of those "
@@ -118,10 +118,10 @@ def event_handler(player: Player,
                 "But now I’m worried about another shipment I sent with a caravan to Epiiat.",
                 "I haven’t heard back from them. Could you check on it for me? I’d be truly grateful."]}
 
-        mapgame.npcs["caravan_leader_darek"].place = [(16, 5)]
-        mapgame.npcs["caravenner_lorien"].place = [(16, 5)]
-        mapgame.npcs["jester_ralzo"].place = [(16, 5)]
-        mapgame.npcs["traveler_kaelen"].place = [(16, 5)]
+        mapgame.npcs["caravan_leader_darek"].place = [(28, 29)]
+        mapgame.npcs["caravenner_lorien"].place = [(28, 29)]
+        mapgame.npcs["jester_ralzo"].place = [(28, 29)]
+        mapgame.npcs["traveler_kaelen"].place = [(28, 29)]
 
         player.events["marlin_quests_2"] = True
 
@@ -149,7 +149,7 @@ def event_handler(player: Player,
         player.events["marlin_quests_3"] = True
 
     # Event Fisherman Marlin quests (5/9).
-    if all(["rocks" not in mapgame.map_settings[(15, 5)].req,
+    if all(["rocks" not in mapgame.map_settings[(27, 29)].req,
             player.events["marlin_quests_3"],
             not player.events["marlin_quests_4"]]):
         mapgame.npcs["fisherman_marlin"].reset_hist_messages()
@@ -180,7 +180,7 @@ def event_handler(player: Player,
         mapgame.npcs["worker_gorrick"].messages = {
             0: ["Finally, the valley is cl...",
                 "Zzzz... Zzz..."]}
-        mapgame.npcs["worker_gorrick"].place = [(10, 4), "wooden_house"]
+        mapgame.npcs["worker_gorrick"].place = [(22, 28), "wooden_house"]
 
         mapgame.map_settings[(14, 5)].description = ("Desolate, silent valley, cracked earth stretches between "
                                                      "imposing cliffs, where an eerie stillness envelops the barren "
@@ -200,8 +200,8 @@ def event_handler(player: Player,
             mapgame.npcs["caravan_leader_darek"].messages_evening = {
                 0: ["Night falls heavy in this cavern, but at least we're safe for now. You've earned a rest,"
                     " traveler."]}
-            mapgame.npcs["caravan_leader_darek"].place_morning = [(9, 5)]
-            mapgame.npcs["caravan_leader_darek"].place_evening = [(9, 5), "inn", "main_room"]
+            mapgame.npcs["caravan_leader_darek"].place_morning = [(21, 29)]
+            mapgame.npcs["caravan_leader_darek"].place_evening = [(21, 29), "inn", "main_room"]
 
             mapgame.npcs["caravenner_lorien"].messages_morning = {
                 0: ["Ah, Epiiat... It's been too long. Feels good to be back. Thanks for making it happen, friend."]}
@@ -209,8 +209,8 @@ def event_handler(player: Player,
                 0: ["Heh... y'know, every time I come to Epiiat, I feel... happy. It’s ‘cause of the mayor’s"
                     " daughter.",
                     "She’s... she’s wonderful. Don’t tell anyone, alright?"]}
-            mapgame.npcs["caravenner_lorien"].place_morning = [(9, 4)]
-            mapgame.npcs["caravenner_lorien"].place_evening = [(9, 5), "inn"]
+            mapgame.npcs["caravenner_lorien"].place_morning = [(21, 28)]
+            mapgame.npcs["caravenner_lorien"].place_evening = [(21, 29), "inn"]
 
             mapgame.npcs["jester_ralzo"].messages_morning = {
                 0: ["Epiiat welcomes me once more! Time to lift spirits and stir laughter. Don’t miss my next act, "
@@ -218,8 +218,8 @@ def event_handler(player: Player,
             mapgame.npcs["jester_ralzo"].messages_night = {
                 0: ["A cavern’s as good a stage as any! Care to join us, hero? Music brightens even the darkest"
                     " corners!"]}
-            mapgame.npcs["jester_ralzo"].place_morning = [(9, 5)]
-            mapgame.npcs["jester_ralzo"].place_night = [(9, 5), "inn"]
+            mapgame.npcs["jester_ralzo"].place_morning = [(21, 29)]
+            mapgame.npcs["jester_ralzo"].place_night = [(21, 29), "inn"]
 
             player.events["caravan_arrive"] = True
 
@@ -242,7 +242,7 @@ def event_handler(player: Player,
                 "I had planned to cross the sea on a ship, but it seems that won’t happen soon.",
                 "The sailors are too wary to sail with a dragon sighted nearby... Can’t say I blame them."]}
 
-        mapgame.npcs["traveler_elinor"].place = [(27, 14)]
+        mapgame.npcs["traveler_elinor"].place = [(39, 38)]
 
         player.events["marlin_quests_5"] = True
         player.events["antinas_permission"] = True
@@ -285,15 +285,15 @@ def event_handler(player: Player,
                     "Farewell, " + player.name + ".",
                     "Until our destinies entwine again."]}
 
-            mapgame.npcs["dragon_firefrost"].place = [(31, 31)]
+            mapgame.npcs["dragon_firefrost"].place = [(56, 92)]
 
             talk(npc=mapgame.npcs["dragon_firefrost"], player=player, map_game=mapgame)
 
-            mapgame.map_settings[(11, 24)].description = ("Frozen valley, a pristine, snow-covered expanse where "
+            mapgame.map_settings[(23, 48)].description = ("Frozen valley, a pristine, snow-covered expanse where "
                                                           "frost-kissed silence reigns. Glistening ice formations "
                                                           "adorn the landscape, creating an ethereal and serene "
                                                           "winter tableau in nature's icy embrace.")
-            mapgame.map_settings[(11, 24)].npc = []
+            mapgame.map_settings[(23, 48)].npc = []
 
             mapgame.map_settings[(0, 0)].entries["hut"].items.append("origami_flowers")
             mapgame.npcs["dragon_firefrost"].place = None
@@ -418,12 +418,12 @@ def map_control_handling(player: Player,
                 del mapgame.npcs[npc].room_expirations[key]
 
     # Sailor Kael detention.
-    if "sailor_kael" in player.place.npc and player.place == mapgame.map_settings[(27, 15)].entries["thornes_ship"]:
+    if "sailor_kael" in player.place.npc and player.place == mapgame.map_settings[(39, 39)].entries["thornes_ship"]:
         talk(npc=mapgame.npcs["sailor_kael"], player=player, map_game=mapgame)
         player.set_place(place=player.last_place)
 
     # Guard Lorian ddetention.
-    if "guard_lorian" in player.last_place.npc and player.place == mapgame.map_settings[(12, 17)]:
+    if "guard_lorian" in player.last_place.npc and player.place == mapgame.map_settings[(24, 41)]:
         if not player.events["antinas_permission"]:
             talk(npc=mapgame.npcs["guard_lorian"], player=player, map_game=mapgame)
             player.set_place(place=player.last_place)
@@ -464,7 +464,7 @@ def reinit(player: Player, mapgame: Map):
 
     # Map reinit.
     utils.reset_map(ms=mapgame.map_settings,
-                    keys=[(2, 1), (6, 2)])
+                    keys=[(14, 25), (18, 26)])
 
 
 def repair(player: Player, mapgame: Map):
@@ -553,7 +553,7 @@ def update(player: Player,
     if option == "map_13_0":
         sub_cave_2_3 = ENTRIES["sub_cave_2_3"]
         sub_cave_3_1 = ENTRIES["sub_cave_3_1"]
-        mapgame.map_settings[(13, 0)].entries["big_cave"].entries["passageway_cave_entrance"].entries[
+        mapgame.map_settings[(25, 24)].entries["big_cave"].entries["passageway_cave_entrance"].entries[
             "goblin_dining_gallery"].entries = {"cave_passageway_entrance": sub_cave_2_3,
                                                 "cave_passageway_exit": sub_cave_3_1}
         return "Update MAP 13 0 succesfully.", player, mapgame

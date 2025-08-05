@@ -2,6 +2,7 @@
 # Local imports.
 from biome import Biome, Entry
 from enums import BodyPart, PlayerStatus
+from globals import MAP_X_LENGTH, MAP_Y_LENGTH
 from inventory import Inventory
 from item import Item
 
@@ -51,10 +52,10 @@ class Player:
     vision: int = field(default=1)
 
     # Player location attributes.
-    x: int = field(default=0)
-    y: int = field(default=0)
-    x_cp: int = field(default=0)
-    y_cp: int = field(default=0)
+    x: int = field(default=12)
+    y: int = field(default=24)
+    x_cp: int = field(default=12)
+    y_cp: int = field(default=24)
     outside: bool = field(default=False)
     place: Biome | Entry = field(default=None)
     last_place: Biome | Entry = field(default=None)
@@ -101,8 +102,8 @@ class Player:
             }
 
         if self.map is None:
-            self.map = np.zeros(shape=(32, 32, 4), dtype=np.uint8)
-            self.map[:, :, 3] = np.ones(shape=(32, 32), dtype=np.uint8) * 255
+            self.map = np.zeros(shape=(MAP_X_LENGTH, MAP_Y_LENGTH, 4), dtype=np.uint8)
+            self.map[:, :, 3] = np.ones(shape=(MAP_X_LENGTH, MAP_Y_LENGTH), dtype=np.uint8) * 255
 
         if self.equip is None:
             self.equip = {BodyPart.HEAD: None,

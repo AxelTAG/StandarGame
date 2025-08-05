@@ -24,6 +24,7 @@ class Biome:
     mobs_chances: list = field(default=None)
     mobs_respawned: list = field(default=None)
     mobs_respawn_time: int = field(default=8)
+    mobs_check_respawn: bool = field(default=False)
     mobs_quantity: int = field(default=3)
     mobs_base: dict = field(default=None)
     fight: bool = field(default=True)
@@ -105,6 +106,9 @@ class Biome:
         self.mobs_respawned.extend([copy.deepcopy(self.mobs_base[mob])])
 
     def respawn_mobs(self, day: int) -> None:
+        if self.mobs_check_respawn:
+            return
+
         if not bool(self.mobs_names):
             return
 
@@ -112,6 +116,7 @@ class Biome:
             return
 
         if day % self.mobs_respawn_time != 0:
+            self.mobs_check_respawn = False
             return
 
         quantity = random.randint(a=len(self.mobs_respawned), b=self.mobs_quantity)
@@ -119,11 +124,7 @@ class Biome:
         for _ in range(quantity):
             mob = random.choices(self.mobs_names, weights=self.mobs_chances, k=1)[0]
             self.repawn_mob(mob=mob)
-
-    def refresh_biome(self, day: int, season: Season, neighboors: list):
-        self.refresh_temperature(season=season)
-        self.move_mobs(biomes=neighboors)
-        self.respawn_mobs(day=day)
+            self.mobs_check_respawn = True
 
     def move_mobs(self, biomes: list):
         for mob in self.mobs_respawned:
@@ -146,6 +147,17 @@ class Biome:
                 if m.id == mob_id:
                     self.mobs_respawned.remove(m)
                     return
+
+    def discard_death_mobs(self):
+        for mob in self.mobs_respawned:
+            if mob.hp <= 0:
+                self.remove_mob_respawned(mob=mob)
+
+    def refresh_biome(self, day: int, season: Season, neighboors: list):
+        self.refresh_temperature(season=season)
+        self.discard_death_mobs()
+        self.move_mobs(biomes=neighboors)
+        self.respawn_mobs(day=day)
 
     def get_mob(self, mob_id: int) -> Mob:
         for mob in self.mobs_respawned:

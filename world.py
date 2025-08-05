@@ -929,7 +929,7 @@ NPCS = {
                                 1: ["Excellent! So, what’ll it be, traveler?"]},
                             answers={
                                 1: "I need craft something"},
-                            place=[(1, 13), "artisan_shop"],
+                            place=[(13, 37), "artisan_shop"],
                             crafting_items={
                                 "rope": 25,
                                 "torch": 15}),
@@ -966,11 +966,11 @@ NPCS = {
                                  1: "Can you tell me about Karûn?",
                                  2: "How long is a year in this land?",
                                  3: "Can you explain the meaning of the months?"},
-                             place_afternoon=[(2, 12), "tower", "second_floor"],
+                             place_afternoon=[(14, 36), "tower", "second_floor"],
                              messages_morning={
                                  0: ["Zzz... the stars... always moving... Zzz... Karûn's light... so bright..."]},
                              answers_morning={},
-                             place_morning=[(2, 12), "tower"],
+                             place_morning=[(14, 36), "tower"],
                              leave_message=["Farewell, traveler! May the stars guide your path, and perhaps we’ll "
                                             "meet again under Karûn’s glow."]),
 
@@ -1001,18 +1001,18 @@ NPCS = {
                                   1: "What can you tell me about the large telescope that is here?",
                                   2: "What do you know about the moon Eldra?",
                                   3: "There is another moon, right?"},
-                              place_afternoon=[(22, 18), "tower_of_eldra", "tower_of_eldra_second_floor"],
+                              place_afternoon=[(34, 42), "tower_of_eldra", "tower_of_eldra_second_floor"],
                               leave_message=["Farewell, traveler! May the stars guide your path, and perhaps we’ll "
                                              "meet again under Eldran’s glow."],
                               messages_morning={
                                   0: ["Zzz... the stars... always moving... Zzz... Eldra's light... so bright..."]
                               },
                               answers_morning={},
-                              place_morning=[(22, 18), "tower_of_eldra"]),
+                              place_morning=[(34, 42), "tower_of_eldra"]),
 
     "bard_caelan": Npc(name="bard caelan",
                        npc_type=NpcTypes.BARD,
-                       place=[(10, 18), "tavern"],
+                       place=[(22, 42), "tavern"],
                        messages_morning={
                            0: ["Ah, greetings, traveler! I am Caelan, a humble bard. Do you seek a tale or a tune?"]},
                        tracks={
@@ -1028,7 +1028,7 @@ NPCS = {
 
     "bard_lyricus": Npc(name="bard lyricus",
                         npc_type=NpcTypes.BARD,
-                        place=[(9, 5), "inn"],
+                        place=[(21, 29), "inn"],
                         messages_morning={
                             0: ["Ah, greetings, traveler! Come by the inn tonight—I’ll be performing songs to lift "
                                 "weary spirits.",
@@ -1057,11 +1057,11 @@ NPCS = {
                                   "to be safe in port than to risk the wrath of such a fearsome creature.",
                                   "But fear not, when the danger has passed, I'll gladly offer you passage to the "
                                   "next port."]},
-                          place_morning=[(27, 15)],
+                          place_morning=[(39, 39)],
                           messages_night={
                               0: ["What business would a dragon have in these lands, traveler? Curious... and"
                                   " troubling, isn’t it?"]},
-                          place_night=[(27, 15), "inn", "first_room"]),
+                          place_night=[(39, 39), "inn", "first_room"]),
 
     "captain_zelian": Npc(name="captain zelian",
                           npc_type=NpcTypes.CAPTAIN,
@@ -1071,7 +1071,7 @@ NPCS = {
                                   "The ocean whispers secrets to those who listen.",
                                   "One day, perhaps, the tides will reveal its mysteries to a brave soul like "
                                   "yourself, adventurer."]},
-                          place=[(5, 3)]),
+                          place=[(17, 27)]),
 
     "caravan_leader_darek": Npc(name="Caravan Leader Darek",
                                 npc_type=NpcTypes.CARAVAN_LEADER,
@@ -1095,14 +1095,14 @@ NPCS = {
                                     "You finally come to me...",
                                     "Destiny calls for a dance of fire and frost between us...",
                                     "Ready your blade..."]},
-                            place=[(11, 24)]),
+                            place=[(23, 48)]),
 
     "elder_lirian": Npc(name="elder lirian",
                         npc_type=NpcTypes.ELDER,
                         messages={
                             0: ["Welcome, traveler, to the humble temple of Epiiat. These walls whisper of ancient "
                                 "prayers. May you find solace here."]},
-                        place_morning=[(10, 4), "temple"]),
+                        place_morning=[(22, 28), "temple"]),
 
     "fisherman_brann": Npc(name="fisherman brann",
                            npc_type=NpcTypes.FISHERMAN,
@@ -1112,8 +1112,8 @@ NPCS = {
                                    "supplies, but nothing has arrived yet. My stores are running low, and the "
                                    "sea hasn’t been kind lately.",
                                    "If you see him, could you ask what’s causing the delay?"]},
-                           place_morning=[(22, 27)],
-                           place_evening=[(22, 27), "coast_hut"]),
+                           place_morning=[(34, 51)],
+                           place_evening=[(34, 51), "coast_hut"]),
 
     "fisherman_marlin": Npc(name="fisherman marlin",
                             npc_type=NpcTypes.FISHERMAN,
@@ -1128,8 +1128,8 @@ NPCS = {
                             answers={
                                 1: "I can help you with the delivery"},
                             leave_message=["Safe travels, friend! May the waters guide you to calm shores."],
-                            place_morning=[(27, 14)],
-                            place_night=[(27, 14), "marlins_hut"]),
+                            place_morning=[(39, 38)],
+                            place_night=[(39, 38), "marlins_hut"]),
 
     # "Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.", "You know, my brother's a guard in
     # the city, watches over the folks there. " "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
@@ -1148,7 +1148,7 @@ NPCS = {
                                 "State your business and present your identification, or you shall not venture beyond.",
                                 "The safety of our citizens is paramount, and we cannot afford to be lax in these "
                                 "trying times."]},
-                        place_morning=[(13, 17)]),
+                        place_morning=[(25, 41)]),
 
     "jester_ralzo": Npc(name="jester ralzo",
                         npc_type=NpcTypes.JESTER,
@@ -1179,7 +1179,7 @@ NPCS = {
                                      "second_room": (10, "aliras_second_room_key"),
                                      "third_room": (8, "aliras_third_room_key"),
                                      "fourth room": (8, "aliras_third_room_key")},
-                           place=[(10, 18), "inn"]),
+                           place=[(22, 42), "inn"]),
 
     "innkeeper_lyssia": Npc(name="innkeeper lyssia",
                             npc_type=NpcTypes.INNKEEPER,
@@ -1201,7 +1201,7 @@ NPCS = {
                             buy_beds={"first_room": (12, "lyssias_first_room_key"),
                                       "second_room": (8, "lyssias_second_room_key"),
                                       "third_room": (5, "lyssias_third_room_key")},
-                            place=[(27, 15), "inn"]),
+                            place=[(39, 39), "inn"]),
 
     "innkeeper_mirabelle": Npc(name="innkeeper mirabelle",
                                npc_type=NpcTypes.INNKEEPER,
@@ -1221,7 +1221,7 @@ NPCS = {
                                           "bier": 2},
                                buy_beds={"main_room": (5, "mirabelles_main_room_key"),
                                          "small_room": (3, "mirabelles_small_room_key")},
-                               place=[(9, 5), "inn"]),
+                               place=[(21, 29), "inn"]),
 
     "lord_aric": Npc(name="lord aric",
                      npc_type=NpcTypes.LORD,
@@ -1231,8 +1231,8 @@ NPCS = {
                              "citizens. The safety of Antina is at stake, and our once-stalwart walls now seem "
                              "fragile.",
                              "May the goddesses watch over us and protect us."]},
-                     place_morning=[(11, 16)],
-                     place_night=[(12, 16), "arics_house"]),
+                     place_morning=[(23, 40)],
+                     place_night=[(24, 40), "arics_house"]),
 
     "marquis_edrion": Npc(name="marquis edrion",
                           npc_type=NpcTypes.MARQUIS,
@@ -1241,7 +1241,7 @@ NPCS = {
                                   "What cruel twist of fate is this?"]},
                           messages_night={
                               0: ["Zzzzz... zzzz... uhgzz..."]},
-                          place=[(12, 16), "edrions_house"]),
+                          place=[(24, 40), "edrions_house"]),
 
     "mayor_thorian": Npc(name="mayor thorian",
                          npc_type=NpcTypes.MAYOR,
@@ -1252,8 +1252,8 @@ NPCS = {
                                  "She wandered off days ago, and no trace of her remains. If your path allows it, "
                                  "please keep an eye out for her.",
                                  "The villagers and I are desperate for her safe return."]},
-                         place_morning=[(10, 4), "mayors_house"],
-                         place_night=[(10, 4), "temple"]),
+                         place_morning=[(22, 28), "mayors_house"],
+                         place_night=[(22, 28), "temple"]),
 
     "mayors_daughter_maisie": Npc(name="mayor's daughter maisie",
                                   npc_type=NpcTypes.MAYORS_DAUGHTER,
@@ -1262,7 +1262,7 @@ NPCS = {
                                                 " back with me to the village.",
                                                 "Words cannot express my gratitude, but I hope our people can repay"
                                                 " your bravery."]},
-                                  place=[(13, 0), "cave_entrance", "cave_pit", "cave_basin", "cave_gallery",
+                                  place=[(25, 24), "cave_entrance", "cave_pit", "cave_basin", "cave_gallery",
                                          "chiefs_cave", "goblin_chief_bedroom"]),
 
     "merchant_bryson": Npc(name="merchant bryson",
@@ -1287,7 +1287,7 @@ NPCS = {
                                       "short_sword": 100,
                                       "wood_shield": 50,
                                       "torch": 20},
-                           place=[(9, 5)]),
+                           place=[(21, 29)]),
 
     "merchant_elden": Npc(name="merchant elden",
                           npc_type=NpcTypes.MERCHANT,
@@ -1310,7 +1310,7 @@ NPCS = {
                                      "spear": 250,
                                      "spike_shield": 150,
                                      "tower_shield": 150},
-                          place=[(12, 18)]),
+                          place=[(24, 42)]),
 
     "merchant_roland": Npc(name="merchant roland",
                            npc_type=NpcTypes.MERCHANT,
@@ -1330,7 +1330,7 @@ NPCS = {
                                       "sword": 300,
                                       "iron_shield": 150,
                                       "torch": 20},
-                           place_morning=[(11, 17)]),
+                           place_morning=[(23, 41)]),
 
     "merchant_selena": Npc(name="merchant selena",
                            npc_type=NpcTypes.MERCHANT,
@@ -1351,17 +1351,17 @@ NPCS = {
                                       "fishing_pole": 200,
                                       "wood_shield": 50,
                                       "telescope": 200},
-                           place=[(27, 15)]),
+                           place=[(39, 39)]),
 
     "sailor_kael": Npc(name="Sailor Kael",
                        npc_type=NpcTypes.SAILOR,
                        messages_morning={
                            0: ["Hold it right there, traveler! This ship isn’t open to passengers. Captain’s orders—no "
                                "exceptions!"]},
-                       place_morning=[(27, 15), "thornes_ship"],
+                       place_morning=[(39, 39), "thornes_ship"],
                        messages_night={
                            0: ["Zzz... Zzz... Hngh..."]},
-                       place_night=[(27, 15), "inn", "third_room"]),
+                       place_night=[(39, 39), "inn", "third_room"]),
 
     "sailor_rolan": Npc(name="Sailor Rolan",
                         npc_type=NpcTypes.SAILOR,
@@ -1390,7 +1390,7 @@ NPCS = {
                           messages={
                               0: ["Hello there, traveler. It's always good to LISTEN, you know.",
                                   "There's wisdom in hearing others' stories. I'm Clara, by the way."]},
-                          place=[(9, 5), "inn"]),
+                          place=[(21, 29), "inn"]),
 
     "traveler_elara": Npc(
         name="traveler elara",
@@ -1413,7 +1413,7 @@ NPCS = {
             1: "What lies to the north?",
             2: "And what of the southern lands?",
             3: "What about the western reaches? Have you ventured there?"},
-        place_morning=[(10, 5)]),
+        place_morning=[(22, 29)]),
 
     "traveler_elinor": Npc(name="traveler elinor",
                            npc_type=NpcTypes.TRAVELER,
@@ -1424,14 +1424,14 @@ NPCS = {
                                    "Seek refuge there, share tales with the fishermen, and who knows, perhaps your "
                                    "path will intertwine with the whims of destiny. May the winds guide your steps, "
                                    "for there is always another path to tread."]},
-                           place=[(13, 17)]),
+                           place=[(25, 41)]),
 
     "traveler_kaelen": Npc(name="traveler kaelen",
                            npc_type=NpcTypes.TRAVELER,
                            messages={
                                0: ["You know, if we had some explosives, those rocks would be gone in no time.",
                                    "Do you, by chance, carry any? It’d make clearing this path a lot easier."]},
-                           place=[(9, 17)]),
+                           place=[(21, 41)]),
 
     "traveler_kaelin": Npc(name="traveler kaelin",
                            npc_type=NpcTypes.TRAVELER,
@@ -1451,7 +1451,7 @@ NPCS = {
                                   "look for an inn—there’s no better place to regain your strength.",
                                   "A warm bed and a hearty meal can make all the difference before facing "
                                   "whatever lies ahead."]},
-                          place=[(9, 5)]),
+                          place=[(21, 29)]),
 
     "traveler seraph": Npc(name="traveler seraph",
                            npc_type=NpcTypes.TRAVELER,
@@ -1462,7 +1462,7 @@ NPCS = {
                                    "for Goblins and other foul creatures.",
                                    "A perilous journey awaits, my friend. Tread "
                                    "carefully if you choose that path."]},
-                           place=[(14, 5)]),
+                           place=[(26, 29)]),
 
     "traveler_sylas": Npc(name="traveler sylas",
                           npc_type=NpcTypes.TRAVELER,
@@ -1471,7 +1471,7 @@ NPCS = {
                                   "Hidden wonders and untold tales await those who venture beyond the familiar. May "
                                   "your steps be guided by curiosity, and may the world unveil its mysteries before "
                                   "you."]},
-                          place=[(9, 5)]),
+                          place=[(21, 29)]),
 
     "traveler_thaldir": Npc(name="traveler thaldir",
                             npc_type=NpcTypes.TRAVELER,
@@ -1479,7 +1479,7 @@ NPCS = {
                                 0: ["Greetings, seeker of fortune. Remember, in every step, 'tis wise to look around "
                                     "and check. Secrets often hide where the eye does not linger.",
                                     "May the journey unveil the unseen, brave one."]},
-                            place=[(9, 4)]),
+                            place=[(21, 28)]),
 
     # Villager from Epiiat.
     "villager_doran": Npc(name="villager_doran",
@@ -1492,7 +1492,7 @@ NPCS = {
                               0: ["Ah, nothing like a good drink and a hot meal after a long day. The bard's song"
                                   " tonight is a fine one—fills the air with tales of heroes and lost treasures.",
                                   "Sit and listen a while, friend. The road can wait a moment longer, can’t it?"]},
-                          place=[(9, 5), "inn"]),
+                          place=[(21, 29), "inn"]),
 
     "villager_fira": Npc(name="villager fira",
                          npc_type=NpcTypes.VILLAGER,
@@ -1502,8 +1502,8 @@ NPCS = {
                                  " I’m so worried—she’s always been kind to us all.",
                                  "If she’s in danger, we must do something. Please, if you find any trace of her, "
                                  "let the mayor know."]},
-                         place_morning=[(10, 5)],
-                         place_evening=[(10, 4), "wooden_house"]),
+                         place_morning=[(22, 28)],
+                         place_evening=[(22, 28), "wooden_house"]),
 
     "villager_merrin": Npc(name="villager merrin",
                            npc_type=NpcTypes.VILLAGER,
@@ -1512,7 +1512,7 @@ NPCS = {
                                    "Some say she wandered too far, but I fear the worst... The goblins have been"
                                    " lurking near the forest caves lately. It’s possible they’ve taken her.",
                                    "I hope I’m wrong, but we need help before it’s too late."]},
-                           place_morning=[(9, 5)]),
+                           place_morning=[(21, 29)]),
 
     # Villager from Aquiri.
 
@@ -1522,8 +1522,8 @@ NPCS = {
                            messages={
                                0: ["Ah, these must be from Marlin! He always sends the best catch. Thank you for"
                                    " bringing them all the way here. It couldn’t have been an easy journey."]},
-                           place_morning=[(10, 16)],
-                           place_night=[(11, 18), "mid_house"]),
+                           place_morning=[(22, 40)],
+                           place_night=[(23, 42), "mid_house"]),
 
     "villager_fenna": Npc(name="villager fenna",
                           npc_type=NpcTypes.VILLAGER,
@@ -1534,7 +1534,7 @@ NPCS = {
                               0: ["The stars look so bright tonight. If the dragon is out there, I hope it’s "
                                   "somewhere far away.",
                                   "I can’t help but dream of seeing one up close, though."]},
-                          place_morning=[(11, 18), "white_house"]),
+                          place_morning=[(23, 42), "white_house"]),
 
     "villager_garrek": Npc(name="villager garrek",
                            npc_type=NpcTypes.VILLAGER,
@@ -1543,8 +1543,8 @@ NPCS = {
                                    "thinking about it."]},
                            messages_evening={
                                0: ["They say a dragon was spotted near the hills... Do you think it will come here?"]},
-                           place_morning=[(11, 17)],
-                           place_evening=[(11, 18), "white_house"]),
+                           place_morning=[(23, 41)],
+                           place_evening=[(23, 42), "white_house"]),
 
     "villager_halden": Npc(name="villager halden",
                            npc_type=NpcTypes.VILLAGER,
@@ -1554,8 +1554,8 @@ NPCS = {
                            messages_night={
                                0: ["Strange, isn't it? The night feels heavier... Maybe the dragon's watching over "
                                    "us, or maybe it's the calm before the storm."]},
-                           place_morning=[(10, 17)],
-                           place_night=[(10, 18), "tavern"]),
+                           place_morning=[(22, 41)],
+                           place_night=[(22, 42), "tavern"]),
 
     "villager_lyria": Npc(name="villager lyria",
                           npc_type=NpcTypes.VILLAGER,
@@ -1564,8 +1564,8 @@ NPCS = {
                           messages_evening={
                               0: ["I can't shake off the thought of that dragon... It's so quiet tonight, almost "
                                   "eerie. Do you think it could be out there, watching us?"]},
-                          place_morning=[(11, 18)],
-                          place_evening=[(11, 18), "family_house"]),
+                          place_morning=[(23, 42)],
+                          place_evening=[(23, 42), "family_house"]),
 
     "villager_mirrel": Npc(name="villager mirrel",
                            npc_type=NpcTypes.VILLAGER,
@@ -1575,8 +1575,8 @@ NPCS = {
                            messages_evening={
                                0: ["I can barely sleep, thinking of the danger we might be in. I hope the soldiers "
                                    "are preparing... They better be, or we'll all be in trouble."]},
-                           place_morning=[(11, 17)],
-                           place_evening=[(12, 17)]),
+                           place_morning=[(23, 41)],
+                           place_evening=[(24, 41)]),
 
     "villager_orik": Npc(name="villager orik",
                          npc_type=NpcTypes.VILLAGER,
@@ -1586,8 +1586,8 @@ NPCS = {
                          messages_evening={
                              0: ["I can't shake off the thought of that dragon... It's so quiet tonight, almost "
                                  "eerie. Do you think it could be out there, watching us?"]},
-                         place_morning=[(11, 17)],
-                         place_evening=[(11, 18), "family_house"]),
+                         place_morning=[(23, 41)],
+                         place_evening=[(23, 42), "family_house"]),
 
     "worker_gorrick": Npc(name="worker gorrick",
                           npc_type=NpcTypes.WORKER,
@@ -1596,7 +1596,7 @@ NPCS = {
                                   "Some say she wandered too far, but I fear the worst... The goblins have been "
                                   "lurking near the forest caves lately. It’s possible they’ve taken her. ",
                                   "I hope I’m wrong, but we need help before it’s too late."]},
-                          place=[(14, 5)]),
+                          place=[(26, 29)]),
 
     "whispers": Npc(name="whispers",
                     npc_type=NpcTypes.WHISPERS,
@@ -1608,13 +1608,13 @@ NPCS = {
     # Others.
     "animal_wild_cat": Npc(name="animal wild cat",
                            npc_type=NpcTypes.ANIMAL,
-                           place=[(0, 0)],
+                           place=[(12, 24)],
                            messages_morning={
                                0: ["Purr... purr... purr... purr..."]},
-                           place_morning=[(0, 0)],
+                           place_morning=[(12, 24)],
                            messages_night={
                                0: ["Meow!"]},
-                           place_night=[(1, 1)])
+                           place_night=[(13, 25)])
 }
 
 
@@ -2810,7 +2810,7 @@ ENTRIES = {
         name="CASTLE SALOON",
         entry_type=EntryType.CASTLE),
 
-    "cave_13_0": Entry(
+    "cave_25_24": Entry(
         description="Echoing cave, shadows stretch across damp walls, while unsettling sounds resonate from unseen"
                     " depths, hinting at hidden creatures lurking within the dark.",
         name="CAVE ENTRANCE",
@@ -2821,7 +2821,7 @@ ENTRIES = {
         mobs_chances=[40],
         req=["torch"]),
 
-    "cave_27_19": Entry(
+    "cave_39_43": Entry(
         description="...",
         name="CAVE ENTRANCE",
         hide={"visibility": False, "finding_chance": 0.60},
@@ -2960,7 +2960,7 @@ ENTRIES = {
     "house_antina_white": Entry(
         description="Modest dwelling with neatly arranged furniture, a small hearth, and colorful tapestries adding "
                     "a touch of warmth to the stone walls.",
-        name="WHITEL HOUSE",
+        name="WHITE HOUSE",
         entry_type=EntryType.HOUSE),
 
     "house_antina_family": Entry(
@@ -3017,41 +3017,41 @@ ENTRIES = {
         name="WOODEN HOUSE",
         entry_type=EntryType.HOUSE),
 
-    "hut_0_0": Entry(
+    "hut_12_24": Entry(
         description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
                     "invites serenity amid nature's whispers.",
         items=["bed", "short_sword", "bread", "apple", "water", "bier"],
         entry_type=EntryType.HUT),
 
-    "hut_1_23": Entry(
+    "hut_13_47": Entry(
         description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
                     "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
                     " to secure the uncertain safety within.",
         items=["bed"],
         entry_type=EntryType.HUT),
 
-    "hut_22_1": Entry(
+    "hut_34_25": Entry(
         description="Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the "
                     "forest stands as a silent witness to nature's reclamation.",
         items=["bed", "rusty_sword"],
         name="ABANDONED HUT",
         entry_type=EntryType.HUT),
 
-    "hut_22_27": Entry(
+    "hut_34_51": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "harpoon"],
         name="BRANN'S SEASIDE HUT",
         entry_type=EntryType.HUT),
 
-    "hut_27_14_1": Entry(
+    "hut_39_38_1": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "harpoon", "fish_tuna", "fish_tuna", "bread"],
         name="MARLIN'S HUT",
         entry_type=EntryType.HUT),
 
-    "hut_27_14_2": Entry(
+    "hut_39_38_2": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "fish_tuna", "fish_sardine", "fish_ray"],

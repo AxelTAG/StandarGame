@@ -2,6 +2,10 @@
 WIDTH = 92
 HEIGHT = 32
 
+# Map dimensions.
+MAP_X_LENGTH = 128
+MAP_Y_LENGTH = 128
+
 # Music settings.
 MUSIC_VOLUME = 0.5
 

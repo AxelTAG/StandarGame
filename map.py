@@ -48,7 +48,7 @@ class Map:
 
     def __attrs_post_init__(self):
         if self.map_labels is None:
-            self.map_labels = label_pixels("rsc/tile-00.png")
+            self.map_labels = label_pixels("rsc/tile-01.png")
 
         if self.map_init_settings is None:
             pass

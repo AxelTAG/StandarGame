@@ -146,15 +146,41 @@ def export_settings(setting: object, path: str) -> None:
         pickle.dump(setting, file)
 
 
-def find_full_name(partial_name: str, names_list: list) -> str | None:
+def find_full_name(partial_name: str,
+                   names_list: list,
+                   unique: bool = True,
+                   duplicates: bool = False,
+                   original: bool = False) -> str | None:
+    if not partial_name:
+        if original:
+            return partial_name
+        return None
+
+    if partial_name is None:
+        return None
+
+    if names_list is None:
+        return None
+
     for name in names_list:
         if name == partial_name:
             return partial_name
 
     matching_names = [name for name in names_list if partial_name.lower() in name.lower()]
 
-    if len(matching_names) != 1:
-        return None
+    if not matching_names:
+        if original:
+            return partial_name
+        return
+
+    if not duplicates:
+        matching_names = list(set(matching_names))
+
+    matching_names.sort(key=lambda x: len(x))
+
+    if unique:
+        if not len(matching_names) == 1:
+            return None
 
     return matching_names[0]
 
@@ -317,7 +343,7 @@ def restore_output():
     sys.stdout = sys.__stdout__
 
 
-# Print patron in column function.
+# Patron in column function.
 def patron_print(elements, n):
     patron = []
     elements_cycle = cycle(elements)
@@ -383,8 +409,7 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
             value = copy.deepcopy(biomes[tl_map[i][j]])
             value.set_x(j)
             value.set_y(i)
-            value.mobs_respawned = []
-            value.respawn_mobs(day=value.mobs_respawn_time)
+            value.reset_mobs(force_respawn=True)
             dictionary[key] = value
     return dictionary
 
@@ -399,5 +424,5 @@ def typewriter(text: str, speed: float = 0.01) -> None:
 
 def underscores(text: str, delete: bool = False) -> str:
     if delete:
-        return text.replace("_", " ")
-    return text.replace(" ", "_")
+        return text.replace("_", " ").lower()
+    return text.replace(" ", "_").lower()

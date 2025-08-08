@@ -51,8 +51,13 @@ class Item:
     hungry_refill: int = field(default=0)
     thirsty_refill: int = field(default=0)
 
+    # Sound attributes.
+    tracks: dict = field(default=None)
+
     def __attrs_post_init__(self):
-        pass
+        if self.tracks is not None:
+            for key in range(0, 8):
+                self.tracks.setdefault(key, None)
 
     @property
     def get_buy_price(self):

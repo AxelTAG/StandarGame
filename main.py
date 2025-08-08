@@ -9,7 +9,7 @@ from actions import *
 from inventory import Inventory
 from map import Map
 from player import Player
-from utils import draw_move, clear, check_name, find_full_name
+from utils import draw_move, clear, check_name, find_full_name, typewriter
 from world import *
 
 # External imports.
@@ -17,6 +17,7 @@ import copy
 import matplotlib.pyplot as plt
 import os
 import random
+import threading
 from attrs import define, field
 from datetime import datetime
 
@@ -122,6 +123,9 @@ class Game:
         displays.disp_title()
         displays.disp_load_game()
 
+        typewriter(text=" Drifting through the veil of dreams... Please wait.",
+                   speed=0.01)
+
         load_state, load_msg, player, map_game = management.load(check_hash=False)
 
         if load_state:
@@ -131,7 +135,16 @@ class Game:
             self.existent_player = player
             self.mapgame = map_game
 
-        print(load_msg)
+        if not load_state:
+            print()
+            print(load_msg)
+
+        print()
+        print()
+        typewriter(text=f" Welcome back, {self.existent_player.name}. Your dream continues...",
+                   speed=0.01)
+        print()
+        print()
         input(" > ")
 
     def main(self):
@@ -156,6 +169,11 @@ class Game:
 
         # Introduction of new game.
         if self.first_setting:
+            # First message.
+            typewriter(
+                text=f"\n   Okay, {self.player_name}, the dream is taking shape. You'll be inside in a few seconds.",
+                speed=0.01)
+
             # Stop of background music.
             self.stop_music(fadeout=self.fadeout)
 
@@ -191,8 +209,20 @@ class Game:
                     "Destiny calls for a dance of fire and frost between us...",
                     "Ready your blade..."]}
 
+            # End message of setting.
+            typewriter(text=f"\n\n   All set, {self.player_name}. The dream is live. Step in when you're ready.",
+                       speed=0.01)
+            input("\n\n   < PRESS ENTER >")
+
             # Introduction.
             if player.name and player.name.lower() != "tester":
+                for _ in range(2):
+                    displays.clear()
+                    displays.disp_title()
+                    print("\n" * 2)
+                    print("    ")
+                    typewriter(text=f" . . .",
+                               speed=0.3)
                 screen = talk(npc=map_game.npcs["whispers"],
                               player=player,
                               map_game=map_game)
@@ -251,11 +281,6 @@ class Game:
             if action[0] != "listen":
                 self.stop_music(fadeout=self.fadeout)
 
-            # Autosave.
-            if self.autosave:
-                management.save(player=player,
-                                mapgame=map_game,
-                                time_init=time_init)  # Autosave.
             clear()
 
             # Fight chances of moving, and player status refreshing.
@@ -349,20 +374,18 @@ class Game:
                     if len(action) == 1:
                         screen = displays.disp_attack()
                     else:
-                        mob = "_".join(action[1:])
-                        if mob in MOBS:
-                            if player.place.has_mob_respawned(mob_id=MobTypes[mob].value):
-                                mob = player.place.get_mob(mob_id=MobTypes[mob].value)
-                                _, _, win = attack(player=player,
-                                                   map_game=map_game,
-                                                   mob=mob)
+                        mob = find_full_name(partial_name=" ".join(action[1:]),
+                                             names_list=[m.name.lower() for m in player.place.mobs_respawned])
+                        if mob:
+                            mob = player.place.get_mob(mob_id=MobTypes[underscores(mob)].value)
+                            _, _, win = attack(player=player,
+                                               map_game=map_game,
+                                               mob=mob)
 
-                                if win:
-                                    screen = f"You attacked {mob.name}."
-                            else:
-                                screen = f"There is no {mob.replace('_', ' ')} here."
+                            if win:
+                                screen = f"You attacked {mob.name}."
                         else:
-                            screen = f"There is no {mob.replace('_', ' ')} here.1"
+                            screen = f"There is no {' '.join(action[1:]).title()} here."
                     player.standing = True
 
                 elif action[0] == "check":  # Check action.
@@ -370,10 +393,14 @@ class Game:
                         screen = check(player=player, item=" ".join(action[1:]))
 
                     elif action[1] in ["inv", "inventory"]:
-                        screen = check(player=player, item="_".join(action[2:]), inventory=True)
+                        item = find_full_name(partial_name="_".join(action[2:]),
+                                              names_list=list(player.inventory.items.keys()))
+                        screen = check(player=player, item=item, inventory=True)
 
                     else:
-                        screen = check(player=player, item="_".join(action[1:]))
+                        item = find_full_name(partial_name="_".join(action[1:]),
+                                              names_list=player.place.items)
+                        screen = check(player=player, item=item)
 
                 elif action == ["draw", "map"]:  # Update of map action.
                     tower_of_eldra = map_game.map_settings[(34, 42)].entries["tower_of_eldra"].entries[
@@ -389,16 +416,21 @@ class Game:
                     screen = draw_map(player=player, map_game=map_game, exploration_radius=exploration_radius)
 
                 elif action[0] == "drink":
-                    item = "_".join(action[1:])
                     if len(action) == 1:
-                        screen = "DRINK ITEM to eat something."
+                        screen = "DRINK ITEM to drink something."
                     else:
+                        item = find_full_name(partial_name="_".join(action[1:]),
+                                              names_list=list(player.inventory.items.keys()),
+                                              original=True)
                         screen = drink(player=player, item=item)
                         player.standing = False
 
                 elif action[0] == "drop":  # Drop action.
                     try:  # Converting input in proper clases and form.
-                        item = "_".join(action[2:])
+                        item = find_full_name(partial_name="_".join(action[2:]),
+                                              names_list=list(player.inventory.items.keys()),
+                                              original=True)
+
                         quantity = int(action[1])
                         screen = drop(player=player, item=item, quantity=quantity)  # Doing drop action.
                         player.standing = True
@@ -409,7 +441,9 @@ class Game:
                         screen = displays.disp_drop()  # Printing drop instructions.
 
                 elif action[0] == "eat":
-                    item = "_".join(action[1:])
+                    item = find_full_name(partial_name="_".join(action[1:]),
+                                          names_list=list(player.inventory.items.keys()),
+                                          original=True)
                     if len(action) == 1:
                         screen = "EAT ITEM to eat something."
                     else:
@@ -422,9 +456,10 @@ class Game:
                         player.standing = True
 
                     else:
-                        place_entries = [*player.place.entries.keys()]
-                        entry_name = find_full_name(partial_name="_".join(action[2:]), names_list=place_entries)
-                        screen, player.standing = enter(player=player, entrie=entry_name, map_game=map_game)
+                        entry_name = find_full_name(partial_name="_".join(action[2:]),
+                                                    names_list=[*player.place.entries.keys()])
+                        screen, player.standing = enter(player=player,
+                                                        entrie=entry_name)
 
                 elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                     if len(action) <= 1:
@@ -432,7 +467,11 @@ class Game:
                         player.standing = True
 
                     else:
-                        screen = equip(player=player, item="_".join(action[1:]))
+                        item = find_full_name(partial_name="_".join(action[1:]),
+                                              names_list=list(player.inventory.items.keys()),
+                                              original=True)
+                        screen = equip(player=player,
+                                       item=item)
                         player.standing = True
 
                 elif action[0] == "exit":  # Exit entrie action:
@@ -452,11 +491,15 @@ class Game:
 
                 elif action[0] == "listen":  # Listen action.
                     entities = player.place.npc + player.place.items
-                    entitie_name = find_full_name(partial_name=" ".join(action[2:]).lower(), names_list=entities)
+                    entitie_name = find_full_name(partial_name="_".join(action[2:]).lower(),
+                                                  names_list=entities,
+                                                  original=True)
                     if len(action) <= 2:
                         screen = "What do you want to listen? LISTEN TO something."
                     else:
-                        screen = listen(player=player, map_game=map_game, entitie=entitie_name)
+                        screen = listen(player=player,
+                                        map_game=map_game,
+                                        entitie=entitie_name)
 
                 elif action == ["look", "around"]:  # Look around action.
                     look_around(player=player, map_game=map_game)
@@ -473,6 +516,8 @@ class Game:
                     zoom_size = 32
                     x, y = player.x, player.y
 
+                    # TODO: modificar la siguiente lógica para que al estar en extremos la camara de centrado
+                    #  no se centre.
                     half = zoom_size // 2
                     x_start = max(0, x - half)
                     x_end = min(player.map.shape[1], x + half)
@@ -487,7 +532,10 @@ class Game:
                     player.standing = True
 
                 elif action[:2] == ["pick", "up"]:  # Pick up action.
-                    screen = pick_up(player=player, item="_".join(action[2:]))
+                    item = find_full_name(partial_name="_".join(action[2:]),
+                                          names_list=player.place.items,
+                                          original=True)
+                    screen = pick_up(player=player, item=item)
 
                 elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
                     screen = displays.disp_show_inventory(player)
@@ -514,7 +562,7 @@ class Game:
 
                 elif action[0] == "sleep":  # Sleep action.
                     if len(action) <= 2:
-                        screen = displays.disp_sleep(player.x, player.y, player.place)
+                        screen = displays.disp_sleep(player.place)
                         player.standing = True
 
                     else:
@@ -525,13 +573,20 @@ class Game:
                             player.x_cp, player.y_cp = player.x, player.y
                             player.standing = True
 
+                            # Autosave.
+                            if self.autosave:
+                                self.auto_save(player=player,
+                                               mapgame=map_game,
+                                               time_init=time_init)  # Autosave.
+
                         else:
                             screen = f"{action[2].title()} is not a time of day."
                             player.standing = True
 
                 elif action[0] == "talk":  # Talk action.
                     npc_name = find_full_name(partial_name="_".join(action[2:]).lower(),
-                                              names_list=player.place.npc)
+                                              names_list=player.place.npc,
+                                              original=True)
 
                     if len(action) <= 2:
                         screen = displays.disp_talk(player.place)
@@ -546,7 +601,7 @@ class Game:
                         player.standing = True
 
                     else:
-                        screen = f"Here no one is called {npc_name.title()}."
+                        screen = f"Here no one is called {npc_name.replace('_', ' ').title()}."
                         player.standing = True
 
                 elif action[0] == "unequip":  # Unequip action.
@@ -555,7 +610,11 @@ class Game:
                         player.standing = True
 
                     else:
-                        screen = unequip(player=player, item="_".join(action[1:]))
+                        item = find_full_name(partial_name="_".join(action[1:]),
+                                              names_list=[underscores(i.name) for i in player.equip.values() if
+                                                          i is not None],
+                                              original=True)
+                        screen = unequip(player=player, item=item)
                         player.standing = True
 
                 elif action == ["use", "boat"]:  # Use boat action.
@@ -563,8 +622,17 @@ class Game:
                     player.standing = True
 
                 elif action[0] == "use":  # Use object action.
-                    screen, _ = use(player, map_game=map_game, item="_".join(action[1:]))
-                    player.standing = True
+                    if len(action) == 1:
+                        screen = displays.disp_use()
+                    else:
+                        item = find_full_name(partial_name="_".join(action[1:]),
+                                              names_list=list(player.inventory.items.keys()),
+                                              unique=False,
+                                              original=True)
+                        screen, _ = use(player=player,
+                                        map_game=map_game,
+                                        item=item)
+                        player.standing = True
 
                 elif action[0] == "wait":  # Wait action.
                     if len(action) <= 2:
@@ -590,6 +658,12 @@ class Game:
 
                     elif action[0] == "estimate":
                         screen = f"{map_game.estimate_date(days=int(action[1]))}"
+
+                    elif action == ["dict", "equip"]:
+                        screen = f"{player.equip}"
+
+                    elif action == ["dict", "inv"]:
+                        screen = f"{player.inventory.items}"
 
                     elif action[:2] == ["lvl", "up"]:
                         player.lvl_up()
@@ -626,9 +700,6 @@ class Game:
     def events(self):
         pass
 
-    def close(self):
-        exit()
-
     def show_rules(self):
         displays.clear()
         displays.disp_title()
@@ -638,6 +709,20 @@ class Game:
 
     def show_settings(self):
         pass
+
+    @staticmethod
+    def close():
+        exit()
+
+    @staticmethod
+    def auto_save(player: Player,
+                  mapgame: Map,
+                  time_init: datetime) -> None:
+        thread = threading.Thread(
+            target=management.save,
+            args=(player, mapgame, time_init))
+        thread.daemon = True
+        thread.start()
 
     @staticmethod
     def play_music(filepath: str,
@@ -665,6 +750,6 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game()
+    game = Game(autosave=True)
     game.main()
     game.close()

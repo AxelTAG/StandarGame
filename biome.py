@@ -102,8 +102,14 @@ class Biome:
     def refresh_temperature(self, season: Season = None) -> None:
         self.base_temperature = self.season_temperatures[season]
 
+    def reset_mobs(self, force_respawn: bool = False):
+        if force_respawn:
+            self.mobs_check_respawn = False
+        self.discard_mobs()
+        self.respawn_mobs(day=self.mobs_respawn_time)
+
     def repawn_mob(self, mob: str) -> None:
-        self.mobs_respawned.extend([copy.deepcopy(self.mobs_base[mob])])
+        self.add_mob_respawned(mob=copy.deepcopy(self.mobs_base[mob]))
 
     def respawn_mobs(self, day: int) -> None:
         if self.mobs_check_respawn:
@@ -115,7 +121,7 @@ class Biome:
         if len(self.mobs_respawned) >= self.mobs_quantity:
             return
 
-        if day % self.mobs_respawn_time != 0:
+        if not day % self.mobs_respawn_time == 0:
             self.mobs_check_respawn = False
             return
 
@@ -124,7 +130,7 @@ class Biome:
         for _ in range(quantity):
             mob = random.choices(self.mobs_names, weights=self.mobs_chances, k=1)[0]
             self.repawn_mob(mob=mob)
-            self.mobs_check_respawn = True
+        self.mobs_check_respawn = True
 
     def move_mobs(self, biomes: list):
         for mob in self.mobs_respawned:
@@ -136,6 +142,7 @@ class Biome:
     def add_mob_respawned(self, mob: Mob) -> None:
         if len(self.mobs_respawned) >= self.mobs_quantity:
             return
+
         self.mobs_respawned.append(mob)
 
     def remove_mob_respawned(self, mob: Mob = None, mob_id: int = None) -> None:
@@ -148,12 +155,15 @@ class Biome:
                     self.mobs_respawned.remove(m)
                     return
 
-    def discard_death_mobs(self):
+    def discard_mobs(self) -> None:
+        self.mobs_respawned = []
+
+    def discard_death_mobs(self) -> None:
         for mob in self.mobs_respawned:
             if mob.hp <= 0:
                 self.remove_mob_respawned(mob=mob)
 
-    def refresh_biome(self, day: int, season: Season, neighboors: list):
+    def refresh_biome(self, day: int, season: Season, neighboors: list) -> None:
         self.refresh_temperature(season=season)
         self.discard_death_mobs()
         self.move_mobs(biomes=neighboors)
@@ -164,7 +174,7 @@ class Biome:
             if mob.id == mob_id:
                 return mob
 
-    def set_mobs(self, list_mob_names: list[str], mob_base: dict[str, dict]):
+    def set_mobs(self, list_mob_names: list[str], mob_base: dict[str, dict]) -> list | None:
         if list_mob_names is None:
             return []
 

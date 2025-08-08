@@ -209,26 +209,20 @@ def buy(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool
 
 # Check action.
 def check(player: Player = None, item: str = None, inventory: bool = False) -> str:
-    if player is None or item is None:
+    if player is None:
         return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
 
-    if item in player.place.items or (inventory and item in player.inventory.items.keys()):
-        if item in ITEMS.keys():
-            text = ITEMS[item].description
+    if not item or item is None:
+        return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
 
-        else:
-            text = f"You observe nothing."
+    if item in ITEMS.keys():
+        if inventory:
+            if item in player.inventory.items.keys():
+                return ITEMS[item].description
 
-    elif item == "":
-        text = "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items at the inventory."
-
-    elif item in ITEMS.keys():
-        text = f"There is no {ITEMS[item].name} here."
-
-    else:
-        text = f"There is no {item.title()} here."
-
-    return text
+        if item in player.place.items:
+            return ITEMS[item].description
+    return f"There is no {item.title()} here."
 
 
 def craft(player: Player, item: str, quantity: int) -> tuple[str, bool]:
@@ -289,14 +283,14 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
 
 
 def drink(player: Player, item: str) -> str:
-    item_name = item.replace("_", "_").title()
+    item_name = item.replace("_", " ").title()
     item_object = get_item(item_name=item)
 
     if not item_object:
         return f"You don't have {item_name}."
 
-    if item not in player.inventory.items or player.inventory.items[item] <= 0:
-        return f"You don't have {item_name}."
+    if not player.has(item=item, amount=1):
+        return f"You don't have {item_object.name}."
 
     if not item_object.edible:
         return f"{item_object.name} is not edible."
@@ -312,6 +306,9 @@ def drop(player: Player, item: str, quantity: int = 1) -> str:
     item_name = item.replace("_", " ")
     item_object = get_item(item_name=item)
 
+    if item is None:
+        return "Cannot drop None."
+
     if not item_object:
         return f"You don't have {item_name}."
 
@@ -321,20 +318,21 @@ def drop(player: Player, item: str, quantity: int = 1) -> str:
     if player.inventory.drop_item(item=item, quantity=quantity):
         player.place.items.append(item)
         return f"You drop {quantity} {item_name.title()}."
-
-    else:
-        return f"You don't have {quantity} {item_name}."
+    return f"You don't have {quantity} {item_name}."
 
 
 def eat(player: Player, item: str) -> str:
-    item_name = item.replace("_", "_").title()
+    item_name = item.replace("_", " ").title()
     item_object = get_item(item_name=item)
+
+    if item is None:
+        return f"Cannot eat None."
 
     if not item_object:
         return f"You don't have {item_name}."
 
-    if item not in player.inventory.items or player.inventory.items[item] <= 0:
-        return f"You don't have {item_name}."
+    if not player.has(item=item, amount=1):
+        return f"You don't have {item_object.name}."
 
     if not item_object.edible:
         return f"{item_object.name} is not edible."
@@ -346,7 +344,10 @@ def eat(player: Player, item: str) -> str:
 
 
 # Enter action.
-def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
+def enter(player: Player, entrie: str) -> tuple[str, bool]:
+    if not player.place.entries:
+        return "There aren't entries here.", True
+
     if entrie is None:
         return "You need to specify the name more clearly.", True
 
@@ -360,19 +361,18 @@ def enter(player: Player, entrie: str, map_game: Map) -> tuple[str, bool]:
     if type(entrie_object) == Entry and not entrie_object.hide["visibility"]:
         return f"There is not a {entry_name} here.", True
 
-    elif all(req in objects for req in entrie_object.req):
+    if all(req in objects for req in entrie_object.req):
         if type(entrie_object) == Entry:
             player.outside = False
-        elif type(entrie_object) == Biome:
+        if type(entrie_object) == Biome:
             player.outside = True
         entrie_name = entrie_object.name
         player.set_place(entrie_object)
         return f"You have enter to the {entrie_name}.", False
 
-    else:
-        requirements = " ".join(entrie_object.req).split("_")
-        requirements = " ".join(requirements).title()
-        return "You need " + requirements + " to enter.", True
+    requirements = " ".join(entrie_object.req).split("_")
+    requirements = " ".join(requirements).title()
+    return "You need " + requirements + " to enter.", True
 
 
 # Equip action.
@@ -380,8 +380,11 @@ def equip(player: Player, item: str) -> str:
     item_name = item.replace('_', ' ').title()
     item_object = get_item(item_name=item)
 
-    if item not in player.inventory.items.keys() or item_object is None:
+    if not item_object:
         return f"You don't have {item_name}."
+
+    if item not in player.inventory.items.keys():
+        return f"You don't have {item_object.name}."
 
     if not item_object.equippable:
         return f"You can't equip {item_object.name}."
@@ -496,6 +499,9 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
         return "You need to specify a name/thing."
 
     if entitie in player.place.items:
+        if ITEMS[entitie].tracks is None:
+            return f"You listen nothing special from {entitie_name}."
+
         track = ITEMS[entitie].tracks[map_game.current_week_day]
         if track is not None:
             pygame.mixer.music.load(track)
@@ -503,6 +509,9 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
         return f"You are listening to {entitie_name}."
 
     if entitie in player.place.npc:
+        if map_game.npcs[entitie].tracks is None:
+            return f"You listen nothing special from {entitie_name}."
+
         track = map_game.npcs[entitie].tracks[map_game.current_week_day]
         if track is not None:
             pygame.mixer.music.load(track)
@@ -510,7 +519,7 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
             return f"You are listening to {entitie_name}."
         return f"You listen nothing special from {entitie_name}."
 
-    return f"You cannot listen something from {entitie_name}."
+    return f"There is no {entitie_name} here."
 
 
 # Move function.
@@ -585,17 +594,19 @@ def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None
 # Pick up action.
 def pick_up(player: Player, item: str) -> str:
     item_name = " ".join(item.split("_")).title()
+    if not item:
+        return "You need to specify something. PICK UP ITEM"
+
     if item in player.place.items:
-        if item in ITEMS.keys() and ITEMS[item].pickable:
+        if item not in ITEMS.keys():
+            return f"There is no {item_name} here."
+
+        if ITEMS[item].pickable:
             player.add_item(item=item, quantity=1)  # Adding item to inventory.
             player.place.items.remove(item)  # Removing item from place.
-
             return f"You pick up {item_name}."
-
-        else:
-            return f"You can't pick {item_name}."
-    else:
-        return f"There is no {item_name} here."
+        return f"You can't pick {item_name}."
+    return f"There is no {item_name} here."
 
 
 # Sleep to [morning, afternoon, evening, night].
@@ -899,13 +910,15 @@ def unequip(player: Player, item: str) -> str:
     item_name = item.replace("_", " ").title()
     item_object = get_item(item_name=item)
 
-    if item_object not in player.equip.values() or item_object is None:
+    if not item_object:
         return f"You don't have equipped {item_name}."
 
-    else:
-        player.unequip_item(item=item_object)
-        player.inventory.add_item(item=item, quantity=1)
-        return f"You have unequip {item_object.name}."
+    if item_object not in player.equip.values():
+        return f"You don't have equipped {item_object.name}."
+
+    player.unequip_item(item=item_object)
+    player.inventory.add_item(item=item, quantity=1)
+    return f"You have unequip {item_object.name}."
 
 
 # Use boat.
@@ -936,6 +949,9 @@ def use_boat(player: Player, map_game: Map) -> str:
 
 # Use action (general).
 def use(player: Player, map_game: Map, item: str) -> tuple[str, bool]:
+    if item is None:
+        return "You cannot use None.", False
+
     if item == "gold":
         return f"You can't use {item.replace('_', ' ').title()}.", False
 

@@ -1670,7 +1670,7 @@ MOBS = {
         poison=0,
         poison_chance=0,
         escape_chance=40,
-        items={"gold": 20, "red_potion": 1, "wood_shield": 1, "antidote": 1, "none": None},
+        items={"gold": 20, "red_potion": 1, "wood_shield": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.1, 0.05, 0.05],
         experience=10
     ),

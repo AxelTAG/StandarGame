@@ -4,7 +4,10 @@
 
 
 class Inventory:
-    def __init__(self, items=None, gold: int = 5, item_base: dict = None):
+    def __init__(self,
+                 items=None,
+                 gold: int = 5,
+                 item_base: dict = None):
         if items is None:
             items = {"red_potion": 2, "little_red_potion": 2}
 

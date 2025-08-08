@@ -2169,6 +2169,19 @@ MOBS = {
 
 # Bioms of map.
 BIOMES = {
+    "arctic_tundra": Biome(
+        color=(150, 200, 200, 255),
+        description="Frozen ground stretches endlessly, dotted with hardy moss and lichen. Icy winds sweep across "
+                    "the barren, snow-covered plains beneath a pale, silent sky.",
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="ARCTIC TUNDRA",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value]),
+
     "ash_covered_rocky": Biome(
         color=(120, 110, 100, 255),
         description="Charred stones lie buried beneath layers of gray ash. The air is dry and still, carrying the "
@@ -2256,7 +2269,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "death_valley": Biome(
-        color=(148, 148, 148, 255),
+        color=(152, 176, 159, 255),
         description="Dreadful dead valley, a chilling abyss where every step deepens the terror within. The air grows "
                     "heavy, and eerie whispers intensify, inducing an unsettling unease as you delve further.",
         fight=True,
@@ -2269,7 +2282,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "deep_ocean": Biome(
-        color=(47, 56, 176, 255),
+        color=(40, 49, 151, 255),
         description="Dark, cold waters stretch endlessly, illuminated only by bioluminescent creatures. Pressure "
                     "crushes all but the hardiest life in this mysterious abyss.",
         fight=True,
@@ -2296,6 +2309,19 @@ BIOMES = {
         pace=10,
         status=[PlayerStatus.WALK.value]),
 
+    "desert_coast": Biome(
+        color=(190, 150, 100, 255),
+        description="Narrow strip of life along shimmering waters, with sparse reeds, cracked soil, and golden sands"
+                    " stretching beyond the fragile, flowing boundary.",
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="DESERT RIVER COAST",
+        req=[],
+        pace=8,
+        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
+
     "desert_mountains": Biome(
         color=(140, 100, 60, 255),
         description="Rugged, sunbaked peaks rise from dry valleys, their rocky faces carved by wind. Sparse vegetation "
@@ -2308,6 +2334,21 @@ BIOMES = {
         req=[],
         pace=10,
         status=[PlayerStatus.WALK.value]),
+
+    "desert_river": Biome(
+        color=(50, 100, 255, 255),
+        description="A rare lifeline winding through arid sands, its banks lined with hardy vegetation and scattered "
+                    "stones, bringing fleeting freshness to the sunbaked land.",
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="RIVER",
+        req=[],
+        pace=6,
+        water=True,
+        fishs=[],
+        status=[PlayerStatus.SURF.value]),
 
     "dunes": Biome(
         color=(210, 180, 140, 255),
@@ -2472,6 +2513,18 @@ BIOMES = {
         pace=4,
         status=[PlayerStatus.WALK.value]),
 
+    "magic_zone": Biome(
+        color=(160, 75, 165, 255),
+        description="Magic zone.",
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="MISTERIOUS MAGIC ZONE",
+        req=[],
+        pace=5,
+        status=[PlayerStatus.WALK.value]),
+
     "molten_surface": Biome(
         color=(210, 70, 25, 255),
         description="Rivers of glowing lava snake through scorched ground, heat distorting the air as fiery cracks "
@@ -2498,7 +2551,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "oasis": Biome(
-        color=(47, 56, 176, 255),
+        color=(0, 255, 245, 255),
         description="A tranquil haven in the desert, with cool, clear water.",
         fight=True,
         mobs_names=[],
@@ -2525,7 +2578,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "ocean": Biome(
-        color=(47, 56, 176, 255),
+        color=(45, 140, 90, 255),
         description="Endless waves shimmer beneath the sun, teeming with life below the surface, where deep currents "
                     "carry secrets of the mysterious blue expanse.",
         fight=False,
@@ -2602,7 +2655,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "rocky_desert": Biome(
-        color=(140, 100, 60, 255),
+        color=(175, 130, 80, 255),
         description="Jagged stones and scattered boulders dominate the harsh terrain, with dry winds sweeping through "
                     "canyons under a blazing, unforgiving sun.",
         fight=True,
@@ -2612,6 +2665,32 @@ BIOMES = {
         name="ROCKY DESERT",
         req=[],
         pace=10,
+        status=[PlayerStatus.WALK.value]),
+
+    "ruins": Biome(
+        color=(202, 154, 128, 255),
+        description="Crumbled towers and scorched stone lie beneath tangled vines. The land is silent, scarred by "
+                    "blackened earth and warped ruins that still radiate a faint, unnatural heat.",
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="RUINS",
+        req=[],
+        pace=7,
+        status=[PlayerStatus.WALK.value]),
+
+    "ruins_desert": Biome(
+        color=(200, 150, 130, 255),
+        description="Sand-buried walls and crumbling arches rise from the dunes, silent witnesses to a once-thriving "
+                    "realm lost to time and shifting winds.",
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="RUINS",
+        req=[],
+        pace=7,
         status=[PlayerStatus.WALK.value]),
 
     "shrubland": Biome(
@@ -2731,7 +2810,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "valley": Biome(
-        color=(167, 167, 167, 255),
+        color=(148, 148, 148, 255),
         description="Desolate, silent valley, cracked earth stretches between imposing cliffs, where an eerie stillness"
                     " envelops the barren landscape, untouched by the whispers of wind or the rustle of life.",
         fight=False,
@@ -2744,7 +2823,7 @@ BIOMES = {
         status=[PlayerStatus.WALK.value]),
 
     "volcanic_mountain": Biome(
-        color=(90, 75, 65, 255),
+        color=(53, 53, 53, 255),
         description="Towering peak crowned with smoke and ash, its slopes scarred by ancient lava flows and"
                     " trembling with the rumble of fiery power below.",
         fight=True,

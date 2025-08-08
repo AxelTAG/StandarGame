@@ -74,6 +74,11 @@ def disp_battle(player: Player, enemy: Mob, text: str) -> None:
         print(" " + line)
 
 
+# Disp use.
+def disp_use() -> str:
+    return "USE -ITEM"
+
+
 # Disp drop.
 def disp_drop() -> str:
     return "DROP -QUANTITY -ITEM."
@@ -82,7 +87,7 @@ def disp_drop() -> str:
 # Enter action.
 def disp_enter(place: Biome) -> str:
     if place.entries:
-        msg = "You want to enter to:"
+        msg = "You want to ENTER TO:"
         n = 0
         for entrie_key, entrie in place.entries.items():
             if type(entrie) == Biome or entrie.hide["visibility"]:

@@ -537,6 +537,13 @@ class Game:
                                           original=True)
                     screen = pick_up(player=player, item=item)
 
+                elif action[0] == ["read"]:  # Read action.
+                    item = find_full_name(partial_name="_".join(action[2:]),
+                                          names_list=player.place.items + list(player.inventory.items.keys()),
+                                          original=True)
+                    screen = read(player=player, item=item)
+                    player.standing = True
+
                 elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
                     screen = displays.disp_show_inventory(player)
                     player.standing = True
@@ -682,6 +689,10 @@ class Game:
                     elif action[:2] == ["remove", "mob"]:
                         player.place.remove_mob_respawned(mob_id=int(action[2]))
                         screen = f"There {len(player.place.mobs_respawned)} mobs."
+
+                    elif action == ["dragon", "vision"]:
+                        player.vision = 1000
+                        screen = f"Now you have god vision."
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])

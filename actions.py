@@ -609,6 +609,10 @@ def pick_up(player: Player, item: str) -> str:
     return f"There is no {item_name} here."
 
 
+def read(player: Player, item: str) -> str:
+    pass
+
+
 # Sleep to [morning, afternoon, evening, night].
 def sleep_in_bed(player: Player, map_game: Map, time_of_day: int) -> str:
     if "bed" in player.place.items:

@@ -123,6 +123,7 @@ class Game:
             self.play = True
             self.first_setting = True
 
+    # TODO: refactorizar los últimos displays in place que hice en esta función.
     def show_load_game(self) -> None:
         displays.clear()
         displays.disp_title()
@@ -165,6 +166,7 @@ class Game:
                 self.show_play()
         self.close()
 
+    # TODO: refactorizar los últimos displays in place que hice en esta función. Arriba del todo.
     def show_play(self):
         # Loading existent map.
         if self.loaded_game:
@@ -535,12 +537,17 @@ class Game:
                                           original=True)
                     screen = pick_up(player=player, item=item)
 
-                elif action[0] == ["read"]:  # Read action.
-                    item = find_full_name(partial_name="_".join(action[2:]),
-                                          names_list=player.place.items + list(player.inventory.items.keys()),
-                                          original=True)
-                    screen = read(player=player, item=item)
-                    player.standing = True
+                elif action[0] == "read":  # Read action.
+                    if len(action) <= 1:
+                        screen = "If you want to read something use READ -ITEM."
+                        player.standing = True
+
+                    if len(action) > 1:
+                        item = find_full_name(partial_name="_".join(action[1:]),
+                                              names_list=player.place.items + list(player.inventory.items.keys()),
+                                              original=True)
+                        screen = read(player=player, item=item)
+                        player.standing = False
 
                 elif action == ["show", "inventory"] or action[0] in ["inventory", "inv"]:
                     screen = displays.disp_show_inventory(player)

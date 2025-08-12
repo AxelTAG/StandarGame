@@ -14,6 +14,8 @@ from world import *
 
 # External imports.
 import copy
+import matplotlib
+matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 import os
 import random
@@ -53,6 +55,9 @@ class Game:
     autosave: bool = field(default=False)
     music_volume: float = field(default=0.5)
     fadeout: int = field(default=2000)
+
+    # Other.
+    _last_fig = field(default=None)
 
     def __attrs_post_init__(self):
         # Init pygame music.
@@ -509,25 +514,18 @@ class Game:
                 elif action[0] in ["map"] or action == ["show", "map"]:  # Show map.
                     player.map[player.y][player.x] = globals.PINK
 
-                    fig, ax = plt.subplots()
-                    ax.imshow(player.map, origin='upper', interpolation='nearest')
-                    ax.set_title(player.name + "'s Map")
-
-                    zoom_size = 32
-                    x, y = player.x, player.y
-
-                    # TODO: modificar la siguiente lógica para que al estar en extremos la camara de centrado
-                    #  no se centre.
-                    half = zoom_size // 2
-                    x_start = max(0, x - half)
-                    x_end = min(player.map.shape[1], x + half)
-                    y_start = max(0, y - half)
-                    y_end = min(player.map.shape[0], y + half)
-
-                    ax.set_xlim(x_start, x_end)
-                    ax.set_ylim(y_end, y_start)
-
+                    zoom_size = 32 if not action[-1] == "all" else 128
+                    half = zoom_size // 2 if not action[-1] == "all" else zoom_size
+                    x_start = max(0, player.x - half)
+                    x_end = min(128, player.x + half)
+                    y_start = max(0, player.y - half)
+                    y_end = min(128, player.y + half)
+                    fig = plt.figure()
+                    plt.imshow(player.map[y_start:y_end, x_start:x_end])
+                    plt.title(player.name + "'s Map")
                     plt.show()
+                    self._last_fig = fig
+
                     player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].color
                     player.standing = True
 

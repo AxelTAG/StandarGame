@@ -2,7 +2,7 @@
 # Local imports.
 import utils
 from actions import battle, talk
-from displays import disp_talk_tw
+from displays import disp_standard_tw
 from map import Map
 from player import Player
 from world import *
@@ -409,8 +409,8 @@ def map_control_handling(player: Player,
             expirated_room_keys = mapgame.check_room_expiration(player=player, npc=npc)
             for key in expirated_room_keys:
                 player.inventory.drop_item(item=key, quantity=player.inventory.items[key])
-                disp_talk_tw(npc=mapgame.npcs[npc],
-                             message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
+                disp_standard_tw(npc=mapgame.npcs[npc],
+                                 message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
                                       "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to rent "
                                       "it again if you plan on staying longer."])
 

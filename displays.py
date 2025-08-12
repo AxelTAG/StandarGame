@@ -313,6 +313,10 @@ def disp_play(player: Player,
         print(" " + patron[i] + line + "  " + patron[i])
 
 
+def disp_read(entitie: str) -> None:
+    pass
+
+
 def disp_rules() -> None:
     print()
     print()
@@ -366,21 +370,21 @@ def disp_talk_answers(answers):
 
 
 # Talk display.
-def disp_talk_util(npc_name: str) -> None:
+def disp_standard_head(name: str) -> None:
     clear()
     disp_title()
     print(" < GAME >")
     print()
-    print(" " * 4 + npc_name.title() + ":", end="\n ")
+    print(" " * 4 + name.title() + ":", end="\n ")
     print()
 
 
 # Talk printing function.
-def disp_talk_tw(npc, message):
+def disp_standard_tw(name: str, message: list):
     clear()
     # Printing of message.
     for line in message:
-        disp_talk_util(npc.name)
+        disp_standard_head(name)
 
         lines = text_ljust(line, width=70)
         for text in lines:

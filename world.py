@@ -9,7 +9,6 @@ from npc import Npc
 # External imports.
 from enum import Enum
 
-
 # Items.
 ITEMS = {
     # Equippable items.
@@ -836,6 +835,32 @@ ITEMS = {
                                         "out with your fingers, you need a long stick.",
                             weight=0.05),
 
+    "old_book": Item(name="Old Book",
+                     description="A weathered tome with brittle pages, faint ink, and a lingering scent of forgotten "
+                                 "stories.",
+                     pickable=True,
+                     readable=True,
+                     weight=0.35,
+                     title="Illegible Title",
+                     readings=["Gravity",
+                               "You pull me in",
+                               "Neutro star",
+                               "My head spins",
+                               "Pulsar",
+                               "My pulse speed up.",
+                               "In your arms, the cosmos feels right",
+                               "pulling me closer like a black hole's might.",
+                               "Through the lens of this gift, we'll",
+                               "discover the secrets of the sky.",
+                               "Comets, planets and stars,",
+                               "galaxies spinning in infinite dance.",
+                               "Our love is celestial, cosmical & astronomical.",
+                               "Woven in stardust, born of chance.",
+                               "Let's take the ... illegible...,",
+                               "go somewhere far,",
+                               "Past... illegible... lights and... illegible...,",
+                               "And lie beneath the quiet stars."]),
+
     # Innkeeper room keys.
     "aliras_first_room_key": Item(name="Lyssia's First Room Key",
                                   description="Polished and ornate, grants access to a refined room in a bustling"
@@ -917,7 +942,6 @@ ITEMS = {
                                       " Marlin gave it to you for his friend Brann.",
                           droppable=False),
 }
-
 
 # NPCs.
 NPCS = {
@@ -1617,7 +1641,6 @@ NPCS = {
                            place_night=[(13, 25)])
 }
 
-
 # MOBS.
 MOBS = {
     "bandit": Mob(
@@ -2165,7 +2188,6 @@ MOBS = {
         experience=7,
     ),
 }
-
 
 # Bioms of map.
 BIOMES = {
@@ -2863,7 +2885,6 @@ BIOMES = {
         status=[PlayerStatus.SURF.value])
 }
 
-
 # Biome types.
 BiomeTypes = Enum(value="BiomeType", names=list(BIOMES.keys()))
 for k, v in BIOMES.items():
@@ -3099,7 +3120,7 @@ ENTRIES = {
     "hut_12_24": Entry(
         description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
                     "invites serenity amid nature's whispers.",
-        items=["bed", "short_sword", "bread", "apple", "water", "bier"],
+        items=["bed", "short_sword", "bread", "apple", "water", "bier", "old_book"],
         entry_type=EntryType.HUT),
 
     "hut_13_47": Entry(
@@ -3286,7 +3307,6 @@ ENTRIES = {
         entry_type=EntryType.TOWER,
         draw_map=True)
 }
-
 
 # Mob types.
 MobTypes = Enum(value="MobType", names=list(MOBS.keys()))

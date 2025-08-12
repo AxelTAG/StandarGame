@@ -1,7 +1,7 @@
 # Imports.
 # Internal imports.
+import displays
 from biome import Biome, Entry
-from displays import disp_battle, disp_talk_answers, disp_talk_tw
 from enums import EntryType, NpcTypes, PlayerStatus, TimeOfDay
 from item import Item
 from map import Map
@@ -54,9 +54,9 @@ def battle(player: Player,
     hours_to_add = 0
 
     while fight:
-        disp_battle(player=player,
-                    enemy=enemy,
-                    text=screen)
+        displays.disp_battle(player=player,
+                             enemy=enemy,
+                             text=screen)
         choice_action = input(" # ")  # User choice action.
         object_used = True
         screen = "Nothing done."  # Clearing text output screen.
@@ -69,9 +69,9 @@ def battle(player: Player,
                                     k=1)[0]
             if escape:
                 screen = "You have escaped."
-                disp_battle(player=player,
-                            enemy=enemy,
-                            text=screen)
+                displays.disp_battle(player=player,
+                                     enemy=enemy,
+                                     text=screen)
                 input(" > ")
                 return play, menu, win
             else:
@@ -94,9 +94,9 @@ def battle(player: Player,
         # Enemy attack.
         if enemy.escape_mob_probability > random.random():
             screen += f"\n {enemy.name} has escaped."
-            disp_battle(player=player,
-                        enemy=enemy,
-                        text=screen)
+            displays.disp_battle(player=player,
+                                 enemy=enemy,
+                                 text=screen)
             input(" > ")
             return play, menu, win
 
@@ -160,9 +160,9 @@ def battle(player: Player,
             # Remove of mob at biome.
             player.place.remove_mob_respawned(mob=enemy)
 
-            disp_battle(player=player,
-                        enemy=enemy,
-                        text=screen)
+            displays.disp_battle(player=player,
+                                 enemy=enemy,
+                                 text=screen)
             input(" > ")
 
             return play, menu, win
@@ -610,7 +610,25 @@ def pick_up(player: Player, item: str) -> str:
 
 
 def read(player: Player, item: str) -> str:
-    pass
+    item_object = get_item(item_name=item)
+
+    if not player.has(item):
+        if item not in player.place.items:
+            return f"You have not {item} and there is not a {item} here."
+
+    if item is None:
+        return f"There is not a {item} here."
+
+    if item_object is None:
+        return f"You can't read {item}."
+
+    if not item_object.readable:
+        return f"You can't read {item}."
+
+    displays.disp_standard_tw(name=item_object.get_title,
+                              message=item_object.readings)
+
+    return f"You have read {item_object.name}."
 
 
 # Sleep to [morning, afternoon, evening, night].
@@ -645,14 +663,14 @@ def sell(player: Player, item: str, quantity: int, price: int) -> str:
 # Talk.
 def talk(npc: Npc, player: Player, map_game: Map) -> str:
     # First message of npc.
-    disp_talk_tw(npc, npc.messages[0])  # Printing first message.
+    displays.disp_standard_tw(npc.name, npc.messages[0])  # Printing first message.
     npc.hist_messages[0] = True  # Turning True first message of NPC.
 
     transactions = ""
     while True:
         # Answers for npc.
         if npc.answers.keys():
-            disp_talk_answers(npc.answers)  # Printing answers.
+            displays.disp_talk_answers(npc.answers)  # Printing answers.
 
             while True:
                 try:
@@ -661,7 +679,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                         if action_choice == len(npc.answers.keys()) + 1:  # Leave action of talk.
                             # Leave message.
                             if npc.leave_message:
-                                disp_talk_tw(npc, npc.leave_message)  # Printing leave message.
+                                displays.disp_standard_tw(npc.name, npc.leave_message)  # Printing leave message.
 
                             if transactions:
                                 return transactions  # Returning transactions if buy or sell actions were done.
@@ -675,7 +693,7 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                     pass
 
             # Second message of npc.
-            disp_talk_tw(npc, npc.messages[action_choice])
+            displays.disp_standard_tw(npc.name, npc.messages[action_choice])
             npc.hist_messages[action_choice] = True  # Turning True message of NPC.
 
             # Talking with merchant.
@@ -798,13 +816,13 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                                                                       price=prices[item])
 
                                 if transaction_status:
-                                    disp_talk_tw(npc=npc,
-                                                 message=["Perfect. Keep this key, until 30 days."])
+                                    displays.disp_standard_tw(npc=npc.name,
+                                                              message=["Perfect. Keep this key, until 30 days."])
                                     expiration_date = ITEMS[items[item]].expiration
                                     npc.room_expirations[items[item]] = map_game.estimate_date(days=expiration_date)
                                 else:
-                                    disp_talk_tw(npc=npc,
-                                                 message=["Mmmm... you don't have enough."])
+                                    displays.disp_standard_tw(npc=npc.name,
+                                                              message=["Mmmm... you don't have enough."])
                                 break
 
                             else:
@@ -865,7 +883,8 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                     for item, value in npc.crafting_items.items():
                         item_object = ITEMS[item]
                         item_name = item.replace("_", " ").title()
-                        print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
+                        print(
+                            f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
                         items.append(item)
                         prices.append(value)
                         n += 1

@@ -31,6 +31,7 @@ class Item:
     drinkable: bool = field(default=False)
     expiration: int | None = field(default=None)
     fishing: bool = field(default=False)
+    readable: bool = field(default=False)
 
     # Buy/Sell prices.
     buy_price: int = field(default=None)
@@ -54,6 +55,10 @@ class Item:
     # Sound attributes.
     tracks: dict = field(default=None)
 
+    # Read attributes.
+    title: str = field(default=None)
+    readings: list = field(default=None)
+
     def __attrs_post_init__(self):
         if self.tracks is not None:
             for key in range(0, 8):
@@ -71,3 +76,9 @@ class Item:
     @property
     def get_sell_price(self):
         return self.get_buy_price * self.deprecator_factor
+
+    @property
+    def get_title(self):
+        if self.title:
+            return self.title
+        return self.name

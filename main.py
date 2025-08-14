@@ -1,6 +1,5 @@
 # Imports.
 # Locals imports.
-import displays
 import enums
 import globals
 import management
@@ -294,7 +293,7 @@ class Game:
             if not player.standing:
                 # Fight.
                 if player.place.fight and player.place.mobs_respawned:
-                    if random.randint(a=0, b=100) < max(player.place.mobs_chances):
+                    if random.randint(a=0, b=100) < max(player.place.get_mobs_chances(map_game.current_month)):
 
                         enemy = random.choices(player.place.mobs_respawned, k=1)[0]
                         self.play, self.menu, win = battle(player=player,
@@ -332,6 +331,7 @@ class Game:
                 if action[0] == "0":  # Save game.
                     self.play = False
                     self.menu = True
+                    self.loaded_game = False
                     management.save(player=player, mapgame=map_game, time_init=time_init)
 
                 if action[0] in ["1", "2", "3", "4"]:  # Move action.
@@ -342,7 +342,7 @@ class Game:
                         screen, player.standing = move(player=player, map_game=map_game, mv=action[0])
 
                     else:
-                        screen = "You are in " + player.place.name.title().replace("'S", "'s")
+                        screen = "You are in " + player.place.get_name(month=map_game.current_month).title().replace("'S", "'s")
 
                 elif action[0] in ["5", "6"]:  # Fast use object action.
                     if action[0] == "5":
@@ -406,7 +406,7 @@ class Game:
 
                     else:
                         item = find_full_name(partial_name="_".join(action[1:]),
-                                              names_list=player.place.items)
+                                              names_list=player.place.get_items())
                         screen = check(player=player, item=item)
 
                 elif action == ["draw", "map"]:  # Update of map action.
@@ -466,7 +466,8 @@ class Game:
                         entry_name = find_full_name(partial_name="_".join(action[2:]),
                                                     names_list=[*player.place.entries.keys()])
                         screen, player.standing = enter(player=player,
-                                                        entrie=entry_name)
+                                                        entrie=entry_name,
+                                                        mapgame=map_game)
 
                 elif action[0] in ["equip"] or action == ["show", "equip"]:  # Equip action.
                     if len(action) <= 1:
@@ -497,7 +498,7 @@ class Game:
                     player.standing = False
 
                 elif action[0] == "listen":  # Listen action.
-                    entities = player.place.npc + player.place.items
+                    entities = player.place.get_npc() + player.place.get_items()
                     entitie_name = find_full_name(partial_name="_".join(action[2:]).lower(),
                                                   names_list=entities,
                                                   original=True)
@@ -528,12 +529,12 @@ class Game:
                     plt.show()
                     self._last_fig = fig
 
-                    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].color
+                    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].get_color(month=map_game.current_month)
                     player.standing = True
 
                 elif action[:2] == ["pick", "up"]:  # Pick up action.
                     item = find_full_name(partial_name="_".join(action[2:]),
-                                          names_list=player.place.items,
+                                          names_list=player.place.get_items(),
                                           original=True)
                     screen = pick_up(player=player, item=item)
 
@@ -544,7 +545,7 @@ class Game:
 
                     if len(action) > 1:
                         item = find_full_name(partial_name="_".join(action[1:]),
-                                              names_list=player.place.items + list(player.inventory.items.keys()),
+                                              names_list=player.place.get_items() + list(player.inventory.items.keys()),
                                               original=True)
                         screen = read(player=player, item=item)
                         player.standing = False
@@ -597,18 +598,18 @@ class Game:
 
                 elif action[0] == "talk":  # Talk action.
                     npc_name = find_full_name(partial_name="_".join(action[2:]).lower(),
-                                              names_list=player.place.npc,
+                                              names_list=player.place.get_npc(),
                                               original=True)
 
                     if len(action) <= 2:
-                        screen = displays.disp_talk(player.place)
+                        screen = displays.disp_talk(player.place, mapgame=map_game)
                         player.standing = True
 
                     elif npc_name is None:
                         screen = "You need to specify the name more clearly."
                         player.standing = True
 
-                    elif npc_name in player.place.npc:
+                    elif npc_name in player.place.get_npc():
                         screen = talk(npc=map_game.npcs[npc_name], player=player, map_game=map_game)
                         player.standing = True
 
@@ -671,11 +672,11 @@ class Game:
                     elif action[0] == "estimate":
                         screen = f"{map_game.estimate_date(days=int(action[1]))}"
 
-                    elif action == ["dict", "equip"]:
-                        screen = f"{player.equip}"
-
-                    elif action == ["dict", "inv"]:
-                        screen = f"{player.inventory.items}"
+                    elif action[:2] == ["dict", "player"]:
+                        if len(action) == 3:
+                            screen = f"{getattr(player, action[2])}"
+                        if len(action) == 4:
+                            screen = f"{getattr(getattr(player, action[2]), action[3])}"
 
                     elif action[:2] == ["lvl", "up"]:
                         player.lvl_up()

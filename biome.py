@@ -9,89 +9,181 @@ import random
 from attrs import define, field
 
 
+def to_default_month_dict(value):
+    if value is None:
+        return
+
+    if isinstance(value, dict):
+        return value
+    return {Months.AURENAR.value: value}
+
+
 @define
 class Biome:
     # Common attributes.
-    name: str = field(default="...")
-    color: tuple = field(default=(255, 0, 0, 255))
-    description: str = field(default="...")
+    name: dict[int, str] | str = field(default="...", converter=to_default_month_dict)
+    color: dict[int, tuple] | tuple = field(default=(255, 0, 0, 255), converter=to_default_month_dict)
+    description: dict[int, str] | str = field(default="...", converter=to_default_month_dict)
     entries: dict = field(default=None)
     id: int = field(default=None)
+    _name: str = field(init=False)
+    _color: tuple = field(init=False)
+    _description: str = field(init=False)
 
     # Mobs and fighting attributes.
     mobs: list = field(default=None)
-    mobs_names: list[str] = field(default=None)
-    mobs_chances: list = field(default=None)
+    mobs_names: dict[int, list[str]] | list[str] = field(default=[], converter=to_default_month_dict)
+    mobs_chances: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
     mobs_respawned: list = field(default=None)
-    mobs_respawn_time: int = field(default=8)
+    mobs_respawn_time: dict[int, int] | int = field(default=8, converter=to_default_month_dict)
     mobs_check_respawn: bool = field(default=False)
-    mobs_quantity: int = field(default=3)
+    mobs_quantity: dict[int, int] | int = field(default=3, converter=to_default_month_dict)
     mobs_base: dict = field(default=None)
     fight: bool = field(default=True)
+    _mobs_names: list = field(init=False)
+    _mobs_chances: list = field(init=False)
+    _mobs_respawn_time: int = field(init=False)
+    _mobs_quantity: int = field(init=False)
 
     # Place attributes.
-    npc: list = field(default=None)
-    items: list = field(default=None)
-    req: list = field(default=None)
-    pace: int = field(default=8)
+    npc: list = field(default=[])
+    items: list = field(default=[])
+    req: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
+    pace: dict[int, int] | int = field(default=8, converter=to_default_month_dict)
     draw_map: bool = field(default=True)
-    status: list = field(default=None)
+    status: dict[int, list] | list = field(default=[PlayerStatus.WALK.value], converter=to_default_month_dict)
     x: int = field(default=None)
     y: int = field(default=None)
     coordinates: tuple[float, float] = field(init=False)
+    _req: list = field(init=False)
+    _pace: int = field(init=False)
+    _status: list = field(init=False)
 
     # Place climate and bioma attributes.
     altitude: int = field(default=5)
-    base_temperature: int = field(default=15)
-    season_temperatures: dict = field(default=None)
-    water: bool = field(default=False)
-    fishs: list = field(default=None)
+    month_temperatures: dict[int, int] = field(default=0, converter=to_default_month_dict)
+    water: dict[int, bool] | bool = field(default=False, converter=to_default_month_dict)
+    fishs: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
     fishs_respawned: list = field(default=None)
+    _temperature: int = field(init=False)
+    _water: bool = field(init=False)
+    _fishs: list = field(init=False)
+    _current_month: int = field(init=False)
 
     def __attrs_post_init__(self):
         # Common attributes.
         if self.entries is None:
             self.entries = {}
 
-        if self.items is None:
-            self.items = []
+        self._name = self.get_name(month=Months.AURENAR.value)
+        self._color = self.get_color(month=Months.AURENAR.value)
+        self._description = self.get_description(month=Months.AURENAR.value)
 
-        # Mobs and fighting attributes.
+        # Mobs and fighting attributes (Pre).
+        self._mobs_names = self.get_mobs_names(month=Months.AURENAR.value)
+        self._mobs_chances = self.get_mobs_chances(month=Months.AURENAR.value)
+        self._mobs_respawn_time = self.get_mobs_respawn_time(month=Months.AURENAR.value)
+        self._mobs_quantity = self.get_mobs_quantity(month=Months.AURENAR.value)
+
+        # Place attributes.
+        self.coordinates = (self.x, self.y)
+
+        self._req = self.get_req(month=Months.AURENAR.value)
+        self._pace = self.get_pace(month=Months.AURENAR.value)
+        self._status = self.get_status(month=Months.AURENAR.value)
+
+        # Place climate and bioma attributes.
+        self._temperature = self.get_temperature(month=Months.AURENAR.value)
+        self._water = self.get_water(month=Months.AURENAR.value)
+        self._fishs = self.get_fishs(month=Months.AURENAR.value)
+        self._current_month = Months.AURENAR.value
+
+        # Mobs and fighting attributes (Post).
         if self.mobs is None:
-            self.set_mobs(list_mob_names=self.mobs_names,
+            self.set_mobs(list_mob_names=self.mobs_names[Months.AURENAR.value],
                           mob_base=self.mobs_base)
 
         if self.mobs_chances is None:
-            self.mobs_chances = []
+            self.mobs_chances = {Months.AURENAR.value: []}
 
         if self.mobs_respawned is None:
             self.mobs_respawned = []
-            self.respawn_mobs(day=self.mobs_respawn_time)
-
-        # Place attributes.
-        if self.npc is None:
-            self.npc = []
-
-        if self.req is None:
-            self.req = []
-
-        if self.status is None:
-            self.status = []
-
-        self.coordinates = (self.x, self.y)
-
-        # Place climate and bioma attributes.
-        if self.season_temperatures is None:
-            self.season_temperatures = {
-                Season.SPRING: 20,
-                Season.SUMMER: 30,
-                Season.AUTUMN: 15,
-                Season.WINTER: 5
-            }
+            self.respawn_mobs(day=self.mobs_respawn_time[Months.AURENAR.value])
 
     @property
     def temperature(self) -> int:
-        return self.base_temperature + self.altitude // 180
+        return self._temperature + self.altitude // 180
+
+    def get_name(self, month: int) -> str:
+        if month < 0:
+            raise ValueError
+        return self.name.get(month, self.get_previous_value(data=self.name, key=month))
+
+    def get_color(self, month: int) -> tuple:
+        if month < 0:
+            raise ValueError
+        return self.color.get(month, self.get_previous_value(data=self.color, key=month))
+
+    def get_description(self, month: int) -> str:
+        if month < 0:
+            raise ValueError
+        return self.description.get(month, self.get_previous_value(data=self.description, key=month))
+
+    def get_mobs_names(self, month: int) -> list:
+        if month < 0:
+            raise ValueError
+        return self.mobs_names.get(month, self.get_previous_value(data=self.mobs_names, key=month))
+
+    def get_mobs_chances(self, month: int) -> list:
+        if month < 0:
+            raise ValueError
+        return self.mobs_chances.get(month, self.get_previous_value(data=self.mobs_chances, key=month))
+
+    def get_mobs_respawn_time(self, month: int) -> int:
+        if month < 0:
+            raise ValueError
+        return self.mobs_respawn_time.get(month, self.get_previous_value(data=self.mobs_respawn_time, key=month))
+
+    def get_mobs_quantity(self, month: int) -> int:
+        if month < 0:
+            raise ValueError
+        return self.mobs_quantity.get(month, self.get_previous_value(data=self.mobs_quantity, key=month))
+
+    def get_npc(self) -> list:
+        return self.npc
+
+    def get_items(self) -> list:
+        return self.items
+
+    def get_req(self, month: int) -> list:
+        if month < 0:
+            raise ValueError
+        return self.req.get(month, self.get_previous_value(data=self.req, key=month))
+
+    def get_pace(self, month: int) -> int:
+        if month < 0:
+            raise ValueError
+        return self.pace.get(month, self.get_previous_value(data=self.pace, key=month))
+
+    def get_status(self, month: int) -> list:
+        if month < 0:
+            raise ValueError
+        return self.status.get(month, self.get_previous_value(data=self.status, key=month))
+
+    def get_temperature(self, month: int) -> int:
+        if month < 0:
+            raise ValueError
+        return self.month_temperatures.get(month, self.get_previous_value(data=self.month_temperatures, key=month))
+
+    def get_water(self, month: int) -> bool:
+        if month < 0:
+            raise ValueError
+        return self.water.get(month, self.get_previous_value(data=self.water, key=month))
+
+    def get_fishs(self, month: int) -> list:
+        if month < 0:
+            raise ValueError
+        return self.fishs.get(month, self.get_previous_value(data=self.fishs, key=month))
 
     def has_mob_respawned(self, mob_id: int) -> bool:
         for mob in self.mobs_respawned:
@@ -99,14 +191,11 @@ class Biome:
                 return True
         return False
 
-    def refresh_temperature(self, season: Season = None) -> None:
-        self.base_temperature = self.season_temperatures[season]
-
     def reset_mobs(self, force_respawn: bool = False):
         if force_respawn:
             self.mobs_check_respawn = False
         self.discard_mobs()
-        self.respawn_mobs(day=self.mobs_respawn_time)
+        self.respawn_mobs(day=self._mobs_respawn_time)
 
     def repawn_mob(self, mob: str) -> None:
         self.add_mob_respawned(mob=copy.deepcopy(self.mobs_base[mob]))
@@ -115,20 +204,19 @@ class Biome:
         if self.mobs_check_respawn:
             return
 
-        if not bool(self.mobs_names):
+        if not bool(self._mobs_names):
             return
 
-        if len(self.mobs_respawned) >= self.mobs_quantity:
+        if len(self.mobs_respawned) >= self._mobs_quantity:
             return
 
-        if not day % self.mobs_respawn_time == 0:
+        if not day % self._mobs_respawn_time == 0:
             self.mobs_check_respawn = False
             return
-
-        quantity = random.randint(a=len(self.mobs_respawned), b=self.mobs_quantity)
+        quantity = random.randint(a=len(self.mobs_respawned), b=self._mobs_quantity)
 
         for _ in range(quantity):
-            mob = random.choices(self.mobs_names, weights=self.mobs_chances, k=1)[0]
+            mob = random.choices(self._mobs_names, weights=self._mobs_chances, k=1)[0]
             self.repawn_mob(mob=mob)
         self.mobs_check_respawn = True
 
@@ -140,7 +228,7 @@ class Biome:
                 self.remove_mob_respawned(mob=mob)
 
     def add_mob_respawned(self, mob: Mob) -> None:
-        if len(self.mobs_respawned) >= self.mobs_quantity:
+        if len(self.mobs_respawned) >= self._mobs_quantity:
             return
 
         self.mobs_respawned.append(mob)
@@ -163,8 +251,26 @@ class Biome:
             if mob.hp <= 0:
                 self.remove_mob_respawned(mob=mob)
 
-    def refresh_biome(self, day: int, season: Season, neighboors: list) -> None:
-        self.refresh_temperature(season=season)
+    def refresh_biome(self, day: int, neighboors: list) -> None:
+        # Update of private attributes.
+        self._name = self.get_name(month=Months.AURENAR.value)
+        self._color = self.get_color(month=Months.AURENAR.value)
+        self._description = self.get_description(month=Months.AURENAR.value)
+
+        self._mobs_names = self.get_mobs_names(month=Months.AURENAR.value)
+        self._mobs_chances = self.get_mobs_chances(month=Months.AURENAR.value)
+        self._mobs_respawn_time = self.get_mobs_respawn_time(month=Months.AURENAR.value)
+        self._mobs_quantity = self.get_mobs_quantity(month=Months.AURENAR.value)
+
+        self._req = self.get_req(month=Months.AURENAR.value)
+        self._pace = self.get_pace(month=Months.AURENAR.value)
+        self._status = self.get_status(month=Months.AURENAR.value)
+
+        self._temperature = self.get_temperature(month=Months.AURENAR.value)
+        self._water = self.get_water(month=Months.AURENAR.value)
+        self._fishs = self.get_fishs(month=Months.AURENAR.value)
+
+        # Mobs.
         self.discard_death_mobs()
         self.move_mobs(biomes=neighboors)
         self.respawn_mobs(day=day)
@@ -174,7 +280,15 @@ class Biome:
             if mob.id == mob_id:
                 return mob
 
-    def set_mobs(self, list_mob_names: list[str], mob_base: dict[str, dict]) -> list | None:
+    def add_item(self, item: str) -> None:
+        self.items.append(item)
+
+    def remove_item(self, item: str) -> None:
+        self.items.remove(item)
+
+    def set_mobs(self,
+                 list_mob_names: list[str],
+                 mob_base: dict[str, dict]) -> list | None:
         if list_mob_names is None:
             return []
 
@@ -204,6 +318,16 @@ class Biome:
                 raise TypeError
         return
 
+    @staticmethod
+    def get_previous_value(data: dict, key):
+        if key not in data:
+            raise KeyError
+
+        keys = list(data.keys())
+        index = keys.index(key)
+        prev_key = keys[index - 1] if index > 0 else keys[-1]
+        return data[prev_key]
+
 
 @define
 class Entry(Biome):
@@ -221,27 +345,41 @@ class Entry(Biome):
         if self.entries is None:
             self.entries = {}
 
-        if self.items is None:
-            self.items = []
+        self._name = self.get_name(month=Months.AURENAR.value)
+        self._color = self.get_color(month=Months.AURENAR.value)
+        self._description = self.get_description(month=Months.AURENAR.value)
 
-        # Mobs and fighting attributes.
-        if self.mobs is None:
-            self.mobs = []
-
-        if self.mobs_chances is None:
-            self.mobs_chances = []
+        # Mobs and fighting attributes (Pre).
+        self._mobs_names = self.get_mobs_names(month=Months.AURENAR.value)
+        self._mobs_chances = self.get_mobs_chances(month=Months.AURENAR.value)
+        self._mobs_respawn_time = self.get_mobs_respawn_time(month=Months.AURENAR.value)
+        self._mobs_quantity = self.get_mobs_quantity(month=Months.AURENAR.value)
 
         # Place attributes.
-        if self.npc is None:
-            self.npc = []
-
-        if self.req is None:
-            self.req = []
-
-        if self.status is None:
-            self.status = []
-
         self.coordinates = (self.x, self.y)
 
+        self._req = self.get_req(month=Months.AURENAR.value)
+        self._pace = self.get_pace(month=Months.AURENAR.value)
+        self._status = self.get_status(month=Months.AURENAR.value)
+
+        # Place climate and bioma attributes.
+        self._temperature = self.get_temperature(month=Months.AURENAR.value)
+        self._water = self.get_water(month=Months.AURENAR.value)
+        self._fishs = self.get_fishs(month=Months.AURENAR.value)
+        self._current_month = Months.AURENAR.value
+
+        # Mobs and fighting attributes (Post).
+        if self.mobs is None:
+            self.set_mobs(list_mob_names=self.mobs_names[Months.AURENAR.value],
+                          mob_base=self.mobs_base)
+
+        if self.mobs_chances is None:
+            self.mobs_chances = {Months.AURENAR.value: []}
+
+        if self.mobs_respawned is None:
+            self.mobs_respawned = []
+            self.respawn_mobs(day=self.mobs_respawn_time[Months.AURENAR.value])
+
+        # Entry attributes.
         if self.hide is None:
             self.hide = {"visibility": True, "finding_chance": 0}

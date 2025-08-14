@@ -94,12 +94,16 @@ class Map:
         return WeekDays(self.day % self.week_duration).name
 
     @property
-    def year_duration_days(self) -> int:
-        return self.year_duration * self.month_duration
+    def current_month(self) -> int:
+        return self.month
 
     @property
     def current_season(self):
         return [*Season][self.month // self.length_of_seasons]
+
+    @property
+    def year_duration_days(self) -> int:
+        return self.year_duration * self.month_duration
 
     def time_of_day_from_hour(self, hour: int) -> int:
         if self.night_start < self.morning_start:
@@ -242,5 +246,4 @@ class Map:
     def refresh_biomes(self):
         for biome in self.map_settings.values():
             biome.refresh_biome(day=self.day,
-                                season=self.current_season,
                                 neighboors=self.neighbors_from_coord(coord=biome.coordinates))

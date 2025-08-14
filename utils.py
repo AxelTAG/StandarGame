@@ -281,7 +281,7 @@ def label_pixels(img_path: str) -> list:
         for x in range(width):
             # Get the color of the pixel at coordinates (x, y)
             color = img.getpixel((x, y))
-            biome = next((b for b in BIOMES.values() if b.color == color), None)
+            biome = next((b for b in BIOMES.values() if b.get_color(month=Months.AURENAR.value) == color), None)
             label = BiomeTypes(biome.id).name if biome else "red"
 
             # Assign a label based on the color.

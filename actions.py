@@ -60,7 +60,7 @@ def battle(player: Player,
         choice_action = input(" # ")  # User choice action.
         object_used = True
         screen = "Nothing done."  # Clearing text output screen.
-        hours_to_add += player.place.pace * pace_factor
+        hours_to_add += player.place.get_pace(month=map_game.current_month) * pace_factor
 
         # Actions.
         if choice_action == "0":  # Escape option.
@@ -119,7 +119,7 @@ def battle(player: Player,
         # Lose.
         if player.hp <= 0:
             screen += "\n " + enemy.name + " defeated " + player.name + "..."
-            disp_battle(player=player, enemy=enemy, text=screen)
+            displays.disp_battle(player=player, enemy=enemy, text=screen)
             input(" > ")
 
             # Setting reinit.
@@ -220,7 +220,7 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
             if item in player.inventory.items.keys():
                 return ITEMS[item].description
 
-        if item in player.place.items:
+        if item in player.place.get_items():
             return ITEMS[item].description
     return f"There is no {item.title()} here."
 
@@ -259,12 +259,12 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
     if exploration_radius is None:
         exploration_radius = player.exploration_radius
 
-    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].color
+    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].get_color(month=map_game.current_month)
 
     # Helper function to map specific coordinates.
     def map_tile(x: int, y: int):
         if 0 <= x < map_game.x_len and 0 <= y < map_game.y_len:
-            player.map[y][x] = map_game.map_settings[(x, y)].color
+            player.map[y][x] = map_game.map_settings[(x, y)].get_color(month=map_game.current_month)
 
     # Map the boxes within the circular radius.
     for i in range(max(0, player.x - int(exploration_radius)),
@@ -276,7 +276,7 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
                 map_tile(i, j)
 
     # Add time based on venue tempo and pace factor.
-    hours_to_add = int(player.place.pace * pace_factor)
+    hours_to_add = int(player.place.get_pace(month=map_game.current_month) * pace_factor)
     map_game.add_hours(hours_to_add=hours_to_add)
 
     return "You have explored the area and mapped it out."
@@ -316,7 +316,7 @@ def drop(player: Player, item: str, quantity: int = 1) -> str:
         return f"You can't drop {item_object.name}."
 
     if player.inventory.drop_item(item=item, quantity=quantity):
-        player.place.items.append(item)
+        player.place.add_item(item)
         return f"You drop {quantity} {item_name.title()}."
     return f"You don't have {quantity} {item_name}."
 
@@ -344,7 +344,7 @@ def eat(player: Player, item: str) -> str:
 
 
 # Enter action.
-def enter(player: Player, entrie: str) -> tuple[str, bool]:
+def enter(player: Player, entrie: str, mapgame: Map) -> tuple[str, bool]:
     if not player.place.entries:
         return "There aren't entries here.", True
 
@@ -361,16 +361,16 @@ def enter(player: Player, entrie: str) -> tuple[str, bool]:
     if type(entrie_object) == Entry and not entrie_object.hide["visibility"]:
         return f"There is not a {entry_name} here.", True
 
-    if all(req in objects for req in entrie_object.req):
+    if all(req in objects for req in entrie_object.get_req(month=mapgame.current_month)):
         if type(entrie_object) == Entry:
             player.outside = False
         if type(entrie_object) == Biome:
             player.outside = True
-        entrie_name = entrie_object.name
+        entrie_name = entrie_object.get_name(month=mapgame.current_month)
         player.set_place(entrie_object)
         return f"You have enter to the {entrie_name}.", False
 
-    requirements = " ".join(entrie_object.req).split("_")
+    requirements = " ".join(entrie_object.get_req(mapgame=mapgame)).split("_")
     requirements = " ".join(requirements).title()
     return "You need " + requirements + " to enter.", True
 
@@ -409,13 +409,13 @@ def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
 
     player.set_place(place)
 
-    return f"You left the {player.last_place.name}.", False
+    return f"You left the {player.last_place.get_name(month=map_game.current_month)}.", False
 
 
 # Explore action.
 def explore(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
     if player.place.entries is None:
-        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
         return "You explore the zone but you found nothing."
 
     if isinstance(player.place, Entry):
@@ -432,11 +432,11 @@ def explore(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
         else:
             if entrie.hide["finding_chance"] >= random.random():
                 entrie.hide["visibility"] = True
-                map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+                map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
                 return f"You have found a {entrie.name}."
-            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
             return "You explore the zone but you found nothing."
-    map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+    map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
     return f"You explore the zone but you found nothing."
 
 
@@ -444,19 +444,19 @@ def fish(player: Player, map_game: Map, pace_factor: float = 0.3) -> str:
     if not any([item.fishing for item in player.inventory.get_item_objects]):
         return "You need a fishingpole to fish."
 
-    if not player.place.water:
+    if not player.place.get_water(month=map_game.current_month):
         return "You cannot fish here."
 
-    probability = 0.95 if player.place.name != "SEA" else 0.99
+    probability = 0.95 if player.place.get_name(month=map_game.current_month) != "SEA" else 0.99
     if random.random() > probability:
-        fish_caught = random.choices(player.place.fishs, k=1)[0]
+        fish_caught = random.choices(player.place.get_fishs(month=map_game.current_month), k=1)[0]
         fish_caught_name = fish_caught.replace("_", " ").title()
         player.add_item(item=fish_caught, quantity=1)
-        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
         return f"You have caught a {fish_caught_name}."
 
     else:
-        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
         return "You haven't caught anything."
 
 
@@ -482,7 +482,7 @@ def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
             map_game.map_settings[(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
                                                          " coastal life.")
 
-        map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
         return "You have land."
 
     else:
@@ -498,7 +498,7 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
     if entitie_name == "":
         return "You need to specify a name/thing."
 
-    if entitie in player.place.items:
+    if entitie in player.place.get_items():
         if ITEMS[entitie].tracks is None:
             return f"You listen nothing special from {entitie_name}."
 
@@ -508,7 +508,7 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
             pygame.mixer.music.play(0)
         return f"You are listening to {entitie_name}."
 
-    if entitie in player.place.npc:
+    if entitie in player.place.get_npc():
         if map_game.npcs[entitie].tracks is None:
             return f"You listen nothing special from {entitie_name}."
 
@@ -534,49 +534,49 @@ def move(player: Player,
     events = [event for event in player.events.keys() if event == True]
 
     # Move North.
-    if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].req) and player.status
+    if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].get_req(month=map_game.current_month)) and player.status
             in ms[(x, y - 1)].status and mv == "1"):
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
             player.x, player.y = x, y - 1
             player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
             return "You moved North.", False
 
     # Move East.
     if (x < map_height and all(
-            req in [*inventory.keys()] + events for req in ms[(x + 1, y)].req) and player.status
+            req in [*inventory.keys()] + events for req in ms[(x + 1, y)].get_req(month=map_game.current_month)) and player.status
             in ms[(x + 1, y)].status and mv == "2"):
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
             player.x, player.y = x + 1, y
             player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
             return "You moved East.", False
 
     # Move South.
     if (y < map_width and all(
-            req in [*inventory.keys()] + events for req in ms[(x, y + 1)].req) and player.status
+            req in [*inventory.keys()] + events for req in ms[(x, y + 1)].get_req(month=map_game.current_month)) and player.status
             in ms[(x, y + 1)].status and mv == "3"):
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
             player.x, player.y = x, y + 1
             player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
             return "You moved South.", False
 
     # Move West.
-    if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].req) and player.status
+    if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].get_req(month=map_game.current_month)) and player.status
             in ms[(x - 1, y)].status and mv == "4"):
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
             player.x, player.y = x - 1, y
             player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.pace * pace_factor))
+            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
             return "You moved West.", False
 
     return "You can't move there.", True
@@ -585,9 +585,9 @@ def move(player: Player,
 # Look around action.
 def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None:
     if player.outside:
-        hours_to_add = int(player.place.pace * pace_factor * 2)
+        hours_to_add = int(player.place.get_pace(month=map_game.current_month) * pace_factor * 2)
     else:
-        hours_to_add = int(player.place.pace * pace_factor)
+        hours_to_add = int(player.place.get_pace(month=map_game.current_month) * pace_factor)
     map_game.add_hours(hours_to_add=hours_to_add)
 
 
@@ -597,13 +597,13 @@ def pick_up(player: Player, item: str) -> str:
     if not item:
         return "You need to specify something. PICK UP ITEM"
 
-    if item in player.place.items:
+    if item in player.place.get_items():
         if item not in ITEMS.keys():
             return f"There is no {item_name} here."
 
         if ITEMS[item].pickable:
             player.add_item(item=item, quantity=1)  # Adding item to inventory.
-            player.place.items.remove(item)  # Removing item from place.
+            player.place.remove_item(item=item)  # Removing item from place.
             return f"You pick up {item_name}."
         return f"You can't pick {item_name}."
     return f"There is no {item_name} here."
@@ -613,7 +613,7 @@ def read(player: Player, item: str) -> str:
     item_object = get_item(item_name=item)
 
     if not player.has(item):
-        if item not in player.place.items:
+        if item not in player.place.get_items():
             return f"You have not {item} and there is not a {item} here."
 
     if item is None:
@@ -633,7 +633,7 @@ def read(player: Player, item: str) -> str:
 
 # Sleep to [morning, afternoon, evening, night].
 def sleep_in_bed(player: Player, map_game: Map, time_of_day: int) -> str:
-    if "bed" in player.place.items:
+    if "bed" in player.place.get_items():
         map_game.skip_to(time_of_day=time_of_day)
         player.hp = player.hpmax
         return f"You slept until the {TimeOfDay(time_of_day).name.title()}."
@@ -816,12 +816,12 @@ def talk(npc: Npc, player: Player, map_game: Map) -> str:
                                                                       price=prices[item])
 
                                 if transaction_status:
-                                    displays.disp_standard_tw(npc=npc.name,
+                                    displays.disp_standard_tw(name=npc.name,
                                                               message=["Perfect. Keep this key, until 30 days."])
                                     expiration_date = ITEMS[items[item]].expiration
                                     npc.room_expirations[items[item]] = map_game.estimate_date(days=expiration_date)
                                 else:
-                                    displays.disp_standard_tw(npc=npc.name,
+                                    displays.disp_standard_tw(name=npc.name,
                                                               message=["Mmmm... you don't have enough."])
                                 break
 
@@ -944,22 +944,24 @@ def unequip(player: Player, item: str) -> str:
     return f"You have unequip {item_object.name}."
 
 
+# TODO: resolver el manjeo de descripciones. Esto es una solución temporal para testear el juego.
 # Use boat.
 def use_boat(player: Player, map_game: Map) -> str:
     place = map_game.map_settings[(player.x, player.y)]
 
-    if "boat" in place.items and player.status != PlayerStatus.SURF.value:
+    if "boat" in place.get_items() and player.status != PlayerStatus.SURF.value:
         player.status = PlayerStatus.SURF.value
-        place.items.remove("boat")
+        place.remove_item(item="boat")
 
         if f"{(player.x, player.y)}" == (6, 2):
             description = """Seaside with swaying palm trees, echoing waves, and vibrant life. A solitary figure stands 
             at the water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves
              and the boundless horizon stretching before them."""
-            place.description = description
+            place.description[map_game.current_month] = description
 
         else:
-            place.description = "Seaside with swaying palm trees, echoing waves, and vibrant life."
+            place.description[map_game.current_month] = ("Seaside with swaying palm trees, echoing waves, and "
+                                                         "vibrant life.")
 
         return "You are in the boat."
 

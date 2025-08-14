@@ -189,7 +189,7 @@ def disp_new_game(existent_player: Player = None) -> None:
 
 # Look around action.
 def disp_look_around(place: Biome) -> str:
-    items = place.items
+    items = place.get_items()
     mobs = place.mobs_respawned
 
     if not items and not mobs:
@@ -221,7 +221,7 @@ def disp_play(player: Player,
     print(
         " \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
     print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
-    t_loc = "LOCATION: " + player.place.name.upper()
+    t_loc = "LOCATION: " + player.place.get_name(month=map_game.current_month).upper()
     t_reg = "\n REGION: " + reg.upper()
     t_coord = "\n COORD: " + str(x) + " " + str(y)
     t_time = f"\n TIME OF DAY: {map_game.current_time_of_day_name.upper()} [{map_game.hour}HS]"
@@ -273,7 +273,7 @@ def disp_play(player: Player,
     t_vit = "\n VITALITY:   " + str(int(player.vitality))
 
     text1 = t_loc + t_reg + t_coord + "\n." + t_time + t_week_day + t_month_year
-    text2 = player.place.description
+    text2 = player.place.get_description(month=map_game.current_month)
     text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + t_status + t_gold
     text41 = prim_stats + t_atk + t_def + t_eva + t_pre + t_weight
     text42 = sec_stats + t_str + t_res + t_agi + t_vit
@@ -344,17 +344,17 @@ def disp_show_inventory(player: Player):
 
 # Sleep options display.
 def disp_sleep(place: Biome) -> str:
-    if "bed" in place.items:
+    if "bed" in place.get_items():
         return "You want to sleep to: \n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Night"
     else:
         return "There is no bed here."
 
 
 # Talk npc options.
-def disp_talk(place) -> str:
-    if place.npc:
+def disp_talk(place: Biome, mapgame: Map) -> str:
+    if place.get_npc():
         msg = "You want to talk to:"
-        for i, npc in enumerate(place.npc):
+        for i, npc in enumerate(place.get_npc()):
             msg += "\n - " + npc.replace("_", " ").title()
         return msg
     else:

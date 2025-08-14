@@ -1807,7 +1807,7 @@ MOBS = {
         poison_chance=0,
         escape_chance=45,
         items={"gold": 5, "little_red_potion": 1, "red_potion": 1, "antidote": 1},
-        items_drop_chances=[0.5, 0.2, 0.05, 0.05],
+        items_drop_chances=[0.5, 0.4, 0.2, 0.4],
         experience=3,
     ),
 
@@ -1826,7 +1826,7 @@ MOBS = {
         poison_chance=0,
         escape_chance=0,
         items={"gold": 60, "red_potion": 5},
-        items_drop_chances=[0.5, 0.45],
+        items_drop_chances=[0.5, 0.7],
         experience=30,
     ),
 
@@ -1905,7 +1905,7 @@ MOBS = {
         poison_chance=0,
         escape_chance=70,
         items={"slime_balls": 1},
-        items_drop_chances=[0.3],
+        items_drop_chances=[0.5],
         experience=1,
     ),
 
@@ -2013,7 +2013,7 @@ MOBS = {
         poison_chance=0,
         escape_chance=50,
         items={"slime_balls": 2},
-        items_drop_chances=[0.4],
+        items_drop_chances=[0.6],
         experience=2,
     ),
 
@@ -2896,19 +2896,25 @@ ENTRIES = {
         description="Arena interior, grand stands circle a sandy pit, with torches lining the walls. Echoes "
                     "of cheers and clashes fill the air.",
         name="ANTINA'S ARENA",
-        entry_type=EntryType.CASTLE),
+        entry_type=EntryType.CASTLE,
+        mobs_base=MOBS,
+    ),
 
     "artisan_shop": Entry(
         description="A workshop filled with the clanging of metal, tools neatly arranged on wooden racks, "
                     "and half-finished crafts displayed under flickering lantern light.",
         name="HAMMER & HEARTH",
-        entry_type=EntryType.MARKET),
+        entry_type=EntryType.MARKET,
+        mobs_base=MOBS,
+    ),
 
     "castle": Entry(
         description="Majestic castle with towering spires and sturdy stone walls, adorned with banners. Its grand "
                     "gates lead to vast halls echoing with Antina’s storied history.",
         name="CASTLE SALOON",
-        entry_type=EntryType.CASTLE),
+        entry_type=EntryType.CASTLE,
+        mobs_base=MOBS,
+    ),
 
     "cave_25_24": Entry(
         description="Echoing cave, shadows stretch across damp walls, while unsettling sounds resonate from unseen"
@@ -2916,6 +2922,7 @@ ENTRIES = {
         name="CAVE ENTRANCE",
         hide={"visibility": False, "finding_chance": 0.80},
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin"],
         mobs_chances=[40],
@@ -2926,6 +2933,7 @@ ENTRIES = {
         name="CAVE ENTRANCE",
         hide={"visibility": False, "finding_chance": 0.60},
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["slime"],
         mobs_chances=[80],
@@ -2936,6 +2944,7 @@ ENTRIES = {
                     " thick with the stench of decay and faint goblin whispers.",
         name="CAVE PIT",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin"],
         mobs_chances=[40]),
@@ -2945,6 +2954,7 @@ ENTRIES = {
                     " Flickering torchlight reveals grimy walls and vigilant goblin eyes peering into the shadows.",
         name="GOBLIN LOOKOUT HOLE",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["watchful_goblin", "goblin_war"],
         mobs_chances=[90, 30]),
@@ -2954,6 +2964,7 @@ ENTRIES = {
                     "marks, and a foul smell lingers amid the chaotic stash.",
         name="GOBLIN'S ARMORY CAVE",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin", "goblin_war"],
         mobs_chances=[30, 60]),
@@ -2963,6 +2974,7 @@ ENTRIES = {
                     " and refuse. A grimy layer coats the stagnant surface, emitting a nauseating stench.",
         name="CAVE BASIN",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=False),
 
     "sub_cave_2_1": Entry(
@@ -2970,6 +2982,7 @@ ENTRIES = {
                     "makeshift throne sits in the center, surrounded by flickering torches.",
         name="CHIEF'S CAVE",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True, ),
 
     "sub_cave_2_2": Entry(
@@ -2978,6 +2991,7 @@ ENTRIES = {
                     "dominates the chaotic space.",
         name="GOBLIN CHIEF'S BEDROOM",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=False),
 
     "sub_cave_2_3": Entry(
@@ -2985,6 +2999,7 @@ ENTRIES = {
                     "with the faint sound of scurrying feet and the occasional echo of distant growls.",
         name="CAVE PASSAGEWAY ENTRANCE",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin", "goblin_war"],
         mobs_chances=[60, 20]),
@@ -2995,6 +3010,7 @@ ENTRIES = {
                     "throughout.",
         name="CAGE CHAMBER",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin", "goblin_war"],
         mobs_chances=[60, 20]),
@@ -3004,6 +3020,7 @@ ENTRIES = {
                     " drips steadily, creating a haunting, rhythmic echo throughout the chamber.",
         name="CAVE GALLERY",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin", "goblin_war"],
         mobs_chances=[60, 20]),
@@ -3013,6 +3030,7 @@ ENTRIES = {
                     "with the faint sound of scurrying feet and the occasional echo of distant growls.",
         name="CAVE PASSAGEWAY EXIT",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin", "goblin_war"],
         mobs_chances=[50, 50]),
@@ -3022,6 +3040,7 @@ ENTRIES = {
                     "thick with the smell of rancid meat, and discarded remnants litter the grimy floor.",
         name="GOBLIN DINING GALLERY",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         fight=True,
         mobs_names=["goblin", "goblin_war"],
         mobs_chances=[70, 70]),
@@ -3031,138 +3050,181 @@ ENTRIES = {
                     "and cobwebs. Cold drafts whistle through, hinting at an abandoned escape route to the surface.",
         name="CHIMNEY CAVE",
         entry_type=EntryType.CAVE,
+        mobs_base=MOBS,
         hide={"visibility": False, "finding_chance": 0.9}),
 
     "house_antina_gareth": Entry(
         description="Warm and inviting, the house features wooden beams, a stone hearth, neatly arranged furniture, "
                     "and shelves lined with books and trinkets from city markets.",
         name="GARETH'S MID HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_antina_aric": Entry(
         description="Spacious home with elegant furniture, a grand chandelier, and shelves filled with books and "
                     "ornaments reflecting wealth and sophistication.",
         name="LORD ARIC'S HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_antina_edrion": Entry(
         description="Luxurious house with velvet drapes, polished floors, and a cabinet displaying rare artifacts "
                     "collected from distant lands.",
         name="LORD EDRION'S HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_antina_edrion_room": Entry(
         description="Luxurious house with velvet drapes, polished floors, and a cabinet displaying rare artifacts "
                     "collected from distant lands.",
         name="LORD EDRION'S HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_antina_white": Entry(
         description="Modest dwelling with neatly arranged furniture, a small hearth, and colorful tapestries adding "
                     "a touch of warmth to the stone walls.",
         name="WHITE HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_antina_family": Entry(
         description="Bustling household with a large dining table, scattered toys, and a lively, lived-in "
                     "atmosphere beneath high wooden beams.",
         name="FAMILY HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_antina_small": Entry(
         description="Quiet home with a simple bed, a writing desk, and potted plants by the window overlooking "
                     "the bustling city streets.",
         name="SMALL HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_aquiri_marlin": Entry(
         description="Weathered wooden hut with fishing nets hanging by the door, a small table inside, and the scent "
                     "of fresh-caught fish lingering.",
         name="MARLIN'S HUT",
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "house_aquiri_normal": Entry(
         description="Cozy seaside home with a thatched roof, seashell wind chimes on the porch, and a hammock "
                     "swaying gently in the ocean breeze.",
         name="COAST HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_aquiri_stone": Entry(
         description="Simple stone cottage with a driftwood door, a warm hearth, and sand-dusted floors, reflecting "
                     "the close bond between life and the sea.",
         name="STONE COAST HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_epiiat_mayor": Entry(
         description="A spacious room with a sturdy oak desk, shelves of documents, and an ornate rug covering the "
                     "polished wooden floor.",
         name="MAYOR'S HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_epiiat_small": Entry(
         description="Small house with a modest hearth, a wooden bench, and handmade decorations adorning the walls, "
                     "reflecting the owner's humble but creative spirit.",
         name="SMALL HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_epiiat_normal": Entry(
         description="Cozy home with a simple table, a woven rug, and dried herbs hanging from the ceiling beams, "
                     "filling the air with an earthy scent.",
         name="HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "house_epiiat_wooden": Entry(
         description="Compact dwelling with a single bed, a chest for belongings, and a faint aroma of baked goods "
                     "lingering from the small corner kitchen.",
         name="WOODEN HOUSE",
-        entry_type=EntryType.HOUSE),
+        entry_type=EntryType.HOUSE,
+        mobs_base=MOBS
+    ),
 
     "hut_12_24": Entry(
         description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
                     "invites serenity amid nature's whispers.",
         items=["bed", "short_sword", "bread", "apple", "water", "bier", "old_book"],
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "hut_13_47": Entry(
         description="Interior of isolated refuge, dimly lit, flickering candles cast dancing shadows "
                     "on weathered walls. Tattered maps and makeshift barricades hint at cautious attempts"
                     " to secure the uncertain safety within.",
         items=["bed"],
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "hut_34_25": Entry(
         description="Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the "
                     "forest stands as a silent witness to nature's reclamation.",
         items=["bed", "rusty_sword"],
         name="ABANDONED HUT",
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "hut_34_51": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "harpoon"],
         name="BRANN'S SEASIDE HUT",
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "hut_39_38_1": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "harpoon", "fish_tuna", "fish_tuna", "bread"],
         name="MARLIN'S HUT",
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "hut_39_38_2": Entry(
         description="Seaside hut, weathered wood and a thatched roof, filled with fishing gear and seashells."
                     " The salty breeze drifts through, mingling with the scent of dried fish.",
         items=["bed", "fish_tuna", "fish_sardine", "fish_ray"],
         name="HUT",
-        entry_type=EntryType.HUT),
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
 
     "aliras_inn": Entry(
         description="Warm and inviting, the inn’s interior features polished wooden beams, a roaring hearth, and "
                     "a bustling common room filled with travelers sharing tales over hearty meals.",
         name="ALIRA'S INN",
-        entry_type=EntryType.INN),
+        entry_type=EntryType.INN,
+        mobs_base=MOBS
+    ),
 
     "aliras_first_room": Entry(
         description="A luxurious suite with velvet curtains, a canopy bed, and a private fireplace, exuding comfort "
@@ -3170,7 +3232,9 @@ ENTRIES = {
         items=["bed"],
         name="ALIRA'S FIRST ROOM",
         req=["aliras_first_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "aliras_second_room": Entry(
         description="A cozy room with a soft feather bed, a small writing desk, and a balcony overlooking the "
@@ -3178,14 +3242,18 @@ ENTRIES = {
         items=["bed"],
         name="ALIRA'S SECOND ROOM",
         req=["aliras_second_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "aliras_third_room": Entry(
         description="A modest room with twin beds, a faded rug, and an old map of the city pinned to the wall.",
         items=["bed", "bed"],
         name="ALIRA'S THIRD ROOM",
         req=["aliras_third_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "aliras_fourth_room": Entry(
         description="A basic but clean room with a single bed, a sturdy chest for belongings, and a small window "
@@ -3193,13 +3261,17 @@ ENTRIES = {
         items=["bed", "bed"],
         name="ALIRA'S FOURTH ROOM",
         req=["aliras_fourth_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "lyssias_inn": Entry(
         description="Coastal inn with weathered stone walls and a thatched roof, offering warm meals, cozy rooms, "
                     "and ocean views through salt-crusted windows.",
         name="LYSSIA'S INN",
-        entry_type=EntryType.INN),
+        entry_type=EntryType.INN,
+        mobs_base=MOBS
+    ),
 
     "lyssias_first_room": Entry(
         description="A cozy room with a worn armchair by the fireplace, seashells arranged on the windowsill, "
@@ -3207,7 +3279,9 @@ ENTRIES = {
         items=["bed"],
         name="LYSSIA'S FIRST ROOM",
         req=["lyssias_first_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "lyssias_second_room": Entry(
         description="Simple room with a sturdy wooden bed, a small desk, and an open window letting in the scent"
@@ -3215,7 +3289,9 @@ ENTRIES = {
         items=["bed"],
         name="LYSSIA'S SECOND ROOM",
         req=["lyssias_second_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "lyssias_third_room": Entry(
         description="A spacious room with twin beds, a nautical map pinned to the wall, and a large chest at the "
@@ -3223,7 +3299,9 @@ ENTRIES = {
         items=["bed", "bed"],
         name="LYSSIA'S THIRD ROOM",
         req=["lyssias_third_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "mirabelles_inn": Entry(
         description="Warm hearth, wooden beams, and cozy furnishings create a welcoming "
@@ -3231,7 +3309,9 @@ ENTRIES = {
                     "find respite.",
         name="MIRABELLE'S INN",
         npc=["innkeeper_mirabelle"],
-        entry_type=EntryType.INN),
+        entry_type=EntryType.INN,
+        mobs_base=MOBS
+    ),
 
     "mirabelles_main_room": Entry(
         description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
@@ -3239,7 +3319,9 @@ ENTRIES = {
         items=["bed"],
         name="MIRABELLE'S INN MAIN ROOM",
         req=["mirabelles_main_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "mirabelles_small_room": Entry(
         description="In the main chamber of the inn, a comfortable bed awaits amidst the charming ambiance of "
@@ -3247,44 +3329,58 @@ ENTRIES = {
         items=["bed"],
         name="MIRABELLE'S INN SMALL ROOM",
         req=["mirabelles_small_room_key"],
-        entry_type=EntryType.ROOM),
+        entry_type=EntryType.ROOM,
+        mobs_base=MOBS
+    ),
 
     "potion_shop_antina": Entry(
         description="Shelves brimming with glowing bottles, dried herbs hanging from beams, and a bubbling cauldron "
                     "in the corner adding to the mystical ambiance.",
         name="MYSTIC VIALS",
-        entry_type=EntryType.POTION_SHOP),
+        entry_type=EntryType.POTION_SHOP,
+        mobs_base=MOBS
+    ),
 
     "temple_antina": Entry(
         description="Sunlit through stained glass, the temple's marble floors glisten. Golden icons and flickering "
                     "candles evoke a serene, divine atmosphere.",
-        name="SANTUARY OF THE RADIANT FLAME"),
+        name="SANTUARY OF THE RADIANT FLAME",
+        mobs_base=MOBS
+    ),
 
     "temple_epiiat": Entry(
         description="Simple stone temple with wooden pews, a central altar adorned with fresh flowers, and sunlight "
                     "streaming through plain but graceful stained-glass windows.",
-        name="TEMPLE"),
+        name="TEMPLE",
+        mobs_base=MOBS
+    ),
 
     "the_golden_tankard_tavern": Entry(
         description="Bustling with laughter and music, this lively tavern features polished oak tables, a "
                     "roaring hearth, and the finest ale in Antina.",
         name="THE GOLDEN TANKARD TAVERN",
         npc=["tavern_keeper_rudrik"],
-        entry_type=EntryType.TAVERN),
+        entry_type=EntryType.TAVERN,
+        mobs_base=MOBS
+    ),
 
     "thornes_ship": Entry(
         description="Weathered wood glistens with sea spray, ropes coil neatly, and seagulls circle overhead as the "
                     "harbor hums with maritime activity.",
         name="CAPTAIN THORNE'S SHIP",
         items=["powder_keg"],
-        entry_type=EntryType.SHIP),
+        entry_type=EntryType.SHIP,
+        mobs_base=MOBS
+    ),
 
     "tower_of_eldra_floor_1": Entry(
         description="Simple bed beside a small desk, lit by a dim lantern. Personal belongings and handwritten"
                     "notes lie scattered across a worn rug.",
         items=["bed", "telescope", "notes"],
         name="TOWER OF ELDRA FIRST FLOOR",
-        entry_type=EntryType.TOWER),
+        entry_type=EntryType.TOWER,
+        mobs_base=MOBS
+    ),
 
     "tower_of_eldra_floor_2": Entry(
         description="Shelves packed with star charts and ancient tomes. A brass telescope points skyward, surrounded"
@@ -3292,20 +3388,26 @@ ENTRIES = {
         items=["giant_telescope"],
         name="TOWER OF ELDRA SECOND FLOOR",
         entry_type=EntryType.TOWER,
-        draw_map=True),
+        mobs_base=MOBS,
+        draw_map=True
+    ),
 
     "tower_of_karun_floor_1": Entry(
         description="Simple ground floor, with a modest bed, scattered maps, and a warm hearth where the astronomer "
                     "rests after long nights.",
         name="TOWER OF KARUN FIRST FLOOR",
-        entry_type=EntryType.TOWER),
+        entry_type=EntryType.TOWER,
+        mobs_base=MOBS
+    ),
 
     "tower_of_karun_floor_2": Entry(
         description="Upper floor filled with star charts and celestial books, a large telescope pointing toward "
                     "the heavens, and intricate brass instruments for stargazing.",
         name="TOWER OF KARUN SECOND FLOOR",
         entry_type=EntryType.TOWER,
-        draw_map=True)
+        mobs_base=MOBS,
+        draw_map=True
+    )
 }
 
 # Mob types.

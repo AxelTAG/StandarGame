@@ -404,26 +404,28 @@ def import_map(path: str) -> Map | None:
 def map_control_handling(player: Player,
                          mapgame: Map):
     # Control of Innkeeper room expirations.
-    for npc in player.place.npc:
+    for npc in player.place.get_npc():
         if mapgame.npcs[npc].npc_type == NpcTypes.INNKEEPER:
-            expirated_room_keys = mapgame.check_room_expiration(player=player, npc=npc)
+            expirated_room_keys = mapgame.check_room_expiration(player=player,
+                                                                npc=npc)
             for key in expirated_room_keys:
-                player.inventory.drop_item(item=key, quantity=player.inventory.items[key])
-                disp_standard_tw(npc=mapgame.npcs[npc],
+                player.inventory.drop_item(item=key,
+                                           quantity=player.inventory.items[key])
+                disp_standard_tw(name=mapgame.npcs[npc].name,
                                  message=["Ah, there you are. Your stay was pleasant, I hope. But your days are up, "
-                                      "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to rent "
-                                      "it again if you plan on staying longer."])
+                                          "traveler. I’ll need the room key back now. Don’t worry—you’re welcome to "
+                                          "rent it again if you plan on staying longer."])
 
             for key in expirated_room_keys:
                 del mapgame.npcs[npc].room_expirations[key]
 
     # Sailor Kael detention.
-    if "sailor_kael" in player.place.npc and player.place == mapgame.map_settings[(39, 39)].entries["thornes_ship"]:
+    if "sailor_kael" in player.place.get_npc() and player.place == mapgame.map_settings[(39, 39)].entries["thornes_ship"]:
         talk(npc=mapgame.npcs["sailor_kael"], player=player, map_game=mapgame)
         player.set_place(place=player.last_place)
 
     # Guard Lorian ddetention.
-    if "guard_lorian" in player.last_place.npc and player.place == mapgame.map_settings[(24, 41)]:
+    if "guard_lorian" in player.last_place.get_npc() and player.place == mapgame.map_settings[(24, 41)]:
         if not player.events["antinas_permission"]:
             talk(npc=mapgame.npcs["guard_lorian"], player=player, map_game=mapgame)
             player.set_place(place=player.last_place)

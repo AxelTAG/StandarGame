@@ -73,7 +73,7 @@ class Mob:
         return odds
 
     def drop_items(self) -> list:
-        quantity = random.randint(a=1, b=len(self.items)) - 1
+        quantity = random.randint(a=0, b=len(self.items))
         items = list(set(random.choices(population=[*self.items.keys()],
                                         cum_weights=self.get_drop_odds(),
                                         k=quantity)))

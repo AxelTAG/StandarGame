@@ -535,7 +535,7 @@ def move(player: Player,
 
     # Move North.
     if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x, y - 1)].status and mv == "1"):
+            in ms[(x, y - 1)].get_status(month=map_game.current_month) and mv == "1"):
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
@@ -547,7 +547,7 @@ def move(player: Player,
     # Move East.
     if (x < map_height and all(
             req in [*inventory.keys()] + events for req in ms[(x + 1, y)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x + 1, y)].status and mv == "2"):
+            in ms[(x + 1, y)].get_status(month=map_game.current_month) and mv == "2"):
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
@@ -559,7 +559,7 @@ def move(player: Player,
     # Move South.
     if (y < map_width and all(
             req in [*inventory.keys()] + events for req in ms[(x, y + 1)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x, y + 1)].status and mv == "3"):
+            in ms[(x, y + 1)].get_status(month=map_game.current_month) and mv == "3"):
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
@@ -570,7 +570,7 @@ def move(player: Player,
 
     # Move West.
     if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x - 1, y)].status and mv == "4"):
+            in ms[(x - 1, y)].get_status(month=map_game.current_month) and mv == "4"):
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
                 tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):

@@ -312,6 +312,7 @@ class Game:
                                    y=player.y,
                                    mdir=draw_move(x=player.x,
                                                   y=player.y,
+                                                  mapgame=map_game,
                                                   map_height=map_game.x_len,
                                                   map_width=map_game.y_len,
                                                   player=player,
@@ -520,9 +521,9 @@ class Game:
                     zoom_size = 32 if not action[-1] == "all" else 128
                     half = zoom_size // 2 if not action[-1] == "all" else zoom_size
                     x_start = max(0, player.x - half)
-                    x_end = min(128, player.x + half)
+                    x_end = min(127, player.x + half)
                     y_start = max(0, player.y - half)
-                    y_end = min(128, player.y + half)
+                    y_end = min(127, player.y + half)
                     fig = plt.figure()
                     plt.imshow(player.map[y_start:y_end, x_start:x_end])
                     plt.title(player.name + "'s Map")
@@ -679,8 +680,12 @@ class Game:
                             screen = f"{getattr(getattr(player, action[2]), action[3])}"
 
                     elif action[:2] == ["lvl", "up"]:
-                        player.lvl_up()
-                        screen = f"{map_game.estimate_date(days=int(action[1]))}"
+                        if len(action) == 2:
+                            quantity = 1
+                        else:
+                            quantity = int(action[2])
+                        player.lvl_up(quantity=quantity)
+                        screen = f"You have lvl up {quantity} levels."
 
                     elif action[0] == "precision":
                         screen = f"{player.precision}"

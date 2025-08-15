@@ -92,24 +92,31 @@ def count_first_spaces(string: str) -> int:
 
 
 # Functions that simplifies moving options.
-def draw_move(x: int, y: int, map_height: int, map_width: int, player: Player, tl_map: list, ms: dict) -> list:
+def draw_move(x: int,
+              y: int,
+              mapgame,
+              map_height: int,
+              map_width: int,
+              player: Player,
+              tl_map: list,
+              ms: dict) -> list:
     inventory = player.inventory.items
     events = [*player.events.keys()]
     active_moves = [0, 0, 0, 0]
     if player.outside:
-        if y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].req) and player.status in ms[(x, y - 1)].status:
+        if y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].get_req(month=mapgame.current_month)) and player.status in ms[(x, y - 1)].get_status(month=mapgame.current_month):
             if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
                 active_moves[0] = 1
 
-        if x < map_height and all(req in [*inventory.keys()] + events for req in ms[(x + 1, y)].req) and player.status in ms[(x + 1, y)].status:
+        if x < map_height and all(req in [*inventory.keys()] + events for req in ms[(x + 1, y)].get_req(month=mapgame.current_month)) and player.status in ms[(x + 1, y)].get_status(month=mapgame.current_month):
             if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
                 active_moves[1] = 1
 
-        if y < map_width and all(req in [*inventory.keys()] + events for req in ms[(x, y + 1)].req) and player.status in ms[(x, y + 1)].status:
+        if y < map_width and all(req in [*inventory.keys()] + events for req in ms[(x, y + 1)].get_req(month=mapgame.current_month)) and player.status in ms[(x, y + 1)].get_status(month=mapgame.current_month):
             if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
                 active_moves[2] = 1
 
-        if x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].req) and player.status in ms[(x - 1, y)].status:
+        if x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].get_req(month=mapgame.current_month)) and player.status in ms[(x - 1, y)].get_status(month=mapgame.current_month):
             if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
                 active_moves[3] = 1
 
@@ -281,7 +288,7 @@ def label_pixels(img_path: str) -> list:
         for x in range(width):
             # Get the color of the pixel at coordinates (x, y)
             color = img.getpixel((x, y))
-            biome = next((b for b in BIOMES.values() if b.get_color(month=Months.AURENAR.value) == color), None)
+            biome = next((b for b in BIOMES.values() if b.color_label == color), None)
             label = BiomeTypes(biome.id).name if biome else "red"
 
             # Assign a label based on the color.

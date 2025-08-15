@@ -2195,6 +2195,7 @@ BIOMES = {
         color=(150, 200, 200, 255),
         description="Frozen ground stretches endlessly, dotted with hardy moss and lichen. Icy winds sweep across "
                     "the barren, snow-covered plains beneath a pale, silent sky.",
+        color_label=(150, 200, 200, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2208,6 +2209,7 @@ BIOMES = {
         color=(120, 110, 100, 255),
         description="Charred stones lie buried beneath layers of gray ash. The air is dry and still, carrying the "
                     "scent of cooled volcanic fire.",
+        color_label=(120, 110, 100, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2220,6 +2222,7 @@ BIOMES = {
     "building": Biome(
         color=(180, 110, 60, 255),
         description="...",
+        color_label=(180, 110, 60, 255),
         fight=True,
         mobs_base=MOBS,
         name="...",
@@ -2229,6 +2232,7 @@ BIOMES = {
     "canyon": Biome(
         color=(54, 54, 54, 255),
         description="Shadowy canyon inhabited by fearsome creatures, dark depths, echoing roars, and lurking horrors",
+        color_label=(54, 54, 54, 255),
         fight=True,
         mobs_names=["basilisk", "giant_blind_spider", "orc", "spectrum"],
         mobs_chances=[30, 50, 10, 30],
@@ -2241,6 +2245,7 @@ BIOMES = {
     "cave": Biome(
         color=(1, 1, 1, 255),
         description="...",
+        color_label=(1, 1, 1, 255),
         fight=True,
         mobs_names=["goblin", "orc"],
         mobs_chances=[80, 50],
@@ -2253,6 +2258,7 @@ BIOMES = {
     "coast": Biome(
         color=(239, 228, 176, 255),
         description="Seaside with swaying palm trees, echoing waves, and vibrant life.",
+        color_label=(239, 228, 176, 255),
         fight=True,
         mobs_names=["little_slime", "slime"],
         mobs_chances=[5, 30],
@@ -2268,6 +2274,7 @@ BIOMES = {
         color=(145, 145, 120, 255),
         description="Flat, treeless plains stretch beneath gray skies, covered in frost-kissed grasses and swept by"
                     " relentless coastal winds from the surrounding sea.",
+        color_label=(145, 145, 120, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2281,6 +2288,7 @@ BIOMES = {
         color=(22, 118, 51, 255),
         description="Shadowy forest of peril, twisted trees loom overhead, their gnarled branches casting eerie "
                     "shadows. ",
+        color_label=(22, 118, 51, 255),
         fight=True,
         mobs_names=["spectral_foxshade", "giant_spider", "poison_spider"],
         mobs_chances=[1, 30, 10],
@@ -2294,6 +2302,7 @@ BIOMES = {
         color=(152, 176, 159, 255),
         description="Dreadful dead valley, a chilling abyss where every step deepens the terror within. The air grows "
                     "heavy, and eerie whispers intensify, inducing an unsettling unease as you delve further.",
+        color_label=(152, 176, 159, 255),
         fight=True,
         mobs_names=["skeleton_warrior"],
         mobs_chances=[40],
@@ -2307,6 +2316,7 @@ BIOMES = {
         color=(40, 49, 151, 255),
         description="Dark, cold waters stretch endlessly, illuminated only by bioluminescent creatures. Pressure "
                     "crushes all but the hardiest life in this mysterious abyss.",
+        color_label=(40, 49, 151, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2322,6 +2332,7 @@ BIOMES = {
         color=(210, 180, 100, 255),
         description="Vast, sun-scorched land with cracked earth, scattered cacti, and distant mirages. Wind sweeps "
                     "through dunes, whispering across the barren, unforgiving landscape.",
+        color_label=(210, 180, 100, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2335,6 +2346,7 @@ BIOMES = {
         color=(190, 150, 100, 255),
         description="Narrow strip of life along shimmering waters, with sparse reeds, cracked soil, and golden sands"
                     " stretching beyond the fragile, flowing boundary.",
+        color_label=(190, 150, 100, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2348,6 +2360,7 @@ BIOMES = {
         color=(140, 100, 60, 255),
         description="Rugged, sunbaked peaks rise from dry valleys, their rocky faces carved by wind. Sparse vegetation "
                     "clings to life in the harsh, arid terrain.",
+        color_label=(140, 100, 60, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2361,6 +2374,7 @@ BIOMES = {
         color=(50, 100, 255, 255),
         description="A rare lifeline winding through arid sands, its banks lined with hardy vegetation and scattered "
                     "stones, bringing fleeting freshness to the sunbaked land.",
+        color_label=(50, 100, 255, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2376,6 +2390,7 @@ BIOMES = {
         color=(210, 180, 140, 255),
         description="Endless waves of golden sand rise and fall under scorching sun, shaped by wind into ever-changing "
                     "ridges in a silent, arid expanse.",
+        color_label=(210, 180, 140, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2389,6 +2404,7 @@ BIOMES = {
         color=(115, 231, 29, 255),
         description="Verdant fields, rolling emerald expanses dotted with wildflowers, where gentle breezes carry the "
                     "sweet scent of blooming herbs and distant melodies from hidden creatures in the tall grass.",
+        color_label=(115, 231, 29, 255),
         fight=True,
         mobs_names=["dryad", "slime", "poison_slime"],
         mobs_chances=[15, 30, 15],
@@ -2402,6 +2418,7 @@ BIOMES = {
         color=(34, 177, 76, 255),
         description="Thick trees, vibrant flora, wildlife, hidden trails, and lurking danger in this treacherous "
                     "forest realm.",
+        color_label=(34, 177, 76, 255),
         fight=True,
         mobs_names=["bandit", "spectral_foxshade", "poison_spider", "wild_boar"],
         mobs_chances=[20, 1, 5, 5],
@@ -2415,6 +2432,7 @@ BIOMES = {
         color=(120, 186, 252, 255),
         description="A pristine, snow-covered expanse where frost-kissed silence reigns. Glistening ice formations "
                     "adorn the landscape, creating an ethereal and serene winter tableau in nature's icy embrace.",
+        color_label=(120, 186, 252, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2430,6 +2448,7 @@ BIOMES = {
         color=(230, 240, 240, 255),
         description="Snow-covered beaches meet icy waves, where frost clings to driftwood and sea spray freezes "
                     "mid-air under a pale, wintry sky.",
+        color_label=(230, 240, 240, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2442,23 +2461,30 @@ BIOMES = {
         status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
 
     "frozen_sea": Biome(
-        color=(120, 180, 250, 255),
-        description="Vast, cracked ice sheets stretch to the horizon, with jagged floes and silent, frigid waters "
-                    "trapped beneath a pale, icy expanse.",
+        color={Months.AURENAR.value: (63, 72, 204, 255),
+               Months.NERITH.value: (120, 180, 250, 255)},
+        description={Months.AURENAR.value: "Nothing important.",
+                     Months.NERITH.value: "Vast, cracked ice sheets stretch to the horizon, with jagged floes and "
+                                          "silent, frigid waters trapped beneath a pale, icy expanse."},
+        color_label=(120, 180, 250, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
         mobs_base=MOBS,
-        name="FROZEN SEA",
+        name={Months.AURENAR.value: "SEA",
+              Months.NERITH.value: "FROZEN SEA"},
         req=[],
-        pace=9,
+        pace={Months.AURENAR.value: 9,
+              Months.NERITH.value: 11},
         water=True,
         fishs=[],
-        status=[PlayerStatus.WALK.value]),
+        status={Months.AURENAR.value: [PlayerStatus.SURF.value],
+                Months.NERITH.value: [PlayerStatus.WALK.value]}),
 
     "gates": Biome(
         color=(200, 191, 231, 255),
         description="Nothing important.",
+        color_label=(200, 191, 231, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2471,6 +2497,7 @@ BIOMES = {
     "highlands": Biome(
         color=(195, 195, 195, 255),
         description="Rugged terrain, sinister caves, and sneaky goblin tribes dominate these perilous elevated lands.",
+        color_label=(195, 195, 195, 255),
         fight=True,
         mobs_names=["goblin"],
         mobs_chances=[40],
@@ -2484,6 +2511,7 @@ BIOMES = {
         color=(78, 185, 32, 255),
         description="Undulating landscapes concealing lurking dangers. Treacherous creatures, hidden in the shadows, "
                     "make these hills a realm of risk for those who dare to traverse their slopes.",
+        color_label=(78, 185, 32, 255),
         fight=True,
         mobs_names=["climbing_goblin", "troll", "goblin_war_chief"],
         mobs_chances=[30, 30, 5],
@@ -2499,6 +2527,7 @@ BIOMES = {
         entries={"hut": Biome(description="Island hut, a cozy retreat adorned with a bed, a table, two "
                                           "chairs, and a window, invites serenity amid nature's whispers.",
                               items=["bed"])},
+        color_label=(185, 122, 87, 255),
         fight=False,
         items=[],
         mobs_names=[],
@@ -2513,6 +2542,7 @@ BIOMES = {
         color=(255, 100, 40, 255),
         description="Blazing currents flow between blackened crags, casting an intense red glow. The air trembles "
                     "with heat, and the ground hisses beneath every step.",
+        color_label=(255, 100, 40, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2526,6 +2556,7 @@ BIOMES = {
         color=(201, 237, 92, 255),
         description="Island rainforest, dense foliage, vibrant biodiversity, and cascading waterfalls characterize "
                     "this tropical haven of life and greenery.",
+        color_label=(201, 237, 92, 255),
         fight=True,
         mobs_names=["little_slime"],
         mobs_chances=[30],
@@ -2538,6 +2569,7 @@ BIOMES = {
     "magic_zone": Biome(
         color=(160, 75, 165, 255),
         description="Magic zone.",
+        color_label=(160, 75, 165, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2551,6 +2583,7 @@ BIOMES = {
         color=(210, 70, 25, 255),
         description="Rivers of glowing lava snake through scorched ground, heat distorting the air as fiery cracks "
                     "pulse with dangerous, untamed energy.",
+        color_label=(210, 70, 25, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2563,6 +2596,7 @@ BIOMES = {
     "mountains": Biome(
         color=(127, 127, 127, 255),
         description="Nothing important.",
+        color_label=(127, 127, 127, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2575,6 +2609,7 @@ BIOMES = {
     "oasis": Biome(
         color=(0, 255, 245, 255),
         description="A tranquil haven in the desert, with cool, clear water.",
+        color_label=(0, 255, 245, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2589,6 +2624,7 @@ BIOMES = {
         color=(47, 56, 176, 255),
         description="Lush palms and vibrant greenery surround a clear water pool, offering life and shade amid the "
                     "surrounding arid desert sands.",
+        color_label=(47, 56, 176, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2603,6 +2639,7 @@ BIOMES = {
         color=(45, 140, 90, 255),
         description="Endless waves shimmer beneath the sun, teeming with life below the surface, where deep currents "
                     "carry secrets of the mysterious blue expanse.",
+        color_label=(45, 140, 90, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2618,6 +2655,7 @@ BIOMES = {
         color=(181, 230, 29, 255),
         description="Gentle terrain, waving grasslands, and minimal elevation define this vast, open expanse of natural"
                     " simplicity and beauty.",
+        color_label=(181, 230, 29, 255),
         fight=True,
         mobs_names=["giant_slime", "goblin", "slime"],
         mobs_chances=[20, 30, 30],
@@ -2631,6 +2669,7 @@ BIOMES = {
         color=(82, 249, 11, 255),
         description="Elevated plateau, expansive views, flat summits, and resilient flora characterize this "
                     "high-altitude, majestic landscape.",
+        color_label=(82, 249, 11, 255),
         fight=True,
         mobs_names=["slime"],
         mobs_chances=[30],
@@ -2643,6 +2682,7 @@ BIOMES = {
     "red": Biome(
         color=(255, 0, 0, 255),
         description="Nothing important.",
+        color_label=(255, 0, 0, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2654,6 +2694,7 @@ BIOMES = {
     "river": Biome(
         color=(0, 162, 232, 255),
         description="Nothing important.",
+        color_label=(0, 162, 232, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2668,6 +2709,7 @@ BIOMES = {
     "rocks": Biome(
         color=(85, 80, 85, 255),
         description="Nothing important.",
+        color_label=(85, 80, 85, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2680,6 +2722,7 @@ BIOMES = {
         color=(175, 130, 80, 255),
         description="Jagged stones and scattered boulders dominate the harsh terrain, with dry winds sweeping through "
                     "canyons under a blazing, unforgiving sun.",
+        color_label=(175, 130, 80, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2693,6 +2736,7 @@ BIOMES = {
         color=(202, 154, 128, 255),
         description="Crumbled towers and scorched stone lie beneath tangled vines. The land is silent, scarred by "
                     "blackened earth and warped ruins that still radiate a faint, unnatural heat.",
+        color_label=(202, 154, 128, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2706,6 +2750,7 @@ BIOMES = {
         color=(200, 150, 130, 255),
         description="Sand-buried walls and crumbling arches rise from the dunes, silent witnesses to a once-thriving "
                     "realm lost to time and shifting winds.",
+        color_label=(200, 150, 130, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2719,6 +2764,7 @@ BIOMES = {
         color=(145, 140, 80, 255),
         description="Thorny bushes and hardy plants sprawl across dry, uneven ground, alive with rustling leaves, "
                     "darting creatures, and the scent of sun-warmed earth.",
+        color_label=(145, 140, 80, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2731,6 +2777,7 @@ BIOMES = {
     "sea": Biome(
         color=(63, 72, 204, 255),
         description="Nothing important.",
+        color_label=(63, 72, 204, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2746,6 +2793,7 @@ BIOMES = {
         color=(15, 180, 10, 255),
         description="Time drifts slowly here—leaves hang mid-fall, whispers echo endlessly, and the air shimmers with "
                     "ancient, motionless magic frozen between moments.",
+        color_label=(15, 180, 10, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2758,6 +2806,7 @@ BIOMES = {
     "snow": Biome(
         color=(250, 250, 250, 255),
         description="Nothing important.",
+        color_label=(250, 250, 250, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2771,6 +2820,7 @@ BIOMES = {
         color=(220, 230, 230, 255),
         description="Tall, frost-covered pines stand silent under heavy snow. Footsteps crunch softly, and mist drifts "
                     "between the trunks in the frozen stillness.",
+        color_label=(220, 230, 230, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2784,6 +2834,7 @@ BIOMES = {
         color=(240, 250, 250, 255),
         description="Jagged peaks cloaked in white, icy winds howl through pine-covered slopes under a pale,"
                     " sunlit sky.",
+        color_label=(240, 250, 250, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2797,6 +2848,7 @@ BIOMES = {
         color=(220, 220, 220, 255),
         description="Frozen grasslands stretch endlessly, blanketed in snow and silence, where only the wind and"
                     " occasional tracks hint at life enduring the cold.",
+        color_label=(220, 220, 220, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2810,6 +2862,7 @@ BIOMES = {
         color=(165, 165, 80, 255),
         description="Endless grasslands ripple in the wind, dotted with hardy shrubs and scattered stones beneath a"
                     " wide, ever-changing sky.",
+        color_label=(165, 165, 80, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2822,6 +2875,7 @@ BIOMES = {
     "town": Biome(
         color=(170, 105, 70, 255),
         description="Nothing important.",
+        color_label=(170, 105, 70, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2835,6 +2889,7 @@ BIOMES = {
         color=(148, 148, 148, 255),
         description="Desolate, silent valley, cracked earth stretches between imposing cliffs, where an eerie stillness"
                     " envelops the barren landscape, untouched by the whispers of wind or the rustle of life.",
+        color_label=(148, 148, 148, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],
@@ -2848,6 +2903,7 @@ BIOMES = {
         color=(53, 53, 53, 255),
         description="Towering peak crowned with smoke and ash, its slopes scarred by ancient lava flows and"
                     " trembling with the rumble of fiery power below.",
+        color_label=(53, 53, 53, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2861,6 +2917,7 @@ BIOMES = {
         color=(90, 75, 65, 255),
         description="Charred, blackened terrain of jagged lava stone and steaming fissures, where heat radiates from "
                     "the ground and few dare to tread.",
+        color_label=(90, 75, 65, 255),
         fight=True,
         mobs_names=[],
         mobs_chances=[],
@@ -2873,6 +2930,7 @@ BIOMES = {
     "water": Biome(
         color=(128, 255, 255, 255),
         description="Quiet water.",
+        color_label=(128, 255, 255, 255),
         fight=False,
         mobs_names=[],
         mobs_chances=[],

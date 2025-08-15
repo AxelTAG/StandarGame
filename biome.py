@@ -32,6 +32,7 @@ class Biome:
     description: dict[int, str] | str = field(default="...", converter=to_default_month_dict)
     entries: dict = field(default=None)
     id: int = field(default=None)
+    color_label: tuple = field(default=(255, 0, 0, 255))
     _name: str = field(init=False)
     _color: tuple = field(init=False)
     _description: str = field(init=False)

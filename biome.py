@@ -14,8 +14,14 @@ def to_default_month_dict(value):
         return
 
     if isinstance(value, dict):
-        return value
-    return {Months.AURENAR.value: value}
+        result = {}
+        last_value = None
+        for i in range(len(Months)):
+            if i in value:
+                last_value = value[i]
+            result[i] = last_value
+        return result
+    return {month.value: value for month in Months}
 
 
 @define

@@ -689,6 +689,10 @@ class Game:
                         player.set_place(map_game.map_settings[(int(action[1]), int(action[2]))])
                         screen = f"You have teleported to {action[1]} {action[2]}."
 
+                    elif action[:2] == ["time", "travel"]:
+                        map_game.add_days(days_to_add=int(action[2]))
+                        screen = f"You have time travel to {action[2]} days."
+
                     elif action[:2] == ["mob", "quantity"]:
                         screen = f"There {len(player.place.mobs_respawned)} mobs."
 

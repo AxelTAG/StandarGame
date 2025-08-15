@@ -2203,7 +2203,14 @@ BIOMES = {
         name="ARCTIC TUNDRA",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 0,
+            Months.IGNARIS.value: 5,
+            Months.OUSKARA.value: -10,
+            Months.NERITH.value: -40,
+                            }
+    ),
 
     "ash_covered_rocky": Biome(
         color=(120, 110, 100, 255),
@@ -2217,7 +2224,14 @@ BIOMES = {
         name="ASH-COVERED ROCKY",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 45,
+            Months.OUSKARA.value: 20,
+            Months.NERITH.value: 15,
+                            }
+    ),
 
     "building": Biome(
         color=(180, 110, 60, 255),
@@ -2227,7 +2241,14 @@ BIOMES = {
         mobs_base=MOBS,
         name="...",
         pace=4,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "canyon": Biome(
         color=(54, 54, 54, 255),
@@ -2240,7 +2261,14 @@ BIOMES = {
         name="CANYON",
         req=["torch", "rope"],
         pace=12,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 25,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 4,
+                            }
+    ),
 
     "cave": Biome(
         color=(1, 1, 1, 255),
@@ -2253,7 +2281,14 @@ BIOMES = {
         name="CAVE",
         req=["torch"],
         pace=10,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 25,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 4,
+                            }
+    ),
 
     "coast": Biome(
         color=(239, 228, 176, 255),
@@ -2268,7 +2303,14 @@ BIOMES = {
         pace=4,
         water=True,
         fishs=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
-        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
+        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "cold_island_steppe": Biome(
         color=(145, 145, 120, 255),
@@ -2282,7 +2324,14 @@ BIOMES = {
         name="COLD ISLAND STEPPE",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 16,
+            Months.IGNARIS.value: 20,
+            Months.OUSKARA.value: 13,
+            Months.NERITH.value: 5,
+                            }
+    ),
 
     "dark_forest": Biome(
         color=(22, 118, 51, 255),
@@ -2296,7 +2345,14 @@ BIOMES = {
         name="DARK FOREST",
         req=[],
         pace=7,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 25,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "death_valley": Biome(
         color=(152, 176, 159, 255),
@@ -2310,7 +2366,14 @@ BIOMES = {
         name="DEATH VALLEY",
         req=[],
         pace=7,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "deep_ocean": Biome(
         color=(40, 49, 151, 255),
@@ -2326,7 +2389,14 @@ BIOMES = {
         water=True,
         fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
-        status=[PlayerStatus.SURF.value]),
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "desert": Biome(
         color=(210, 180, 100, 255),
@@ -2340,7 +2410,14 @@ BIOMES = {
         name="DESERT",
         req=[],
         pace=10,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "desert_coast": Biome(
         color=(190, 150, 100, 255),
@@ -2354,7 +2431,14 @@ BIOMES = {
         name="DESERT RIVER COAST",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
+        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "desert_mountains": Biome(
         color=(140, 100, 60, 255),
@@ -2368,7 +2452,14 @@ BIOMES = {
         name="DESERT MOUNTAINS",
         req=[],
         pace=10,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "desert_river": Biome(
         color=(50, 100, 255, 255),
@@ -2384,7 +2475,14 @@ BIOMES = {
         pace=6,
         water=True,
         fishs=[],
-        status=[PlayerStatus.SURF.value]),
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "dunes": Biome(
         color=(210, 180, 140, 255),
@@ -2398,7 +2496,14 @@ BIOMES = {
         name="DUNES",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "fields": Biome(
         color=(115, 231, 29, 255),
@@ -2412,7 +2517,14 @@ BIOMES = {
         name="FIELDS",
         req=[],
         pace=5,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "forest": Biome(
         color=(34, 177, 76, 255),
@@ -2426,7 +2538,14 @@ BIOMES = {
         name="FOREST",
         req=[],
         pace=6,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "frostvale": Biome(
         color=(120, 186, 252, 255),
@@ -2442,7 +2561,14 @@ BIOMES = {
         pace=6,
         water=True,
         fishs=["fish_sabalo"],
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "frozen_coast": Biome(
         color=(230, 240, 240, 255),
@@ -2458,7 +2584,14 @@ BIOMES = {
         pace=9,
         water=True,
         fishs=[],
-        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value]),
+        status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 16,
+            Months.IGNARIS.value: 20,
+            Months.OUSKARA.value: 13,
+            Months.NERITH.value: 5,
+                            }
+    ),
 
     "frozen_sea": Biome(
         color={Months.AURENAR.value: (63, 72, 204, 255),
@@ -2479,7 +2612,14 @@ BIOMES = {
         water=True,
         fishs=[],
         status={Months.AURENAR.value: [PlayerStatus.SURF.value],
-                Months.NERITH.value: [PlayerStatus.WALK.value]}),
+                Months.NERITH.value: [PlayerStatus.WALK.value]},
+        month_temperatures={
+            Months.AURENAR.value: 14,
+            Months.IGNARIS.value: 18,
+            Months.OUSKARA.value: 11,
+            Months.NERITH.value: 3,
+                            }
+    ),
 
     "gates": Biome(
         color=(200, 191, 231, 255),
@@ -2492,7 +2632,14 @@ BIOMES = {
         name="GATES",
         req=[],
         pace=2,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "highlands": Biome(
         color=(195, 195, 195, 255),
@@ -2505,7 +2652,14 @@ BIOMES = {
         name="HIGHLANDS",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "hills": Biome(
         color=(78, 185, 32, 255),
@@ -2519,7 +2673,14 @@ BIOMES = {
         name="HILLS",
         req=[],
         pace=6,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "hut": Biome(
         color=(185, 122, 87, 255),
@@ -2536,7 +2697,14 @@ BIOMES = {
         name="HUT",
         pace=2,
         req=[],
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "incandescent_lava": Biome(
         color=(255, 100, 40, 255),
@@ -2550,7 +2718,14 @@ BIOMES = {
         name="INCANDESCENT LAVA",
         req=[],
         pace=7,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 30,
+            Months.IGNARIS.value: 55,
+            Months.OUSKARA.value: 25,
+            Months.NERITH.value: 20,
+                            }
+    ),
 
     "island": Biome(
         color=(201, 237, 92, 255),
@@ -2564,7 +2739,14 @@ BIOMES = {
         name="ISLAND",
         req=[],
         pace=4,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "magic_zone": Biome(
         color=(160, 75, 165, 255),
@@ -2577,7 +2759,14 @@ BIOMES = {
         name="MISTERIOUS MAGIC ZONE",
         req=[],
         pace=5,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "molten_surface": Biome(
         color=(210, 70, 25, 255),
@@ -2591,7 +2780,14 @@ BIOMES = {
         name="MOLTEN SURFACE",
         req=[],
         pace=7,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 30,
+            Months.IGNARIS.value: 55,
+            Months.OUSKARA.value: 25,
+            Months.NERITH.value: 20,
+                            }
+    ),
 
     "mountains": Biome(
         color=(127, 127, 127, 255),
@@ -2604,7 +2800,14 @@ BIOMES = {
         name="MOUNTAINS",
         req=["climbing tools"],
         pace=10,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 18,
+            Months.IGNARIS.value: 28,
+            Months.OUSKARA.value: 12,
+            Months.NERITH.value: 6,
+                            }
+    ),
 
     "oasis": Biome(
         color=(0, 255, 245, 255),
@@ -2618,7 +2821,14 @@ BIOMES = {
         pace=18,
         water=True,
         fishs=[],
-        status=[PlayerStatus.SURF.value]),
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 23,
+            Months.IGNARIS.value: 33,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 5,
+                            }
+    ),
 
     "oasis_vegetation": Biome(
         color=(47, 56, 176, 255),
@@ -2633,7 +2843,14 @@ BIOMES = {
         pace=18,
         water=False,
         fishs=[],
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 23,
+            Months.IGNARIS.value: 33,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 5,
+                            }
+    ),
 
     "ocean": Biome(
         color=(45, 140, 90, 255),
@@ -2649,7 +2866,14 @@ BIOMES = {
         water=True,
         fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
-        status=[PlayerStatus.SURF.value]),
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 26,
+            Months.OUSKARA.value: 17,
+            Months.NERITH.value: 12,
+                            }
+    ),
 
     "plains": Biome(
         color=(181, 230, 29, 255),
@@ -2663,7 +2887,14 @@ BIOMES = {
         name="PLAINS",
         req=[],
         pace=6,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "plateau": Biome(
         color=(82, 249, 11, 255),
@@ -2677,7 +2908,14 @@ BIOMES = {
         name="PLATEAU",
         req=[],
         pace=6,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "red": Biome(
         color=(255, 0, 0, 255),
@@ -2704,7 +2942,14 @@ BIOMES = {
         pace=6,
         water=True,
         fishs=["fish_sabalo"],
-        status=[PlayerStatus.SURF.value]),
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "rocks": Biome(
         color=(85, 80, 85, 255),
@@ -2716,7 +2961,14 @@ BIOMES = {
         mobs_base=MOBS,
         name="ROCKS",
         req=["wings"],
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "rocky_desert": Biome(
         color=(175, 130, 80, 255),
@@ -2730,7 +2982,14 @@ BIOMES = {
         name="ROCKY DESERT",
         req=[],
         pace=10,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "ruins": Biome(
         color=(202, 154, 128, 255),
@@ -2744,7 +3003,14 @@ BIOMES = {
         name="RUINS",
         req=[],
         pace=7,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "ruins_desert": Biome(
         color=(200, 150, 130, 255),
@@ -2758,7 +3024,14 @@ BIOMES = {
         name="RUINS",
         req=[],
         pace=7,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 35,
+            Months.OUSKARA.value: 10,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "shrubland": Biome(
         color=(145, 140, 80, 255),
@@ -2772,7 +3045,14 @@ BIOMES = {
         name="SHRUBLAND",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 18,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 14,
+            Months.NERITH.value: 6,
+                            }
+    ),
 
     "sea": Biome(
         color=(63, 72, 204, 255),
@@ -2787,7 +3067,14 @@ BIOMES = {
         water=True,
         fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
-        status=[PlayerStatus.SURF.value]),
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "seleran_forest": Biome(
         color=(15, 180, 10, 255),
@@ -2801,7 +3088,14 @@ BIOMES = {
         name="SELERAN FOREST",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "snow": Biome(
         color=(250, 250, 250, 255),
@@ -2814,7 +3108,14 @@ BIOMES = {
         name="SNOW",
         req=["snow clothing"],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 10,
+            Months.IGNARIS.value: 15,
+            Months.OUSKARA.value: 8,
+            Months.NERITH.value: 2,
+                            }
+    ),
 
     "snowy_forest": Biome(
         color=(220, 230, 230, 255),
@@ -2828,7 +3129,14 @@ BIOMES = {
         name="SNOWY FOREST",
         req=["snow clothing"],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 14,
+            Months.IGNARIS.value: 18,
+            Months.OUSKARA.value: 11,
+            Months.NERITH.value: 3,
+                            }
+    ),
 
     "snowy_mountains": Biome(
         color=(240, 250, 250, 255),
@@ -2842,7 +3150,14 @@ BIOMES = {
         name="SNOWY MOUNTAINS",
         req=["snow clothing"],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 16,
+            Months.IGNARIS.value: 20,
+            Months.OUSKARA.value: 13,
+            Months.NERITH.value: 5,
+                            }
+    ),
 
     "snowy_covered_steppe": Biome(
         color=(220, 220, 220, 255),
@@ -2856,7 +3171,14 @@ BIOMES = {
         name="SNOW-COVERED STEPPE",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 16,
+            Months.IGNARIS.value: 20,
+            Months.OUSKARA.value: 13,
+            Months.NERITH.value: 5,
+                            }
+    ),
 
     "steppe": Biome(
         color=(165, 165, 80, 255),
@@ -2870,7 +3192,14 @@ BIOMES = {
         name="STEPPE",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 18,
+            Months.IGNARIS.value: 24,
+            Months.OUSKARA.value: 14,
+            Months.NERITH.value: 7,
+                            }
+    ),
 
     "town": Biome(
         color=(170, 105, 70, 255),
@@ -2883,7 +3212,14 @@ BIOMES = {
         name="TOWN",
         req=[],
         pace=2,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "valley": Biome(
         color=(148, 148, 148, 255),
@@ -2897,7 +3233,14 @@ BIOMES = {
         name="VALLEY",
         req=[],
         pace=5,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 
     "volcanic_mountain": Biome(
         color=(53, 53, 53, 255),
@@ -2911,7 +3254,14 @@ BIOMES = {
         name="VOLCANIC MOUNTAIN",
         req=[],
         pace=8,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 22,
+            Months.IGNARIS.value: 42,
+            Months.OUSKARA.value: 17,
+            Months.NERITH.value: 12,
+                            }
+    ),
 
     "volcanic_rock": Biome(
         color=(90, 75, 65, 255),
@@ -2925,7 +3275,14 @@ BIOMES = {
         name="VOLCANIC ROCK",
         req=[],
         pace=5,
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        month_temperatures={
+            Months.AURENAR.value: 25,
+            Months.IGNARIS.value: 45,
+            Months.OUSKARA.value: 20,
+            Months.NERITH.value: 15,
+                            }
+    ),
 
     "water": Biome(
         color=(128, 255, 255, 255),
@@ -2940,7 +3297,14 @@ BIOMES = {
         pace=6,
         water=True,
         fishs=["fish_sabalo"],
-        status=[PlayerStatus.SURF.value])
+        status=[PlayerStatus.SURF.value],
+        month_temperatures={
+            Months.AURENAR.value: 20,
+            Months.IGNARIS.value: 30,
+            Months.OUSKARA.value: 15,
+            Months.NERITH.value: 8,
+                            }
+    ),
 }
 
 # Biome types.

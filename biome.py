@@ -68,7 +68,7 @@ class Biome:
 
     # Place climate and bioma attributes.
     altitude: int = field(default=5)
-    month_temperatures: dict[int, int] = field(default=0, converter=to_default_month_dict)
+    month_temperatures: dict[int, int] = field(default=15, converter=to_default_month_dict)
     water: dict[int, bool] | bool = field(default=False, converter=to_default_month_dict)
     fishs: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
     fishs_respawned: list = field(default=None)

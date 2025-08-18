@@ -135,7 +135,7 @@ def battle(player: Player,
             player.exp = 0
             reset_map(ms=map_game.map_settings, keys=[(2, 1), (6, 2)])
 
-            print(" GAME OVER")
+            print(" LOST DREAM")
             input(" > ")
             return play, menu, win
 
@@ -474,13 +474,9 @@ def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
         player.status = PlayerStatus.WALK.value
 
         map_game.map_settings[(x, y)].items.append("boat")
-        map_game.map_settings[(x, y)].description = map_game.map_settings[(x, y)].description.replace(
-            "Seaside with swaying palm trees, echoing waves, and vibrant life.",
-            "Seaside with anchored boat, echoing waves and vibrant coastal life.")
-
-        if map_game.map_settings[(x, y)].description == "":
-            map_game.map_settings[(x, y)].description = ("Seaside with anchored boat, echoing waves and vibrant"
-                                                         " coastal life.")
+        if not map_game.map_settings[(x, y)].description.items().count("boat"):
+            for k, v in map_game.map_settings[(x, y)].description.items():
+                map_game.map_settings[(x, y)].description[k] += " Anchored boat gently resting by the shore."
 
         map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
         return "You have land."
@@ -944,24 +940,17 @@ def unequip(player: Player, item: str) -> str:
     return f"You have unequip {item_object.name}."
 
 
-# TODO: resolver el manjeo de descripciones. Esto es una solución temporal para testear el juego.
 # Use boat.
 def use_boat(player: Player, map_game: Map) -> str:
     place = map_game.map_settings[(player.x, player.y)]
 
-    if "boat" in place.get_items() and player.status != PlayerStatus.SURF.value:
+    if "boat" in place.get_items() and not player.status == PlayerStatus.SURF.value:
         player.status = PlayerStatus.SURF.value
         place.remove_item(item="boat")
 
-        if f"{(player.x, player.y)}" == (6, 2):
-            description = """Seaside with swaying palm trees, echoing waves, and vibrant life. A solitary figure stands 
-            at the water's edge, gazing out into the vastness of the sea, captivated by the rhythmic dance of the waves
-             and the boundless horizon stretching before them."""
-            place.description[map_game.current_month] = description
-
-        else:
-            place.description[map_game.current_month] = ("Seaside with swaying palm trees, echoing waves, and "
-                                                         "vibrant life.")
+        for k, v in place.description.items():
+            if place.get_items().count("boat") < 2:
+                place.description[k] = v.replace("Anchored boat gently resting by the shore.", "")
 
         return "You are in the boat."
 

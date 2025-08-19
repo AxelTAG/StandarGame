@@ -55,10 +55,12 @@ def clear():
 
 # Coast reset.
 def reset_map(ms: dict, keys: list):
-    ms[keys[0]].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+    ms[keys[0]].description = ("Seaside with swaying palm trees, echoing waves, and vibrant life. Anchored boat gently "
+                               "resting by the shore.")
     ms[keys[0]].items = ["boat"]
 
-    ms[keys[1]].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+    ms[keys[1]].description = ("Seaside with swaying palm trees, echoing waves, and vibrant life. Anchored boat gently "
+                               "resting by the shore.")
     ms[keys[1]].items = ["boat"]
 
 

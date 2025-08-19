@@ -31,7 +31,8 @@ def init_map_setting(ms: dict):
     ms[(14, 24)].mobs_chances = [20, 50]
 
     # (14, 25)
-    ms[(14, 25)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life."
+    ms[(14, 25)].description = ("Seaside with swaying palm trees, echoing waves, and vibrant life. "
+                                "Anchored boat gently resting by the shore.")
     ms[(14, 25)].items = ["boat"]
 
     # (14, 36)
@@ -44,10 +45,10 @@ def init_map_setting(ms: dict):
     ms[(14, 36)].entries["tower"].entries["second_floor"].items = ["giant_telescope"]
 
     # (17, 27)
-    ms[(17, 27)].description = "Seaside with anchored boat, echoing waves and vibrant coastal life. A solitary" \
+    ms[(17, 27)].description = "Seaside with swaying palm trees, echoing waves, and vibrant life. A solitary" \
                                " figure stands at the water's edge, gazing out into the vastness of the sea, " \
                                "captivated by the rhythmic dance of the waves and the boundless horizon " \
-                               "stretching before them."
+                               "stretching before them. Anchored boat gently resting by the shore."
     ms[(17, 27)].items = ["boat"]
 
     # (21, 28)

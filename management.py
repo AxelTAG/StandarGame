@@ -1,5 +1,6 @@
 # Imports.
 # Local imports.
+import displays
 import utils
 from actions import battle, talk
 from displays import disp_standard_tw
@@ -18,6 +19,11 @@ from datetime import datetime
 def event_handler(player: Player,
                   mapgame: Map,
                   time_init: datetime) -> tuple[int, int]:
+    # Player sea trap.
+    if player.status not in player.place.get_status(month=mapgame.current_month):
+        player.hp = 0
+        return False, True
+
     # Event of Goblin Chief (1/3).
     goblin_chiefs_bedroom = mapgame.place_from_list([(25, 24), "cave_entrance", "cave_pit", "cave_basin",
                                                      "cave_gallery", "chiefs_cave", "goblin_chief_bedroom"])
@@ -456,8 +462,7 @@ def load(path_usavepkl: str = "./save/cfg_save.pkl",
 def reinit(player: Player, mapgame: Map):
     # Player reinit.
     player.hp = int(player.hpmax)
-    player.x = player.x_cp
-    player.y = player.y_cp
+    player.set_place(place=mapgame.map_settings[(player.x_cp, player.y_cp)])
     player.status = 0
     player.poison = 0
     player.hungry = 48

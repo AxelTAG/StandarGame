@@ -119,8 +119,8 @@ def disp_equip(equip: dict) -> str:
 def disp_game_loss() -> None:
     print()
     print("    YOU HAVE DIED")
-    print("    GAME OVER")
-    input("     > ")
+    print("    LOST DREAM")
+    input("    > ")
 
 
 def disp_intro(width: int = 60) -> None:

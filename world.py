@@ -3730,7 +3730,7 @@ ENTRIES = {
                     "atmosphere. Aromas of home-cooked meals linger, inviting weary travelers to "
                     "find respite.",
         name="MIRABELLE'S INN",
-        npc=["innkeeper_mirabelle"],
+        npcs=["innkeeper_mirabelle"],
         entry_type=EntryType.INN,
         mobs_base=MOBS
     ),
@@ -3781,7 +3781,7 @@ ENTRIES = {
         description="Bustling with laughter and music, this lively tavern features polished oak tables, a "
                     "roaring hearth, and the finest ale in Antina.",
         name="THE GOLDEN TANKARD TAVERN",
-        npc=["tavern_keeper_rudrik"],
+        npcs=["tavern_keeper_rudrik"],
         entry_type=EntryType.TAVERN,
         mobs_base=MOBS
     ),

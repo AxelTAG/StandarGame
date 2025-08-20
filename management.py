@@ -299,7 +299,7 @@ def event_handler(player: Player,
                                                           "frost-kissed silence reigns. Glistening ice formations "
                                                           "adorn the landscape, creating an ethereal and serene "
                                                           "winter tableau in nature's icy embrace.")
-            mapgame.map_settings[(23, 48)].npc = []
+            mapgame.map_settings[(23, 48)].npcs = []
 
             mapgame.map_settings[(0, 0)].entries["hut"].items.append("origami_flowers")
             mapgame.npcs["dragon_firefrost"].place = None

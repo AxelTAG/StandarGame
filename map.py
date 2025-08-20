@@ -193,10 +193,13 @@ class Map:
         date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
         return date_1 < date_2
 
-    def place_from_list(self, place_list: list) -> Biome | Entry | None:
+    def place_from_list(self, place_list: list) -> Biome | Entry:
         place = self.map_settings[place_list[0]]
         for site in place_list[1:]:
             place = place.entries[site]
+
+        if place is None:
+            raise ValueError(f"{place_list} is not a place.")
         return place
 
     def neighbors_from_coord(self, coord: tuple):
@@ -234,16 +237,20 @@ class Map:
             if npc.place is not None:
                 place = self.place_from_list(place_list=npc.place)
 
-            if place is not None and npc_key in place.npc:
-                place.npc.remove(npc_key)
+            if place is not None and npc_key in place.npcs:
+                place.remove_npc(npc=npc_key)
 
             for hour in hours_time_of_days:
                 npc.refresh_temporal(hour=hour)
 
             if npc.place is not None:
-                self.place_from_list(place_list=npc.place).npc.append(npc_key)
+                self.place_from_list(place_list=npc.place).add_npc(npc=npc_key)
 
     def refresh_biomes(self):
         for biome in self.map_settings.values():
             biome.refresh_biome(day=self.day,
                                 neighboors=self.neighbors_from_coord(coord=biome.coordinates))
+
+    def refresh_map(self) -> None:
+        self.refresh_npcs()
+        self.refresh_biomes()

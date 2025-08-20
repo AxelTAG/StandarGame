@@ -24,6 +24,21 @@ def to_default_month_dict(value):
     return {month.value: value for month in Months}
 
 
+def none_to_month_dict_list(value):
+    if value is None:
+        return {month.value: [] for month in Months}
+
+    if isinstance(value, dict):
+        result = {}
+        last_value = None
+        for i in range(len(Months)):
+            if i in value:
+                last_value = value[i]
+            result[i] = last_value
+        return result
+    return {month.value: value for month in Months}
+
+
 @define
 class Biome:
     # Common attributes.
@@ -39,8 +54,8 @@ class Biome:
 
     # Mobs and fighting attributes.
     mobs: list = field(default=None)
-    mobs_names: dict[int, list[str]] | list[str] = field(default=[], converter=to_default_month_dict)
-    mobs_chances: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
+    mobs_names: dict[int, list[str]] | list[str] = field(default=None, converter=none_to_month_dict_list)
+    mobs_chances: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
     mobs_respawned: list = field(default=None)
     mobs_respawn_time: dict[int, int] | int = field(default=8, converter=to_default_month_dict)
     mobs_check_respawn: bool = field(default=False)
@@ -53,12 +68,12 @@ class Biome:
     _mobs_quantity: int = field(init=False)
 
     # Place attributes.
-    npc: list = field(default=[])
-    items: list = field(default=[])
-    req: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
+    npcs: list = field(default=None)
+    items: list = field(default=None)
+    req: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
     pace: dict[int, int] | int = field(default=8, converter=to_default_month_dict)
     draw_map: bool = field(default=True)
-    status: dict[int, list] | list = field(default=[PlayerStatus.WALK.value], converter=to_default_month_dict)
+    status: dict[int, list] | list = field(default=[PlayerStatus.WALK.value], converter=none_to_month_dict_list)
     x: int = field(default=None)
     y: int = field(default=None)
     coordinates: tuple[float, float] = field(init=False)
@@ -70,7 +85,7 @@ class Biome:
     altitude: int = field(default=5)
     month_temperatures: dict[int, int] = field(default=15, converter=to_default_month_dict)
     water: dict[int, bool] | bool = field(default=False, converter=to_default_month_dict)
-    fishs: dict[int, list] | list = field(default=[], converter=to_default_month_dict)
+    fishs: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
     fishs_respawned: list = field(default=None)
     _temperature: int = field(init=False)
     _water: bool = field(init=False)
@@ -93,6 +108,12 @@ class Biome:
         self._mobs_quantity = self.get_mobs_quantity(month=Months.AURENAR.value)
 
         # Place attributes.
+        if self.npcs is None:
+            self.npcs = []
+
+        if self.items is None:
+            self.items = []
+
         self.coordinates = (self.x, self.y)
 
         self._req = self.get_req(month=Months.AURENAR.value)
@@ -157,7 +178,7 @@ class Biome:
         return self.mobs_quantity.get(month, self.get_previous_value(data=self.mobs_quantity, key=month))
 
     def get_npc(self) -> list:
-        return self.npc
+        return self.npcs
 
     def get_items(self) -> list:
         return self.items
@@ -287,8 +308,14 @@ class Biome:
             if mob.id == mob_id:
                 return mob
 
+    def add_npc(self, npc: str) -> None:
+        self.npcs.append(npc)
+
     def add_item(self, item: str) -> None:
         self.items.append(item)
+
+    def remove_npc(self, npc: str) -> None:
+        self.npcs.remove(npc)
 
     def remove_item(self, item: str) -> None:
         self.items.remove(item)
@@ -363,6 +390,12 @@ class Entry(Biome):
         self._mobs_quantity = self.get_mobs_quantity(month=Months.AURENAR.value)
 
         # Place attributes.
+        if self.npcs is None:
+            self.npcs = []
+
+        if self.items is None:
+            self.items = []
+
         self.coordinates = (self.x, self.y)
 
         self._req = self.get_req(month=Months.AURENAR.value)

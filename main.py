@@ -229,7 +229,7 @@ class Game:
                     print("    ")
                     typewriter(text=f" . . .",
                                speed=0.3)
-                screen = talk(npc=map_game.npcs["whispers"],
+                talk(npc=map_game.npcs["whispers"],
                               player=player,
                               map_game=map_game)
 
@@ -259,9 +259,7 @@ class Game:
 
             if not (map_game.get_hours == hours):
                 # Map refresh.
-                map_game.refresh_npcs()
-                map_game.refresh_biomes()
-
+                map_game.refresh_map()
                 # Player status refresh.
                 player.refresh_status()
                 player.refresh_hungry(hour=map_game.get_hours,
@@ -666,7 +664,7 @@ class Game:
                 if action[0] == "poweradmin":
                     self.admin = True
 
-                if self.admin:
+                if self.admin or player.name == "Tester":
                     if action[0] == "events":
                         screen = f"{player.events}"
 
@@ -708,6 +706,15 @@ class Game:
                     elif action == ["dragon", "vision"]:
                         player.vision = 1000
                         screen = f"Now you have god vision."
+
+                    elif action == ["dict", "map", "npcs"]:
+                        if len(action) == 3:
+                            screen = f"{getattr(map_game, action[2])}"
+                        if len(action) == 4:
+                            screen = f"{getattr(getattr(map_game, action[2]), action[3])}"
+
+                    elif action == ["equal", "npc"]:
+                        screen = f"{map_game.place_from_list(place_list=[(13, 37), 'artisan_shop']).npcs is map_game.place_from_list(place_list=[(14, 36), 'tower']).npcs}"
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])

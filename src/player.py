@@ -247,23 +247,22 @@ class Player:
     def has(self, item: str, amount: int = None) -> bool:
         if amount is None:
             amount = 1
-        return item in self.inventory.items.keys() and self.inventory.items[item] >= amount
+        return self.inventory.has(item=item, amount=amount)
 
     def add_item(self, item: str, quantity: int = 1) -> None:
         if item in self.item_limits:
             if item not in self.inventory.items:
                 if quantity >= self.item_limits[item]:
-                    self.inventory.items[item] = self.item_limits[item]
+                    self.inventory.add_item(item=item, quantity=self.item_limits[item])
                     return
-                else:
-                    self.inventory.items[item] = quantity
-                    return
+                self.inventory.add_item(item=item, quantity=quantity)
+                return
             if self.inventory.items[item] + quantity >= self.item_limits[item]:
                 self.inventory.items[item] = self.item_limits[item]
-            else:
-                self.inventory.items[item] = quantity
-        else:
+                return
             self.inventory.add_item(item=item, quantity=quantity)
+            return
+        self.inventory.add_item(item=item, quantity=quantity)
 
     def refresh_hungry(self, hour: int, last_hour: int) -> None:
         if self.hungry > 0:

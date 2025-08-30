@@ -6,6 +6,7 @@ from npc import Npc
 from player import Player
 from utils import label_pixels, tl_map_set
 from utils_settings import init_map_setting
+from globals import MAP_TILE_PATH
 
 # External imports.
 from attrs import define, field
@@ -48,7 +49,7 @@ class Map:
 
     def __attrs_post_init__(self):
         if self.map_labels is None:
-            self.map_labels = label_pixels("rsc/tile-01.png")
+            self.map_labels = label_pixels(MAP_TILE_PATH)
 
         if self.map_init_settings is None:
             pass

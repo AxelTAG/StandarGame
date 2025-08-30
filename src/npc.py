@@ -1,6 +1,7 @@
 # Imports.
 # Local imports.
-from enums import NpcTypes, TimeOfDay
+from enums import NpcTypes, QuestStatus, TimeOfDay
+from quest import Quest
 
 # External imports
 from attrs import define, field
@@ -16,13 +17,17 @@ class Npc:
     leave_message: list[str] = field(default=None)
     place: list = field(default=None)
 
-    # Merchants or Innkeepers.
-    buy_items: dict[str, int] = field(default=None)
-    buy_beds: dict[str, tuple[int, str]] = field(default=None)
+    # Trading attributes.
+    buy_items: dict[str, dict[str, int]] = field(default=None)
+    quantity_message: str = field(default=None)
+
+    buy_beds: dict[str, dict[str, int]] = field(default=None)
     room_expirations: dict[str, tuple] = field(default=None)
+    bed_key_message: str = field(default=None)
+    bed_low_message: str = field(default=None)
 
     # Crafting items.
-    crafting_items: dict[str, int] = field(default=None)
+    crafting_items: dict[str, dict[str, int]] = field(default=None)
 
     # Talking attributes.
     hist_messages: dict = field(init=False)
@@ -50,6 +55,9 @@ class Npc:
 
     # Listen attributes.
     tracks: dict = field(default=None)
+
+    # Quests.
+    quests: list[Quest] = field(factory=list)
 
     def __attrs_post_init__(self):
         if self.buy_beds is None:
@@ -79,6 +87,7 @@ class Npc:
         self.reset_hist_messages()
         self.refresh_temporal(hour=6)
 
+    # Refresh and status methods.
     def reset_hist_messages(self):
         self.hist_messages = {}
         for _ in self.messages.keys():
@@ -139,3 +148,52 @@ class Npc:
             if self.place_night is not None:
                 self.place = self.place_night
             return
+
+    # Buy/sell/craft methods.
+    def get_quantity_message(self, item: str, buy: bool = False, craft: bool = False, sell: bool = False) -> str:
+        if buy:
+            return self.quantity_message.replace("#item", item.title()).replace("#action", "buy")
+        if craft:
+            return self.quantity_message.replace("#item", item.title()).replace("#action", "craft")
+        if sell:
+            return self.quantity_message.replace("#item", item.title()).replace("#action", "sell")
+        raise ValueError("You must to pass buy, craft or sell argument.")
+
+    def get_trading_items(self, item_base: dict) -> dict:
+        items = {}
+        if self.buy_items:
+            items = self.buy_items
+
+        if self.crafting_items:
+            for k, v in self.crafting_items.items():
+                items[k] = v | item_base[k].crafting_materials
+        return items
+
+    def get_bed_items(self) -> dict:
+        return self.buy_beds
+
+    # Quest methods.
+    def has_quest(self, completed: bool = False) -> bool:
+        if completed:
+            return bool(self.quests)
+        return any([not quest.is_completed() for quest in self.quests])
+
+    def get_first_quest(self):
+        quests = [quest for quest in self.quests if not quest.is_completed()]
+        return quests[0]
+
+    def give_quest(self, quest_id: str) -> Quest | None:
+        for quest in self.quests:
+            if quest.id == quest_id and quest.status == QuestStatus.NOT_STARTED:
+                quest.start()
+                return quest
+        return None
+
+    def check_quests(self) -> list[Quest]:
+        return [quest for quest in self.quests if quest.status in (QuestStatus.IN_PROGRESS, QuestStatus.COMPLETED)]
+
+    def complete_quest(self, quest_id: str) -> dict | None:
+        for quest in self.quests:
+            if quest.id == quest_id and quest.status == QuestStatus.COMPLETED:
+                return quest.claim_reward()
+        return None

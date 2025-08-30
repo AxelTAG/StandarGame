@@ -167,10 +167,35 @@ class NpcTypes(Enum):
     WHISPERS = 471993
 
 
+class ObjectiveType(Enum):
+    # Implemented.
+    COLLECT = auto()
+    KILL = auto()
+    TALK = auto()
+    DELIVER = auto()
+
+    # Not implemented.
+    ESCORT = auto()
+    EXPLORE = auto()
+    CRAFT = auto()
+    PUZZLE = auto()
+    TIMED = auto()
+    DEFENSE = auto()
+    INVESTIGATE = auto()
+    DECISION = auto()
+
+
 class PlayerStatus(Enum):
     WALK = 0
     SURF = 1
     FLY = 2
+
+
+class QuestStatus(Enum):
+    NOT_STARTED = auto()
+    IN_PROGRESS = auto()
+    COMPLETED = auto()
+    REWARDED = auto()
 
 
 # Seasons.

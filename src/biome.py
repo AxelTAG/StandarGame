@@ -9,6 +9,7 @@ import random
 from attrs import define, field
 
 
+# TODO: reemplazar esta función converter por factory de attrs.
 def to_default_month_dict(value):
     if value is None:
         return

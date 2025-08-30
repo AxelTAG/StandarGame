@@ -1,8 +1,8 @@
 # Imports.
 # Local imports.
-import displays
 import utils
-from actions import battle, talk
+from actions.actions import battle
+from actions.talk import talk
 from displays import disp_standard_tw
 from map import Map
 from player import Player
@@ -29,12 +29,12 @@ def event_handler(player: Player,
                                                      "cave_gallery", "chiefs_cave", "goblin_chief_bedroom"])
 
     if player.place == goblin_chiefs_bedroom and not player.events["goblin_chief_crown_1"]:
-        talk(npc=mapgame.npcs["goblin_griznuk"], player=player, map_game=mapgame)
+        talk(npc=mapgame.npcs["goblin_griznuk"], player=player, mapgame=mapgame)
 
         play, menu, win = battle(player=player, enemy=copy.deepcopy(MOBS["goblin chief"]), map_game=mapgame)
 
         if win:
-            talk(npc=mapgame.npcs["mayors_daughter_maisie"], player=player, map_game=mapgame)
+            talk(npc=mapgame.npcs["mayors_daughter_maisie"], player=player, mapgame=mapgame)
 
             mapgame.npcs["mayors_daughter_maisie"].messages = {
                 0: ["My father, the mayor, will want to thank you properly. Please, come back with me to the village.",
@@ -293,7 +293,7 @@ def event_handler(player: Player,
 
             mapgame.npcs["dragon_firefrost"].place = [(56, 92)]
 
-            talk(npc=mapgame.npcs["dragon_firefrost"], player=player, map_game=mapgame)
+            talk(npc=mapgame.npcs["dragon_firefrost"], player=player, mapgame=mapgame)
 
             mapgame.map_settings[(23, 48)].description = ("Frozen valley, a pristine, snow-covered expanse where "
                                                           "frost-kissed silence reigns. Glistening ice formations "
@@ -384,7 +384,7 @@ def event_handler(player: Player,
     if mapgame.npcs["captain_thorne"].hist_messages[0] and player.events["dragon_win"]:
         utils.clear()
         time.sleep(1.5)
-        talk(npc=mapgame.npcs["whispers"], player=player, map_game=mapgame)
+        talk(npc=mapgame.npcs["whispers"], player=player, mapgame=mapgame)
 
         return False, True
 
@@ -427,13 +427,13 @@ def map_control_handling(player: Player,
 
     # Sailor Kael detention.
     if "sailor_kael" in player.place.get_npc() and player.place == mapgame.map_settings[(39, 39)].entries["thornes_ship"]:
-        talk(npc=mapgame.npcs["sailor_kael"], player=player, map_game=mapgame)
+        talk(npc=mapgame.npcs["sailor_kael"], player=player, mapgame=mapgame)
         player.set_place(place=player.last_place)
 
     # Guard Lorian ddetention.
     if "guard_lorian" in player.last_place.get_npc() and player.place == mapgame.map_settings[(24, 41)]:
         if not player.events["antinas_permission"]:
-            talk(npc=mapgame.npcs["guard_lorian"], player=player, map_game=mapgame)
+            talk(npc=mapgame.npcs["guard_lorian"], player=player, mapgame=mapgame)
             player.set_place(place=player.last_place)
 
 
@@ -441,10 +441,10 @@ def load(path_usavepkl: str = "./save/cfg_save.pkl",
          path_msave: str = "./save/cfg_map.pkl",
          path_hsave: str = "./save/cfg_hash.txt",
          check_hash: bool = True) -> tuple[bool, str, Player | None, Map | None]:
-    """Checks corruption of files and finally loads game."""
+    """Checks corruption of files and finally loads src."""
     if check_hash:
         load_hash = utils.load_dict_from_txt(path_hsave)
-        if not utils.get_hash("./save/cfg_save.pkl") == load_hash["hash"]:
+        if not utils.get_hash("../save/cfg_save.pkl") == load_hash["hash"]:
             return False, " Corrupted file.", None, None
 
     player = import_player(path_usavepkl)
@@ -485,7 +485,7 @@ def save(player: Player,
          path_usavepkl: str = "./save/cfg_save.pkl",
          path_mappkl: str = "./save/cfg_map.pkl",
          path_hsave: str = "./save/cfg_hash.txt") -> None:
-    """Saves game."""
+    """Saves src."""
     player.refresh_time_played(datetime.now(), time_init)
 
     # Inventory, user stats and map setting saving (export to txt).

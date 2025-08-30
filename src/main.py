@@ -4,7 +4,8 @@ import enums
 import globals
 import management
 
-from actions import *
+from actions.actions import *
+from actions.talk import talk
 from inventory import Inventory
 from map import Map
 from player import Player
@@ -14,6 +15,7 @@ from world import *
 # External imports.
 import copy
 import matplotlib
+
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 import os
@@ -60,6 +62,8 @@ class Game:
 
     def __attrs_post_init__(self):
         # Init pygame music.
+        if pygame.mixer.get_init():
+            pygame.mixer.quit()
         pygame.mixer.init()
         pygame.mixer.music.set_volume(self.music_volume)
 
@@ -173,7 +177,7 @@ class Game:
             map_game = self.mapgame
             self.first_setting = False
 
-        # Introduction of new game.
+        # Introduction of new src.
         if self.first_setting:
             # First message.
             typewriter(
@@ -230,8 +234,8 @@ class Game:
                     typewriter(text=f" . . .",
                                speed=0.3)
                 talk(npc=map_game.npcs["whispers"],
-                              player=player,
-                              map_game=map_game)
+                     player=player,
+                     mapgame=map_game)
 
         # Previous setting before start playing.
         # First screen massage.
@@ -327,7 +331,7 @@ class Game:
                     player.standing = True
 
                 # Action ejecution.
-                if action[0] == "0":  # Save game.
+                if action[0] == "0":  # Save src.
                     self.play = False
                     self.menu = True
                     self.loaded_game = False
@@ -341,7 +345,8 @@ class Game:
                         screen, player.standing = move(player=player, map_game=map_game, mv=action[0])
 
                     else:
-                        screen = "You are in " + player.place.get_name(month=map_game.current_month).title().replace("'S", "'s")
+                        screen = "You are in " + player.place.get_name(month=map_game.current_month).title().replace(
+                            "'S", "'s")
 
                 elif action[0] in ["5", "6"]:  # Fast use object action.
                     if action[0] == "5":
@@ -528,7 +533,8 @@ class Game:
                     plt.show()
                     self._last_fig = fig
 
-                    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].get_color(month=map_game.current_month)
+                    player.map[player.y][player.x] = map_game.map_settings[(player.x, player.y)].get_color(
+                        month=map_game.current_month)
                     player.standing = True
 
                 elif action[:2] == ["pick", "up"]:  # Pick up action.
@@ -609,7 +615,7 @@ class Game:
                         player.standing = True
 
                     elif npc_name in player.place.get_npc():
-                        screen = talk(npc=map_game.npcs[npc_name], player=player, map_game=map_game)
+                        screen = talk(npc=map_game.npcs[npc_name], player=player, mapgame=map_game)
                         player.standing = True
 
                     else:
@@ -665,8 +671,9 @@ class Game:
                     self.admin = True
 
                 if self.admin or player.name == "Tester":
-                    if action[0] == "events":
-                        screen = f"{player.events}"
+                    if action[:2] == ["dragon", "fortune"]:
+                        quantity_item = int(action[3]) if len(action) == 4 else 1
+                        player.add_item(item=action[2], quantity=quantity_item)
 
                     elif action[0] == "estimate":
                         screen = f"{map_game.estimate_date(days=int(action[1]))}"

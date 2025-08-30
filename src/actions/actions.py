@@ -2,13 +2,12 @@
 # Internal imports.
 import displays
 from biome import Biome, Entry
-from enums import EntryType, NpcTypes, PlayerStatus, TimeOfDay
+from enums import EntryType, PlayerStatus, TimeOfDay
 from item import Item
 from map import Map
 from mob import Mob
-from npc import Npc
 from player import Player
-from utils import reset_map, text_ljust, underscores
+from utils import reset_map, underscores
 from world import ITEMS
 
 # External imports.
@@ -169,42 +168,20 @@ def battle(player: Player,
 
 
 # Buy action.
-def buy(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool]:
-    """
-    Attempts to buy a specified quantity of an item for a player if they have enough gold.
+def buy(player: Player,
+        item: str,
+        quantity: int,
+        cost: dict) -> tuple[str, bool]:
+    for k, v in cost.items():
+        if not player.has(item=k, amount=v * quantity):
+            cost_name = underscores(text=k, delete=True).title()
+            return f"You don't have enough {cost_name}.", False
 
-    The function checks if the player has sufficient gold to purchase the desired quantity of the item at the given
-    price.
-    If successful, the item is added to the player's inventory, and the gold is deducted from their balance.
-    If the player doesn't have enough gold, the purchase is rejected.
-
-    :param player: The player making the purchase. It must be an instance of the `Player` class.
-    :type player: Player
-    :param item: The name of the item to purchase.
-    :type item: str
-    :param quantity: The quantity of the item to purchase.
-    :type quantity: int
-    :param price: The price per unit of the item.
-    :type price: int
-
-    :return: A message indicating the result of the transaction and a boolean that is `True` if the purchase is
-    successful, otherwise `False`.
-    :rtype: tuple[str, bool]
-    """
-    item_name = item.replace('_', ' ').title()
-    if player.inventory.gold >= price * quantity:
-        try:
-            player.add_item(item=item, quantity=quantity)
-
-        except KeyError:
-            player.inventory.items[item] = 0
-            player.add_item(item=item, quantity=quantity)
-        player.inventory.gold -= price * quantity
-
-        return f"You buy {quantity} {item_name}.", True
-
-    else:
-        return "You don't have enough gold.", False
+    item_name = underscores(text=item, delete=True).title()
+    player.add_item(item=item, quantity=quantity)
+    for k, v in cost.items():
+        player.inventory.discard_item(item=k, quantity=v * quantity)
+    return f"You buy {quantity} {item_name}.", True
 
 
 # Check action.
@@ -370,7 +347,7 @@ def enter(player: Player, entrie: str, mapgame: Map) -> tuple[str, bool]:
         player.set_place(entrie_object)
         return f"You have enter to the {entrie_name}.", False
 
-    requirements = " ".join(entrie_object.get_req(mapgame=mapgame)).split("_")
+    requirements = " ".join(entrie_object.get_req(month=mapgame.current_month)).split("_")
     requirements = " ".join(requirements).title()
     return "You need " + requirements + " to enter.", True
 
@@ -639,289 +616,14 @@ def sleep_in_bed(player: Player, map_game: Map, time_of_day: int) -> str:
 
 
 # Sell action.
-def sell(player: Player, item: str, quantity: int, price: int) -> str:
-    inventory = player.inventory
-    items = player.inventory.items
-    item_name = item.replace("_", " ").title()
-    try:
-        if items[item] >= quantity:
-            player.inventory.discard_item(item=item, quantity=quantity)
-            inventory.gold += quantity * price
-            return f"You sell {quantity} {item_name}. You earn {quantity * price} gold."
-
-        else:
-            return f"You don't have enough {item_name}."
-
-    except KeyError:
-        return f"You don't have enough {item_name}."
-
-
-# Talk.
-def talk(npc: Npc, player: Player, map_game: Map) -> str:
-    # First message of npc.
-    displays.disp_standard_tw(npc.name, npc.messages[0])  # Printing first message.
-    npc.hist_messages[0] = True  # Turning True first message of NPC.
-
-    transactions = ""
-    while True:
-        # Answers for npc.
-        if npc.answers.keys():
-            displays.disp_talk_answers(npc.answers)  # Printing answers.
-
-            while True:
-                try:
-                    action_choice = int(input(" " * 4 + "# "))
-                    if 0 < action_choice <= len(npc.answers.keys()) + 1:
-                        if action_choice == len(npc.answers.keys()) + 1:  # Leave action of talk.
-                            # Leave message.
-                            if npc.leave_message:
-                                displays.disp_standard_tw(npc.name, npc.leave_message)  # Printing leave message.
-
-                            if transactions:
-                                return transactions  # Returning transactions if buy or sell actions were done.
-                            elif npc.npc_type == NpcTypes.MERCHANT or npc.npc_type == NpcTypes.TAVERN_KEEPER:
-                                return "Nothing done."  # If nothing was done.
-                            else:
-                                return f"You talked with {npc.name.title()}."
-                        else:
-                            break
-                except ValueError:  # Bucle will reset if input is not an intenger.
-                    pass
-
-            # Second message of npc.
-            displays.disp_standard_tw(npc.name, npc.messages[action_choice])
-            npc.hist_messages[action_choice] = True  # Turning True message of NPC.
-
-            # Talking with merchant.
-            if npc.npc_type == NpcTypes.MERCHANT or npc.npc_type == NpcTypes.TAVERN_KEEPER:
-                print()
-                if action_choice == 1:  # Buy option.
-                    items, prices, n = [], [], 0
-
-                    for item, value in npc.buy_items.items():
-                        item_name = item.replace("_", " ").title()
-                        print(f"{' ' * 6}{n + 1}) {item_name} x {value} gold.")
-                        items.append(item)
-                        prices.append(value)
-                        n += 1
-
-                    print(f"{' ' * 6}{n + 1}) Quit.")
-                    print()
-                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
-
-                    while True:
-                        try:
-                            item = int(input(" " * 4 + "# ")) - 1
-                            if 0 <= item < len(items):
-                                item_name = items[item].replace('_', ' ').title()
-                                if item >= len(items):  # Quit condition.
-                                    break
-                                print()
-                                print(f"{' ' * 4}How many {item_name} do you want to buy?")
-                                while True:
-                                    try:
-                                        quantity = int(input(f"{' ' * 4}# "))
-                                        transaction, transaction_status = buy(player, items[item], quantity,
-                                                                              prices[item])
-                                        transactions += transaction
-                                        break
-                                    except ValueError:
-                                        break
-                                break
-                            else:
-                                break
-                        except ValueError:
-                            pass
-
-                elif action_choice == 2:  # Sell option.
-                    print()
-                    items = []
-                    prices = []
-                    n = 0
-                    for item, quantity in player.inventory.items.items():
-                        item_object = get_item(item_name=item)
-
-                        if quantity < 1 or item_object.sell_price is None:
-                            continue
-
-                        line_text = text_ljust(msg=f"{n + 1}) {item_object.name} x {item_object.sell_price} gold.",
-                                               width=30)
-                        print(f"{' ' * 6}{line_text[0]} [{player.inventory.items[item]}]")
-
-                        items.append(item)
-                        prices.append(item_object.sell_price)
-                        n += 1
-
-                    print(f"{' ' * 6}{n + 1}) Quit.")
-                    print()
-                    print(f"{' ' * 6}GOLD: {player.inventory.gold}.\n")
-
-                    while True:
-                        try:
-                            item = int(input(f"{' ' * 4}# ")) - 1
-                            if 0 <= item < len(items):
-                                item_name = items[item].replace("_", " ").title()
-                                if item >= len(items):  # Quit condition.
-                                    break
-                                print()
-                                print(f"{' ' * 4}How many {item_name} do you want to sell?")
-                                while True:
-                                    try:
-                                        quantity = int(input(" " * 4 + "# "))
-                                        transactions += sell(player, items[item], quantity, prices[item])
-                                        break
-                                    except ValueError:
-                                        pass
-                                break
-                            else:
-                                break
-                        except ValueError:
-                            pass
-
-                else:
-                    return "Nothing done."
-
-            if npc.npc_type == NpcTypes.INNKEEPER:
-                print()
-
-                if action_choice == 1:  # Buy room bed.
-                    items = []
-                    prices = []
-                    n = 0
-                    for item, value in npc.buy_beds.items():
-                        item_name = item.replace("_", " ").title()
-                        print(f"{' ' * 6}{n + 1}) {item_name} x {value[0]} gold.")
-                        items.append(value[1])
-                        prices.append(value[0])
-                        n += 1
-
-                    print(f"      {n + 1}) Quit.")
-                    print()
-                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
-
-                    while True:
-                        try:
-                            item = int(input(f"{' ' * 4}# ")) - 1
-                            if 0 <= item < len(items):
-                                if item >= len(items):  # Quit condition.
-                                    break
-
-                                transaction, transaction_status = buy(player=player,
-                                                                      item=items[item],
-                                                                      quantity=1,
-                                                                      price=prices[item])
-
-                                if transaction_status:
-                                    displays.disp_standard_tw(name=npc.name,
-                                                              message=["Perfect. Keep this key, until 30 days."])
-                                    expiration_date = ITEMS[items[item]].expiration
-                                    npc.room_expirations[items[item]] = map_game.estimate_date(days=expiration_date)
-                                else:
-                                    displays.disp_standard_tw(name=npc.name,
-                                                              message=["Mmmm... you don't have enough."])
-                                break
-
-                            else:
-                                break
-                        except ValueError:
-                            pass
-
-                if action_choice == 2:  # Buy food.
-                    items = []
-                    prices = []
-                    n = 0
-                    for item, value in npc.buy_items.items():
-                        item_name = item.replace("_", " ").title()
-                        print(f"{' ' * 6}{n + 1}) {item_name}  x {value} gold.")
-                        items.append(item)
-                        prices.append(value)
-                        n += 1
-
-                    print(f"      {n + 1}) Quit.")
-                    print()
-                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
-
-                    while True:
-                        try:
-                            item = int(input(f"{' ' * 4}# ")) - 1
-                            if 0 <= item < len(items):
-                                if item >= len(items):  # Quit condition.
-                                    break
-                                print()
-                                item_name = items[item].replace('_', ' ').title()
-                                print(f"{' ' * 4}How many {item_name} do you want to buy?")
-
-                                while True:
-                                    try:
-                                        quantity = int(input(" " * 4 + "# "))
-                                        transaction, transaction_status = buy(player=player,
-                                                                              item=items[item],
-                                                                              quantity=quantity,
-                                                                              price=prices[item])
-                                        transactions += transaction
-                                        break
-
-                                    except ValueError:
-                                        break
-                                break
-
-                            else:
-                                break
-
-                        except ValueError:
-                            pass
-
-            if npc.npc_type == NpcTypes.ARTISAN:
-                print()
-                if action_choice == 1:  # Craft option.
-                    items, prices, n = [], [], 0
-
-                    for item, value in npc.crafting_items.items():
-                        item_object = ITEMS[item]
-                        item_name = item.replace("_", " ").title()
-                        print(
-                            f"{' ' * 6}{n + 1}) {item_name} x {value} gold. Requires: {item_object.crafting_materials}")
-                        items.append(item)
-                        prices.append(value)
-                        n += 1
-
-                    print(f"      {n + 1}) Quit.")
-                    print()
-                    print(f"{' ' * 6}[GOLD: {player.inventory.gold}]\n")
-
-                    while True:
-                        try:
-                            item = int(input(" " * 4 + "# ")) - 1
-                            if 0 <= item < len(items):
-                                item_name = items[item].replace('_', ' ').title()
-                                if item >= len(items):  # Quit condition.
-                                    break
-                                print()
-                                print(f"{' ' * 4}How many {item_name} do you want to craft?")
-                                while True:
-                                    try:
-                                        quantity = int(input(f"{' ' * 4}# "))
-                                        transaction, transaction_status = craft(player=player,
-                                                                                item=items[item],
-                                                                                quantity=quantity)
-                                        transactions += transaction
-                                        break
-                                    except ValueError:
-                                        break
-                                break
-                            else:
-                                break
-                        except ValueError:
-                            pass
-
-                else:
-                    return "Nothing done."
-
-        elif npc.name == "whispers":
-            return "You heard some whispers. "
-
-        else:
-            return f"You talked with {npc.name.title()}."  # Break if the npc has no second message.
+def sell(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool]:
+    item_name = underscores(text=item, delete=True).title()
+    if player.has(item=item, amount=quantity):
+        earning = quantity * price
+        player.inventory.discard_item(item=item, quantity=quantity)
+        player.inventory.add_item(item="gold", quantity=earning)
+        return f"You sell {quantity} {item_name}. You earn {earning} gold.", True
+    return f"You don't have enough {item_name}.", False
 
 
 # Unequip action.

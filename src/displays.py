@@ -7,7 +7,11 @@ from enums import Months
 from map import Map
 from mob import Mob
 from player import Player
-from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter
+from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter, underscores
+
+
+INPUT_LABEL = " " * 4 + "# "
+ITEM_SPACING = " " * 6
 
 
 # Assign display.
@@ -128,6 +132,26 @@ def disp_intro(width: int = 60) -> None:
     print(" < PRESS ENTER > ".center(width))
 
 
+def disp_show_list_items(player: Player, items: dict, player_quantity: bool = False) -> tuple[list, list]:
+    print()
+    items_list, prices_list, n, item_stock = [], [], 0, ""
+    for item_key, item_v in items.items():
+        item_name = underscores(text=item_key, delete=True).title()
+        if player_quantity:
+            item_stock = f" [{player.inventory.items[item_key]}]"
+        print(f"{ITEM_SPACING}{n + 1}) {item_name}{item_stock}: {', '.join([f'{q.title()} {r}' for q, r in item_v.items()])}.")
+
+        items_list.append(item_key)
+        prices_list.append(item_v)
+        n += 1
+
+    print(f"{ITEM_SPACING}{n + 1}) Quit.")
+    print()
+    print(f"{ITEM_SPACING}[GOLD: {player.inventory.gold}]\n")
+
+    return items_list, prices_list
+
+
 def disp_load_game() -> None:
     print(" < LOAD GAME >")
     print()
@@ -178,7 +202,7 @@ def disp_new_game(existent_player: Player = None) -> None:
     else:
         print(" < NEW GAME >")
         print()
-        print(" There is already a game existing, do you want to delete it?")
+        print(" There is already a src existing, do you want to delete it?")
         print()
         print(f" NAME: {existent_player.name} / LVL: {existent_player.lvl}")
         print()
@@ -322,7 +346,7 @@ def disp_rules() -> None:
     print()
     print(" < RULES >")
     print()
-    print(" I'm the creator of this game and these are the rules.")
+    print(" I'm the creator of this src and these are the rules.")
     print()
     print(" 1) Follow your path.")
     print(" 2) Trace your path with: 'map' and 'draw map'.")

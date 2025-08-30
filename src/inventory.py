@@ -35,30 +35,15 @@ class Inventory:
                 if self.items[item] == 0:
                     del self.items[item]
                 return True
-            else:
-                return False
+            return False
         else:
             if item == "gold":
                 self.gold -= min([self.gold, quantity])
                 return True
-            else:
-                return False
+            return False
 
     def drop_item(self, item: str, quantity: int) -> bool:
-        if item in self.items.keys():
-            if self.items[item] >= quantity:
-                self.items[item] -= int(quantity)
-                if self.items[item] == 0:
-                    del self.items[item]
-                return True
-            else:
-                return False
-        else:
-            if item == "gold":
-                self.gold -= min([self.gold, quantity])
-                return True
-            else:
-                return False
+        return self.discard_item(item=item, quantity=quantity)
 
     @property
     def get_item_objects(self):
@@ -67,3 +52,10 @@ class Inventory:
 
     def get_item_object(self, item: str):
         return self.item_base[item]
+
+    def has(self, item: str, amount: int) -> bool:
+        if item == "gold":
+            return self.gold >= amount
+        if item in self.items.keys():
+            return self.items[item] >= amount
+        return False

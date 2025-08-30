@@ -2,6 +2,12 @@
 WIDTH = 92
 HEIGHT = 32
 
+# Map tile.
+MAP_TILE_PATH = "./rsc/tile-01.png"
+
+# Save path.
+SAVE_PATH = "../save/"
+
 # Map dimensions.
 MAP_X_LENGTH = 128
 MAP_Y_LENGTH = 128

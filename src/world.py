@@ -5,6 +5,7 @@ from enums import *
 from item import Item
 from mob import Mob
 from npc import Npc
+from quest import QuestObjective, Quest
 
 # External imports.
 from enum import Enum
@@ -943,8 +944,38 @@ ITEMS = {
                           droppable=False),
 }
 
+# Quests.
+QUEST_OBJETIVES = {
+    "slime_slayer": QuestObjective(
+        type=ObjectiveType.KILL,
+        target="Slime",
+        amount=5
+    )
+}
+
+QUESTS = {
+    "slime_slayer": Quest(
+        id="slime_slayer",
+        title="The Slime Slayer",
+        description="Kill 5 Slime.",
+        objectives=[QUEST_OBJETIVES["slime_slayer"]],
+        rewards={"gold": 15},
+        messages_npc={
+            0: ["Hello there! I will guide you to this tutorial.",
+                "For now, just take down 5 Slimes. And return to me again."],
+        },
+    )
+}
+
 # NPCs.
 NPCS = {
+    "ant_loial": Npc(name="aloial",
+                     npc_type=NpcTypes.VETERAN,
+                     messages={
+                         0: ["Hello there! Today I have no mision to give you."],
+                     },
+                     place=[(12, 24)]),
+
     "artisan_brenwick": Npc(name="artisan brenwick",
                             npc_type=NpcTypes.ARTISAN,
                             messages={
@@ -954,9 +985,10 @@ NPCS = {
                             answers={
                                 1: "I need craft something"},
                             place=[(13, 37), "artisan_shop"],
+                            quantity_message="How many #item do you need to craft?",
                             crafting_items={
-                                "rope": 25,
-                                "torch": 15}),
+                                "rope": {"gold": 25},
+                                "torch": {"gold": 15}}),
 
     "astronomer_aldric": Npc(name="astronomer aldric",
                              npc_type=NpcTypes.ASTRONOMER,
@@ -1192,17 +1224,20 @@ NPCS = {
                            answers={
                                1: "I need to sleep",
                                2: "Buy food"},
-                           buy_items={"bread": 1,
-                                      "cheese": 2,
-                                      "soup": 2,
-                                      "water": 1,
-                                      "bier": 2,
-                                      "wine": 3,
-                                      "fish_sardine": 3},
-                           buy_beds={"first_room": (15, "aliras_first_room_key"),
-                                     "second_room": (10, "aliras_second_room_key"),
-                                     "third_room": (8, "aliras_third_room_key"),
-                                     "fourth room": (8, "aliras_third_room_key")},
+                           buy_items={"bread": {"gold": 1},
+                                      "cheese": {"gold": 2},
+                                      "soup": {"gold": 2},
+                                      "water": {"gold": 1},
+                                      "bier": {"gold": 2},
+                                      "wine": {"gold": 3},
+                                      "fish_sardine": {"gold": 3}},
+                           buy_beds={"aliras_first_room_key": {"gold": 15},
+                                     "aliras_second_room_key": {"gold": 10},
+                                     "aliras_third_room_key": {"gold": 8},
+                                     "aliras_fourth_room_key": {"gold": 8}},
+                           bed_key_message="Perfect. Keep this key, until 30 days.",
+                           bed_low_message="Mmmmmmm... you don't have enough.",
+                           quantity_message="How many #item do you want to #action?",
                            place=[(22, 42), "inn"]),
 
     "innkeeper_lyssia": Npc(name="innkeeper lyssia",
@@ -1216,15 +1251,18 @@ NPCS = {
                             answers={
                                 1: "I need to sleep",
                                 2: "Buy food"},
-                            buy_items={"bread": 1,
-                                       "cheese": 2,
-                                       "soup": 2,
-                                       "water": 1,
-                                       "bier": 2,
-                                       "fish_sardine": 3},
-                            buy_beds={"first_room": (12, "lyssias_first_room_key"),
-                                      "second_room": (8, "lyssias_second_room_key"),
-                                      "third_room": (5, "lyssias_third_room_key")},
+                            buy_items={"bread": {"gold": 1},
+                                       "cheese": {"gold": 2},
+                                       "soup": {"gold": 2},
+                                       "water": {"gold": 1},
+                                       "bier": {"gold": 2},
+                                       "fish_sardine": {"gold": 3}},
+                            buy_beds={"lyssias_first_room_key": {"gold": 12},
+                                      "lyssias_second_room_key": {"gold": 8},
+                                      "lyssias_third_room_key": {"gold": 5}},
+                            bed_key_message="Perfect. Keep this key, until 30 days.",
+                            bed_low_message="Mmmmmmm... you don't have enough.",
+                            quantity_message="How many #item do you want to #action?",
                             place=[(39, 39), "inn"]),
 
     "innkeeper_mirabelle": Npc(name="innkeeper mirabelle",
@@ -1238,13 +1276,16 @@ NPCS = {
                                answers={
                                    1: "I need to sleep",
                                    2: "Buy food"},
-                               buy_items={"bread": 1,
-                                          "cheese": 2,
-                                          "soup": 2,
-                                          "water": 1,
-                                          "bier": 2},
-                               buy_beds={"main_room": (5, "mirabelles_main_room_key"),
-                                         "small_room": (3, "mirabelles_small_room_key")},
+                               buy_items={"bread": {"gold": 1},
+                                          "cheese": {"gold": 2},
+                                          "soup": {"gold": 2},
+                                          "water": {"gold": 1},
+                                          "bier": {"gold": 2}},
+                               buy_beds={"mirabelles_main_room_key": {"gold": 5},
+                                         "mirabelles_small_room_key": {"gold": 3}},
+                               bed_key_message="Perfect. Keep this key, until 30 days.",
+                               bed_low_message="Mmmmmmm... you don't have enough.",
+                               quantity_message="How many #item do you want to #action?",
                                place=[(21, 29), "inn"]),
 
     "lord_aric": Npc(name="lord aric",
@@ -1303,14 +1344,15 @@ NPCS = {
                            answers={
                                1: "Buy",
                                2: "Sell"},
-                           buy_items={"antidote": 5,
-                                      "leather_armor": 75,
-                                      "leather_boots": 60,
-                                      "little_red_potion": 5,
-                                      "red_potion": 10,
-                                      "short_sword": 100,
-                                      "wood_shield": 50,
-                                      "torch": 20},
+                           buy_items={"antidote": {"gold": 5},
+                                      "leather_armor": {"gold": 75},
+                                      "leather_boots": {"gold": 60},
+                                      "little_red_potion": {"gold": 5},
+                                      "red_potion": {"gold": 10},
+                                      "short_sword": {"gold": 100},
+                                      "wood_shield": {"gold": 50},
+                                      "torch": {"gold": 20}},
+                           quantity_message="How many #item do you want to #action?",
                            place=[(21, 29)]),
 
     "merchant_elden": Npc(name="merchant elden",
@@ -1324,16 +1366,16 @@ NPCS = {
                           answers={
                               1: "Buy",
                               2: "Sell"},
-                          buy_items={"axe": 280,
-                                     "chainmail_armor": 300,
-                                     "large_bow": 220,
-                                     "longsword": 350,
-                                     "iron_shield": 130,
-                                     "mesh_boots": 100,
-                                     "plate_armor": 400,
-                                     "spear": 250,
-                                     "spike_shield": 150,
-                                     "tower_shield": 150},
+                          buy_items={"axe": {"gold": 280},
+                                     "chainmail_armor": {"gold": 300},
+                                     "large_bow": {"gold": 220},
+                                     "longsword": {"gold": 350},
+                                     "iron_shield": {"gold": 130},
+                                     "mesh_boots": {"gold": 100},
+                                     "plate_armor": {"gold": 400},
+                                     "spear": {"gold": 250},
+                                     "spike_shield": {"gold": 150},
+                                     "tower_shield": {"gold": 150}},
                           place=[(24, 42)]),
 
     "merchant_roland": Npc(name="merchant roland",
@@ -1348,12 +1390,12 @@ NPCS = {
                            answers={
                                1: "Buy",
                                2: "Sell"},
-                           buy_items={"antidote": 7,
-                                      "giant_red_potion": 15,
-                                      "red_potion": 10,
-                                      "sword": 300,
-                                      "iron_shield": 150,
-                                      "torch": 20},
+                           buy_items={"antidote": {"gold": 7},
+                                      "giant_red_potion": {"gold": 15},
+                                      "red_potion": {"gold": 10},
+                                      "sword": {"gold": 300},
+                                      "iron_shield": {"gold": 150},
+                                      "torch": {"gold": 20}},
                            place_morning=[(23, 41)]),
 
     "merchant_selena": Npc(name="merchant selena",
@@ -1368,13 +1410,13 @@ NPCS = {
                            answers={
                                1: "Buy",
                                2: "Sell"},
-                           buy_items={"antidote": 5,
-                                      "harpoon": 150,
-                                      "hardened_leather_armor": 120,
-                                      "red_potion": 10,
-                                      "fishing_pole": 200,
-                                      "wood_shield": 50,
-                                      "telescope": 200},
+                           buy_items={"antidote": {"gold": 5},
+                                      "harpoon": {"gold": 150},
+                                      "hardened_leather_armor": {"gold": 120},
+                                      "red_potion": {"gold": 10},
+                                      "fishing_pole": {"gold": 200},
+                                      "wood_shield": {"gold": 50},
+                                      "telescope": {"gold": 200}},
                            place=[(39, 39)]),
 
     "sailor_kael": Npc(name="Sailor Kael",
@@ -1403,11 +1445,11 @@ NPCS = {
                                     1: ["What do you want to buy?"]},
                                 answers={
                                     1: "Buy"},
-                                buy_items={"bread": 2,
-                                           "cheese": 4,
-                                           "soup": 2,
-                                           "water": 1,
-                                           "antinas_beer": 2}),
+                                buy_items={"bread": {"gold": 2},
+                                           "cheese": {"gold": 4},
+                                           "soup": {"gold": 2},
+                                           "water": {"gold": 1},
+                                           "antinas_beer": {"gold": 2}}),
 
     "traveler_clara": Npc(name="traveler clara",
                           npc_type=NpcTypes.TRAVELER,
@@ -2209,7 +2251,7 @@ BIOMES = {
             Months.IGNARIS.value: 5,
             Months.OUSKARA.value: -10,
             Months.NERITH.value: -40,
-                            }
+        }
     ),
 
     "ash_covered_rocky": Biome(
@@ -2230,7 +2272,7 @@ BIOMES = {
             Months.IGNARIS.value: 45,
             Months.OUSKARA.value: 20,
             Months.NERITH.value: 15,
-                            }
+        }
     ),
 
     "building": Biome(
@@ -2247,7 +2289,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "canyon": Biome(
@@ -2267,7 +2309,7 @@ BIOMES = {
             Months.IGNARIS.value: 25,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 4,
-                            }
+        }
     ),
 
     "cave": Biome(
@@ -2287,7 +2329,7 @@ BIOMES = {
             Months.IGNARIS.value: 25,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 4,
-                            }
+        }
     ),
 
     "coast": Biome(
@@ -2309,7 +2351,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "cold_island_steppe": Biome(
@@ -2330,7 +2372,7 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-                            }
+        }
     ),
 
     "dark_forest": Biome(
@@ -2351,7 +2393,7 @@ BIOMES = {
             Months.IGNARIS.value: 25,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "death_valley": Biome(
@@ -2372,7 +2414,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "deep_ocean": Biome(
@@ -2395,7 +2437,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "desert": Biome(
@@ -2416,7 +2458,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "desert_coast": Biome(
@@ -2437,7 +2479,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "desert_mountains": Biome(
@@ -2458,7 +2500,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "desert_river": Biome(
@@ -2481,7 +2523,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "dunes": Biome(
@@ -2502,7 +2544,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "fields": Biome(
@@ -2523,7 +2565,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "forest": Biome(
@@ -2544,7 +2586,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "frostvale": Biome(
@@ -2567,7 +2609,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "frozen_coast": Biome(
@@ -2590,7 +2632,7 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-                            }
+        }
     ),
 
     "frozen_sea": Biome(
@@ -2618,7 +2660,7 @@ BIOMES = {
             Months.IGNARIS.value: 18,
             Months.OUSKARA.value: 11,
             Months.NERITH.value: 3,
-                            }
+        }
     ),
 
     "gates": Biome(
@@ -2638,7 +2680,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "highlands": Biome(
@@ -2658,7 +2700,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "hills": Biome(
@@ -2679,7 +2721,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "hut": Biome(
@@ -2703,7 +2745,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "incandescent_lava": Biome(
@@ -2724,7 +2766,7 @@ BIOMES = {
             Months.IGNARIS.value: 55,
             Months.OUSKARA.value: 25,
             Months.NERITH.value: 20,
-                            }
+        }
     ),
 
     "island": Biome(
@@ -2745,7 +2787,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "magic_zone": Biome(
@@ -2765,7 +2807,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "molten_surface": Biome(
@@ -2786,7 +2828,7 @@ BIOMES = {
             Months.IGNARIS.value: 55,
             Months.OUSKARA.value: 25,
             Months.NERITH.value: 20,
-                            }
+        }
     ),
 
     "mountains": Biome(
@@ -2806,7 +2848,7 @@ BIOMES = {
             Months.IGNARIS.value: 28,
             Months.OUSKARA.value: 12,
             Months.NERITH.value: 6,
-                            }
+        }
     ),
 
     "oasis": Biome(
@@ -2827,7 +2869,7 @@ BIOMES = {
             Months.IGNARIS.value: 33,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 5,
-                            }
+        }
     ),
 
     "oasis_vegetation": Biome(
@@ -2849,7 +2891,7 @@ BIOMES = {
             Months.IGNARIS.value: 33,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 5,
-                            }
+        }
     ),
 
     "ocean": Biome(
@@ -2872,7 +2914,7 @@ BIOMES = {
             Months.IGNARIS.value: 26,
             Months.OUSKARA.value: 17,
             Months.NERITH.value: 12,
-                            }
+        }
     ),
 
     "plains": Biome(
@@ -2893,7 +2935,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "plateau": Biome(
@@ -2914,7 +2956,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "red": Biome(
@@ -2948,7 +2990,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "rocks": Biome(
@@ -2967,7 +3009,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "rocky_desert": Biome(
@@ -2988,7 +3030,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "ruins": Biome(
@@ -3009,7 +3051,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "ruins_desert": Biome(
@@ -3030,7 +3072,7 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "shrubland": Biome(
@@ -3051,7 +3093,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 14,
             Months.NERITH.value: 6,
-                            }
+        }
     ),
 
     "sea": Biome(
@@ -3073,7 +3115,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "seleran_forest": Biome(
@@ -3094,7 +3136,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "snow": Biome(
@@ -3114,7 +3156,7 @@ BIOMES = {
             Months.IGNARIS.value: 15,
             Months.OUSKARA.value: 8,
             Months.NERITH.value: 2,
-                            }
+        }
     ),
 
     "snowy_forest": Biome(
@@ -3135,7 +3177,7 @@ BIOMES = {
             Months.IGNARIS.value: 18,
             Months.OUSKARA.value: 11,
             Months.NERITH.value: 3,
-                            }
+        }
     ),
 
     "snowy_mountains": Biome(
@@ -3156,7 +3198,7 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-                            }
+        }
     ),
 
     "snowy_covered_steppe": Biome(
@@ -3177,7 +3219,7 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-                            }
+        }
     ),
 
     "steppe": Biome(
@@ -3198,7 +3240,7 @@ BIOMES = {
             Months.IGNARIS.value: 24,
             Months.OUSKARA.value: 14,
             Months.NERITH.value: 7,
-                            }
+        }
     ),
 
     "town": Biome(
@@ -3218,7 +3260,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "valley": Biome(
@@ -3239,7 +3281,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 
     "volcanic_mountain": Biome(
@@ -3260,7 +3302,7 @@ BIOMES = {
             Months.IGNARIS.value: 42,
             Months.OUSKARA.value: 17,
             Months.NERITH.value: 12,
-                            }
+        }
     ),
 
     "volcanic_rock": Biome(
@@ -3281,7 +3323,7 @@ BIOMES = {
             Months.IGNARIS.value: 45,
             Months.OUSKARA.value: 20,
             Months.NERITH.value: 15,
-                            }
+        }
     ),
 
     "water": Biome(
@@ -3303,7 +3345,7 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-                            }
+        }
     ),
 }
 

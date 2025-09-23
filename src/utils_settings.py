@@ -13,6 +13,9 @@ def init_map_setting(ms: dict):
     ms[(12, 24)].fight = False
     ms[(12, 24)].name = "ISLAND"
 
+    # (12, 26)
+    ms[(12, 24)].items = ["coconut", "coconut", "coconut", "coconut", "coconut"]
+
     # (13, 37)
     ms[(13, 37)].description = ("Rolling highlands with windswept grass, a sturdy artisan’s cabin billowing smoke from "
                                 "its forge, and a tall stone tower overlooking the vast horizon.")

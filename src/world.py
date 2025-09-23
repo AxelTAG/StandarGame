@@ -473,6 +473,24 @@ ITEMS = {
                    hungry_refill=40,
                    thirsty_refill=1),
 
+    "coconut": Item(name="Coconut",
+                    description="Hard-shelled fruit, offers sweet water and nourishing flesh, a tropical traveler’s "
+                                "delight.",
+                    attack=0,
+                    defense=0,
+                    precision=0,
+                    evasion=0,
+                    weight=0.2,
+                    pickable=True,
+                    consumable=True,
+                    equippable=False,
+                    expiration=None,
+                    edible=True,
+                    buy_price=1,
+                    sell_price=1,
+                    hungry_refill=20,
+                    thirsty_refill=20),
+
     "fish_flounder": Item(name="Fish Flounder",
                           description="A flat fish that camouflages on sandy ocean floors to hunt.",
                           weight=0.5,
@@ -946,35 +964,186 @@ ITEMS = {
 
 # Quests.
 QUEST_OBJETIVES = {
-    "slime_slayer": QuestObjective(
+    # Kill quest objectives.
+    "slime_slayer_I": QuestObjective(
         type=ObjectiveType.KILL,
-        target="Slime",
+        target="little_slime",
         amount=5
-    )
+    ),
+    "slime_slayer_II": QuestObjective(
+        type=ObjectiveType.KILL,
+        target="slime",
+        amount=2
+    ),
+
+    # Talk quest objectives.
+    "meet_ant_nynaeve": QuestObjective(
+        type=ObjectiveType.TALK,
+        target="ant_nynaeve"
+    ),
+
+    # Collect quest objectives.
+    "coco_collect_I": QuestObjective(
+        type=ObjectiveType.COLLECT,
+        target="coconut",
+        amount=5
+    ),
+
+    # Delivery quest objectives.
+    "water_for_nynaeve": QuestObjective(
+        type=ObjectiveType.DELIVER,
+        target="ant_nynaeve",
+        deliver_item="water",
+        deliver_amount=1)
 }
 
 QUESTS = {
-    "slime_slayer": Quest(
-        id="slime_slayer",
-        title="The Slime Slayer",
-        description="Kill 5 Slime.",
-        objectives=[QUEST_OBJETIVES["slime_slayer"]],
+    # Kill quests.
+    "slime_slayer_I": Quest(
+        id="slime_slayer_I",
+        title="The Slimy Slayer",
+        description="Defeat 5 Little Slimes.",
+        objectives=[QUEST_OBJETIVES["slime_slayer_I"]],
         rewards={"gold": 15},
-        messages_npc={
+        messages_start={
             0: ["Hello there! I will guide you to this tutorial.",
                 "For now, just take down 5 Slimes. And return to me again."],
         },
-    )
+        messages_in_progress={
+            0: ["Keep going, you haven’t defeated all 5 Little Slimes yet."],
+        },
+        messages_reward={
+            0: ["Well done, hero! The slimes won’t bother us anymore.",
+                "Here, take these 15 gold coins as your reward.",
+                "Come back to me when you are ready for your next mission."],
+        }
+    ),
+
+    "slime_slayer_II": Quest(
+        id="slime_slayer_II",
+        title="The Slimy Slayer II",
+        description="Defeat 2 Slimes.",
+        objectives=[QUEST_OBJETIVES["slime_slayer_II"]],
+        rewards={"gold": 30, "red_potion": 1},
+        messages_start={
+            0: ["Those Little Slimes were only the beginning. Are you ready for the next quest?"],
+            1: ["Now, I need you to face their stronger kin — the Slimes.",
+                "Defeat 2 of them and return here safely."],
+        },
+        answers_start={
+            1: "Yes",
+            2: "No",
+        },
+        messages_in_progress={
+            0: ["Be careful! Slimes are tougher than their smaller cousins.",
+                "You’ve got this — just focus and stay alert. Defeat 2 Slimes."],
+        },
+        messages_reward={
+            0: ["Incredible work! You’ve defeated the Slimes.",
+                "Take these 30 gold coins and a potion as your reward.",
+                "Return when you’re ready — greater challenges await."],
+        }
+    ),
+
+    # Talk quests.
+    "meet_ant_nynaeve": Quest(
+        id="meet_ant_nynaeve",
+        title="Meet Ant Nynaeve",
+        description="Search for Ant Nynaeve and talk with her.",
+        objectives=[QUEST_OBJETIVES["meet_ant_nynaeve"]],
+        rewards={"gold": 10},
+        messages_start={
+            0: ["For your next task, I need you to find Nynaeve.,",
+                "I haven’t seen her in some time—she may be in trouble.",
+                "Could you search her for me?"],
+        },
+        answers_start={
+            1: "Yes",
+            2: "No",
+        },
+        messages_in_progress={
+            0: ["Please, have you found Ant Nynaeve yet?",
+                "She should be wandering near the shore."],
+        },
+        messages_reward={
+            0: ["You spoke with her? Wonderful!",
+                "Now I know where to find her again.",
+                "Take this, my thanks for your kindness."],
+        }
+    ),
+
+    # Collect quests.
+    "coco_collect_I": Quest(
+        id="coco_collect_I",
+        title="Gathering Coconuts",
+        description="Collect 5 coconuts from the nearby palm trees.",
+        objectives=[QUEST_OBJETIVES["coco_collect_I"]],
+        rewards={"gold": 10},
+        remove=True,
+        messages_start={
+            0: ["I need some fresh coconuts. Can you bring me five of them?"],
+        },
+        answers_start={
+            1: "Yes, I'll collect them.",
+            2: "No, not right now.",
+        },
+        messages_in_progress={
+            0: ["Have you found the coconuts yet? I still need five."],
+        },
+        messages_reward={
+            0: ["Perfect! These coconuts will do just fine. Here’s your reward."],
+        },
+    ),
+
+    # Deliver quests.
+    "water_for_nynaeve": Quest(
+        id="water_for_nynaeve",
+        title="Water for Nynaeve",
+        description="Loial asked you to deliver fresh water to Nynaeve, who might be in need.",
+        objectives=[QUEST_OBJETIVES["water_for_nynaeve"]],
+        rewards={"gold": 10},
+        remove=True,
+        messages_start={
+            0: ["Nynaeve may need fresh water. Could you deliver it to her?"],
+        },
+        answers_start={
+            1: "Yes",
+            2: "No",
+        },
+        messages_in_progress={
+            0: ["Please, bring the water to Nynaeve as soon as possible."],
+        },
+        messages_reward={
+            0: ["Thank you, this will help her a lot."],
+        },
+    ),
 }
 
 # NPCs.
 NPCS = {
-    "ant_loial": Npc(name="aloial",
+    "ant_loial": Npc(name="ant loial",
                      npc_type=NpcTypes.VETERAN,
                      messages={
                          0: ["Hello there! Today I have no mision to give you."],
                      },
+                     quests=[
+                         QUESTS["water_for_nynaeve"],
+                         QUESTS["coco_collect_I"],
+                         QUESTS["slime_slayer_I"],
+                         QUESTS["slime_slayer_II"],
+                         QUESTS["meet_ant_nynaeve"],
+                     ],
                      place=[(12, 24)]),
+
+    "ant_nynaeve": Npc(name="ant nynaeve",
+                       npc_type=NpcTypes.VETERAN,
+                       messages={
+                           0: ["Oh, hello dear one.",
+                               "I wander the shore, seeking seashells and hidden treasures.",
+                               "The ocean whispers secrets to those who listen."],
+                       },
+                       id="ant_nynaeve",
+                       place=[(10, 25)]),
 
     "artisan_brenwick": Npc(name="artisan brenwick",
                             npc_type=NpcTypes.ARTISAN,
@@ -1129,14 +1298,14 @@ NPCS = {
                                   "yourself, adventurer."]},
                           place=[(17, 27)]),
 
-    "caravan_leader_darek": Npc(name="Caravan Leader Darek",
+    "caravan_leader_darek": Npc(name="caravan leader darek",
                                 npc_type=NpcTypes.CARAVAN_LEADER,
                                 messages={
                                     0: ["We’re stuck here, traveler. The path through the valley to Epiiat is "
                                         "blocked by a landslide. Until the rubble is cleared, there’s no way forward.",
                                         "It’s put quite the halt to our journey."]}),
 
-    "caravenner_lorien": Npc(name="Caravanner Lorien",
+    "caravenner_lorien": Npc(name="caravanner lorien",
                              npc_type=NpcTypes.CARAVANNER,
                              messages={
                                  0: ["Epiiat... It’s been years since I last visited. A quiet little place, if I "
@@ -1419,7 +1588,7 @@ NPCS = {
                                       "telescope": {"gold": 200}},
                            place=[(39, 39)]),
 
-    "sailor_kael": Npc(name="Sailor Kael",
+    "sailor_kael": Npc(name="sailor kael",
                        npc_type=NpcTypes.SAILOR,
                        messages_morning={
                            0: ["Hold it right there, traveler! This ship isn’t open to passengers. Captain’s orders—no "
@@ -1429,14 +1598,14 @@ NPCS = {
                            0: ["Zzz... Zzz... Hngh..."]},
                        place_night=[(39, 39), "inn", "third_room"]),
 
-    "sailor_rolan": Npc(name="Sailor Rolan",
+    "sailor_rolan": Npc(name="sailor rolan",
                         npc_type=NpcTypes.SAILOR,
                         messages={
                             0: ["We arrived in Aquiri not long ago, but who knows when we’ll leave. We spotted a "
                                 "dragon not far from here... it’s keeping us on edge.",
                                 "Better safe than sorry, eh?"]}),
 
-    "tavern_keeper_rudrik": Npc(name="TAVERN KEEPER RUDRIK",
+    "tavern_keeper_rudrik": Npc(name="Tavern Keeper Rudrik",
                                 npc_type=NpcTypes.TAVERN_KEEPER,
                                 messages={
                                     0: ["Welcome to The Golden Tankard, traveler! Take a seat and warm yourself by"

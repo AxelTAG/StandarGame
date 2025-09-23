@@ -261,15 +261,18 @@ class Game:
             management.map_control_handling(player=player,
                                             mapgame=map_game)
 
+            # Map refresh.
             if not (map_game.get_hours == hours):
                 # Map refresh.
                 map_game.refresh_map()
+
                 # Player status refresh.
                 player.refresh_status()
                 player.refresh_hungry(hour=map_game.get_hours,
                                       last_hour=hours)
                 player.refresh_thirsty(hour=map_game.get_hours,
                                        last_hour=hours)
+            player.refresh_quests()
 
             # Setting reinit.
             if player.hp <= 0:
@@ -680,9 +683,15 @@ class Game:
 
                     elif action[:2] == ["dict", "player"]:
                         if len(action) == 3:
-                            screen = f"{getattr(player, action[2])}"
+                            try:
+                                screen = f"{getattr(player, action[2])}"
+                            except AttributeError:
+                                screen = f"Acces to: Player -> {action[2]} not posible."
                         if len(action) == 4:
-                            screen = f"{getattr(getattr(player, action[2]), action[3])}"
+                            try:
+                                screen = f"{getattr(getattr(player, action[2]), action[3])}"
+                            except AttributeError:
+                                screen = f"Acces to: Player -> {action[2]} -> {action[3]} not posible."
 
                     elif action[:2] == ["lvl", "up"]:
                         if len(action) == 2:
@@ -716,12 +725,15 @@ class Game:
 
                     elif action == ["dict", "map", "npcs"]:
                         if len(action) == 3:
-                            screen = f"{getattr(map_game, action[2])}"
+                            try:
+                                screen = f"{getattr(map_game, action[2])}"
+                            except AttributeError:
+                                screen = f"Acces to: Map -> {action[2]} not posible."
                         if len(action) == 4:
-                            screen = f"{getattr(getattr(map_game, action[2]), action[3])}"
-
-                    elif action == ["equal", "npc"]:
-                        screen = f"{map_game.place_from_list(place_list=[(13, 37), 'artisan_shop']).npcs is map_game.place_from_list(place_list=[(14, 36), 'tower']).npcs}"
+                            try:
+                                screen = f"{getattr(getattr(map_game, action[2]), action[3])}"
+                            except AttributeError:
+                                screen = f"Acces to: Map -> {action[2]} -> {action[3]} not posible."
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])
@@ -734,6 +746,11 @@ class Game:
                         map_game.map_settings[(36, 42)].entries["cave"].leave_entry = map_game.map_settings[
                             (36, 42)]
                         screen = "Game repaired."
+
+                    elif action[0] == "equal":
+                        npc_quest = map_game.npcs['ant_loial'].get_first_quest()
+                        player_quest = player.quests_in_progress[0]
+                        screen = f"Equal: {player_quest == npc_quest}, {player_quest is npc_quest}, {id(player_quest)}, {id(npc_quest)}"
             else:
                 player.standing = True
 

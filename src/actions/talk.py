@@ -2,11 +2,18 @@
 import displays
 import utils
 from actions.actions import buy, sell, get_item
-from enums import NpcTypes
+from enums import NpcTypes, ObjectiveType, QuestStatus
 from map import Map
 from npc import Npc
 from player import Player
+from quest import Quest
 from world import ITEMS
+
+
+def verify_quests_memory(quest1: Quest, quest2: Quest) -> bool:
+    if quest1 is quest2:
+        return True
+    raise Exception
 
 
 def get_number(floor_n: int = 0, ceil_n: int = 10) -> int | None:
@@ -115,15 +122,68 @@ def loop_rent(player: Player, npc: Npc, mapgame: Map) -> tuple[str, bool]:
 def talk(npc: Npc,
          player: Player,
          mapgame: Map) -> str:
-    # # Npc with quest.
-    # if npc.has_quest():
-    #     quest = npc.get_first_quest()
-    #
-    #     if not quest.is_started():
-    #         displays.disp_standard_tw(npc.name, quest.messages_npc[0])  # Printing first message.
-    #         quest.start()
-    #         return f"You talked with {npc.name.title()}."
+    # Update of quests with TALK objective.
+    player.update_quests(target=npc.id, amount=1)
+    # Update of quests with DELIVERY objective.
+    for quest in player.get_quests(completed=False):
+        for objetive in quest.objectives:
+            if objetive.type == ObjectiveType.DELIVER:
+                if player.has(item=objetive.deliver_item, amount=objetive.deliver_amount):
+                    player.update_quests(target=npc.id,
+                                         amount=1,
+                                         deliver_item=objetive.deliver_item,
+                                         deliver_amount=objetive.deliver_amount)
+                    if objetive.is_done():
+                        player.inventory.discard_item(item=objetive.deliver_item,
+                                                      quantity=objetive.deliver_amount)
+    # Npc with quest.
+    if npc.has_quest():
+        quest = npc.get_first_quest()
 
+        if not quest.is_started():
+            displays.disp_standard_tw(name=npc.name, message=quest.messages_start[0])  # Printing first message.
+            if quest.answers_start:
+                answer = get_answer(answers=quest.answers_start)
+                if answer == 1:
+                    if quest.messages_start.get(1, False):
+                        displays.disp_standard_tw(name=npc.name, message=quest.messages_start[answer])
+                if answer == 2:
+                    return f"You talked with {npc.name.title()}."
+            player.add_quest(quest=npc.give_quest(quest=quest))
+            verify_quests_memory(quest1=quest, quest2=player.quests_in_progress[-1])
+            for item, amount in quest.give_items().items():
+                player.add_item(item=item, quantity=amount)
+            return f"New quest: {quest.description} You talked with {npc.name.title()}."
+
+        if quest.is_in_progress():
+            displays.disp_standard_tw(name=npc.name, message=quest.messages_in_progress[0])
+            if quest.answers_in_progress:
+                answer = get_answer(answers=quest.answers_start)
+                displays.disp_standard_tw(name=npc.name, message=quest.messages_in_progress[answer])
+            return f"You talked with {npc.name.title()}."
+
+        if quest.is_completed():
+            displays.disp_standard_tw(name=npc.name, message=quest.messages_reward[0])
+            if quest.answers_reward:
+                answer = get_answer(answers=quest.answers_start)
+                if answer == 1:
+                    displays.disp_standard_tw(name=npc.name, message=quest.messages_reward[answer])
+                if answer == 2:
+                    return f"You talked with {npc.name.title()}."
+            reward = npc.complete_quest(quest=quest)
+            reward_msg = f"{npc.name.title()} gives you: "
+            for item, amount in reward.items():
+                player.add_item(item=item, quantity=amount)
+                item_object = get_item(item_name=item)
+                reward_msg += f"{amount} {item_object.name}, "
+            if quest.remove:
+                for objetive in filter(lambda q: q.type == ObjectiveType.COLLECT, quest.objectives):
+                    player.inventory.discard_item(item=objetive.target, quantity=objetive.amount)
+            player.remove_quest(quest=quest)
+            return f"{reward_msg[:-2]}. You talked with {npc.name.title()}."
+        return f"You talked with {npc.name.title()}."
+
+    # Npc whithout quests.
     # First message of npc.
     displays.disp_standard_tw(npc.name, npc.messages[0])  # Printing first message.
     npc.hist_messages[0] = True  # Turning True first message of NPC.
@@ -167,7 +227,6 @@ def talk(npc: Npc,
             if npc.npc_type == NpcTypes.INNKEEPER:
                 if answer == 1:
                     result, _ = loop_rent(player=player, npc=npc, mapgame=mapgame)
-
                 if answer == 2:
                     result, _ = loop_buy(player=player, npc=npc, craft=False)
 

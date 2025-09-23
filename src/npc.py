@@ -16,6 +16,7 @@ class Npc:
     answers: dict[int, str] = field(default=None)
     leave_message: list[str] = field(default=None)
     place: list = field(default=None)
+    id: str = field(default=None)
 
     # Trading attributes.
     buy_items: dict[str, dict[str, int]] = field(default=None)
@@ -74,6 +75,9 @@ class Npc:
 
         if self.messages is None:
             self.messages = {0: ["...", "..."]}
+
+        if self.id is None:
+            self.id = self.name.replace(" ", "_").lower()
 
         if self.room_expirations is None:
             self.room_expirations = {}
@@ -176,15 +180,15 @@ class Npc:
     def has_quest(self, completed: bool = False) -> bool:
         if completed:
             return bool(self.quests)
-        return any([not quest.is_completed() for quest in self.quests])
+        return any([not quest.is_rewarded() for quest in self.quests])
 
     def get_first_quest(self):
-        quests = [quest for quest in self.quests if not quest.is_completed()]
+        quests = [quest for quest in self.quests if not quest.is_rewarded()]
         return quests[0]
 
-    def give_quest(self, quest_id: str) -> Quest | None:
-        for quest in self.quests:
-            if quest.id == quest_id and quest.status == QuestStatus.NOT_STARTED:
+    def give_quest(self, quest: Quest) -> Quest | None:
+        if quest in self.quests:
+            if quest.status == QuestStatus.NOT_STARTED:
                 quest.start()
                 return quest
         return None
@@ -192,8 +196,8 @@ class Npc:
     def check_quests(self) -> list[Quest]:
         return [quest for quest in self.quests if quest.status in (QuestStatus.IN_PROGRESS, QuestStatus.COMPLETED)]
 
-    def complete_quest(self, quest_id: str) -> dict | None:
-        for quest in self.quests:
-            if quest.id == quest_id and quest.status == QuestStatus.COMPLETED:
+    def complete_quest(self, quest: Quest) -> dict | None:
+        if quest in self.quests:
+            if quest.status == QuestStatus.COMPLETED:
                 return quest.claim_reward()
         return None

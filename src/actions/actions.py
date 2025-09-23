@@ -156,6 +156,9 @@ def battle(player: Player,
             if player.add_exp(enemy.experience):
                 screen += " You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
 
+            # Quest logic.
+            player.update_quests(target=underscores(text=enemy.name.lower()), amount=1)
+
             # Remove of mob at biome.
             player.place.remove_mob_respawned(mob=enemy)
 

@@ -1,10 +1,11 @@
 # Imports.
 # Local imports.
 from biome import Biome, Entry
-from enums import BodyPart, PlayerStatus
+from enums import BodyPart, PlayerStatus, ObjectiveType
 from globals import MAP_X_LENGTH, MAP_Y_LENGTH
 from inventory import Inventory
 from item import Item
+from quest import Quest
 
 # External imports.
 import numpy as np
@@ -75,6 +76,10 @@ class Player:
 
     # Map attributes.
     map: np.array = field(default=None)
+
+    # Quests.
+    quests_in_progress: list = field(factory=list)
+    quests_completed: list = field(factory=list)
 
     # Others.
     events: dict = field(default=None)
@@ -263,6 +268,38 @@ class Player:
             self.inventory.add_item(item=item, quantity=quantity)
             return
         self.inventory.add_item(item=item, quantity=quantity)
+        self.update_quests(target=item, amount=quantity)
+
+    # Quest methods.
+    def add_quest(self, quest: Quest) -> None:
+        self.quests_in_progress.append(quest)
+
+    def get_quests(self, in_progress: bool = True, completed: bool = True) -> list[Quest]:
+        quests = []
+        if in_progress:
+            quests.extend(self.quests_in_progress)
+        if completed:
+            quests.extend(self.quests_completed)
+        return quests
+
+    def remove_quest(self, quest: Quest) -> None:
+        if quest.is_completed():
+            self.quests_completed.append(quest)
+            self.quests_completed.sort(key=lambda q: q.title)
+            self.quests_in_progress.remove(quest)
+
+    def update_quests(self, target: str, amount: int, deliver_item: str = None, deliver_amount: int = None) -> None:
+        for quest in self.quests_in_progress:
+            quest.update_progress(target=target,
+                                  amount=amount,
+                                  deliver_item=deliver_item,
+                                  deliver_amount=deliver_amount)
+
+    def refresh_quests(self) -> None:
+        for quest in self.get_quests(completed=False):
+            for objetive in filter(lambda obj: obj.type == ObjectiveType.COLLECT, quest.objectives):
+                target = objetive.target
+                quest.update_progress(target=target, amount=self.inventory.items.get(target, 0), carry=True)
 
     def refresh_hungry(self, hour: int, last_hour: int) -> None:
         if self.hungry > 0:

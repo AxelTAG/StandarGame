@@ -493,7 +493,7 @@ class Game:
                     screen, player.standing = exit_entry(player=player, map_game=map_game)
 
                 elif action[0] == "explore":  # Explore action:
-                    screen = explore(player=player, map_game=map_game)
+                    screen = explore(player=player, mapgame=map_game)
                     player.standing = False if player.outside else True
 
                 elif action[0] == "fish":

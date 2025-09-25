@@ -10,6 +10,8 @@ from player import Player
 from utils import reset_map, underscores
 from world import ITEMS
 
+from actions.explore import explore
+
 # External imports.
 import math
 import os
@@ -390,34 +392,6 @@ def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
     player.set_place(place)
 
     return f"You left the {player.last_place.get_name(month=map_game.current_month)}.", False
-
-
-# Explore action.
-def explore(player: Player, map_game: Map, pace_factor: float = 0.5) -> str:
-    if player.place.entries is None:
-        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-        return "You explore the zone but you found nothing."
-
-    if isinstance(player.place, Entry):
-        if player.place.entry_type not in [EntryType.CAVE]:
-            return "You can't explore here."
-
-    for key_entrie, entrie in player.place.entries.items():
-        if type(entrie) == Biome:
-            continue
-        if entrie.hide is None:
-            continue
-        if entrie.hide["visibility"]:
-            continue
-        else:
-            if entrie.hide["finding_chance"] >= random.random():
-                entrie.hide["visibility"] = True
-                map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-                return f"You have found a {entrie.name}."
-            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-            return "You explore the zone but you found nothing."
-    map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-    return f"You explore the zone but you found nothing."
 
 
 def fish(player: Player, map_game: Map, pace_factor: float = 0.3) -> str:

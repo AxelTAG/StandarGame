@@ -1,16 +1,22 @@
 # Imports.
 # Local imports.
-from biome import Biome, Entry
-from enums import BodyPart, PlayerStatus, ObjectiveType
-from globals import MAP_X_LENGTH, MAP_Y_LENGTH
-from inventory import Inventory
-from item import Item
-from quest import Quest
+import copy
+
+from .biome import Biome, Entry
+from .enums import Actions, BodyPart, PlayerStatus, ObjectiveType, RequirementType, StatusType
+from .globals import MAP_X_LENGTH, MAP_Y_LENGTH
+from .skill import Skill
+from .inventory import Inventory
+from .item import Item
+from .status import Status
+from .quest import Quest
 
 # External imports.
+import random
 import numpy as np
 from attr import define, field
 from datetime import timedelta, datetime
+from enum import Enum
 
 
 # Player class.
@@ -24,15 +30,11 @@ class Player:
     lvl: int = field(default=1)  # Level of player.
     exp: int = field(default=0)  # Actual experience points.
     expmax: int = field(default=10)  # Max experience points for level up.
-
-    hungry: int = field(default=100)
-    thirsty: int = field(default=100)
-    status: int = field(default=PlayerStatus.WALK.value)
-    poison: int = field(default=0)
-    freezing: int = field(default=0)
+    vital_energy: int = field(default=5)
 
     # Player basis attributes.
     b_hpmax: int = field(default=25)
+    b_vital_energy: int = field(default=5)
     b_attack: int = field(default=2)
     b_defense: int = field(default=1)
     b_evasion: float = field(default=0)
@@ -45,12 +47,39 @@ class Player:
     agility: int = field(default=0)
     vitality: int = field(default=0)
     dexterity: int = field(default=0)
+
     attack_factor: float = field(default=0.4)
     defence_factor: float = field(default=0.4)
     evasion_factor: float = field(default=0.01)
     precision_factor: float = field(default=0.005)
     vitality_factor: float = field(default=1)
+    vital_energy_factor: float = field(default=0.5)
     vision: int = field(default=1)
+
+    # Status attributes.
+    statuses: list[Status] = field(factory=list)
+    statuses_save: list[Status] = field(factory=list)
+
+    hungry: int = field(default=100)
+    thirsty: int = field(default=100)
+    status: int = field(default=PlayerStatus.WALK.value)
+
+    poison: bool = field(default=False)
+    freeze: bool = field(default=False)
+    burn: bool = field(default=False)
+    stun: bool = field(default=False)
+    bleed: bool = field(default=False)
+    paralyze: bool = field(default=False)
+
+    resistance_poison: float = field(default=0)
+    resistance_freeze: float = field(default=0)
+    resistance_burn: float = field(default=0)
+    resistance_stun: float = field(default=0)
+    resistance_bleed: float = field(default=0)
+    resistance_paralyze: float = field(default=0)
+
+    # Temperature attributes.
+    temperature: int = field(default=36)
 
     # Player location attributes.
     x: int = field(default=12)
@@ -69,8 +98,6 @@ class Player:
 
     # Inventory attributes.
     inventory: Inventory = field(default=None)
-    slot1: str = field(default="red_potion")
-    slot2: str = field(default="little_red_potion")
     equip: dict = field(default=None)
     item_limits: dict = field(default=None)
 
@@ -80,6 +107,9 @@ class Player:
     # Quests.
     quests_in_progress: list = field(factory=list)
     quests_completed: list = field(factory=list)
+
+    # Skills attributes.
+    skills: list[Skill] = field(factory=list)
 
     # Others.
     events: dict = field(default=None)
@@ -115,6 +145,7 @@ class Player:
                           BodyPart.CHEST: None,
                           BodyPart.RIGHT_HAND: None,
                           BodyPart.LEFT_HAND: None,
+                          BodyPart.WAIST: None,
                           BodyPart.LEGS: None}
 
         else:
@@ -162,8 +193,16 @@ class Player:
         return self.b_precision + self.agility * self.precision_factor + item_precision_sum
 
     @property
+    def speed(self) -> float:
+        return self.agility - self.current_weight * 0.1
+
+    @property
     def hpmax(self) -> int:
         return int(self.b_hpmax + self.vitality * self.vitality_factor)
+
+    @property
+    def vital_energy_max(self) -> int:
+        return int(self.b_vital_energy + self.vitality * self.vital_energy_factor)
 
     @property
     def exploration_radius(self):
@@ -182,38 +221,40 @@ class Player:
     def move_available(self):
         return True if self.current_weight <= self.weight_carry else False
 
+    # Current status methods.
+    def has_vital_energy(self) -> bool:
+        if hasattr(self, "vital_energy"):
+            if self.vital_energy > 0:
+                return True
+        return False
+
+    def is_alive(self) -> bool:
+        return self.hp > 0
+
     def heal(self, amount: int) -> None:
         if self.hp + amount < self.hpmax:
             self.hp += amount
-
-        else:
-            self.hp = self.hpmax
+            return
+        self.hp = self.hpmax
 
     def heal_poisoning(self) -> None:
-        if self.poison:
-            self.poison = 0
+        for status in self.statuses:
+            if status.status_type == StatusType.POISON:
+                self.statuses.remove(status)
 
-    def refresh_time_played(self, time_close: timedelta | datetime, time_init: timedelta | datetime) -> None:
-        self.time_played = time_close - time_init + self.time_played
+    def recover_vital_energy(self, amount: int) -> None:
+        self.vital_energy = min(self.vital_energy + amount, self.vital_energy_max)
 
-    def refresh_status(self) -> None:
-        if self.poison > 0:
-            self.hp -= self.poison
+    def use_vital_energy(self, amount: int) -> bool:
+        if self.vital_energy >= amount:
+            self.vital_energy -= amount
+            return True
+        return False
 
-        if self.hungry < 10:
-            self.hp -= 1
+    def get_vital_energy(self) -> int:
+        return self.vital_energy
 
-        if self.thirsty < 10:
-            self.hp -= 1
-
-    def equip_item(self, item: Item) -> None:
-        if item.equippable and self.equip[item.body_part] is None:
-            self.equip[item.body_part] = item
-
-    def unequip_item(self, item: Item) -> None:
-        if item in self.equip.values():
-            self.equip[item.body_part] = None
-
+    # Player lvl up attributes.
     def add_exp(self, amount: int) -> bool:
         self.exp += amount
 
@@ -235,6 +276,7 @@ class Player:
         self.b_precision += 0.005 * quantity
         self.b_evasion += 0.01 * quantity
 
+    # Player place methods.
     def set_place(self, place: Biome | Entry) -> None:
         if type(self.place) == Entry:
             self.last_entry = self.place
@@ -254,6 +296,37 @@ class Player:
             amount = 1
         return self.inventory.has(item=item, amount=amount)
 
+    def has_slots(self) -> bool:
+        if self.equip[BodyPart.WAIST] is not None:
+            return self.equip[BodyPart.WAIST].has_slot()
+        return False
+
+    def has_slot_empty(self) -> bool:
+        if self.equip[BodyPart.WAIST] is not None:
+            return self.equip[BodyPart.WAIST].has_slot_empty()
+        return False
+
+    def get_item_quantity(self, item: Item) -> int:
+        if item is None:
+            return 0
+        return self.inventory.get_item_quantity(item=item.id)
+
+    def get_slots_quantity(self) -> int:
+        return self.equip[BodyPart.WAIST].get_slot_quantity()
+
+    def get_slot_item(self, slot: int) -> Item | None:
+        if self.equip[BodyPart.WAIST] is not None:
+            belt = self.equip[BodyPart.WAIST]
+            return belt.get_slot_item(slot=slot)
+        return None
+
+    def get_first_slot_empty(self) -> int | None:
+        if self.equip[BodyPart.WAIST] is not None:
+            return self.equip[BodyPart.WAIST].get_first_slot_empty()
+
+    def set_slot(self, slot: int, item: Item) -> bool:
+        return self.equip[BodyPart.WAIST].set_slot(slot=slot, item=item)
+
     def add_item(self, item: str, quantity: int = 1) -> None:
         if item in self.item_limits:
             if item not in self.inventory.items:
@@ -269,6 +342,32 @@ class Player:
             return
         self.inventory.add_item(item=item, quantity=quantity)
         self.update_quests(target=item, amount=quantity)
+
+    def get_equiped_items(self) -> list[Item]:
+        items = []
+        for item in self.equip.values():
+            if item is None:
+                continue
+            items.append(item)
+        return items
+
+    def equip_item(self, item: Item) -> None:
+        if item.equippable and self.equip[item.body_part] is None:
+            self.equip[item.body_part] = item
+            return
+        if self.has_slot_empty():
+            self.set_slot(slot=self.get_first_slot_empty(), item=item)
+
+    def unequip_item(self, item: Item) -> None:
+        if item in self.equip.values():
+            self.equip[item.body_part] = None
+
+    def is_equiped(self, item: Item | str):
+        if item in self.equip.values():
+            return True
+        if item in [item.id for item in self.get_equiped_items()]:
+            return True
+        return False
 
     # Quest methods.
     def add_quest(self, quest: Quest) -> None:
@@ -297,30 +396,188 @@ class Player:
 
     def refresh_quests(self) -> None:
         for quest in self.get_quests(completed=False):
-            for objetive in filter(lambda obj: obj.type == ObjectiveType.COLLECT, quest.objectives):
+            for objetive in filter(lambda obj: obj.status_type == ObjectiveType.COLLECT, quest.objectives):
                 target = objetive.target
                 quest.update_progress(target=target, amount=self.inventory.items.get(target, 0), carry=True)
 
+    # Skill methods.
+    def is_skill_available(self, skill: Skill) -> tuple[bool, int, str]:
+        if self.vital_energy <= skill.cost:
+            return False, RequirementType.VITAL_ENERGY.value, f"{skill.cost}"
+        return skill.check_requirements(caster=self)
+
+    def add_skill(self, skill: Skill) -> None:
+        self.skills.append(skill)
+
+    def has_skill(self) -> bool:
+        for skill in self.skills:
+            if skill.id != "attack":
+                return True
+        return False
+
+    # Status methods.
+    def is_poison(self) -> bool:
+        return self.poison
+
+    def is_freeze(self) -> bool:
+        return self.freeze
+
+    def is_burn(self) -> bool:
+        return self.burn
+
+    def is_stun(self) -> bool:
+        return self.stun
+
+    def is_bleed(self) -> bool:
+        return self.bleed
+
+    def is_paralyze(self) -> bool:
+        return self.paralyze
+
+    def set_stun(self, value: bool) -> None:
+        self.stun = value
+
+    def set_paralyze(self, value: bool) -> None:
+        self.paralyze = value
+
     def refresh_hungry(self, hour: int, last_hour: int) -> None:
         if self.hungry > 0:
-            self.hungry -= hour - last_hour
-        else:
-            self.hungry = 0
+            self.hungry = max(0, self.hungry - (hour - last_hour))
+            return
+        self.hungry = 0
 
     def refresh_thirsty(self, hour: int, last_hour: int) -> None:
         if self.thirsty > 0:
-            self.thirsty -= (hour - last_hour) // 2
-        else:
-            self.thirsty = 0
+            self.thirsty = max(0, self.thirsty - (hour - last_hour) // 2)
+            return
+        self.thirsty = 0
+
+    def refresh_vital_energy(self, hour: int, last_hour: int) -> None:
+        self.recover_vital_energy(amount=self.vitality // 3 * ((hour - last_hour) // 12))
+
+    def refresh_temperature(self) -> None:
+        temperature = self.place.temperature
+        for item in self.equip.values():
+            if item is None:
+                continue
+            temperature += item.warmness
+        self.temperature = temperature
+
+    def refresh_temperature_status(self) -> None:
+        self.refresh_temperature()
+        if self.temperature > 45:
+            self.add_status(status=Status.gen_freeze(duration=2, stacks=2, max_stacks=1, source="biome"))
+        if 40 <= self.temperature <= 45:
+            self.add_status(status=Status.gen_burn(duration=2, stacks=1, max_stacks=1, source="biome"))
+        if 25 <= self.temperature <= 30:
+            self.add_status(status=Status.gen_freeze(duration=2, stacks=1, max_stacks=1, source="biome"))
+        if self.temperature <= 25:
+            self.add_status(status=Status.gen_freeze(duration=2, stacks=2, max_stacks=1, source="biome"))
+
+    def refresh_status(self, onbattle: bool = False) -> None:
+        self.set_stun(value=False)
+        self.set_paralyze(value=False)
+        self.discard_save_statuses()
+        for status in self.statuses:
+            if status.is_damaging():
+                self.hp -= status.stacks
+            if status.is_sttuner():
+                self.set_stun(value=True)
+            if status.is_paralyzer():
+                self.set_paralyze(value=True)
+            status.tick(entity=self)
+            if status.duration <= 0:
+                self.add_save_status(status=status)
+                self.discard_status(status=status)
+
+        if not onbattle:
+            if self.hungry < 10:
+                self.hp -= 1
+
+            if self.thirsty < 10:
+                self.hp -= 1
 
     def add_hungry(self, amount: int) -> None:
         if self.hungry + amount > 100:
             self.hungry = 100
-        else:
-            self.hungry += amount
+            return
+        self.hungry += amount
 
     def add_thirsty(self, amount: int) -> None:
         if self.thirsty + amount > 100:
             self.thirsty = 100
-        else:
-            self.thirsty += amount
+            return
+        self.thirsty += amount
+
+    def add_status(self, status: Status) -> None:
+        active_status = self.get_status(status_type=status.status_type)
+        if active_status is not None:
+            active_status.apply_stack(other=status)
+            return
+        self.statuses.append(copy.deepcopy(status))
+
+    def add_save_status(self, status: Status) -> None:
+        self.statuses_save.append(status)
+
+    def discard_status(self, status: Status) -> None:
+        self.statuses.remove(status)
+
+    def discard_save_statuses(self) -> None:
+        self.statuses_save.clear()
+
+    def get_status(self, status_type: Enum) -> Status | None:
+        for status in self.statuses:
+            if status_type == status.status_type:
+                return status
+
+    # Fighting methods.
+    def get_standar_attack(self) -> Skill:
+        for skill in self.skills:
+            if skill.id == "attack":
+                return skill
+
+    def attack_to(self, target) -> tuple[bool, bool, int, bool, list]:
+        skill = self.get_standar_attack()
+        return skill.action(caster=self, target=target)
+        
+    def take_damage(self, damage: int) -> int:
+        efective_dmg = max(0, damage - self.defense)
+        self.hp = max(0, self.hp - efective_dmg)
+        return efective_dmg
+
+    # Other methods.
+    def refresh_time_played(self, time_close: timedelta | datetime, time_init: timedelta | datetime) -> None:
+        self.time_played = time_close - time_init + self.time_played
+
+    # Move and actions methods.
+    def get_available_actions(self) -> tuple[list, list]:
+        actions = []
+        action_labels = []
+        if self.is_stun():
+            actions.append(Actions.WAIT)
+            action_labels.append("WAIT")
+            return actions, action_labels
+
+        if self.is_paralyze():
+            actions.append(Actions.WAIT)
+            action_labels.append("WAIT")
+            if self.has_skill():
+                actions.append(Actions.SKILL)
+                action_labels.append("SKILL")
+            return actions, action_labels
+
+        actions.append(Actions.ESCAPE)
+        action_labels.append("ESCAPE")
+        actions.append(Actions.HIT_ATTACK)
+        action_labels.append("ATTACK")
+        if self.has_skill():
+            actions.append(Actions.SKILL)
+            action_labels.append("SKILL")
+        if self.has_slots():
+            for slot_number in range(self.get_slots_quantity()):
+                actions.append(Actions.USE_ITEM)
+                item = self.get_slot_item(slot=slot_number)
+                item_name = item.name.upper() if item is not None else "None"
+                quantity = self.get_item_quantity(item=item)
+                action_labels.append(f"{item_name} [{quantity}]")
+        return actions, action_labels

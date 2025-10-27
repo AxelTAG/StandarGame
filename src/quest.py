@@ -1,6 +1,6 @@
 # Imports.
 # Local imports.
-from enums import ObjectiveType, QuestStatus
+from .enums import ObjectiveType, QuestStatus
 
 # External imports.
 from attrs import define, field

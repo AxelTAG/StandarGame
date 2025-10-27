@@ -1,7 +1,7 @@
 # Imports.
 # Local imports.
-from enums import NpcTypes, QuestStatus, TimeOfDay
-from quest import Quest
+from .enums import NpcTypes, QuestStatus, TimeOfDay
+from .quest import Quest
 
 # External imports
 from attrs import define, field

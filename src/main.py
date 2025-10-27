@@ -1,28 +1,29 @@
 # Imports.
 # Locals imports.
-import enums
-import globals
-import management
+from . import enums
+from . import globals
+from . import management
 
-from actions.actions import *
-from actions.talk import talk
-from inventory import Inventory
-from map import Map
-from player import Player
-from utils import draw_move, clear, check_name, find_full_name, typewriter
-from world import *
+from .actions.actions import *
+from .actions.talk import talk
+from .inventory import Inventory
+from .map import Map
+from .player import Player
+from .utils import draw_move, clear, check_name, find_full_name, typewriter
+from .world import *
 
 # External imports.
 import copy
-import matplotlib
-
-matplotlib.use("Qt5Agg")
-import matplotlib.pyplot as plt
 import os
 import random
 import threading
 from attrs import define, field
 from datetime import datetime
+
+import matplotlib
+
+matplotlib.use("Qt5Agg")
+import matplotlib.pyplot as plt
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
@@ -102,7 +103,7 @@ class Game:
             self.show_rules()
         if selection == "4":
             self.show_settings()
-        if selection == "5":
+        if selection == "0":
             self.close()
 
     def show_new_game(self) -> None:
@@ -199,7 +200,8 @@ class Game:
                             place=map_game.map_settings[(12, 24)].entries["hut"],
                             last_place=map_game.map_settings[(12, 24)].entries["hut"],
                             last_entry=map_game.map_settings[(12, 24)].entries["hut"],
-                            inventory=Inventory(item_base=ITEMS))
+                            inventory=Inventory(item_base=ITEMS),
+                            skills=[SKILLS["attack"]])
 
             # Location setting.
             map_game.map_settings[(12, 24)].entries["hut"].name = player.name + "'s Hut"
@@ -267,11 +269,15 @@ class Game:
                 map_game.refresh_map()
 
                 # Player status refresh.
+                player.refresh_temperature()
+                player.refresh_temperature_status()
                 player.refresh_status()
                 player.refresh_hungry(hour=map_game.get_hours,
                                       last_hour=hours)
                 player.refresh_thirsty(hour=map_game.get_hours,
                                        last_hour=hours)
+                player.refresh_vital_energy(hour=map_game.get_hours,
+                                            last_hour=hours)
             player.refresh_quests()
 
             # Setting reinit.
@@ -301,9 +307,9 @@ class Game:
                     if random.randint(a=0, b=100) < max(player.place.get_mobs_chances(map_game.current_month)):
 
                         enemy = random.choices(player.place.mobs_respawned, k=1)[0]
-                        self.play, self.menu, win = battle(player=player,
-                                                           map_game=map_game,
-                                                           enemy=enemy)
+                        win = battle(players=[player],
+                                     mapgame=map_game,
+                                     enemies=[enemy])
                         if win:
                             screen += f"\n You battled width {enemy.name}."
 
@@ -353,9 +359,13 @@ class Game:
 
                 elif action[0] in ["5", "6"]:  # Fast use object action.
                     if action[0] == "5":
-                        screen, _ = use(player=player, map_game=map_game, item=player.slot1)
+                        screen, _ = use(player=player,
+                                        mapgame=map_game,
+                                        item=player.equip[BodyPart.WAIST].slots_packs[0].id)
                     if action[0] == "6":
-                        screen, _ = use(player=player, map_game=map_game, item=player.slot2)
+                        screen, _ = use(player=player,
+                                        mapgame=map_game,
+                                        item=player.equip[BodyPart.WAIST].slots_packs[1].id)
                     player.standing = True
 
                 elif action[0] == "assign":  # Assign action.
@@ -392,9 +402,9 @@ class Game:
                                              names_list=[m.name.lower() for m in player.place.mobs_respawned])
                         if mob:
                             mob = player.place.get_mob(mob_id=MobTypes[underscores(mob)].value)
-                            _, _, win = attack(player=player,
-                                               map_game=map_game,
-                                               mob=mob)
+                            win = attack(player=player,
+                                         map_game=map_game,
+                                         mob=mob)
 
                             if win:
                                 screen = f"You attacked {mob.name}."
@@ -562,25 +572,6 @@ class Game:
                     screen = displays.disp_show_inventory(player)
                     player.standing = True
 
-                elif action[0] == "slot1":  # Selection slot1 action.
-                    item_select = "_".join(action[1:])
-                    item_object = get_item(item_name=item_select)
-                    if (
-                            item_object.consumable or item_object.equippable) and item_select in player.inventory.items.keys():
-                        player.slot1 = item_select
-                    else:
-                        screen = f"You cannot equip {item_object.name} in the belt."
-                    player.standing = True
-
-                elif action[0] == "slot2":  # Selection slot1 action.
-                    item_select = "_".join(action[1:])
-                    item_object = get_item(item_name=item_select)
-                    if item_object.consumable or item_object.equippable and item_select in player.inventory.items.keys():
-                        player.slot2 = item_select
-                    else:
-                        screen = f"You cannot equip {item_object.name} in the belt."
-                    player.standing = True
-
                 elif action[0] == "sleep":  # Sleep action.
                     if len(action) <= 2:
                         screen = displays.disp_sleep(player.place)
@@ -632,7 +623,7 @@ class Game:
 
                     else:
                         item = find_full_name(partial_name="_".join(action[1:]),
-                                              names_list=[underscores(i.name) for i in player.equip.values() if
+                                              names_list=[underscores(i.id) for i in player.equip.values() if
                                                           i is not None],
                                               original=True)
                         screen = unequip(player=player, item=item)
@@ -651,7 +642,7 @@ class Game:
                                               unique=False,
                                               original=True)
                         screen, _ = use(player=player,
-                                        map_game=map_game,
+                                        mapgame=map_game,
                                         item=item)
                         player.standing = True
 
@@ -700,6 +691,10 @@ class Game:
                             quantity = int(action[2])
                         player.lvl_up(quantity=quantity)
                         screen = f"You have lvl up {quantity} levels."
+
+                    elif action[:2] == ["add", "skill"]:
+                        player.add_skill(SKILLS["lunge"])
+                        screen = f"{action[2].title()} has been learned."
 
                     elif action[0] == "precision":
                         screen = f"{player.precision}"

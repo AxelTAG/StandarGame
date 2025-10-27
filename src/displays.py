@@ -1,20 +1,21 @@
 # Imports.
 # Locals imports.
-import globals
+from . import globals
 
-from biome import Biome
-from enums import Months
-from map import Map
-from mob import Mob
-from player import Player
-from utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter, underscores
-
+from .biome import Biome
+from .enums import Months, BodyPart, StatusType
+from .map import Map
+from .mob import Mob
+from .player import Player
+from .utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter, underscores
 
 INPUT_LABEL = " " * 4 + "# "
+INPUT_LABEL_BATTLE = " # "
 ITEM_SPACING = " " * 6
+PAUSE_LABEL = " > "
+PLAYER_LVL_UP_MSG = "You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
 
 
-# Assign display.
 def disp_assign(st: int) -> str:
     return f"Assign skill point ({st}) to: \n- Strength (STR)\n- Agility (AGI)\n- Resistance (RES)\n- Vitality (VIT)"
 
@@ -24,58 +25,50 @@ def disp_attack() -> str:
 
 
 # Bar display
-def disp_bar(n: int = 18, disp: bool = True) -> str:
+def disp_line(n: int = 18, disp: bool = True) -> str:
     text = "--" + "-" * n + "--"
     if disp:
         print(text)
-
     return text
 
 
 # Battle display.
-def disp_battle(player: Player, enemy: Mob, text: str) -> None:
-    width = 36
+def disp_battle(players: list[Player],
+                enemies: list[Mob],
+                screen: str,
+                width: int = 36) -> None:
     clear()
     disp_title()
-    print(" < GAME >")
-    print()
+    disp_game_label()
 
-    # Text lines for text1.
-    u_name = player.name
-    u_hp = "\n HP: " + str(int(player.hp)) + " / " + str(player.hpmax)
-    u_hpbar = "\n " + "█" * int(25 * (player.hp / player.hpmax)) + "-" * (
-            25 - int(25 * (max(player.hp, 0) / player.hpmax))) + "|"
-    u_atk = "\n ATTACK: " + str(int(player.attack))
-
-    # Text lines for text2.
-    e_name = "ENEMY: " + enemy.name
-    e_hp = "\n HP: " + str(int(enemy.hp)) + " / " + str(enemy.hpmax)
-    e_hpbar = "\n " + "█" * int(25 * (enemy.hp / enemy.hpmax)) + "-" * (
-            25 - int(25 * (max(enemy.hp, 0) / enemy.hpmax))) + "|"
-
-    # Text lines for text3.
-    o_escape = "0 - ESCAPE"
-    o_attack = "\n1 - ATTACK"
-
-    slot1_quantity = str(player.inventory.items[player.slot1]) if player.has(player.slot1) else "0"
-    slot2_quantity = str(player.inventory.items[player.slot2]) if player.has(player.slot2) else "0"
-    o_slot1 = "\n 2 - " + player.slot1.replace("_", " ").upper() + " [" + slot1_quantity + "]"
-    o_slot2 = "\n 3 - " + player.slot2.replace("_", " ").upper() + " [" + slot2_quantity + "]"
-
-    text1 = u_name + u_hp + u_hpbar + u_atk
-    text2 = e_name + e_hp + e_hpbar
-    text3 = o_escape + o_attack + o_slot1 + o_slot2
-    text4 = text
+    players, enemies = equal_len(ls1=players, ls2=enemies, refill=".")
 
     cmp_text = []
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "-")
-    cmp_text = cmp_text + text_2_col(text1, text2, width, "|")
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
-    cmp_text = cmp_text + text_2_col(text3, text4, width, "|")
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
+    cmp_text = cmp_text + text_2_col(msg1=disp_line(width - 4, disp=False),
+                                     msg2=disp_line(width - 4, disp=False),
+                                     width=width,
+                                     ch="-")
+    for i in range(len(players)):
+        cmp_text += text_2_col(msg1=disp_info(entitie=players[i], onbattle=True),
+                               msg2=disp_info(entitie=enemies[i], onbattle=True),
+                               width=width,
+                               ch="|")
+        cmp_text = cmp_text + text_2_col(msg1=disp_line(width - 4, disp=False),
+                                         msg2=disp_line(width - 4, disp=False),
+                                         width=width,
+                                         ch="+")
 
-    for line in cmp_text:
-        print(" " + line)
+    cmp_text = cmp_text + text_2_col(msg1=disp_player_battle_actions(player=players[0]),
+                                     msg2=screen,
+                                     width=width,
+                                     ch="|")
+    cmp_text = cmp_text + text_2_col(msg1=disp_line(width - 4, disp=False),
+                                     msg2=disp_line(width - 4, disp=False),
+                                     width=width,
+                                     ch="-")
+
+    # Display.
+    disp_list(list_to_display=cmp_text, prefix=" ")
 
 
 # Disp use.
@@ -120,6 +113,11 @@ def disp_equip(equip: dict) -> str:
     return text
 
 
+def disp_game_label() -> None:
+    print(" < GAME >")
+    print()
+
+
 def disp_game_loss() -> None:
     print()
     print("    YOU HAVE DIED")
@@ -127,9 +125,42 @@ def disp_game_loss() -> None:
     input("    > ")
 
 
+def disp_bar(current_value: int, max_value: int, width: int = 25) -> str:
+    hits = int(width * (current_value / max_value))
+    no_hits = width - int(width * (max(current_value, 0) / max_value))
+    hpbar = "█" * hits + "-" * no_hits + "|"
+    return hpbar
+
+
+def disp_info(entitie: Player | Mob, onbattle: bool = False) -> str:
+    text_info = ""
+    text_info += entitie.name.upper()
+    text_info += f"\n HP: {int(entitie.hp)} / {entitie.hpmax}"
+    text_info += f"\n {disp_bar(current_value=entitie.hp, max_value=entitie.hpmax, width=25)}"
+    if entitie.has_vital_energy():
+        text_info += f"\n VITAL ENERGY: {int(entitie.vital_energy)} / {entitie.vital_energy_max}"
+        text_info += f"\n {disp_bar(current_value=entitie.vital_energy, max_value=entitie.vital_energy_max, width=25)}"
+    text_info += disp_statuses(entitie=entitie, onbattle=onbattle)
+    text_info += f"\n ATTACK: {int(entitie.attack)}"
+    return text_info
+
+
 def disp_intro(width: int = 60) -> None:
     disp_logo(width=width)
     print(" < PRESS ENTER > ".center(width))
+
+
+def disp_player_battle_actions(player: Player,
+                               prefix: str = "",
+                               subfix: str = "",
+                               display: bool = False) -> str:
+    _, labels = player.get_available_actions()
+    actions = []
+    for i, label in enumerate(labels):
+        actions.append(f"{prefix}{i} - {label.upper()}{subfix}")
+        if display:
+            print(f"{prefix}{i} - {label.upper()}{subfix}")
+    return "\n".join(actions)
 
 
 def disp_show_list_items(player: Player, items: dict, player_quantity: bool = False) -> tuple[list, list]:
@@ -139,7 +170,8 @@ def disp_show_list_items(player: Player, items: dict, player_quantity: bool = Fa
         item_name = underscores(text=item_key, delete=True).title()
         if player_quantity:
             item_stock = f" [{player.inventory.items[item_key]}]"
-        print(f"{ITEM_SPACING}{n + 1}) {item_name}{item_stock}: {', '.join([f'{q.title()} {r}' for q, r in item_v.items()])}.")
+        print(
+            f"{ITEM_SPACING}{n + 1}) {item_name}{item_stock}: {', '.join([f'{q.title()} {r}' for q, r in item_v.items()])}.")
 
         items_list.append(item_key)
         prices_list.append(item_v)
@@ -152,8 +184,21 @@ def disp_show_list_items(player: Player, items: dict, player_quantity: bool = Fa
     return items_list, prices_list
 
 
+def disp_skill_selection(entitie: Player | Mob, prefix: str = "", subfix: str = "") -> None:
+    print()
+    print(f"{prefix}SELECT THE SKILL: ")
+    for i, skill in enumerate(entitie.skills, 0):
+        if skill.id != "attack":
+            print(f"{prefix}{i} - {skill.name.upper()} (COST {skill.cost} VT){subfix}")
+
+
+def disp_list(list_to_display: list, prefix: str = "", subfix: str = "") -> None:
+    for line in list_to_display:
+        print(prefix + line + subfix)
+
+
 def disp_load_game() -> None:
-    print(" < LOAD GAME >")
+    print(" < LOAD DREAM >")
     print()
 
 
@@ -187,22 +232,22 @@ def disp_logo(width: int = 80) -> None:
 def disp_main_screen():
     print(" < MENU >")
     print()
-    print(" 1 - NEW GAME")
-    print(" 2 - LOAD GAME")
+    print(" 1 - NEW DREAM")
+    print(" 2 - LOAD DREAM")
     print(" 3 - RULES")
     print(" 4 - OPTIONS")
-    print(" 5 - QUIT GAME")
+    print(" 0 - QUIT")
     print()
 
 
 def disp_new_game(existent_player: Player = None) -> None:
     if existent_player is None:
-        print(" < NEW GAME >")
+        print(" < NEW DREAM >")
         print()
     else:
-        print(" < NEW GAME >")
+        print(" < NEW DREAM >")
         print()
-        print(" There is already a src existing, do you want to delete it?")
+        print(" There is already a dream existing, do you want to delete it?")
         print()
         print(f" NAME: {existent_player.name} / LVL: {existent_player.lvl}")
         print()
@@ -262,8 +307,8 @@ def disp_play(player: Player,
 
     # Status text.
     t_status_types = []
-    if player.poison > 0:
-        t_status_types.append(f"POISONED [{player.poison}]")
+    for status in player.statuses:
+        t_status_types.append(f"{status.name.upper()} [{status.stacks}]")
     if player.hungry <= 10:
         t_status_types.append(f"HUNGRY")
     if player.thirsty <= 10:
@@ -273,12 +318,20 @@ def disp_play(player: Player,
     t_status = f"\nSTATUS: {' '.join(t_status_types)}"
 
     # Belt items.
-    slot1_quantity = str(player.inventory.items[player.slot1]) if player.has(player.slot1) else "0"
-    slot2_quantity = str(player.inventory.items[player.slot2]) if player.has(player.slot2) else "0"
+    slot1_item, slot1_quantity = "None", 0
+    slot2_item, slot2_quantity = "None", 0
+    if player.get_slot_item(slot=0) is not None:
+        slot1_item = player.equip[BodyPart.WAIST].slots_packs[0].name
+        slot1_quantity = player.get_item_quantity(item=player.equip[BodyPart.WAIST].slots_packs[0])
+    if player.get_slot_item(slot=1) is not None:
+        slot2_item = player.equip[BodyPart.WAIST].slots_packs[1].name
+        slot2_quantity = player.get_item_quantity(item=player.equip[BodyPart.WAIST].slots_packs[1])
 
-    t_gold = "\nGOLD: " + str(player.inventory.gold)
-    t_item1 = "\n5 - " + player.slot1.replace("_", " ").upper() + ": " + slot1_quantity
-    t_item2 = "\n6 - " + player.slot2.replace("_", " ").upper() + ": " + slot2_quantity
+    t_gold = f"\nGOLD: {player.inventory.gold}"
+    t_item1, t_item2 = "", ""
+    if player.equip[BodyPart.WAIST] is not None:
+        t_item1 = f"\n5 - {slot1_item.upper()}: {slot1_quantity}"
+        t_item2 = f"\n6 - {slot2_item.upper()}: {slot2_quantity}"
 
     # Text4.1 lines.
     prim_stats = "PRIM. STATS: "
@@ -306,11 +359,11 @@ def disp_play(player: Player,
     text6 = screen_text
 
     cmp_text = []
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "-")
+    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "-")
     cmp_text = cmp_text + text_2_col(text1, text2, width, "|")
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
+    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "+")
     cmp_text = cmp_text + text_2_col(text3, text4, width, "|", False)
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "+")
+    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "+")
 
     for i, status in enumerate(mdir):
         if i == 0:
@@ -328,7 +381,7 @@ def disp_play(player: Player,
     text5 += t_item1 + t_item2
 
     cmp_text = cmp_text + text_2_col(text5, text6, width, "|")
-    cmp_text = cmp_text + text_2_col(disp_bar(width - 4, disp=False), disp_bar(width - 4, disp=False), width, "-")
+    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "-")
 
     # cmp_text = concatenate_lists(cmp_text, side_text)
     patron = patron_print(globals.PATRON, len(cmp_text))
@@ -346,7 +399,7 @@ def disp_rules() -> None:
     print()
     print(" < RULES >")
     print()
-    print(" I'm the creator of this src and these are the rules.")
+    print(" I am the creator of this dream story and these are the rules.")
     print()
     print(" 1) Follow your path.")
     print(" 2) Trace your path with: 'map' and 'draw map'.")
@@ -372,6 +425,35 @@ def disp_sleep(place: Biome) -> str:
         return "You want to sleep to: \n- Sleep to Morning\n- Sleep to Afternoon\n- Sleep to Evening\n- Sleep to Night"
     else:
         return "There is no bed here."
+
+
+def disp_statuses(entitie: Player | Mob, onbattle: bool = False) -> str:
+    statuses_list = []
+    for status in entitie.statuses:
+        statuses_list.append(f"{status.name.upper()}")
+        if status.is_damaging():
+            statuses_list[-1] += f" [{status.stacks}]"
+        if status.is_sttuner() or status.is_paralyzer():
+            statuses_list[-1] += f" [{status.duration}]"
+
+    if onbattle:
+        for status in entitie.statuses_save:
+            statuses_list.append(f"{status.name.upper()}")
+            if status.is_damaging():
+                statuses_list[-1] += f" [{status.stacks}]"
+            if status.is_sttuner() or status.is_paralyzer():
+                statuses_list[-1] += f" [{status.duration}]"
+
+    if not onbattle:
+        if entitie.hungry <= 10:
+            statuses_list.append(f"HUNGRY")
+        if entitie.thirsty <= 10:
+            statuses_list.append(f"THIRSTY")
+
+    if not statuses_list:
+        statuses_list.append(f"HEALTHY")
+
+    return f"\nSTATUS: {' '.join(statuses_list)}"
 
 
 # Talk npc options.
@@ -436,3 +518,16 @@ def disp_title() -> None:
 # Wait options display.
 def disp_wait() -> str:
     return "You want to wait to:\n- Wait to Morning\n- Wait to Afternoon\n- Wait to Evening\n- Wait to Nigth"
+
+
+def equal_len(ls1: list, ls2: list, refill=None) -> tuple[list, list]:
+    if ls1 is None:
+        ls1 = []
+    if ls2 is None:
+        ls2 = []
+    max_len = max(len(ls1), len(ls2))
+    while len(ls1) < max_len:
+        ls1.append(refill)
+    while len(ls2) < max_len:
+        ls2.append(refill)
+    return ls1, ls2

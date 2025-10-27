@@ -1,6 +1,6 @@
 # Imports.
 # Local imports.
-from enums import BodyPart
+from .enums import BodyPart
 
 # External imports.
 from attrs import define, field
@@ -11,6 +11,7 @@ class Item:
     # Item name.
     name: str = field(default=None)
     description: str = field(default=None)
+    id: str = field(default=None)
 
     # Item stats.
     attack: int = field(default=0)
@@ -59,10 +60,26 @@ class Item:
     title: str = field(default=None)
     readings: list = field(default=None)
 
+    # Equip attributes.
+    slots: int = field(default=0)
+    slots_packs: dict = field(factory=dict)
+
+    # Temperature attributes.
+    warmness: int = field(default=0)
+
     def __attrs_post_init__(self):
+        # Item name attributes.
+        if self.id is None:
+            self.id = self.name.replace(" ", "_").lower()
+
+        # Sound attributes.
         if self.tracks is not None:
             for key in range(0, 8):
                 self.tracks.setdefault(key, None)
+
+        # Equip attributes.
+        for i in range(self.slots):
+            self.slots_packs[i] = None
 
     @property
     def get_buy_price(self):
@@ -77,8 +94,52 @@ class Item:
     def get_sell_price(self):
         return self.get_buy_price * self.deprecator_factor
 
+    # Read methods.
     @property
     def get_title(self):
         if self.title:
             return self.title
         return self.name
+
+    # Slot methods.
+    def get_slot_quantity(self) -> int:
+        return self.slots
+
+    def get_slot_item(self, slot: int):
+        if self.has_slot():
+            if 0 <= slot <= self.slots:
+                return self.slots_packs[slot]
+        return None
+
+    def get_first_slot_empty(self) -> int | None:
+        for slot, item in self.slots_packs.items():
+            if item is None:
+                return slot
+
+    def has_slot(self) -> bool:
+        if self.slots:
+            return True
+        return False
+
+    def has_slot_empty(self) -> bool:
+        if self.has_slot():
+            for slot, item in self.slots_packs.items():
+                if item is None:
+                    return True
+        return False
+
+    def set_slot(self, slot: int, item: str) -> bool:
+        if self.is_slot_empty(slot=slot):
+            self.slots_packs[slot] = item
+            return True
+        return False
+
+    def is_slot_empty(self, slot: int) -> bool:
+        if self.has_slot:
+            if 0 <= slot <= self.slots:
+                return self.slots_packs[slot] is None
+        return False
+
+    # # Temperature methods.
+    def get_warmness(self) -> int:
+        return self.warmness

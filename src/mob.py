@@ -1,11 +1,10 @@
 # Imports.
 # Local imports.
-import copy
-
 from .skill import Skill
 from .status import Status
 
 # External imports.
+import copy
 import random
 
 from attrs import define, field

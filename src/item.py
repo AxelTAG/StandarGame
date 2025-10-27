@@ -111,6 +111,10 @@ class Item:
                 return self.slots_packs[slot]
         return None
 
+    def get_slot_items(self) -> list:
+        if self.has_slot():
+            return [item for item in self.slots_packs.values() if item is not None]
+
     def get_first_slot_empty(self) -> int | None:
         for slot, item in self.slots_packs.items():
             if item is None:
@@ -139,6 +143,10 @@ class Item:
             if 0 <= slot <= self.slots:
                 return self.slots_packs[slot] is None
         return False
+
+    def clear_slot(self, slot: int) -> None:
+        if self.has_slot():
+            self.slots_packs[slot] = None
 
     # # Temperature methods.
     def get_warmness(self) -> int:

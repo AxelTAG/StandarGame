@@ -221,6 +221,12 @@ class Player:
     def move_available(self):
         return True if self.current_weight <= self.weight_carry else False
 
+    @property
+    def belt(self) -> Item | None:
+        if self.equip[BodyPart.WAIST]:
+            return self.equip[BodyPart.WAIST]
+        return None
+
     # Current status methods.
     def has_vital_energy(self) -> bool:
         if hasattr(self, "vital_energy"):
@@ -320,6 +326,11 @@ class Player:
             return belt.get_slot_item(slot=slot)
         return None
 
+    def get_slot_items(self) -> list[Item]:
+        if self.belt is not None:
+            return self.belt.get_slot_items()
+        return []
+
     def get_first_slot_empty(self) -> int | None:
         if self.equip[BodyPart.WAIST] is not None:
             return self.equip[BodyPart.WAIST].get_first_slot_empty()
@@ -359,8 +370,11 @@ class Player:
             self.set_slot(slot=self.get_first_slot_empty(), item=item)
 
     def unequip_item(self, item: Item) -> None:
-        if item in self.equip.values():
+        if item in self.equip.values() and item.equippable:
             self.equip[item.body_part] = None
+        for i, slot in enumerate(self.get_slot_items()):
+            if item.id == slot.id:
+                self.belt.clear_slot(slot=i)
 
     def is_equiped(self, item: Item | str):
         if item in self.equip.values():

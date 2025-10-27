@@ -1,16 +1,18 @@
 # Imports.
 # Internal imports.
-import displays
-from biome import Biome, Entry
-from enums import EntryType, PlayerStatus, TimeOfDay
-from item import Item
-from map import Map
-from mob import Mob
-from player import Player
-from utils import reset_map, underscores
-from world import ITEMS
+from .. import displays
+from ..biome import Biome, Entry
+from ..enums import EntryType, PlayerStatus, TimeOfDay
+from ..item import Item
+from ..map import Map
+from ..mob import Mob
+from ..player import Player
+from ..utils import underscores
+from ..world import ITEMS
 
-from actions.explore import explore
+from .battle import battle
+from .explore import explore
+from .use import use
 
 # External imports.
 import math
@@ -34,142 +36,12 @@ def get_item(item_name: str) -> Item | bool:
 
 def attack(player: Player,
            map_game: Map,
-           mob: Mob) -> tuple[bool, bool, bool]:
-    play, menu, win = battle(player=player,
-                             map_game=map_game,
-                             enemy=mob,
-                             pace_factor=.05)
-    return play, menu, win
-
-
-# Battle action.
-def battle(player: Player,
-           map_game: Map,
-           enemy: Mob,
-           pace_factor: float = 0.025) -> tuple[bool, bool, bool]:
-    screen = "Defeat the enemy!"
-    play = True
-    menu = False
-    win = False
-    fight = True
-    hours_to_add = 0
-
-    while fight:
-        displays.disp_battle(player=player,
-                             enemy=enemy,
-                             text=screen)
-        choice_action = input(" # ")  # User choice action.
-        object_used = True
-        screen = "Nothing done."  # Clearing text output screen.
-        hours_to_add += player.place.get_pace(month=map_game.current_month) * pace_factor
-
-        # Actions.
-        if choice_action == "0":  # Escape option.
-            escape = random.choices([True, False],
-                                    weights=[enemy.escape_chance, 100 - enemy.escape_chance],
-                                    k=1)[0]
-            if escape:
-                screen = "You have escaped."
-                displays.disp_battle(player=player,
-                                     enemy=enemy,
-                                     text=screen)
-                input(" > ")
-                return play, menu, win
-            else:
-                screen = "You have not escaped."
-
-        elif choice_action == "1":  # Attack option.
-            if player.precision * (1 - enemy.evasion) > random.random():
-                USER_DMG = max(int(int(player.attack) - int(enemy.defense)), 0)
-                enemy.hp -= USER_DMG
-                screen = f" {player.name} dealt {USER_DMG} damage to the {enemy.name}."
-            else:
-                screen = f" {player.name} fail the attack."
-
-        elif choice_action in ["2", "3"]:  # Use object action.
-            if choice_action == "2":
-                screen, object_used = use(player, map_game=map_game, item=player.slot1)
-            if choice_action == "3":
-                screen, object_used = use(player, map_game=map_game, item=player.slot2)
-
-        # Enemy attack.
-        if enemy.escape_mob_probability > random.random():
-            screen += f"\n {enemy.name} has escaped."
-            displays.disp_battle(player=player,
-                                 enemy=enemy,
-                                 text=screen)
-            input(" > ")
-            return play, menu, win
-
-        if enemy.hp > 0 and choice_action in ["0", "1", "2", "3"]:
-            if enemy.precision * (1 - player.evasion) > random.random() and object_used:
-                ENEMY_ATK = [[enemy.attack, enemy.attack * enemy.critical_coeficient],
-                             [100 - enemy.critical_chance, enemy.critical_chance]]
-                ENEMY_DMG = max(int(int(random.choices(ENEMY_ATK[0], ENEMY_ATK[1], k=1)[0]) - int(player.defense)), 0)
-                player.hp -= ENEMY_DMG
-                screen += "\n " + enemy.name + " dealt " + str(ENEMY_DMG) + " damage to " + player.name + "."
-
-                if enemy.poison > 0 and enemy.poison_chance > random.random() and player.poison == 0:
-                    player.poison = enemy.poison
-                    screen += "\n " + enemy.name + " has poisoned you."
-            else:
-                screen += "\n " + enemy.name + " fail the attack."
-        input(" > ")
-
-        # Logic of fight status or result.
-        # Lose.
-        if player.hp <= 0:
-            screen += "\n " + enemy.name + " defeated " + player.name + "..."
-            displays.disp_battle(player=player, enemy=enemy, text=screen)
-            input(" > ")
-
-            # Setting reinit.
-            play = False
-            menu = True
-            win = False
-            player.hp = int(player.hpmax)
-            player.set_place(place=map_game.map_settings[(player.x_cp, player.y_cp)])
-            player.status = 0
-            player.poison = 0
-            player.hungry = 48
-            player.thirsty = 48
-            player.exp = 0
-            reset_map(ms=map_game.map_settings, keys=[(2, 1), (6, 2)])
-
-            print(" LOST DREAM")
-            input(" > ")
-            return play, menu, win
-
-        # Win.
-        if enemy.hp <= 0:
-            win = True
-            screen += f"\nYou defeated the {enemy.name}!"
-            map_game.add_hours(hours_to_add=int(hours_to_add))
-
-            # Drop items logic and experience gain.
-            if enemy.items:
-                for item in enemy.drop_items():
-                    item_name = underscores(text=item, delete=True)
-                    player.add_item(item=item, quantity=enemy.items[item])
-                    screen += f"\n You've found {enemy.items[item]} {item_name}."
-
-            screen += f"\n You have gained {enemy.experience} experience."
-
-            if player.add_exp(enemy.experience):
-                screen += " You have lvl up. ASSIGN Strength/Agility/Vitality. You can assign 3 points."
-
-            # Quest logic.
-            player.update_quests(target=underscores(text=enemy.name.lower()), amount=1)
-
-            # Remove of mob at biome.
-            player.place.remove_mob_respawned(mob=enemy)
-
-            displays.disp_battle(player=player,
-                                 enemy=enemy,
-                                 text=screen)
-            input(" > ")
-
-            return play, menu, win
+           mob: Mob) -> bool:
+    win = battle(players=[player],
+                 mapgame=map_game,
+                 enemies=[mob],
+                 pace_factor=.05)
+    return win
 
 
 # Buy action.
@@ -359,6 +231,9 @@ def enter(player: Player, entrie: str, mapgame: Map) -> tuple[str, bool]:
 
 # Equip action.
 def equip(player: Player, item: str) -> str:
+    if item is None:
+        return "You cannot equip this item."
+
     item_name = item.replace('_', ' ').title()
     item_object = get_item(item_name=item)
 
@@ -369,7 +244,12 @@ def equip(player: Player, item: str) -> str:
         return f"You don't have {item_object.name}."
 
     if not item_object.equippable:
-        return f"You can't equip {item_object.name}."
+        if player.has_slots():
+            if player.has_slot_empty():
+                player.equip_item(item=item_object)
+                return f"You have equip {item_object.name}."
+            return "You haven't a slot empty."
+        return f"You need a belt to carry this item."
 
     if player.equip[item_object.body_part] is not None:
         return f"You already have an item equipped. UNEQUIP {item_object.body_part.name}."
@@ -484,7 +364,8 @@ def move(player: Player,
     events = [event for event in player.events.keys() if event == True]
 
     # Move North.
-    if (y > 0 and all(req in [*inventory.keys()] + events for req in ms[(x, y - 1)].get_req(month=map_game.current_month)) and player.status
+    if (y > 0 and all(req in [*inventory.keys()] + events for req in
+                      ms[(x, y - 1)].get_req(month=map_game.current_month)) and player.status
             in ms[(x, y - 1)].get_status(month=map_game.current_month) and mv == "1"):
         if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
@@ -496,7 +377,8 @@ def move(player: Player,
 
     # Move East.
     if (x < map_height and all(
-            req in [*inventory.keys()] + events for req in ms[(x + 1, y)].get_req(month=map_game.current_month)) and player.status
+            req in [*inventory.keys()] + events for req in
+            ms[(x + 1, y)].get_req(month=map_game.current_month)) and player.status
             in ms[(x + 1, y)].get_status(month=map_game.current_month) and mv == "2"):
         if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
@@ -508,7 +390,8 @@ def move(player: Player,
 
     # Move South.
     if (y < map_width and all(
-            req in [*inventory.keys()] + events for req in ms[(x, y + 1)].get_req(month=map_game.current_month)) and player.status
+            req in [*inventory.keys()] + events for req in
+            ms[(x, y + 1)].get_req(month=map_game.current_month)) and player.status
             in ms[(x, y + 1)].get_status(month=map_game.current_month) and mv == "3"):
         if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
@@ -519,7 +402,8 @@ def move(player: Player,
             return "You moved South.", False
 
     # Move West.
-    if (x > 0 and all(req in [*inventory.keys()] + events for req in ms[(x - 1, y)].get_req(month=map_game.current_month)) and player.status
+    if (x > 0 and all(req in [*inventory.keys()] + events for req in
+                      ms[(x - 1, y)].get_req(month=map_game.current_month)) and player.status
             in ms[(x - 1, y)].get_status(month=map_game.current_month) and mv == "4"):
         if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
                 tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
@@ -611,11 +495,16 @@ def unequip(player: Player, item: str) -> str:
     if not item_object:
         return f"You don't have equipped {item_name}."
 
+    if item_object.id in [slot_item.id for slot_item in player.belt.get_slot_items()]:
+        player.unequip_item(item=item_object)
+        return f"You have unequip {item_object.name}."
+
     if item_object not in player.equip.values():
         return f"You don't have equipped {item_object.name}."
 
     player.unequip_item(item=item_object)
-    player.inventory.add_item(item=item, quantity=1)
+    if item_object.equippable:
+        player.inventory.add_item(item=item, quantity=1)
     return f"You have unequip {item_object.name}."
 
 
@@ -638,59 +527,6 @@ def use_boat(player: Player, map_game: Map) -> str:
 
     else:
         return "There is no boat here."
-
-
-# Use action (general).
-def use(player: Player, map_game: Map, item: str) -> tuple[str, bool]:
-    if item is None:
-        return "You cannot use None.", False
-
-    if item == "gold":
-        return f"You can't use {item.replace('_', ' ').title()}.", False
-
-    if item not in player.inventory.items.keys():
-        return f"You have no {item.replace('_', ' ').title()}.", False
-
-    if player.inventory.items[item] > 0:
-        if "potion" in item:
-            if item == "giant_red_potion":
-                player.heal(amount=40)
-
-            elif item == "red_potion":
-                player.heal(amount=25)
-
-            elif item == "little_red_potion":
-                player.heal(amount=10)
-
-            else:
-                return "Nothing done.", False
-
-            player.inventory.discard_item(item=item, quantity=1)
-
-            return f"{player.name}'s HP refilled to {player.hp}!", True
-
-        elif "antidote" in item:
-            player.heal_poisoning()
-            player.inventory.discard_item(item=item, quantity=1)
-
-            return "You have taken the antidote.", True
-
-        elif "powder_keg" in item:
-            explosion = False
-            for neighbor in map_game.neighbors_from_coord((player.x, player.y)):
-                if "rocks" in neighbor.req:
-                    neighbor.req.remove("rocks")
-                    player.inventory.discard_item(item=item, quantity=1)
-                    explosion = True
-            if explosion:
-                return "You have explode the keg powder on all the rocks.", True
-            else:
-                return "There is nothing to explode here.", False
-
-        else:
-            return "You can't use this item.", False
-    else:
-        return f"You have no more {item.replace('_', ' ').title()}.", False
 
 
 # Wait action.

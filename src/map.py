@@ -1,12 +1,12 @@
 # Imports.
 # Local imports.
-from biome import Biome, Entry
-from enums import Months, Season, TimeOfDay, WeekDays
-from npc import Npc
-from player import Player
-from utils import label_pixels, tl_map_set
-from utils_settings import init_map_setting
-from globals import MAP_TILE_PATH
+from .biome import Biome, Entry
+from .enums import Months, Season, TimeOfDay, WeekDays
+from .npc import Npc
+from .player import Player
+from .utils import label_pixels, tl_map_set
+from .utils_settings import init_map_setting
+from .globals import MAP_TILE_PATH
 
 # External imports.
 from attrs import define, field

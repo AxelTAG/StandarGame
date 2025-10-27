@@ -1,7 +1,7 @@
 # Imports.
 # Local imports.
-from player import Player
-from world import *
+from .player import Player
+from .world import *
 
 # Externals imports.
 import copy
@@ -369,6 +369,8 @@ def text_ljust(msg: str, width: int = 20, adjust: bool = True) -> list:
     if adjust:
         for line in lines:
             words = line.split()
+            if not words:
+                return []
             current_line = words[0]
 
             for word in words[1:]:

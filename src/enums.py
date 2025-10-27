@@ -3,12 +3,44 @@
 from enum import Enum, auto
 
 
+class Actions(Enum):
+    ESCAPE = 0
+    HIT_ATTACK = 1
+    SKILL = 2
+    USE_ITEM = 3
+    WAIT = 4
+
+
 class BodyPart(Enum):
     HEAD = 0
     CHEST = 1
     RIGHT_HAND = 2
     LEFT_HAND = 3
     LEGS = 4
+    WAIST = 5
+
+
+class EquipCondition(Enum):
+    NECESSARY = 0
+    NOT_NECESSARY = 1
+
+
+class SkillElements(Enum):
+    NEUTRAL = 0
+    FIRE = 1
+    EARTH = 2
+    WATER = 3
+    WIND = 4
+    LIGHT = 5
+    DARK = 6
+    VOID = 7
+    TIME = 8
+
+
+class SkillType(Enum):
+    ATTACK = 0
+    DEFENSE = 1
+    SUPPORT = 2
 
 
 class EntryType(Enum):
@@ -198,7 +230,24 @@ class QuestStatus(Enum):
     REWARDED = auto()
 
 
-# Seasons.
+class RequirementType(Enum):
+    LVL = 0
+    EQUIP = 1
+    ITEM = 2
+    STATS = 3
+    VITAL_ENERGY = 4
+    ALL_PAST = 9
+
+
+class StatusType(Enum):
+    POISON = auto()
+    FREEZE = auto()
+    BURN = auto()
+    STUN = auto()
+    BLEED = auto()
+    PARALYSIS = auto()
+
+
 class Season(Enum):
     SPRING = 0
     SUMMER = 1

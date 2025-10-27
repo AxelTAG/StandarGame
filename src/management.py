@@ -1,12 +1,12 @@
 # Imports.
 # Local imports.
-import utils
-from actions.actions import battle
-from actions.talk import talk
-from displays import disp_standard_tw
-from map import Map
-from player import Player
-from world import *
+from . import utils
+from .actions.actions import battle
+from .actions.talk import talk
+from .displays import disp_standard_tw
+from .map import Map
+from .player import Player
+from .world import *
 
 # External imports.
 import copy
@@ -520,7 +520,7 @@ def update(player: Player,
                             thirsty=player.thirsty,
                             status=player.status,
                             poison=player.poison,
-                            freezing=player.freezing,
+                            freeze=player.freeze,
                             b_hpmax=player.b_hpmax,
                             b_attack=player.b_attack,
                             b_defense=player.b_defense,
@@ -549,8 +549,6 @@ def update(player: Player,
                             st_points=player.st_points,
                             sk_points=player.sk_points,
                             inventory=player.inventory,
-                            slot1=player.slot1,
-                            slot2=player.slot2,
                             equip=player.equip,
                             map=player.map,
                             events=player.events,

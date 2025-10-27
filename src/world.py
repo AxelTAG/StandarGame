@@ -1,14 +1,161 @@
 # Imports.
 # Local imports.
-from biome import Biome, Entry
-from enums import *
-from item import Item
-from mob import Mob
-from npc import Npc
-from quest import QuestObjective, Quest
+from .biome import Biome, Entry
+from .enums import *
+from .item import Item
+from .mob import Mob
+from .npc import Npc
+from .skill import Skill
+from .quest import QuestObjective, Quest
+from .status import Status
 
 # External imports.
 from enum import Enum
+
+
+EFFECTS = {}
+
+SKILLS = {
+    "attack": Skill(
+        id="attack",
+        name="Attack",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=0,
+        cost=0,
+        type=SkillType.ATTACK.value,
+        accuracy=1,
+        desviation=1,
+        critical_factor=1.05,
+        critical_chance=0.1,
+        cooldown=0,
+        scaling={
+            "attack": 1,
+        },
+        scaling_critical={
+            "agility": 0.01,
+        },
+        requirements_equip={},
+        tags=["attack"]
+    ),
+
+    "lunge": Skill(
+        id="lunge",
+        name="Lunge",
+        description="A swift thrust that pierces the enemy’s defense.",
+        element=SkillElements.NEUTRAL.value,
+        power=5,
+        cost=2,
+        type=SkillType.ATTACK.value,
+        accuracy=0.6,
+        desviation=2,
+        critical_chance=0.5,
+        cooldown=0,
+        scaling={
+            "strength": 0.1,
+            "agility": 0.1,
+            "attack": 1,
+        },
+        scaling_critical={
+            "agility": 0.005,
+        },
+        requirements_equip={
+            "short_sword": EquipCondition.NOT_NECESSARY.value,
+            "sword": EquipCondition.NOT_NECESSARY.value,
+        },
+        tags=["lunge"]
+    ),
+
+    "hammer_crush": Skill(
+        id="hammer_crush",
+        name="Hammer Crush",
+        description="",
+        element=SkillElements.NEUTRAL.value,
+        power=4,
+        cost=3,
+        type=SkillType.ATTACK.value,
+        accuracy=0.4,
+        desviation=3,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={
+            "strength": 0.1,
+            "attack": 1,
+        },
+        scaling_critical={
+            "strength": 0.005,
+        },
+        requirements_equip={
+            "hammer": 1,
+        },
+        tags=["hammer_crush"],
+    ),
+}
+
+SKILLS_MOB = {
+    "attack_little_slime": Skill(
+        id="mob_attack",
+        name="Attack Little Slime",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=0,
+        cost=0,
+        type=SkillType.ATTACK.value,
+        desviation=0,
+        accuracy=1,
+        critical_chance=0,
+        cooldown=0,
+        scaling={
+            "attack": 1,
+        },
+        requirements_equip={},
+        tags=["attack_little_slime"]
+    ),
+
+    "attack_slime": Skill(
+        id="mob_attack",
+        name="Attack Slime",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=1,
+        cost=0,
+        type=SkillType.ATTACK.value,
+        desviation=0,
+        accuracy=1,
+        critical_chance=0,
+        cooldown=0,
+        scaling={
+            "attack": 1,
+        },
+        requirements_equip={},
+        tags=["attack_little_slime"]
+    ),
+
+    "attack_training_dummy": Skill(
+        id="mob_attack",
+        name="Attack Training Dummy",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=1,
+        cost=0,
+        type=SkillType.ATTACK.value,
+        desviation=0,
+        accuracy=1,
+        critical_chance=0,
+        cooldown=0,
+        status_effects=[
+            Status.gen_poison(duration=20, stacks=1, max_stacks=3, source="Training Dummy"),
+            Status.gen_paralyze(duration=1, stacks=1, max_stacks=1, source="Training Dummy"),
+            Status.gen_freeze(duration=2, stacks=1, max_stacks=1, source="Training Dummy"),
+        ],
+        status_accuracy=[0.0, 0.0, 0.5],
+        scaling={
+            "attack": 1,
+        },
+        requirements_equip={},
+        tags=["attack_little_slime"]
+    ),
+}
 
 # Items.
 ITEMS = {
@@ -333,6 +480,24 @@ ITEMS = {
                          buy_price=600,
                          sell_price=150),
 
+    "travelers_belt": Item(name="Traveler's Belt",
+                           description="Sturdy and practical belt, grants quick access to essential items during "
+                                       "any journey.",
+                           id="travelers_belt",
+                           attack=0,
+                           defense=0,
+                           precision=0,
+                           evasion=0,
+                           weight=0.5,
+                           body_part=BodyPart.WAIST,
+                           pickable=True,
+                           consumable=False,
+                           equippable=True,
+                           expiration=None,
+                           buy_price=200,
+                           sell_price=100,
+                           slots=2),
+
     "wood_shield": Item(name="Wood Shield",
                         description="A simple wooden shield. Provides basic defense.",
                         attack=0,
@@ -352,6 +517,7 @@ ITEMS = {
     "antinas_beer": Item(name="Antinas's Beer",
                          description="Renowned city brew, rich and frothy, celebrated for its unmatched flavor "
                                      "and heritage.",
+                         id="antinas_beer",
                          weight=0.1,
                          pickable=True,
                          consumable=True,
@@ -884,6 +1050,7 @@ ITEMS = {
     "aliras_first_room_key": Item(name="Lyssia's First Room Key",
                                   description="Polished and ornate, grants access to a refined room in a bustling"
                                               " metropolis.",
+                                  id="aliras_first_room_key",
                                   weight=0.05,
                                   expiration=30,
                                   buy_price=15),
@@ -891,6 +1058,7 @@ ITEMS = {
     "aliras_second_room_key": Item(name="Lyssia's Second Room Key",
                                    description="Polished and ornate, grants access to a refined room in a bustling"
                                                " metropolis.",
+                                   id="aliras_second_room_key",
                                    weight=0.05,
                                    expiration=30,
                                    buy_price=10),
@@ -898,6 +1066,7 @@ ITEMS = {
     "aliras_third_room_key": Item(name="Lyssia's Third Room Key",
                                   description="Polished and ornate, grants access to a refined room in a bustling"
                                               " metropolis.",
+                                  id="aliras_third_room_key",
                                   weight=0.05,
                                   expiration=30,
                                   buy_price=8),
@@ -905,6 +1074,7 @@ ITEMS = {
     "aliras_fourth_room_key": Item(name="Lyssia's Fourth Room Key",
                                    description="Polished and ornate, grants access to a refined room in a bustling"
                                                " metropolis.",
+                                   id="aliras_fourth_room_key",
                                    weight=0.05,
                                    expiration=30,
                                    buy_price=8),
@@ -912,6 +1082,7 @@ ITEMS = {
     "lyssias_first_room_key": Item(name="Lyssia's First Room Key",
                                    description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
                                                " ocean waves.",
+                                   id="lyssias_first_room_key",
                                    weight=0.05,
                                    expiration=30,
                                    buy_price=12),
@@ -919,6 +1090,7 @@ ITEMS = {
     "lyssias_second_room_key": Item(name="Lyssia's Second Room Key",
                                     description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
                                                 " ocean waves.",
+                                    id="lyssias_second_room_key",
                                     weight=0.05,
                                     expiration=30,
                                     buy_price=8),
@@ -926,6 +1098,7 @@ ITEMS = {
     "lyssias_third_room_key": Item(name="Lyssia's Third Room Key",
                                    description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
                                                " ocean waves.",
+                                   id="lyssias_third_room_key",
                                    weight=0.05,
                                    expiration=30,
                                    buy_price=5),
@@ -933,6 +1106,7 @@ ITEMS = {
     "mirabelles_small_room_key": Item(name="Mirabelle's Small Room Key",
                                       description="Small room key, worn and simple, granting access to a modest inn"
                                                   " chamber.",
+                                      id="mirabelles_small_room_key",
                                       weight=0.05,
                                       expiration=30,
                                       buy_price=3),
@@ -940,6 +1114,7 @@ ITEMS = {
     "mirabelles_main_room_key": Item(name="Mirabelle's Small Room Key",
                                      description="Small room key, worn and simple, granting access to a modest inn"
                                                  " chamber.",
+                                     id="mirabelles_main_room_key",
                                      weight=0.05,
                                      expiration=30,
                                      buy_price=5),
@@ -954,6 +1129,7 @@ ITEMS = {
     "marlins_fish_tuna": Item(name="Marlin's Fish Tuna",
                               description="A fast ocean fish, highly valued for its delicious and versatile meat."
                                           " Marlin gave it to you for his friend Brann.",
+                              id="marlins_fish_tuna",
                               droppable=False),
 
     "dragon_scales": Item(name="Dragon Scales",
@@ -1865,7 +2041,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.5,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=0.4,
         items={"gold": 15, "red_potion": 1, "antidote": 1},
@@ -1883,7 +2059,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.7,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=20,
         items={"basilisk_fangs": 2},
@@ -1901,7 +2077,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.5,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=40,
         items={"gold": 20, "red_potion": 1, "wood_shield": 1, "antidote": 1},
@@ -1920,7 +2096,7 @@ MOBS = {
         precision=0.9,
         critical_coeficient=1.5,
         critical_chance=30,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=0,
         items={"scales": 8},
@@ -1939,13 +2115,14 @@ MOBS = {
         precision=0.9,
         critical_coeficient=1.7,
         critical_chance=20,
-        poison=3,
+        poison_stacks=3,
         poison_chance=0.33,
         escape_chance=50,
         items={},
         items_drop_chances=[],
         experience=12
     ),
+
     "giant_blind_spider": Mob(
         name="Giant Blind Spider",
         hp=70,
@@ -1957,7 +2134,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.5,
         critical_chance=20,
-        poison=5,
+        poison_stacks=5,
         poison_chance=0.5,
         escape_chance=5,
         items={"giant_silk": 1},
@@ -1976,7 +2153,7 @@ MOBS = {
         precision=0.65,
         critical_coeficient=1.5,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=50,
         items={"slime_balls": 2, "red_potion": 1},
@@ -1995,7 +2172,7 @@ MOBS = {
         precision=0.65,
         critical_coeficient=1.6,
         critical_chance=15,
-        poison=1,
+        poison_stacks=1,
         poison_chance=0.15,
         escape_chance=30,
         items={"giant_silk": 1, "red_potion": 1},
@@ -2014,7 +2191,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.7,
         critical_chance=60,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=45,
         items={"gold": 5, "little_red_potion": 1, "red_potion": 1, "antidote": 1},
@@ -2033,7 +2210,7 @@ MOBS = {
         precision=0.6,
         critical_coeficient=1.3,
         critical_chance=30,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=0,
         items={"gold": 60, "red_potion": 5},
@@ -2052,7 +2229,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.5,
         critical_chance=60,
-        poison=2,
+        poison_stacks=2,
         poison_chance=0.15,
         escape_chance=50,
         items={"gold": 10, "little_red_potion": 1, "bone_sword": 1, "bone_shield": 1, "antidote": 1},
@@ -2071,7 +2248,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.2,
         critical_chance=30,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=35,
         items={"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1},
@@ -2090,7 +2267,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.7,
         critical_chance=40,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=40,
         items={"gold": 10, "bone_sword": 1, "bone_shield": 1},
@@ -2112,12 +2289,13 @@ MOBS = {
         precision=0.6,
         critical_coeficient=1.5,
         critical_chance=10,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=70,
         items={"slime_balls": 1},
         items_drop_chances=[0.5],
         experience=1,
+        skills=[SKILLS_MOB["attack_little_slime"]]
     ),
 
     "poison_slime": Mob(
@@ -2131,7 +2309,7 @@ MOBS = {
         precision=0.6,
         critical_coeficient=1.2,
         critical_chance=30,
-        poison=1,
+        poison_stacks=1,
         poison_chance=0.15,
         escape_chance=50,
         items={"slime_balls": 2},
@@ -2150,7 +2328,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.4,
         critical_chance=15,
-        poison=2,
+        poison_stacks=2,
         poison_chance=0.25,
         escape_chance=50,
         items={"giant_silk": 1, "poison_gland": 1},
@@ -2182,7 +2360,7 @@ MOBS = {
         precision=0.85,
         critical_coeficient=1.6,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=20,
         items={"wolf_fur": 1, "wolf_claw": 2},
@@ -2201,7 +2379,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.3,
         critical_chance=10,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=10,
         items={"bone_sword": 1, "bone_shield": 1},
@@ -2220,12 +2398,33 @@ MOBS = {
         precision=0.6,
         critical_coeficient=1.5,
         critical_chance=40,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=50,
         items={"slime_balls": 2},
         items_drop_chances=[0.6],
         experience=2,
+    ),
+
+    "training_dummy": Mob(
+        name="Training Dummy",
+        hp=99,
+        hpmax=99,
+        description="A wooden target that strikes back unexpectedly, teaching adventurers the pain of careless blows.",
+        attack=1,
+        defense=1,
+        evasion=0.2,
+        precision=0.8,
+        critical_coeficient=1,
+        critical_chance=40,
+        poison_stacks=1,
+        poison_duration=2,
+        poison_source="training_dummy",
+        poison_max_stacks=30,
+        poison_chance=80,
+        escape_chance=99,
+        experience=0,
+        skills=[SKILLS_MOB["attack_training_dummy"]]
     ),
 
     "orc": Mob(
@@ -2239,7 +2438,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.5,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=0,
         items={"gold": 20, "red_potion": 1, "antidote": 1},
@@ -2258,7 +2457,7 @@ MOBS = {
         precision=1,
         critical_coeficient=1.7,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=100,
         items={"gold": 100},
@@ -2277,7 +2476,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.7,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=20,
         items={},
@@ -2295,7 +2494,7 @@ MOBS = {
         precision=0.75,
         critical_coeficient=1.4,
         critical_chance=20,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=50,
         items={"gold": 15, "red_potion": 1, "bludgeon": 1},
@@ -2314,7 +2513,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.6,
         critical_chance=15,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=10,
         items={"gold": 20, "rusty_sword": 1, "rusty_shield": 1},
@@ -2333,7 +2532,7 @@ MOBS = {
         precision=0.7,
         critical_coeficient=1.5,
         critical_chance=30,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=40,
         items={"gold": 5, "bones": 1},
@@ -2352,7 +2551,7 @@ MOBS = {
         precision=0.8,
         critical_coeficient=1.4,
         critical_chance=10,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=30,
         items={"boar_tusk": 2},
@@ -2372,7 +2571,7 @@ MOBS = {
         precision=0.9,
         critical_coeficient=1.7,
         critical_chance=25,
-        poison=0,
+        poison_stacks=0,
         poison_chance=0,
         escape_chance=5,
         items={"dragon_scales": 2},
@@ -2391,7 +2590,7 @@ MOBS = {
         precision=0.6,
         critical_coeficient=1.2,
         critical_chance=5,
-        poison=3,
+        poison_stacks=3,
         poison_chance=0.05,
         escape_chance=5,
         items={"rotten_flesh": 3},
@@ -3525,6 +3724,14 @@ for k, v in BIOMES.items():
 
 # Entries.
 ENTRIES = {
+    "test_hut": Entry(
+        description="A simple testing hut where mechanics and events are safely evaluated.",
+        name="Test Room",
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS,
+        month_temperatures={0: 0}
+    ),
+
     "arena_antina": Entry(
         description="Arena interior, grand stands circle a sandy pit, with torches lining the walls. Echoes "
                     "of cheers and clashes fill the air.",
@@ -3801,7 +4008,7 @@ ENTRIES = {
     "hut_12_24": Entry(
         description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
                     "invites serenity amid nature's whispers.",
-        items=["bed", "short_sword", "bread", "apple", "water", "bier", "old_book"],
+        items=["bed", "short_sword", "bread", "apple", "water", "bier", "old_book", "travelers_belt"],
         entry_type=EntryType.HUT,
         mobs_base=MOBS
     ),

@@ -1,7 +1,7 @@
 # Imports.
 # Local imports.
-from enums import *
-from mob import Mob
+from .enums import *
+from .mob import Mob
 
 # External imports.
 import copy
@@ -226,7 +226,7 @@ class Biome:
         self.discard_mobs()
         self.respawn_mobs(day=self._mobs_respawn_time)
 
-    def repawn_mob(self, mob: str) -> None:
+    def respawn_mob(self, mob: str) -> None:
         self.add_mob_respawned(mob=copy.deepcopy(self.mobs_base[mob]))
 
     def respawn_mobs(self, day: int) -> None:
@@ -246,7 +246,7 @@ class Biome:
 
         for _ in range(quantity):
             mob = random.choices(self._mobs_names, weights=self._mobs_chances, k=1)[0]
-            self.repawn_mob(mob=mob)
+            self.respawn_mob(mob=mob)
         self.mobs_check_respawn = True
 
     def move_mobs(self, biomes: list):
@@ -264,7 +264,8 @@ class Biome:
 
     def remove_mob_respawned(self, mob: Mob = None, mob_id: int = None) -> None:
         if mob:
-            self.mobs_respawned.remove(mob)
+            if mob in self.mobs_respawned:
+                self.mobs_respawned.remove(mob)
             return
         if mob_id:
             for m in self.mobs_respawned:

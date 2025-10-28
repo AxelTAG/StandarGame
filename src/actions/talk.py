@@ -1,13 +1,13 @@
 # Local imports.
-import displays
-import utils
-from actions.actions import buy, sell, get_item
-from enums import NpcTypes, ObjectiveType, QuestStatus
-from map import Map
-from npc import Npc
-from player import Player
-from quest import Quest
-from world import ITEMS
+from .actions import buy, sell, get_item
+from .. import displays
+from .. import utils
+from ..enums import NpcTypes, ObjectiveType, QuestStatus
+from ..map import Map
+from ..npc import Npc
+from ..player import Player
+from ..quest import Quest
+from ..world import ITEMS
 
 
 def verify_quests_memory(quest1: Quest, quest2: Quest) -> bool:
@@ -177,7 +177,7 @@ def talk(npc: Npc,
                 item_object = get_item(item_name=item)
                 reward_msg += f"{amount} {item_object.name}, "
             if quest.remove:
-                for objetive in filter(lambda q: q.type == ObjectiveType.COLLECT, quest.objectives):
+                for objetive in filter(lambda q: q.status_type == ObjectiveType.COLLECT, quest.objectives):
                     player.inventory.discard_item(item=objetive.target, quantity=objetive.amount)
             player.remove_quest(quest=quest)
             return f"{reward_msg[:-2]}. You talked with {npc.name.title()}."

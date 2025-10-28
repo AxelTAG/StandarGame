@@ -1,9 +1,9 @@
 # Imports.
 # Local imports.
-from biome import Biome, Entry
-from enums import EntryType
-from map import Map
-from player import Player
+from ..biome import Biome, Entry
+from ..enums import EntryType
+from ..map import Map
+from ..player import Player
 
 # External imports.
 import random

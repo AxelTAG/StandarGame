@@ -7,6 +7,57 @@ from attrs import define, field
 from enum import Enum
 
 
+def to_list(value) -> list:
+    if isinstance(value, list):
+        return value
+    return [value]
+
+
+@define
+class Buff:
+    name: str = field(factory=str)
+    id: str = field(default=None)
+    stat: str | list[str] = field(factory=list, converter=to_list)
+    amount: float | list[float] = field(default=1, converter=to_list)
+    duration: int = field(default=1)
+    description: str = field(factory=str)
+    source: str = field(factory=str)
+
+    on_apply = field(default=None)
+    on_expire = field(default=None)
+
+    def __attrs_post_init__(self):
+        if self.id is None:
+            self.id = self.name.replace(" ", "_").lower()
+
+    def tick(self, entity):
+        if self.on_apply:
+            self.on_apply(entity, self)
+        self.duration -= 1
+
+    def apply(self, entitie):
+        """Applies the buff to the player."""
+        for stat, amount in zip(self.stat, self.amount):
+            if hasattr(entitie, stat):
+                current_value = getattr(entitie, stat)
+                setattr(entitie, stat, current_value + amount)
+            if self.on_apply:
+                self.on_apply(entitie, self)
+
+    def expire(self, entitie):
+        """Reverses the buff effect."""
+        for stat, amount in zip(self.stat, self.amount):
+            if hasattr(entitie, stat):
+                current_value = getattr(entitie, stat)
+                setattr(entitie, stat, current_value - amount)
+            if self.on_expire:
+                self.on_expire(entitie, self)
+
+    def is_active(self) -> bool:
+        """Returns True if the buff is still active."""
+        return self.duration > 0
+
+
 @define
 class Status:
     name: str = field(factory=str)

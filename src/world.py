@@ -7,13 +7,21 @@ from .mob import Mob
 from .npc import Npc
 from .skill import Skill
 from .quest import QuestObjective, Quest
-from .status import Status
+from .status import Buff, Status
 
 # External imports.
 from enum import Enum
 
-
-EFFECTS = {}
+BUFFS = {
+    "little_strength_potion": Buff(
+        name="Little Strength Potion",
+        stat=StatType.STRENGTH.value,
+        amount=3,
+        duration=10,
+        description="Little strength Potion.",
+        source="little_strength_potion",
+    )
+}
 
 SKILLS = {
     "attack": Skill(
@@ -283,6 +291,19 @@ ITEMS = {
                         expiration=None,
                         buy_price=400,
                         sell_price=75),
+
+    "large_belt": Item(name="Large Belt",
+                       description="",
+                       id="large_belt",
+                       weight=1,
+                       body_part=BodyPart.WAIST,
+                       pickable=True,
+                       consumable=False,
+                       equippable=True,
+                       expiration=None,
+                       buy_price=400,
+                       sell_price=200,
+                       slots=3),
 
     "large_bow": Item(name="Large Bow",
                       description="A hefty bow designed for long-range attacks. Great precision and speed.",
@@ -791,20 +812,6 @@ ITEMS = {
                       hungry_refill=30,
                       thirsty_refill=15),
 
-    "giant_red_potion": Item(name="Giant Red Potion",
-                             description="A large red potion that restores a significant amount of health.",
-                             weight=0.5,
-                             attack=0,
-                             defense=0,
-                             precision=0,
-                             evasion=0,
-                             pickable=True,
-                             consumable=True,
-                             equippable=False,
-                             expiration=None,
-                             buy_price=10,
-                             sell_price=10),
-
     "giant_silk": Item(name="Giant Silk",
                        description="Silk from a giant spider. Valuable for crafting or trading.",
                        weight=0.5,
@@ -819,20 +826,6 @@ ITEMS = {
                        buy_price=30,
                        sell_price=30),
 
-    "little_red_potion": Item(name="Little Red Potion",
-                              description="A small potion that restores a minor amount of health.",
-                              weight=0.2,
-                              attack=0,
-                              defense=0,
-                              precision=0,
-                              evasion=0,
-                              pickable=True,
-                              consumable=True,
-                              equippable=False,
-                              expiration=None,
-                              buy_price=2,
-                              sell_price=2),
-
     "poison_gland": Item(name="Poison Gland",
                          description="A toxic organ, harvested to craft potent poisons or deadly alchemical "
                                      "concoctions.",
@@ -840,20 +833,6 @@ ITEMS = {
                          pickable=True,
                          buy_price=20,
                          sell_price=15),
-
-    "red_potion": Item(name="Red Potion",
-                       description="A standard red potion to restore health during battle.",
-                       weight=0.3,
-                       attack=0,
-                       defense=0,
-                       precision=0,
-                       evasion=0,
-                       pickable=True,
-                       consumable=True,
-                       equippable=False,
-                       expiration=None,
-                       buy_price=5,
-                       sell_price=5),
 
     "rotten_flesh": Item(name="Boar Tusk",
                          description="Decayed and foul, a remnant of the cursed, unsuitable for consumption but "
@@ -1118,6 +1097,44 @@ ITEMS = {
                                      weight=0.05,
                                      expiration=30,
                                      buy_price=5),
+
+    # Potion items.
+    "little_red_potion": Item(name="Little Red Potion",
+                              description="A small potion that restores a minor amount of health.",
+                              weight=0.2,
+                              pickable=True,
+                              consumable=True,
+                              equippable=False,
+                              expiration=None,
+                              buy_price=2,
+                              sell_price=2),
+
+    "red_potion": Item(name="Red Potion",
+                       description="A standard red potion to restore health during battle.",
+                       weight=0.3,
+                       pickable=True,
+                       consumable=True,
+                       equippable=False,
+                       expiration=None,
+                       buy_price=5,
+                       sell_price=5),
+
+    "giant_red_potion": Item(name="Giant Red Potion",
+                             description="A large red potion that restores a significant amount of health.",
+                             weight=0.5,
+                             pickable=True,
+                             consumable=True,
+                             buy_price=10,
+                             sell_price=10),
+
+    "little_strength_potion": Item(name="Little Strength Potion",
+                                   description="",
+                                   weight=0.5,
+                                   pickable=True,
+                                   consumable=True,
+                                   buy_price=10,
+                                   sell_price=5,
+                                   droppable=True),
 
     # Others.
     "gold": Item(name="gold",
@@ -3726,10 +3743,11 @@ for k, v in BIOMES.items():
 ENTRIES = {
     "test_hut": Entry(
         description="A simple testing hut where mechanics and events are safely evaluated.",
-        name="Test Room",
+        name="Test Hut",
         entry_type=EntryType.HUT,
         mobs_base=MOBS,
-        month_temperatures={0: 0}
+        month_temperatures={0: 0},
+        items=["large_belt", "little_strength_potion"],
     ),
 
     "arena_antina": Entry(

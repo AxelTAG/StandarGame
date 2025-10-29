@@ -271,6 +271,7 @@ class Game:
                 # Player status refresh.
                 player.refresh_temperature()
                 player.refresh_temperature_status()
+                player.refresh_buffs()
                 player.refresh_status()
                 player.refresh_hungry(hour=map_game.get_hours,
                                       last_hour=hours)

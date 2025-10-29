@@ -11,11 +11,11 @@ def init_map_setting(ms: dict):
     ms[(12, 24)].description = ("Solitary hut amidst lush foliage, surrounded by the symphony of waves and "
                                 "the serenity of untouched nature.")
     ms[(12, 24)].entries = {"hut": ENTRIES["hut_12_24"],
-                            "test_hut": ENTRIES["test_hut"]}
+                            "test_hut": ENTRIES["test_hut"]}  # TODO: borrar este entrie.
     ms[(12, 24)].entries["hut"].leave_entry = ms[(12, 24)]
     ms[(12, 24)].fight = False
     ms[(12, 24)].name = "ISLAND"
-    ms[(12, 24)].respawn_mob(mob="training_dummy")
+    ms[(12, 24)].respawn_mob(mob="training_dummy")  # TODO: borrar este mob.
 
     # (13, 37)
     ms[(13, 37)].description = ("Rolling highlands with windswept grass, a sturdy artisan’s cabin billowing smoke from "

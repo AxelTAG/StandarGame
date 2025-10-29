@@ -8,7 +8,7 @@ from .globals import MAP_X_LENGTH, MAP_Y_LENGTH
 from .skill import Skill
 from .inventory import Inventory
 from .item import Item
-from .status import Status
+from .status import Buff, Status
 from .quest import Quest
 
 # External imports.
@@ -55,6 +55,10 @@ class Player:
     vitality_factor: float = field(default=1)
     vital_energy_factor: float = field(default=0.5)
     vision: int = field(default=1)
+
+    # Buff attributes.
+    buffs: list[Buff] = field(factory=list)
+    buffs_applied: list[Buff] = field(factory=list)
 
     # Status attributes.
     statuses: list[Status] = field(factory=list)
@@ -243,10 +247,13 @@ class Player:
             return
         self.hp = self.hpmax
 
-    def heal_poisoning(self) -> None:
+    def heal_poisoning(self, amount: int) -> None:
         for status in self.statuses:
             if status.status_type == StatusType.POISON:
-                self.statuses.remove(status)
+                if status.stacks <= amount:
+                    self.statuses.remove(status)
+                    return
+                status.stacks -= amount
 
     def recover_vital_energy(self, amount: int) -> None:
         self.vital_energy = min(self.vital_energy + amount, self.vital_energy_max)
@@ -428,6 +435,33 @@ class Player:
             if skill.id != "attack":
                 return True
         return False
+
+    # Buff methods.
+    def has_buffs(self) -> bool:
+        return bool(self.buffs)
+
+    def add_buff(self, buff: Buff) -> None:
+        self.buffs.append(copy.deepcopy(buff))
+
+    def add_buff_applied(self, buff: Buff) -> None:
+        self.buffs_applied.append(buff)
+
+    def remove_buff(self, buff: Buff) -> None:
+        self.buffs.remove(buff)
+
+    def remove_buff_applied(self, buff: Buff) -> None:
+        self.buffs_applied.remove(buff)
+
+    def refresh_buffs(self) -> None:
+        for buff in self.buffs:
+            buff.apply(entitie=self)
+            self.add_buff_applied(buff=buff)
+            self.remove_buff(buff=buff)
+        for buff in self.buffs_applied:
+            buff.tick(entity=self)
+            if not buff.is_active():
+                buff.expire(entitie=self)
+                self.remove_buff_applied(buff=buff)
 
     # Status methods.
     def is_poison(self) -> bool:

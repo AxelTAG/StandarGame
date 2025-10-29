@@ -25,24 +25,6 @@ class EquipCondition(Enum):
     NOT_NECESSARY = 1
 
 
-class SkillElements(Enum):
-    NEUTRAL = 0
-    FIRE = 1
-    EARTH = 2
-    WATER = 3
-    WIND = 4
-    LIGHT = 5
-    DARK = 6
-    VOID = 7
-    TIME = 8
-
-
-class SkillType(Enum):
-    ATTACK = 0
-    DEFENSE = 1
-    SUPPORT = 2
-
-
 class EntryType(Enum):
     ARENA = 0
     BARRACKS = 1
@@ -239,6 +221,42 @@ class RequirementType(Enum):
     ALL_PAST = 9
 
 
+class Season(Enum):
+    SPRING = 0
+    SUMMER = 1
+    AUTUMN = 2
+    WINTER = 3
+
+
+class SkillElements(Enum):
+    NEUTRAL = 0
+    FIRE = 1
+    EARTH = 2
+    WATER = 3
+    WIND = 4
+    LIGHT = 5
+    DARK = 6
+    VOID = 7
+    TIME = 8
+
+
+class SkillType(Enum):
+    ATTACK = 0
+    DEFENSE = 1
+    SUPPORT = 2
+
+
+class StatType(Enum):
+    STRENGTH = "strength"
+    RESISTANCE = "resistance"
+    AGILITY = "agility"
+    VITALITY = "vitality"
+    VITAL_ENERGY = "vital_energy"
+
+    PERCEPTION = "perception"
+    PRESENCE = "presence"
+
+
 class StatusType(Enum):
     POISON = auto()
     FREEZE = auto()
@@ -246,13 +264,6 @@ class StatusType(Enum):
     STUN = auto()
     BLEED = auto()
     PARALYSIS = auto()
-
-
-class Season(Enum):
-    SPRING = 0
-    SUMMER = 1
-    AUTUMN = 2
-    WINTER = 3
 
 
 class TimeOfDay(Enum):

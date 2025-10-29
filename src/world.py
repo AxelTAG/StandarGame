@@ -20,7 +20,106 @@ BUFFS = {
         duration=10,
         description="Little strength Potion.",
         source="little_strength_potion",
-    )
+    ),
+
+    "strength_potion": Buff(
+        name="Strength Potion",
+        stat=StatType.STRENGTH.value,
+        amount=5,
+        duration=20,
+        description="Increases strength temporarily.",
+        source="strength_potion",
+    ),
+
+    "great_strength_potion": Buff(
+        name="Great Strength Potion",
+        stat=StatType.STRENGTH.value,
+        amount=10,
+        duration=30,
+        description="Greatly increases strength for a while.",
+        source="great_strength_potion",
+    ),
+
+    "little_agility_potion": Buff(
+        name="Little Agility Potion",
+        stat=StatType.AGILITY.value,
+        amount=2,
+        duration=10,
+        description="Slightly increases agility for a short time.",
+        source="little_agility_potion",
+    ),
+
+    "agility_potion": Buff(
+        name="Agility Potion",
+        stat=StatType.AGILITY.value,
+        amount=5,
+        duration=20,
+        description="Increases agility temporarily.",
+        source="agility_potion",
+    ),
+
+    "great_agility_potion": Buff(
+        name="Great Agility Potion",
+        stat=StatType.AGILITY.value,
+        amount=10,
+        duration=30,
+        description="Greatly increases agility for a while.",
+        source="great_agility_potion",
+    ),
+
+    "little_vitality_potion": Buff(
+        name="Little Vitality Potion",
+        stat=StatType.VITALITY.value,
+        amount=3,
+        duration=10,
+        description="Slightly increases vitality for a short time.",
+        source="little_vitality_potion",
+    ),
+
+    "vitality_potion": Buff(
+        name="Vitality Potion",
+        stat=StatType.VITALITY.value,
+        amount=6,
+        duration=20,
+        description="Increases vitality temporarily.",
+        source="vitality_potion",
+    ),
+
+    "great_vitality_potion": Buff(
+        name="Great Vitality Potion",
+        stat=StatType.VITALITY.value,
+        amount=12,
+        duration=30,
+        description="Greatly increases vitality for a while.",
+        source="great_vitality_potion",
+    ),
+
+    "little_resistance_potion": Buff(
+        name="Little Resistance Potion",
+        stat=StatType.RESISTANCE.value,
+        amount=2,
+        duration=10,
+        description="Slightly increases resistance for a short time.",
+        source="little_resistance_potion",
+    ),
+
+    "resistance_potion": Buff(
+        name="Resistance Potion",
+        stat=StatType.RESISTANCE.value,
+        amount=4,
+        duration=20,
+        description="Increases resistance temporarily.",
+        source="resistance_potion",
+    ),
+
+    "great_resistance_potion": Buff(
+        name="Great Resistance Potion",
+        stat=StatType.RESISTANCE.value,
+        amount=8,
+        duration=30,
+        description="Greatly increases resistance for a while.",
+        source="great_resistance_potion",
+    ),
 }
 
 SKILLS = {
@@ -1127,14 +1226,135 @@ ITEMS = {
                              buy_price=10,
                              sell_price=10),
 
-    "little_strength_potion": Item(name="Little Strength Potion",
-                                   description="",
-                                   weight=0.5,
-                                   pickable=True,
-                                   consumable=True,
-                                   buy_price=10,
-                                   sell_price=5,
-                                   droppable=True),
+    "little_strength_potion": Item(
+        name="Slightly increases strength for a short time.",
+        description="",
+        weight=0.5,
+        pickable=True,
+        consumable=True,
+        buy_price=10,
+        sell_price=5,
+        droppable=True),
+
+    "strength_potion": Item(
+        name="Strength Potion",
+        description="Increases strength temporarily.",
+        weight=0.7,
+        pickable=True,
+        consumable=True,
+        buy_price=25,
+        sell_price=12,
+        droppable=True,
+    ),
+
+    "great_strength_potion": Item(
+        name="Great Strength Potion",
+        description="Greatly increases strength for a while.",
+        weight=1.0,
+        pickable=True,
+        consumable=True,
+        buy_price=50,
+        sell_price=25,
+        droppable=True,
+    ),
+
+    "little_agility_potion": Item(
+        name="Little Agility Potion",
+        description="Slightly increases agility for a short time.",
+        weight=0.5,
+        pickable=True,
+        consumable=True,
+        buy_price=10,
+        sell_price=5,
+        droppable=True,
+    ),
+
+    "agility_potion": Item(
+        name="Agility Potion",
+        description="Increases agility temporarily.",
+        weight=0.7,
+        pickable=True,
+        consumable=True,
+        buy_price=25,
+        sell_price=12,
+        droppable=True,
+    ),
+
+    "great_agility_potion": Item(
+        name="Great Agility Potion",
+        description="Greatly increases agility for a while.",
+        weight=1.0,
+        pickable=True,
+        consumable=True,
+        buy_price=50,
+        sell_price=25,
+        droppable=True,
+    ),
+
+    "little_vitality_potion": Item(
+        name="Little Vitality Potion",
+        description="Slightly increases vitality for a short time.",
+        weight=0.5,
+        pickable=True,
+        consumable=True,
+        buy_price=10,
+        sell_price=5,
+        droppable=True,
+    ),
+
+    "vitality_potion": Item(
+        name="Vitality Potion",
+        description="Increases vitality temporarily.",
+        weight=0.7,
+        pickable=True,
+        consumable=True,
+        buy_price=25,
+        sell_price=12,
+        droppable=True,
+    ),
+
+    "great_vitality_potion": Item(
+        name="Great Vitality Potion",
+        description="Greatly increases vitality for a while.",
+        weight=1.0,
+        pickable=True,
+        consumable=True,
+        buy_price=50,
+        sell_price=25,
+        droppable=True,
+    ),
+
+    "little_resistance_potion": Item(
+        name="Little Resistance Potion",
+        description="Slightly increases resistance for a short time.",
+        weight=0.5,
+        pickable=True,
+        consumable=True,
+        buy_price=10,
+        sell_price=5,
+        droppable=True,
+    ),
+    "resistance_potion": Item(
+        name="Resistance Potion",
+        description="Increases resistance temporarily.",
+        weight=0.7,
+        pickable=True,
+        consumable=True,
+        buy_price=25,
+        sell_price=12,
+        droppable=True,
+    ),
+
+    "great_resistance_potion": Item(
+        name="Great Resistance Potion",
+        description="Greatly increases resistance for a while.",
+        weight=1.0,
+        pickable=True,
+        consumable=True,
+        buy_price=50,
+        sell_price=25,
+        droppable=True,
+    ),
 
     # Others.
     "gold": Item(name="gold",

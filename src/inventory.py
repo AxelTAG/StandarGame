@@ -51,6 +51,8 @@ class Inventory:
             yield self.item_base[item]
 
     def get_item_object(self, item: str):
+        if item not in self.item_base.keys():
+            return None
         return self.item_base[item]
 
     def get_item_quantity(self, item: str) -> int:

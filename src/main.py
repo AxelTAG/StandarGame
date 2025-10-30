@@ -305,14 +305,19 @@ class Game:
             if not player.standing:
                 # Fight.
                 if player.place.fight and player.place.mobs_respawned:
-                    if random.randint(a=0, b=100) < max(player.place.get_mobs_chances(map_game.current_month)):
-
-                        enemy = random.choices(player.place.mobs_respawned, k=1)[0]
+                    queue_mob = []
+                    for mob in player.place.mobs_respawned:
+                        if mob.should_attack(player=player):
+                            queue_mob.append(mob)
+                    if queue_mob:
+                        number_enemies = min(1 + int(random.random() > 0.5), len(queue_mob))
+                        enemies = random.choices(player.place.mobs_respawned, k=number_enemies)
                         win = battle(players=[player],
                                      mapgame=map_game,
-                                     enemies=[enemy])
+                                     enemies=enemies)
                         if win:
-                            screen += f"\n You battled width {enemy.name}."
+                            enemies_names = [enemy.name for enemy in enemies]
+                            screen += f"\n You battled width {' and '.join(enemies_names)}."
 
             if self.play:
                 # Draw of general stats.
@@ -730,6 +735,13 @@ class Game:
                                 screen = f"{getattr(getattr(map_game, action[2]), action[3])}"
                             except AttributeError:
                                 screen = f"Acces to: Map -> {action[2]} -> {action[3]} not posible."
+
+                    elif action[:2] == ["gen", "battle"]:
+                        e = []
+                        for mob in action[2:]:
+                            if mob in MOBS.keys():
+                                e.append(copy.deepcopy(MOBS[mob]))
+                        battle(players=[player], enemies=e, mapgame=map_game)
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])

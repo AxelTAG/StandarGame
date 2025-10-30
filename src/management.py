@@ -513,7 +513,7 @@ def update(player: Player,
     if option == "player":
         new_player = Player(name=player.name,
                             hp=player.hp,
-                            lvl=player.lvl,
+                            level=player.level,
                             exp=player.exp,
                             expmax=player.expmax,
                             hungry=player.hungry,

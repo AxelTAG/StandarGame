@@ -22,6 +22,9 @@ class Mob:
     id: int = field(default=None)
     id_key: str = field(default=None)
 
+    # Lvl attributes.
+    level: int = field(default=None)
+
     # Place attributes.
     movable: bool = field(default=True)
     movable_biomes: list[int] = field(default=None)
@@ -51,6 +54,7 @@ class Mob:
     escape_chance: float = field(default=50)
 
     hostile: bool = field(default=True)
+    agression: float = field(default=0.4)
     visibility: float = field(default=1)
 
     # Drop attributes.
@@ -199,6 +203,13 @@ class Mob:
         efective_dmg = max(0, damage - self.defense)
         self.hp = max(0, self.hp - efective_dmg)
         return efective_dmg
+
+    def should_attack(self, player) -> bool:
+        if not self.hostile:
+            return False
+
+        if player.presence / 100 * self.agression > random.random():
+            return True
 
     @staticmethod
     def underscores(text: str):

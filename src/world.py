@@ -200,12 +200,31 @@ SKILLS = {
 }
 
 SKILLS_MOB = {
+    "attack_goblin": Skill(
+        id="mob_attack",
+        name="Attack Goblin",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=3,
+        cost=0,
+        type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_chance=0,
+        cooldown=0,
+        scaling={
+            "attack": 1,
+        },
+        requirements_equip={},
+        tags=["attack_goblin"]
+    ),
+
     "attack_little_slime": Skill(
         id="mob_attack",
         name="Attack Little Slime",
         description="A basic physical strike.",
         element=SkillElements.NEUTRAL.value,
-        power=0,
+        power=1,
         cost=0,
         type=SkillType.ATTACK.value,
         desviation=0,
@@ -224,10 +243,10 @@ SKILLS_MOB = {
         name="Attack Slime",
         description="A basic physical strike.",
         element=SkillElements.NEUTRAL.value,
-        power=1,
+        power=2,
         cost=0,
         type=SkillType.ATTACK.value,
-        desviation=0,
+        desviation=1,
         accuracy=1,
         critical_chance=0,
         cooldown=0,
@@ -235,7 +254,7 @@ SKILLS_MOB = {
             "attack": 1,
         },
         requirements_equip={},
-        tags=["attack_little_slime"]
+        tags=["attack_slime"]
     ),
 
     "attack_training_dummy": Skill(
@@ -2434,6 +2453,7 @@ MOBS = {
         items={"gold": 5, "little_red_potion": 1, "red_potion": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.4, 0.2, 0.4],
         experience=3,
+        skills=[SKILLS_MOB["attack_goblin"]]
     ),
 
     "goblin_chief": Mob(

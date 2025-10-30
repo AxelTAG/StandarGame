@@ -27,7 +27,7 @@ class Player:
 
     # Player current attributes.
     hp: int = field(default=25)  # Hit points or life.
-    lvl: int = field(default=1)  # Level of player.
+    level: int = field(default=1)  # Level of player.
     exp: int = field(default=0)  # Actual experience points.
     expmax: int = field(default=10)  # Max experience points for level up.
     vital_energy: int = field(default=5)
@@ -47,6 +47,9 @@ class Player:
     agility: int = field(default=0)
     vitality: int = field(default=0)
     dexterity: int = field(default=0)
+    vision: int = field(default=1)
+    perception: int = field(default=0)
+    presence: int = field(default=100)
 
     attack_factor: float = field(default=0.4)
     defence_factor: float = field(default=0.4)
@@ -54,7 +57,6 @@ class Player:
     precision_factor: float = field(default=0.005)
     vitality_factor: float = field(default=1)
     vital_energy_factor: float = field(default=0.5)
-    vision: int = field(default=1)
 
     # Buff attributes.
     buffs: list[Buff] = field(factory=list)
@@ -278,9 +280,9 @@ class Player:
             return False
 
     def lvl_up(self, quantity: int = 1) -> None:
-        self.lvl += quantity
+        self.level += quantity
         self.exp = 0
-        self.expmax = 10 * self.lvl + self.lvl ** 2
+        self.expmax = 10 * self.level + self.level ** 2
         self.st_points += 3 * quantity
 
         self.b_hpmax += 2 * quantity

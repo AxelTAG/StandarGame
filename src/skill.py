@@ -115,7 +115,7 @@ class Skill:
                            items: bool = True,
                            stats: bool = True) -> tuple[bool, int, str]:
         if level:
-            if self.requirement_lvl >= caster.lvl:
+            if self.requirement_lvl >= caster.level:
                 return False, RequirementType.LVL.value, f"lvl {self.requirement_lvl}"
 
         if equip:

@@ -41,16 +41,16 @@ def disp_battle(players: list[Player],
     disp_title()
     disp_game_label()
 
-    players, enemies = equal_len(ls1=players, ls2=enemies, refill=".")
+    length = max(len(players), len(enemies))
 
     cmp_text = []
     cmp_text = cmp_text + text_2_col(msg1=disp_line(width - 4, disp=False),
                                      msg2=disp_line(width - 4, disp=False),
                                      width=width,
                                      ch="-")
-    for i in range(len(players)):
-        cmp_text += text_2_col(msg1=disp_info(entitie=players[i], onbattle=True),
-                               msg2=disp_info(entitie=enemies[i], onbattle=True),
+    for i in range(length):
+        cmp_text += text_2_col(msg1=disp_info(entitie=mock_length(ls=players, length=length)[i], onbattle=True),
+                               msg2=disp_info(entitie=mock_length(ls=enemies, length=length)[i], onbattle=True),
                                width=width,
                                ch="|")
         cmp_text = cmp_text + text_2_col(msg1=disp_line(width - 4, disp=False),
@@ -133,6 +133,8 @@ def disp_bar(current_value: int, max_value: int, width: int = 25) -> str:
 
 
 def disp_info(entitie: Player | Mob, onbattle: bool = False) -> str:
+    if entitie is None:
+        return ""
     text_info = ""
     text_info += entitie.name.upper()
     text_info += f"\n HP: {int(entitie.hp)} / {entitie.hpmax}"
@@ -249,7 +251,7 @@ def disp_new_game(existent_player: Player = None) -> None:
         print()
         print(" There is already a dream existing, do you want to delete it?")
         print()
-        print(f" NAME: {existent_player.name} / LVL: {existent_player.lvl}")
+        print(f" NAME: {existent_player.name} / LVL: {existent_player.level}")
         print()
         print(" 1 - Yes")
         print(" 2 - No")
@@ -301,7 +303,7 @@ def disp_play(player: Player,
     t_hp = "\nHP: " + str(int(player.hp)) + "/" + str(player.hpmax)
     t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (
             20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
-    t_lvl = "\nEXP: " + str(player.exp) + "/" + str(player.expmax) + " | LVL: " + str(player.lvl)
+    t_lvl = "\nEXP: " + str(player.exp) + "/" + str(player.expmax) + " | LVL: " + str(player.level)
     t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (
             11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
 
@@ -531,3 +533,7 @@ def equal_len(ls1: list, ls2: list, refill=None) -> tuple[list, list]:
     while len(ls2) < max_len:
         ls2.append(refill)
     return ls1, ls2
+
+
+def mock_length(ls: list, length: int) -> list:
+    return ls + [None] * (length - len(ls))

@@ -3,7 +3,7 @@
 from . import globals
 
 from .biome import Biome
-from .enums import Months, BodyPart, StatusType
+from .enums import Months, BodyPart, Directions
 from .map import Map
 from .mob import Mob
 from .player import Player
@@ -49,8 +49,8 @@ def disp_battle(players: list[Player],
                                      width=width,
                                      ch="-")
     for i in range(length):
-        cmp_text += text_2_col(msg1=disp_info(entitie=mock_length(ls=players, length=length)[i], onbattle=True),
-                               msg2=disp_info(entitie=mock_length(ls=enemies, length=length)[i], onbattle=True),
+        cmp_text += text_2_col(msg1=disp_info(entitie=mock_list_length(ls=players, length=length)[i], onbattle=True),
+                               msg2=disp_info(entitie=mock_list_length(ls=enemies, length=length)[i], onbattle=True),
                                width=width,
                                ch="|")
         cmp_text = cmp_text + text_2_col(msg1=disp_line(width - 4, disp=False),
@@ -128,7 +128,7 @@ def disp_game_loss() -> None:
 def disp_bar(current_value: int, max_value: int, width: int = 25) -> str:
     hits = int(width * (current_value / max_value))
     no_hits = width - int(width * (max(current_value, 0) / max_value))
-    hpbar = "█" * hits + "-" * no_hits + "|"
+    hpbar = "|" + "█" * hits + "-" * no_hits + "|"
     return hpbar
 
 
@@ -142,7 +142,7 @@ def disp_info(entitie: Player | Mob, onbattle: bool = False) -> str:
     if entitie.has_vital_energy():
         text_info += f"\n VITAL ENERGY: {int(entitie.vital_energy)} / {entitie.vital_energy_max}"
         text_info += f"\n {disp_bar(current_value=entitie.vital_energy, max_value=entitie.vital_energy_max, width=25)}"
-    text_info += disp_statuses(entitie=entitie, onbattle=onbattle)
+    text_info += f"\n{disp_statuses(entitie=entitie, onbattle=onbattle)}"
     text_info += f"\n ATTACK: {int(entitie.attack)}"
     return text_info
 
@@ -156,9 +156,47 @@ def disp_player_battle_actions(player: Player,
                                prefix: str = "",
                                subfix: str = "",
                                display: bool = False) -> str:
-    _, labels = player.get_available_actions()
+    _, labels = player.get_available_actions(onbattle=True)
     actions = []
     for i, label in enumerate(labels):
+        actions.append(f"{prefix}{i} - {label.upper()}{subfix}")
+        if display:
+            print(f"{prefix}{i} - {label.upper()}{subfix}")
+    return "\n".join(actions)
+
+
+def disp_player_play_actions(player: Player,
+                             mapgame: Map,
+                             prefix: str = "",
+                             subfix: str = "",
+                             display: bool = False) -> str:
+    # Moves.
+    moves = mapgame.get_avaible_moves(player=player)
+    moves_labels = []
+    for i, move in enumerate(moves, 1):
+        if i == 1:
+            x_pos, y_pos = player.x, player.y - 1
+        elif i == 2:
+            x_pos, y_pos = player.x + 1, player.y
+        elif i == 3:
+            x_pos, y_pos = player.x, player.y + 1
+        elif i == 4:
+            x_pos, y_pos = player.x - 1, player.y
+        else:
+            x_pos, y_pos = player.x, player.y
+        biome_name = player.get_biome_label(x=x_pos, y=y_pos)
+        if move:
+            moves_labels.append(f"{Directions(i).name} ({biome_name})")
+
+    # Actions.
+    _, actions_labels = player.get_available_actions(onbattle=False)
+
+    actions = []
+    for i, label in enumerate(actions_labels[0:1] + moves_labels):
+        actions.append(f"{prefix}{i} - {label.upper()}{subfix}")
+        if display:
+            print(f"{prefix}{i} - {label.upper()}{subfix}")
+    for i, label in enumerate(actions_labels[1:], 5):
         actions.append(f"{prefix}{i} - {label.upper()}{subfix}")
         if display:
             print(f"{prefix}{i} - {label.upper()}{subfix}")
@@ -194,7 +232,12 @@ def disp_skill_selection(entitie: Player | Mob, prefix: str = "", subfix: str = 
             print(f"{prefix}{i} - {skill.name.upper()} (COST {skill.cost} VT){subfix}")
 
 
-def disp_list(list_to_display: list, prefix: str = "", subfix: str = "") -> None:
+def disp_list(list_to_display: list, prefix: str = "", subfix: str = "", patron: list = None) -> None:
+    if patron is not None:
+        for i, line in enumerate(list_to_display):
+            print(prefix + patron[i] + line + patron[i] + subfix)
+        return
+
     for line in list_to_display:
         print(prefix + line + subfix)
 
@@ -279,117 +322,105 @@ def disp_look_around(place: Biome) -> str:
 
 # Play display.
 def disp_play(player: Player,
-              map_game: Map,
-              reg: str,
-              x: int,
-              y: int,
-              mdir: list,
-              screen_text: str,
+              mapgame: Map,
+              screen: str,
               width: int) -> None:
-    print("  .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. ")
-    print(
-        " / .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\")
-    print(
-        " \\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /")
-    print("  \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / ")
-    t_loc = "LOCATION: " + player.place.get_name(month=map_game.current_month).upper()
-    t_reg = "\n REGION: " + reg.upper()
-    t_coord = "\n COORD: " + str(x) + " " + str(y)
-    t_time = f"\n TIME OF DAY: {map_game.current_time_of_day_name.upper()} [{map_game.hour}HS]"
-    t_week_day = f"\n WEEK DAY: {map_game.current_week_day_name.upper()} [{map_game.day} DAY]"
-    t_month_year = f"\n MONTH: {Months(map_game.month).name.upper()} - YEAR: {map_game.year}"
 
-    t_name = "NAME: " + player.name.upper()
-    t_hp = "\nHP: " + str(int(player.hp)) + "/" + str(player.hpmax)
-    t_hpbar = "\n|" + "█" * int(20 * (player.hp / player.hpmax)) + "-" * (
-            20 - int(20 * (max(player.hp, 0) / player.hpmax))) + "|"
-    t_lvl = "\nEXP: " + str(player.exp) + "/" + str(player.expmax) + " | LVL: " + str(player.level)
-    t_expbar = "\n|" + "█" * int(11 * (player.exp / player.expmax)) + "-" * (
-            11 - int(11 * (max(player.exp, 0) / player.expmax))) + "|"
-
-    # Status text.
-    t_status_types = []
-    for status in player.statuses:
-        t_status_types.append(f"{status.name.upper()} [{status.stacks}]")
-    if player.hungry <= 10:
-        t_status_types.append(f"HUNGRY")
-    if player.thirsty <= 10:
-        t_status_types.append(f"THIRSTY")
-    if not t_status_types:
-        t_status_types.append(f"HEALTHY")
-    t_status = f"\nSTATUS: {' '.join(t_status_types)}"
-
-    # Belt items.
-    slot1_item, slot1_quantity = "None", 0
-    slot2_item, slot2_quantity = "None", 0
-    if player.get_slot_item(slot=0) is not None:
-        slot1_item = player.equip[BodyPart.WAIST].slots_packs[0].name
-        slot1_quantity = player.get_item_quantity(item=player.equip[BodyPart.WAIST].slots_packs[0])
-    if player.get_slot_item(slot=1) is not None:
-        slot2_item = player.equip[BodyPart.WAIST].slots_packs[1].name
-        slot2_quantity = player.get_item_quantity(item=player.equip[BodyPart.WAIST].slots_packs[1])
-
-    t_gold = f"\nGOLD: {player.inventory.gold}"
-    t_item1, t_item2 = "", ""
-    if player.equip[BodyPart.WAIST] is not None:
-        t_item1 = f"\n5 - {slot1_item.upper()}: {slot1_quantity}"
-        t_item2 = f"\n6 - {slot2_item.upper()}: {slot2_quantity}"
-
-    # Text4.1 lines.
-    prim_stats = "PRIM. STATS: "
-    t_atk = "\n\nATTACK:    " + str(int(player.attack))
-    t_def = "\nDEFENSE:   " + str(int(player.defense))
-    t_eva = "\nEVASION:   " + str(int(player.evasion * 100)) + "%"
-    t_pre = "\nPRECISION: " + str(int(player.precision * 100)) + "%"
-    t_weight = "\nWEIGHT:    " + str(int(player.current_weight)) + "/" + str(int(player.weight_carry))
-
-    # Text4.2 lines.
-    sec_stats = " SEC. STATS:"
-    t_str = "\n\n STRENGTH:   " + str(int(player.strength))
-    t_res = "\n RESISTANCE: " + str(int(player.resistance))
-    t_agi = "\n AGILITY:    " + str(int(player.agility))
-    # t_dex = "\n DEXTERITY:  " + str(int(user["b_dex"]))
-    t_vit = "\n VITALITY:   " + str(int(player.vitality))
-
-    text1 = t_loc + t_reg + t_coord + "\n." + t_time + t_week_day + t_month_year
-    text2 = player.place.get_description(month=map_game.current_month)
-    text3 = t_name + t_lvl + t_expbar + t_hp + t_hpbar + t_status + t_gold
-    text41 = prim_stats + t_atk + t_def + t_eva + t_pre + t_weight
-    text42 = sec_stats + t_str + t_res + t_agi + t_vit
+    text1 = disp_play_location_and_time(player=player, mapgame=mapgame, prefix="", subfix="")
+    text2 = player.place.get_description(month=mapgame.current_month)
+    text3 = disp_play_info(player=player)
+    text41 = disp_play_prim_stats(player=player, width=width // 2 - 2)
+    text42 = disp_play_sec_stats(player=player, width=width // 2 - 2)
     text4 = "\n".join(text_2_col(text41, text42, int(width / 2 - 2), "|", False))
-    text5 = "0 - SAVE AND QUIT"
-    text6 = screen_text
+    text5 = disp_player_play_actions(player=player, mapgame=mapgame)
+    text6 = screen
 
-    cmp_text = []
-    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "-")
-    cmp_text = cmp_text + text_2_col(text1, text2, width, "|")
-    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "+")
-    cmp_text = cmp_text + text_2_col(text3, text4, width, "|", False)
-    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "+")
+    fixture_text = []
+    fixture_text += text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "-")
+    fixture_text += text_2_col(text1, text2, width, "|")
+    fixture_text += text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "+")
+    fixture_text += text_2_col(text3, text4, width, "|", False)
+    fixture_text += text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "+")
+    fixture_text += text_2_col(text5, text6, width, "|")
+    fixture_text += text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "-")
 
-    for i, status in enumerate(mdir):
-        if i == 0:
-            x_pos, y_pos = x, y - 1
-        elif i == 1:
-            x_pos, y_pos = x + 1, y
-        elif i == 2:
-            x_pos, y_pos = x, y + 1
-        elif i == 3:
-            x_pos, y_pos = x - 1, y
-        else:
-            x_pos, y_pos = x, y
-        if status:
-            text5 += "\n" + globals.DIRECTIONS[i] + " (" + get_label(x_pos, y_pos, player.map).upper() + ")"
-    text5 += t_item1 + t_item2
+    # Displays.
+    disp_play_header(length=23,
+                     display=True)
+    disp_list(list_to_display=fixture_text,
+              patron=patron_print(elements=globals.PATRON, n=len(fixture_text)))
 
-    cmp_text = cmp_text + text_2_col(text5, text6, width, "|")
-    cmp_text = cmp_text + text_2_col(disp_line(width - 4, disp=False), disp_line(width - 4, disp=False), width, "-")
 
-    # cmp_text = concatenate_lists(cmp_text, side_text)
-    patron = patron_print(globals.PATRON, len(cmp_text))
+def disp_play_header(length: int, display: bool = True) -> None:
+    if display:
+        print(" " + ".--." * length + " ")
+        print("/ " + ".. \\" * length)
+        print("\\ \\/" + "\\ `'" * (length - 2) + "\\ \\/ /")
+        print(" \\/ /" + "`--'" * (length - 2) + "\\/ / ")
 
-    for i, line in enumerate(cmp_text):
-        print(" " + patron[i] + line + "  " + patron[i])
+
+def disp_play_tale(length: int, display: bool = True) -> None:
+    if display:
+        print(" / /\\" + ".--." * (length - 2) + "/ /\\ ")
+        print("/ /\\ " + "\\.. " * (length - 2) + "\\/\\ \\")
+        print("\\ `'" * length + " /")
+        print(" " + "`--'" * length + " ")
+
+
+def disp_play_location_and_time(player: Player, mapgame: Map, prefix: str = "", subfix: str = "") -> str:
+    location = f"LOCATION: {player.place.get_name(month=mapgame.current_month).upper()}"
+    region = f"REGION: {mapgame.get_region_name(x=player.x, y=player.y)}"
+    coordinates = f"COORD: {player.x} {player.y}"
+    time_of_day = f"TIME OF DAY: {mapgame.current_time_of_day_name.upper()} [{mapgame.hour}HS]"
+    week_day = f"WEEK DAY: {mapgame.current_week_day_name.upper()} [{mapgame.day} DAY]"
+    month_year = f"MONTH: {Months(mapgame.month).name.upper()} - YEAR: {mapgame.year}"
+
+    return "\n".join([location, region, coordinates, time_of_day, week_day, month_year])
+
+
+def disp_play_info(player: Player) -> str:
+    name = f"NAME: {player.name.upper()}"
+    exp_level = f"EXP: {player.exp}/{player.expmax} | LVL: {player.level}"
+    exp_bar = disp_bar(current_value=player.exp, max_value=player.expmax, width=18)
+    hp = f"HP: {player.hp} / {player.hpmax}"
+    hp_bar = f"{disp_bar(current_value=player.hp, max_value=player.hpmax, width=30)}"
+
+    vt, vt_bar = "", ""
+    if player.has_vital_energy():
+        vt = f"VITAL ENERGY: {int(player.vital_energy)} / {player.vital_energy_max}"
+        vt_bar = f"{disp_bar(current_value=player.vital_energy, max_value=player.vital_energy_max, width=25)}"
+
+    statuses = disp_statuses(entitie=player, onbattle=False)
+    gold = f"GOLD: {player.get_gold()}"
+
+    info_line = [name, exp_level, exp_bar, hp, hp_bar, vt, vt_bar, statuses, gold]
+    return "\n".join([info for info in info_line if info])
+
+
+def disp_play_prim_stats(player: Player, width: int) -> str:
+    title = "PRIM. STATS:\n"
+    attack = twotext_justify(title="ATTACK:", number=f"{int(player.attack)}", width=width)
+    defense = twotext_justify(title="DEFENSE:", number=f"{int(player.defense)}", width=width)
+    evasion = twotext_justify(title="EVASION:", number=f"{int(player.evasion * 100)}%", width=width)
+    precision = twotext_justify(title="PRECISION:", number=f"{int(player.precision * 100)}%", width=width)
+    weight = twotext_justify(title="WEIGHT:",
+                             number=f"{int(player.current_weight)}/{int(player.weight_carry)}",
+                             width=width)
+
+    info_line = [title, attack, defense, evasion, precision, weight]
+    return "\n".join([info for info in info_line if info])
+
+
+def disp_play_sec_stats(player: Player, width: int) -> str:
+    title = "SEC. STATS:\n"
+    strength = twotext_justify(title="STRENGTH:", number=f"{int(player.strength)}", width=width)
+    resistance = twotext_justify(title="RESISTANCE:", number=f"{int(player.resistance)}", width=width)
+    agility = twotext_justify(title="AGILITY:", number=f"{int(player.agility)}", width=width)
+    dexterity = twotext_justify(title="DEXTERITY:", number=f"{int(player.dexterity)}", width=width)
+    vitality = twotext_justify(title="VITALITY:", number=f"{int(player.vitality)}", width=width)
+
+    info_line = [title, strength, resistance, agility, dexterity, vitality]
+    return "\n".join([info for info in info_line if info])
 
 
 def disp_read(entitie: str) -> None:
@@ -455,7 +486,7 @@ def disp_statuses(entitie: Player | Mob, onbattle: bool = False) -> str:
     if not statuses_list:
         statuses_list.append(f"HEALTHY")
 
-    return f"\nSTATUS: {' '.join(statuses_list)}"
+    return f"STATUS: {' '.join(statuses_list)}"
 
 
 # Talk npc options.
@@ -535,5 +566,20 @@ def equal_len(ls1: list, ls2: list, refill=None) -> tuple[list, list]:
     return ls1, ls2
 
 
-def mock_length(ls: list, length: int) -> list:
+def mock_list_length(ls: list, length: int) -> list:
     return ls + [None] * (length - len(ls))
+
+
+def get_max_text_length(texts: list) -> int:
+    return max(map(max, texts))
+
+
+def twotext_justify(title: str, number: str, width: int) -> str:
+    title_length = len(title)
+    number_length = len(number)
+
+    if title_length + number_length > width:
+        return f"{title} {number}"
+
+    spaces = width - title_length - number_length
+    return f"{title}{' ' * spaces}{number}"

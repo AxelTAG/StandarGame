@@ -109,6 +109,7 @@ class Player:
 
     # Map attributes.
     map: np.array = field(default=None)
+    map_labels: list = field(default=None)
 
     # Quests.
     quests_in_progress: list = field(factory=list)
@@ -145,6 +146,9 @@ class Player:
         if self.map is None:
             self.map = np.zeros(shape=(MAP_X_LENGTH, MAP_Y_LENGTH, 4), dtype=np.uint8)
             self.map[:, :, 3] = np.ones(shape=(MAP_X_LENGTH, MAP_Y_LENGTH), dtype=np.uint8) * 255
+
+        if self.map_labels is None:
+            self.map_labels = [["UNEXPLORED" for _ in range(MAP_X_LENGTH)] for _ in range(MAP_Y_LENGTH)]
 
         if self.equip is None:
             self.equip = {BodyPart.HEAD: None,
@@ -321,6 +325,9 @@ class Player:
             return self.equip[BodyPart.WAIST].has_slot_empty()
         return False
 
+    def get_gold(self) -> int:
+        return self.inventory.get_gold()
+
     def get_item_quantity(self, item: Item) -> int:
         if item is None:
             return 0
@@ -363,6 +370,12 @@ class Player:
         self.inventory.add_item(item=item, quantity=quantity)
         self.update_quests(target=item, amount=quantity)
 
+    def get_equiped_item(self, item: str) -> Item | None:
+        for equiped_item in self.get_equiped_items():
+            if equiped_item.id == item:
+                return equiped_item
+        return None
+
     def get_equiped_items(self) -> list[Item]:
         items = []
         for item in self.equip.values():
@@ -391,6 +404,10 @@ class Player:
         if item in [item.id for item in self.get_equiped_items()]:
             return True
         return False
+
+    # Map methods.
+    def get_biome_label(self, x: int, y: int) -> str:
+        return self.map_labels[y][x]
 
     # Quest methods.
     def add_quest(self, quest: Quest) -> None:
@@ -600,15 +617,19 @@ class Player:
         self.time_played = time_close - time_init + self.time_played
 
     # Move and actions methods.
-    def get_available_actions(self) -> tuple[list, list]:
+    def get_available_actions(self, onbattle: bool = False) -> tuple[list, list]:
         actions = []
         action_labels = []
+        if not onbattle:
+            actions.append(Actions.SAVE_AND_QUIT)
+            action_labels.append("SAVE AND QUIT")
+
         if self.is_stun():
             actions.append(Actions.WAIT)
             action_labels.append("WAIT")
             return actions, action_labels
 
-        if self.is_paralyze():
+        if self.is_paralyze() and not self.is_stun():
             actions.append(Actions.WAIT)
             action_labels.append("WAIT")
             if self.has_skill():
@@ -616,10 +637,12 @@ class Player:
                 action_labels.append("SKILL")
             return actions, action_labels
 
-        actions.append(Actions.ESCAPE)
-        action_labels.append("ESCAPE")
-        actions.append(Actions.HIT_ATTACK)
-        action_labels.append("ATTACK")
+        if onbattle:
+            actions.append(Actions.ESCAPE)
+            action_labels.append("ESCAPE")
+            actions.append(Actions.HIT_ATTACK)
+            action_labels.append("ATTACK")
+
         if self.has_skill():
             actions.append(Actions.SKILL)
             action_labels.append("SKILL")

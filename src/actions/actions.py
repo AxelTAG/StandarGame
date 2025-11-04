@@ -119,6 +119,7 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
     def map_tile(x: int, y: int):
         if 0 <= x < map_game.x_len and 0 <= y < map_game.y_len:
             player.map[y][x] = map_game.map_settings[(x, y)].get_color(month=map_game.current_month)
+            player.map_labels[y][x] = map_game.map_settings[(x, y)].name[map_game.current_month].upper()
 
     # Map the boxes within the circular radius.
     for i in range(max(0, player.x - int(exploration_radius)),
@@ -127,7 +128,7 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
                        min(map_game.y_len, player.y + int(exploration_radius) + 1)):
             # Checks if the cell is inside de circunference.
             if math.sqrt((player.x - i) ** 2 + (player.y - j) ** 2) <= exploration_radius:
-                map_tile(i, j)
+                map_tile(x=i, y=j)
 
     # Add time based on venue tempo and pace factor.
     hours_to_add = int(player.place.get_pace(month=map_game.current_month) * pace_factor)
@@ -252,7 +253,7 @@ def equip(player: Player, item: str) -> str:
         return f"You need a belt to carry this item."
 
     if player.equip[item_object.body_part] is not None:
-        return f"You already have an item equipped. UNEQUIP {item_object.body_part.name}."
+        return f"You already have an item equipped. UNEQUIP {item_object.name}."
 
     player.equip[item_object.body_part] = item_object
     player.inventory.drop_item(item=item, quantity=1)
@@ -490,7 +491,7 @@ def sell(player: Player, item: str, quantity: int, price: int) -> tuple[str, boo
 # Unequip action.
 def unequip(player: Player, item: str) -> str:
     item_name = item.replace("_", " ").title()
-    item_object = get_item(item_name=item)
+    item_object = player.get_equiped_item(item=item)
 
     if not item_object:
         return f"You don't have equipped {item_name}."
@@ -498,9 +499,6 @@ def unequip(player: Player, item: str) -> str:
     if item_object.id in [slot_item.id for slot_item in player.belt.get_slot_items()]:
         player.unequip_item(item=item_object)
         return f"You have unequip {item_object.name}."
-
-    if item_object not in player.equip.values():
-        return f"You don't have equipped {item_object.name}."
 
     player.unequip_item(item=item_object)
     if item_object.equippable:

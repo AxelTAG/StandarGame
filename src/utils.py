@@ -291,7 +291,7 @@ def label_pixels(img_path: str) -> list:
             # Get the color of the pixel at coordinates (x, y)
             color = img.getpixel((x, y))
             biome = next((b for b in BIOMES.values() if b.color_label == color), None)
-            label = BiomeTypes(biome.id).name if biome else "red"
+            label = biome.id if biome else "red"
 
             # Assign a label based on the color.
             img_row.append(label)
@@ -353,7 +353,7 @@ def restore_output():
 
 
 # Patron in column function.
-def patron_print(elements, n):
+def patron_print(elements: list, n: int) -> list:
     patron = []
     elements_cycle = cycle(elements)
     for _ in range(n):
@@ -391,7 +391,15 @@ def text_ljust(msg: str, width: int = 20, adjust: bool = True) -> list:
 
 
 # Function that puts two messages in two paralels columns.
-def text_2_col(msg1: str, msg2: str, width: int = 20, ch: str = "", adjust: bool = True) -> list:
+def text_2_col(msg1: str,
+               msg2: str,
+               width: int = 20,
+               ch: str = "",
+               adjust: bool = True,
+               prefix_1_c: str = "",
+               subfix_1_c: str = " ",
+               prefix_2_c: str = " ",
+               subfix_2_c: str = "", ) -> list:
     lines1 = text_ljust(msg1, width, adjust)
     lines2 = text_ljust(msg2, width, adjust)
 
@@ -400,7 +408,7 @@ def text_2_col(msg1: str, msg2: str, width: int = 20, ch: str = "", adjust: bool
     lines1 += [" " * width] * (max_lines - len(lines1))
     lines2 += [" " * width] * (max_lines - len(lines2))
 
-    return [t1 + " " + str(ch) + " " + t2 for t1, t2 in zip(lines1, lines2)]
+    return [prefix_1_c + t1 + subfix_1_c + str(ch) + prefix_2_c + t2 + subfix_2_c for t1, t2 in zip(lines1, lines2)]
 
 
 # Functions that returns coordinates as text separete by comma.

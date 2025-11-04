@@ -323,20 +323,13 @@ class Game:
                 # Draw of general stats.
                 clear()
                 displays.disp_play(player=player,
-                                   map_game=map_game,
-                                   reg="NAIWAT",
-                                   x=player.x,
-                                   y=player.y,
-                                   mdir=draw_move(x=player.x,
-                                                  y=player.y,
-                                                  mapgame=map_game,
-                                                  map_height=map_game.x_len,
-                                                  map_width=map_game.y_len,
-                                                  player=player,
-                                                  tl_map=map_game.map_labels,
-                                                  ms=map_game.map_settings),
-                                   screen_text=screen,
-                                   width=38)
+                                   mapgame=map_game,
+                                   screen=screen,
+                                   width=39)
+
+                # Preset actions avaibles.
+                actions, _ = player.get_available_actions(onbattle=False)
+                actions_len = len(actions)
 
                 # Input action.
                 print()
@@ -363,15 +356,23 @@ class Game:
                         screen = "You are in " + player.place.get_name(month=map_game.current_month).title().replace(
                             "'S", "'s")
 
-                elif action[0] in ["5", "6"]:  # Fast use object action.
-                    if action[0] == "5":
+                elif action[0] in [f"{i}" for i in range(5, 4 + actions_len)]:
+                    choice = int(action[0]) - 4
+
+                    # TODO: implementar menu de skills y ejecución de la misma.
+                    if actions[choice] == Actions.WAIT:
+                        screen = "You have waited one hour."
+                        map_game.add_hours(hours_to_add=1)
+                        player.standing = True
+
+                    if actions[choice] == Actions.SKILL:
+                        screen = "Yet not implemented."
+                        player.standing = True
+
+                    if actions[choice] == Actions.USE_ITEM:
                         screen, _ = use(player=player,
                                         mapgame=map_game,
-                                        item=player.equip[BodyPart.WAIST].slots_packs[0].id)
-                    if action[0] == "6":
-                        screen, _ = use(player=player,
-                                        mapgame=map_game,
-                                        item=player.equip[BodyPart.WAIST].slots_packs[1].id)
+                                        item=player.equip[BodyPart.WAIST].slots_packs[choice - (actions_len - player.belt.slots)])
                     player.standing = True
 
                 elif action[0] == "assign":  # Assign action.
@@ -628,10 +629,11 @@ class Game:
                         player.standing = True
 
                     else:
-                        item = find_full_name(partial_name="_".join(action[1:]),
-                                              names_list=[underscores(i.id) for i in player.equip.values() if
+                        item = find_full_name(partial_name="_".join(action[1:]).replace("'", ""),
+                                              names_list=[i.id for i in player.get_equiped_items() if
                                                           i is not None],
                                               original=True)
+
                         screen = unequip(player=player, item=item)
                         player.standing = True
 
@@ -742,6 +744,9 @@ class Game:
                             if mob in MOBS.keys():
                                 e.append(copy.deepcopy(MOBS[mob]))
                         battle(players=[player], enemies=e, mapgame=map_game)
+
+                    elif action == ["active", "moves"]:
+                        screen = f"{map_game.get_avaible_moves(player=player)}"
 
                     elif action[0] == "update":
                         opt = "_".join(action[1:])

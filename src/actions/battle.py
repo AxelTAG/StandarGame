@@ -96,7 +96,7 @@ class Battle:
 
     def player_action(self, player: Player, enemies: list[Mob]) -> bool:
         # Action selection and display.
-        actions, _ = player.get_available_actions()
+        actions, _ = player.get_available_actions(onbattle=True)
         choice = get_number(floor_n=0, ceil_n=len(actions) - 1)
         action_type = actions[choice]
 

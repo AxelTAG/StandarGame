@@ -3878,6 +3878,8 @@ BIOMES = {
         mobs_base=MOBS,
         name="TOWN",
         req=[],
+        accessible_from=["gates"],
+        accessible_to=["gates", "town"],
         pace=2,
         status=[PlayerStatus.WALK.value],
         month_temperatures={
@@ -3977,7 +3979,7 @@ BIOMES = {
 # Biome types.
 BiomeTypes = Enum(value="BiomeType", names=list(BIOMES.keys()))
 for k, v in BIOMES.items():
-    v.id = BiomeTypes[k].value
+    v.id = BiomeTypes[k].name
 
 # Entries.
 ENTRIES = {

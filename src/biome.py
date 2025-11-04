@@ -47,7 +47,7 @@ class Biome:
     color: dict[int, tuple] | tuple = field(default=(255, 0, 0, 255), converter=to_default_month_dict)
     description: dict[int, str] | str = field(default="...", converter=to_default_month_dict)
     entries: dict = field(default=None)
-    id: int = field(default=None)
+    id: str = field(default=None)
     color_label: tuple = field(default=(255, 0, 0, 255))
     _name: str = field(init=False)
     _color: tuple = field(init=False)
@@ -72,6 +72,8 @@ class Biome:
     npcs: list = field(default=None)
     items: list = field(default=None)
     req: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
+    accessible_from: list[str] = field(default=None)
+    accessible_to: list[str] = field(default=None)
     pace: dict[int, int] | int = field(default=8, converter=to_default_month_dict)
     draw_map: bool = field(default=True)
     status: dict[int, list] | list = field(default=[PlayerStatus.WALK.value], converter=none_to_month_dict_list)
@@ -213,6 +215,16 @@ class Biome:
         if month < 0:
             raise ValueError
         return self.fishs.get(month, self.get_previous_value(data=self.fishs, key=month))
+
+    def is_accessible_from(self, biome: str) -> bool:
+        if self.accessible_from is None:
+            return True
+        return biome in self.accessible_from
+
+    def is_accessible_to(self, biome: str) -> bool:
+        if self.accessible_to is None:
+            return True
+        return biome in self.accessible_to
 
     def has_mob_respawned(self, mob_id: int) -> bool:
         for mob in self.mobs_respawned:

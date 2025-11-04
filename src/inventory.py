@@ -60,6 +60,9 @@ class Inventory:
             return self.items[item]
         return 0
 
+    def get_gold(self) -> int:
+        return self.gold
+
     def has(self, item: str, amount: int) -> bool:
         if item == "gold":
             return self.gold >= amount

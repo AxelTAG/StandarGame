@@ -9,6 +9,15 @@ class Actions(Enum):
     SKILL = 2
     USE_ITEM = 3
     WAIT = 4
+    MOVE = 5
+    SAVE_AND_QUIT = 6
+
+
+class Directions(Enum):
+    NORTH = 1
+    EAST = 2
+    SOUTH = 3
+    WEST = 4
 
 
 class BodyPart(Enum):

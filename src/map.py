@@ -65,6 +65,14 @@ class Map:
         self.x_len = len(self.map_labels) - 1
         self.y_len = len(self.map_labels[0]) - 1
 
+    # Control methods.
+    def get_label(self, x: int, y: int) -> str:
+        return self.map_labels[y][x]
+
+    def get_current_biome_name(self, x: int, y: int) -> str:
+        return self.map_settings[(x, y)].name[self.current_month]
+
+    # Time methods.
     @property
     def get_hours(self):
         sum_days = (self.day - 1)
@@ -194,6 +202,7 @@ class Map:
         date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
         return date_1 < date_2
 
+    # Place methods.
     def place_from_list(self, place_list: list) -> Biome | Entry:
         place = self.map_settings[place_list[0]]
         for site in place_list[1:]:
@@ -216,6 +225,10 @@ class Map:
             neighbors.append(self.map_settings[(x - 1, y)])
         return neighbors
 
+    def get_region_name(self, x: int, y: int) -> str:
+        return "NAIWAT"
+
+    # Npc methods.
     def check_room_expiration(self, player: Player, npc: str) -> iter:
         for item, date in self.npcs[npc].room_expirations.items():
             if item in player.inventory.items.keys():
@@ -247,6 +260,7 @@ class Map:
             if npc.place is not None:
                 self.place_from_list(place_list=npc.place).add_npc(npc=npc_key)
 
+    # Refreshing methods.
     def refresh_biomes(self):
         for biome in self.map_settings.values():
             biome.refresh_biome(day=self.day,
@@ -255,3 +269,41 @@ class Map:
     def refresh_map(self) -> None:
         self.refresh_npcs()
         self.refresh_biomes()
+
+    # Player control methods.
+    def get_avaible_moves(self, player: Player) -> list:
+        active_moves = [0, 0, 0, 0]
+        month = self.current_month
+        current_tile = self.map_labels[player.y][player.x]
+        if not player.outside:
+            return active_moves
+
+        directions = [
+            (0, -1, 0),  # North
+            (1, 0, 1),  # East
+            (0, 1, 2),  # South
+            (-1, 0, 3)  # West
+        ]
+
+        for dx, dy, idx in directions:
+            nx, ny = player.x + dx, player.y + dy
+
+            if not (0 <= nx < self.y_len and 0 <= ny < self.x_len):
+                continue
+
+            ms_tile = self.map_settings[(nx, ny)]
+
+            if not ms_tile.is_accessible_from(biome=current_tile):
+                continue
+
+            label_tile = self.map_labels[ny][nx]
+            if not player.place.is_accessible_to(biome=label_tile):
+                continue
+
+            all_req = all(player.has(item=req) for req in ms_tile.get_req(month=month))
+            all_status = player.status in ms_tile.get_status(month=month)
+
+            if all_req and all_status:
+                active_moves[idx] = 1
+
+        return active_moves

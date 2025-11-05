@@ -66,11 +66,12 @@ class Skill:
     def action(self, caster, target) -> tuple[bool, bool, int, bool, list]:
         fail, avaible, effective_damage, critical, effects = False, False, 0, False, []
 
+        if not caster.use_vital_energy(amount=self.cost):
+            return fail, avaible, effective_damage, critical, effects
+        avaible = True
+
         if not caster.precision * self.accuracy * (1 - target.evasion) > random.random():
             fail = True
-            return fail, avaible, effective_damage, critical, effects
-
-        if not caster.use_vital_energy(amount=self.cost):
             return fail, avaible, effective_damage, critical, effects
 
         damage = self.damage(caster=caster) * self.get_type_factor(element=self.element)
@@ -121,14 +122,15 @@ class Skill:
         if equip:
             msg = ""
             not_necessary_conditions = []
-            for requirement, condition in self.requirements_equip.items():
-                if condition == EquipCondition.NECESSARY.value:
-                    if not caster.is_equiped(item=requirement):
-                        return False, RequirementType.EQUIP.value, f"{requirement}"
-                not_necessary_conditions.append(caster.is_equiped(item=requirement))
-                msg += f"{self.underscores(text=requirement, delete=True)}, "
-            if not any(not_necessary_conditions):
-                return False, RequirementType.EQUIP.value, msg[:-2]
+            if len(self.requirements_equip) >= 1:
+                for requirement, condition in self.requirements_equip.items():
+                    if condition == EquipCondition.NECESSARY.value:
+                        if not caster.is_equiped(item=requirement):
+                            return False, RequirementType.EQUIP.value, f"{requirement}"
+                    not_necessary_conditions.append(caster.is_equiped(item=requirement))
+                    msg += f"{self.underscores(text=requirement, delete=True)}, "
+                if not any(not_necessary_conditions):
+                    return False, RequirementType.EQUIP.value, msg[:-2]
 
         if items:
             for requirement, quantity in self.requirements_items.items():

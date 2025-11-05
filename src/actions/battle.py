@@ -13,7 +13,6 @@ from ..utils import reset_map, underscores
 import random
 from attrs import field, define
 
-
 STANDARD_VICTORY_MSG = "Victory! You defeated all enemies."
 STANDARD_DEFEAT_MSG = "The enemy has defeat you..."
 STANDARD_PARTY_DEFEAT_MSG = "Defeat... Your party has fallen."
@@ -44,7 +43,7 @@ class Battle:
     enemies: list[Mob] | Mob
     mapgame: Map
     turn: int = field(default=1)
-    
+
     # Escape attributes.
     escape: bool = field(default=False)
     escape_chance: float = field(default=None)
@@ -94,6 +93,14 @@ class Battle:
         entities = [entitie for entitie in self.players + self.enemies if entitie.is_alive()]
         return sorted(entities, key=lambda entitie: entitie.speed, reverse=True)
 
+    def select_target_enemy(self) -> Mob:
+        alive_enemies = [enemy for enemy in self.enemies if enemy.is_alive()]
+        if len(alive_enemies) == 1:
+            return alive_enemies[0]
+        displays.disp_enemies(enemies=alive_enemies, display=True)
+        selection = get_number(floor_n=1, ceil_n=len(alive_enemies)) - 1
+        return alive_enemies[selection]
+
     def player_action(self, player: Player, enemies: list[Mob]) -> bool:
         # Action selection and display.
         actions, _ = player.get_available_actions(onbattle=True)
@@ -114,7 +121,7 @@ class Battle:
             return True
 
         elif action_type == enums.Actions.HIT_ATTACK:
-            target = random.choice([enemy for enemy in enemies if enemy.is_alive()])
+            target = self.select_target_enemy()
             fail, _, damage, critical, _ = player.attack_to(target=target)
             if fail:
                 self.screen.append(f"{player.name} has failed the attack.")
@@ -126,21 +133,23 @@ class Battle:
 
         elif action_type == enums.Actions.SKILL:
             displays.disp_skill_selection(entitie=player, prefix=" ")
-            number = get_number(floor_n=1, ceil_n=len(player.skills)) - 1
+            number = get_number(floor_n=1, ceil_n=len(player.skills) - 1)
             if 0 <= number < len(player.skills):
                 skill = player.skills[number]
-                target = random.choice([enemy for enemy in enemies if enemy.is_alive()])
+                target = self.select_target_enemy()
                 avaible, requirement, cause = player.is_skill_available(skill=skill)
                 if avaible:
-                    fail, avaible, damage, critical, effects = skill.action(player, target)
+                    fail, _, damage, critical, effects = skill.action(caster=player, target=target)
                     if fail:
                         self.screen.append(f"{player.name} has failed the skill {skill.name}.")
                     if critical:
                         self.screen[-1] += " Critical hit!"
                     if effects:
                         effect_names = [effect.name for effect in effects]
-                        self.screen.append(f"{player.name}’s skill caused the following effects: {', '.join(effect_names)}.")
-                    self.screen.append(f"{player.name} has casted {skill.name} and has dealt {damage}.")
+                        self.screen.append(
+                            f"{player.name}’s skill caused the following effects: {', '.join(effect_names)}.")
+                    if not fail:
+                        self.screen.append(f"{player.name} has casted {skill.name} and has dealt {damage}.")
                     return True
                 if requirement == enums.RequirementType.VITAL_ENERGY.value:
                     self.display(screen=STANDARD_NOT_ENOUGH_VT_MSG,
@@ -155,7 +164,7 @@ class Battle:
                                  clear=False)
                     return False
                 if requirement == enums.RequirementType.EQUIP.value:
-                    self.display(screen=STANDARD_NOT_EQUIPED_MSG,
+                    self.display(screen=f"{STANDARD_NOT_EQUIPED_MSG}\n({cause})",
                                  players=self.players,
                                  enemies=self.enemies,
                                  clear=False)

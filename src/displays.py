@@ -81,6 +81,15 @@ def disp_drop() -> str:
     return "DROP -QUANTITY -ITEM."
 
 
+def disp_enemies(enemies: list[Mob], display: bool = True, prefix: str = " ", subfix: str = "") -> list[str] | None:
+    labels = [f" {prefix}{i} - {enemy.name.upper()}{subfix}" for i, enemy in enumerate(enemies, 1)]
+    if display:
+        print(f"\n{prefix}SELECT ENEMY:{subfix}")
+        for label in labels:
+            print(label)
+    return labels
+
+
 # Enter action.
 def disp_enter(place: Biome) -> str:
     if place.entries:

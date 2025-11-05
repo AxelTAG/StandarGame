@@ -9,7 +9,7 @@ from .actions.talk import talk
 from .inventory import Inventory
 from .map import Map
 from .player import Player
-from .utils import draw_move, clear, check_name, find_full_name, typewriter
+from .utils import clear, check_name, find_full_name, typewriter
 from .world import *
 
 # External imports.

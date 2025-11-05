@@ -398,11 +398,13 @@ class Player:
             if item.id == slot.id:
                 self.belt.clear_slot(slot=i)
 
-    def is_equiped(self, item: Item | str):
-        if item in self.equip.values():
-            return True
-        if item in [item.id for item in self.get_equiped_items()]:
-            return True
+    def is_equiped(self, item: Item | str) -> bool:
+        if isinstance(item, Item):
+            if item in self.equip.values():
+                return True
+        if isinstance(item, str):
+            if item in [item.id for item in self.get_equiped_items()]:
+                return True
         return False
 
     # Map methods.
@@ -442,7 +444,7 @@ class Player:
 
     # Skill methods.
     def is_skill_available(self, skill: Skill) -> tuple[bool, int, str]:
-        if self.vital_energy <= skill.cost:
+        if self.vital_energy < skill.cost:
             return False, RequirementType.VITAL_ENERGY.value, f"{skill.cost}"
         return skill.check_requirements(caster=self)
 

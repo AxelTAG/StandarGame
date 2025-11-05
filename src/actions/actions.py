@@ -275,23 +275,23 @@ def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
     return f"You left the {player.last_place.get_name(month=map_game.current_month)}.", False
 
 
-def fish(player: Player, map_game: Map, pace_factor: float = 0.3) -> str:
+def fish(player: Player, mapgame: Map, pace_factor: float = 0.3) -> str:
     if not any([item.fishing for item in player.inventory.get_item_objects]):
         return "You need a fishingpole to fish."
 
-    if not player.place.get_water(month=map_game.current_month):
+    if not player.place.get_water(month=mapgame.current_month):
         return "You cannot fish here."
 
-    probability = 0.95 if player.place.get_name(month=map_game.current_month) != "SEA" else 0.99
+    probability = 0.95 if player.place.get_name(month=mapgame.current_month) != "SEA" else 0.99
     if random.random() > probability:
-        fish_caught = random.choices(player.place.get_fishs(month=map_game.current_month), k=1)[0]
+        fish_caught = random.choices(player.place.get_fishs(month=mapgame.current_month), k=1)[0]
         fish_caught_name = fish_caught.replace("_", " ").title()
         player.add_item(item=fish_caught, quantity=1)
-        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
+        mapgame.add_hours(hours_to_add=int(player.place.get_pace(month=mapgame.current_month) * pace_factor))
         return f"You have caught a {fish_caught_name}."
 
     else:
-        map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
+        mapgame.add_hours(hours_to_add=int(player.place.get_pace(month=mapgame.current_month) * pace_factor))
         return "You haven't caught anything."
 
 

@@ -514,7 +514,7 @@ class Game:
                     player.standing = False if player.outside else True
 
                 elif action[0] == "fish":
-                    screen = fish(player=player, map_game=map_game)
+                    screen = fish(player=player, mapgame=map_game)
                     player.standing = False
 
                 elif action[0] == "land":  # Land action.

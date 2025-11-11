@@ -2,6 +2,8 @@
 # Local imports.
 from .enums import *
 from .mob import Mob
+from .entities.entitie import Fish
+from .globals import FISH_RATE_RESPAWN
 
 # External imports.
 import copy
@@ -88,8 +90,10 @@ class Biome:
     altitude: int = field(default=5)
     month_temperatures: dict[int, int] = field(default=15, converter=to_default_month_dict)
     water: dict[int, bool] | bool = field(default=False, converter=to_default_month_dict)
-    fishs: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
-    fishs_respawned: list = field(default=None)
+    fishes: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
+    fishes_respawned: list = field(factory=list)
+    fishes_respawn_time: dict[int, int] = field(default=16, converter=to_default_month_dict)
+    fishes_base: dict = field(default=None)
     _temperature: int = field(init=False)
     _water: bool = field(init=False)
     _fishs: list = field(init=False)
@@ -128,6 +132,7 @@ class Biome:
         self._water = self.get_water(month=Months.AURENAR.value)
         self._fishs = self.get_fishs(month=Months.AURENAR.value)
         self._current_month = Months.AURENAR.value
+        self.respawn_fishs()
 
         # Mobs and fighting attributes (Post).
         if self.mobs is None:
@@ -145,6 +150,7 @@ class Biome:
     def temperature(self) -> int:
         return self._temperature + self.altitude // 180
 
+    # General get methods.
     def get_name(self, month: int) -> str:
         if month < 0:
             raise ValueError
@@ -214,18 +220,41 @@ class Biome:
     def get_fishs(self, month: int) -> list:
         if month < 0:
             raise ValueError
-        return self.fishs.get(month, self.get_previous_value(data=self.fishs, key=month))
+        return self.fishes.get(month, self.get_previous_value(data=self.fishes, key=month))
 
     def is_accessible_from(self, biome: str) -> bool:
         if self.accessible_from is None:
             return True
         return biome in self.accessible_from
 
+    # Place methods.
+    def set_x(self, value: int) -> None:
+        if isinstance(value, int):
+            self.x = value
+            self.coordinates = (value, self.coordinates[1])
+            return
+        raise TypeError
+
+    def set_y(self, value: int) -> None:
+        if isinstance(value, int):
+            self.y = value
+            self.coordinates = (self.coordinates[0], value)
+            return
+        raise TypeError
+
+    def set_coordinates(self, value: tuple[int, int]) -> None:
+        if isinstance(value, tuple):
+            if isinstance(value[0], int) and isinstance(value[1], int):
+                self.coordinates = value
+                raise TypeError
+        return
+
     def is_accessible_to(self, biome: str) -> bool:
         if self.accessible_to is None:
             return True
         return biome in self.accessible_to
 
+    # Mobs methods.
     def has_mob_respawned(self, mob_id: int) -> bool:
         for mob in self.mobs_respawned:
             if mob.id == mob_id:
@@ -293,24 +322,38 @@ class Biome:
             if mob.hp <= 0:
                 self.remove_mob_respawned(mob=mob)
 
-    def refresh_biome(self, day: int, neighboors: list) -> None:
+    def set_mobs(self,
+                 list_mob_names: list[str],
+                 mob_base: dict[str, dict]) -> list | None:
+        if list_mob_names is None:
+            return []
+
+        mobs = []
+        for mob in list_mob_names:
+            mobs.append(copy.deepcopy(mob_base[mob]))
+        self.mobs = mobs
+
+    # Refresh methods.
+    def refresh_biome(self, day: int, month: int, neighboors: list) -> None:
         # Update of private attributes.
-        self._name = self.get_name(month=Months.AURENAR.value)
-        self._color = self.get_color(month=Months.AURENAR.value)
-        self._description = self.get_description(month=Months.AURENAR.value)
+        self._name = self.get_name(month=month)
+        self._color = self.get_color(month=month)
+        self._description = self.get_description(month=month)
 
-        self._mobs_names = self.get_mobs_names(month=Months.AURENAR.value)
-        self._mobs_chances = self.get_mobs_chances(month=Months.AURENAR.value)
-        self._mobs_respawn_time = self.get_mobs_respawn_time(month=Months.AURENAR.value)
-        self._mobs_quantity = self.get_mobs_quantity(month=Months.AURENAR.value)
+        self._mobs_names = self.get_mobs_names(month=month)
+        self._mobs_chances = self.get_mobs_chances(month=month)
+        self._mobs_respawn_time = self.get_mobs_respawn_time(month=month)
+        self._mobs_quantity = self.get_mobs_quantity(month=month)
 
-        self._req = self.get_req(month=Months.AURENAR.value)
-        self._pace = self.get_pace(month=Months.AURENAR.value)
-        self._status = self.get_status(month=Months.AURENAR.value)
+        self._req = self.get_req(month=month)
+        self._pace = self.get_pace(month=month)
+        self._status = self.get_status(month=month)
 
-        self._temperature = self.get_temperature(month=Months.AURENAR.value)
-        self._water = self.get_water(month=Months.AURENAR.value)
-        self._fishs = self.get_fishs(month=Months.AURENAR.value)
+        self._temperature = self.get_temperature(month=month)
+        self._water = self.get_water(month=month)
+        self._fishs = self.get_fishs(month=month)
+
+        self._current_month = month
 
         # Mobs.
         self.discard_death_mobs()
@@ -334,38 +377,33 @@ class Biome:
     def remove_item(self, item: str) -> None:
         self.items.remove(item)
 
-    def set_mobs(self,
-                 list_mob_names: list[str],
-                 mob_base: dict[str, dict]) -> list | None:
-        if list_mob_names is None:
-            return []
+    # Fish methods.
+    def get_fishs_respawned(self) -> list:
+        return self.fishes_respawned
 
-        mobs = []
-        for mob in list_mob_names:
-            mobs.append(copy.deepcopy(mob_base[mob]))
-        self.mobs = mobs
+    def get_fish_quantity(self) -> int:
+        return len(self.get_fishs_respawned())
 
-    def set_x(self, value: int) -> None:
-        if isinstance(value, int):
-            self.x = value
-            self.coordinates = (value, self.coordinates[1])
+    def add_respawned_fish(self, fish: Fish) -> None:
+        self.fishes_respawned.append(fish)
+
+    def remove_respawned_fish(self, fish: Fish) -> None:
+        self.fishes_respawned.remove(fish)
+
+    def respawn_fishs(self, base: dict = None) -> None:
+        if base is None:
+            base = self.fishes_base
+        if self.fishes is None:
             return
-        raise TypeError
+        month = self._current_month
+        fishes = self.add_entities_from_base(entities=self.get_fishs(month=month), base=base)
+        fish_entities = [fish for fish in fishes if month in fish.spawn_months]
+        if fishes:
+            if random.random() < FISH_RATE_RESPAWN:
+                fishs_to_respawn = random.choices(fish_entities, k=2)
+                self.fishes_respawned.extend(fishs_to_respawn)
 
-    def set_y(self, value: int) -> None:
-        if isinstance(value, int):
-            self.y = value
-            self.coordinates = (self.coordinates[0], value)
-            return
-        raise TypeError
-
-    def set_coordinates(self, value: tuple[int, int]) -> None:
-        if isinstance(value, tuple):
-            if isinstance(value[0], int) and isinstance(value[1], int):
-                self.coordinates = value
-                raise TypeError
-        return
-
+    # Static methods.
     @staticmethod
     def get_previous_value(data: dict, key):
         if key not in data:
@@ -375,6 +413,10 @@ class Biome:
         index = keys.index(key)
         prev_key = keys[index - 1] if index > 0 else keys[-1]
         return data[prev_key]
+
+    @staticmethod
+    def add_entities_from_base(entities: str | list[str], base: dict) -> list:
+        return [copy.deepcopy(base[entitie]) for entitie in entities if entitie in base]
 
 
 @define

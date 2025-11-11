@@ -192,6 +192,7 @@ class Game:
             # Map settings.
             map_game = Map(mobs=copy.deepcopy(MOBS),
                            biomes=copy.deepcopy(BIOMES),
+                           fishes=copy.deepcopy(FISHES),
                            npcs=copy.deepcopy(NPCS),
                            entries=copy.deepcopy(ENTRIES))
 
@@ -630,10 +631,9 @@ class Game:
 
                     else:
                         item = find_full_name(partial_name="_".join(action[1:]).replace("'", ""),
-                                              names_list=[i.id for i in player.get_equiped_items() if
-                                                          i is not None],
+                                              names_list=[i.id for i in player.get_equiped_items()],
+                                              unique=False,
                                               original=True)
-
                         screen = unequip(player=player, item=item)
                         player.standing = True
 
@@ -748,17 +748,12 @@ class Game:
                     elif action == ["active", "moves"]:
                         screen = f"{map_game.get_avaible_moves(player=player)}"
 
+                    elif action[:2] == ["count", "biome"]:
+                        screen = f"{map_game.get_number_biomes(biome_id=action[2:])}"
+
                     elif action[0] == "update":
                         opt = "_".join(action[1:])
                         screen, player, map_game = management.update(player=player, mapgame=map_game, option=opt)
-
-                    elif action[0] == "repair":
-                        map_game.map_settings[(36, 42)].entries = {
-                            "cave": map_game.map_settings[(49, 43)].entries["cave"]
-                        }
-                        map_game.map_settings[(36, 42)].entries["cave"].leave_entry = map_game.map_settings[
-                            (36, 42)]
-                        screen = "Game repaired."
 
                     elif action[0] == "equal":
                         npc_quest = map_game.npcs['ant_loial'].get_first_quest()

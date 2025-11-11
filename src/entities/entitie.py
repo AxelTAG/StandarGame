@@ -1,6 +1,8 @@
 # Imports.
 # Local imports.
 # External imports.
+import random
+
 from attrs import define, field
 
 
@@ -16,16 +18,83 @@ class Entitie:
     visibility: float = field(default=1)
     interactable: bool = field(default=False)
 
+    def __attrs_post_init__(self):
+        if self.id is None:
+            self.id = self.underscores(text=self.name.lower())
+
+    @staticmethod
+    def underscores(text: str):
+        return text.replace(" ", "_").lower()
+
 
 @define
 class Fish(Entitie):
     # Swim attributes.
     depth: int = field(default=1)
+    spawn_months: list[int] = field(default=None)
+    catch_chance: float = field(default=0.2)
+
+    # Growth attributes.
+    growth_rate: float = field(default=0.001)
+    weight: float = field(init=False)
+    max_weight: float = field(default=1)
+    age: int = field(default=None)
+    max_age: int = field(default=24 * 64 * 8)
 
     # Place attributes.
     movable: bool = field(default=True)
-    movable_biomes: list[int] = field(default=None)
+    movable_biomes: list[str] = field(default=None)
     move_chance: float = field(default=0)
+
+    def __attrs_post_init__(self):
+        # Super init.
+        super().__attrs_post_init__()
+
+        # Swim attributes.
+        if self.spawn_months is None:
+            self.spawn_months = list(range(8))
+
+        # Growth attributes.
+        self.weight = max(min(random.random(), 0.5) * self.max_weight, self.max_weight * 0.2)
+
+        if self.age is None:
+            self.age = random.randint(a=0, b=int(0.3 * self.max_age))
+
+    # Growth methods.
+    def refresh(self, hours: int) -> None:
+        self.weight += hours * self.growth_rate
+        self.age += hours
+
+    def is_alive(self) -> bool:
+        return self.age <= self.max_age
+
+    # Move methods.
+    def is_mobile(self) -> bool:
+        return self.movable
+
+    def move(self, place) -> bool:
+        if self.is_mobile():
+            if place.id in self.movable_biomes:
+                return True
+        return False
+
+    def random_move(self, places: list) -> None:
+        if not self.movable_biomes:
+            return
+
+        if not self.move_chance > random.random():
+            return
+
+        places = list(filter(lambda x: x.id in self.movable_biomes, places))
+        if places:
+            place = random.choices(places, k=1)[0]
+            if self.move(place=place):
+                return place
+        return
+
+    # Drop methods.
+    def get_drop_item(self):
+        return self.id
 
 
 @define

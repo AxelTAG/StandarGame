@@ -24,3 +24,8 @@ DIRECTIONS = {0: "1 - NORTH", 1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
 # Colors.
 WHITE = (255, 255, 255, 255)
 PINK = (255, 105, 180, 255)
+
+
+# Map restrintions.
+FISH_RESPAWNED_LIMIT = 3000
+FISH_RATE_RESPAWN = 0.2

@@ -12,6 +12,7 @@ from ..world import ITEMS
 
 from .battle import battle
 from .explore import explore
+from .fish import fish
 from .use import use
 
 # External imports.
@@ -275,26 +276,6 @@ def exit_entry(player: Player, map_game: Map) -> tuple[str, bool]:
     return f"You left the {player.last_place.get_name(month=map_game.current_month)}.", False
 
 
-def fish(player: Player, mapgame: Map, pace_factor: float = 0.3) -> str:
-    if not any([item.fishing for item in player.inventory.get_item_objects]):
-        return "You need a fishingpole to fish."
-
-    if not player.place.get_water(month=mapgame.current_month):
-        return "You cannot fish here."
-
-    probability = 0.95 if player.place.get_name(month=mapgame.current_month) != "SEA" else 0.99
-    if random.random() > probability:
-        fish_caught = random.choices(player.place.get_fishs(month=mapgame.current_month), k=1)[0]
-        fish_caught_name = fish_caught.replace("_", " ").title()
-        player.add_item(item=fish_caught, quantity=1)
-        mapgame.add_hours(hours_to_add=int(player.place.get_pace(month=mapgame.current_month) * pace_factor))
-        return f"You have caught a {fish_caught_name}."
-
-    else:
-        mapgame.add_hours(hours_to_add=int(player.place.get_pace(month=mapgame.current_month) * pace_factor))
-        return "You haven't caught anything."
-
-
 # Heal action.
 def heal(player: Player, amount: int) -> tuple[str, int]:
     player.heal(amount=amount)
@@ -490,6 +471,9 @@ def sell(player: Player, item: str, quantity: int, price: int) -> tuple[str, boo
 
 # Unequip action.
 def unequip(player: Player, item: str) -> str:
+    if item is None:
+        f"You don't have equipped {item}."
+
     item_name = item.replace("_", " ").title()
     item_object = player.get_equiped_item(item=item)
 

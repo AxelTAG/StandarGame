@@ -377,12 +377,9 @@ class Player:
         return None
 
     def get_equiped_items(self) -> list[Item]:
-        items = []
-        for item in self.equip.values():
-            if item is None:
-                continue
-            items.append(item)
-        return items
+        body_items = [item for item in self.equip.values() if item is not None]
+        belt_items = [item for item in self.belt.get_slot_items() if item is not None]
+        return body_items + belt_items
 
     def equip_item(self, item: Item) -> None:
         if item.equippable and self.equip[item.body_part] is None:

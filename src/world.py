@@ -1,6 +1,7 @@
 # Imports.
 # Local imports.
 from .biome import Biome, Entry
+from .entities.entitie import Fish
 from .enums import *
 from .item import Item
 from .mob import Mob
@@ -280,6 +281,232 @@ SKILLS_MOB = {
         },
         requirements_equip={},
         tags=["attack_little_slime"]
+    ),
+}
+
+# Fishs.
+FISHES = {
+    # Coast, sea and ocean fishes.
+    "fish_flounder": Fish(
+        name="Fish Flounder",
+        description="A flat fish that camouflages on sandy ocean floors to hunt.",
+        depth=10,
+        spawn_months=[0, 1, 2, 3],
+        catch_chance=0.3,
+        growth_rate=0.0015,
+        max_weight=3,
+        movable=True,
+        movable_biomes=["bay", "coast", "estuary"],
+        move_chance=0.15
+    ),
+
+    "fish_grouper": Fish(
+        name="Fish Grouper",
+        description="A sturdy fish inhabiting reefs and rocky ocean floors.",
+        depth=20,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.25,
+        growth_rate=0.0012,
+        max_weight=20,
+        movable=True,
+        movable_biomes=["coast", "reef"],
+        move_chance=0.1
+    ),
+
+    "fish_hammerhead_shark": Fish(
+        name="Fish Hammerhead Shark",
+        description="A unique predator with a distinctive hammer-shaped head.",
+        depth=30,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.05,
+        growth_rate=0.0008,
+        max_weight=300,
+        movable=True,
+        movable_biomes=["coast", "sea"],
+        move_chance=0.05
+    ),
+
+    "fish_mackerel": Fish(
+        name="Fish Mackerel",
+        description="A swift, striped fish, commonly found in coastal schools.",
+        depth=10,
+        spawn_months=[1, 2, 3, 4],
+        catch_chance=0.4,
+        growth_rate=0.002,
+        max_weight=2,
+        movable=True,
+        movable_biomes=["coast", "sea"],
+        move_chance=0.25
+    ),
+
+    "fish_mahi_mahi": Fish(
+        name="Fish Mahi-Mahi",
+        description="A vibrant-colored fish, known for its strength and leaping ability.",
+        depth=20,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.25,
+        growth_rate=0.002,
+        max_weight=30,
+        movable=True,
+        movable_biomes=["sea"],
+        move_chance=0.2
+    ),
+
+    "fish_ray": Fish(
+        name="Fish Ray",
+        description="A flattened fish with wide fins and a venomous sting in its tail.",
+        depth=10,
+        spawn_months=[0, 1, 2, 3, 4, 5],
+        catch_chance=0.15,
+        growth_rate=0.001,
+        max_weight=10,
+        movable=True,
+        movable_biomes=["coast", "estuary", "reef"],
+        move_chance=0.1
+    ),
+
+    "fish_sardine": Fish(
+        name="Fish Sardine",
+        description="A small silvery fish, popular among anglers and vital to the marine ecosystem.",
+        depth=10,
+        spawn_months=[0, 1, 2, 3, 4, 5, 6, 7],
+        catch_chance=0.5,
+        growth_rate=0.002,
+        max_weight=0.3,
+        movable=True,
+        movable_biomes=["coast", "sea"],
+        move_chance=0.4
+    ),
+
+    "fish_snapper": Fish(
+        name="Fish Snapper",
+        description="A white-fleshed fish, common in tropical and subtropical waters.",
+        depth=10,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.3,
+        growth_rate=0.0013,
+        max_weight=8,
+        movable=True,
+        movable_biomes=["coast", "reef"],
+        move_chance=0.15
+    ),
+
+    "fish_swordfish": Fish(
+        name="Fish Swordfish",
+        description="A large predator with a characteristic elongated sword-like snout.",
+        depth=40,
+        spawn_months=[3, 4, 5],
+        catch_chance=0.1,
+        growth_rate=0.001,
+        max_weight=400,
+        movable=True,
+        movable_biomes=["sea"],
+        move_chance=0.05
+    ),
+
+    "fish_tuna": Fish(
+        name="Fish Tuna",
+        description="A fast ocean fish, highly valued for its delicious and versatile meat.",
+        depth=40,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.2,
+        growth_rate=0.0015,
+        max_weight=250,
+        movable=True,
+        movable_biomes=["sea"],
+        move_chance=0.1
+    ),
+
+    # River fishes.
+    "fish_sabalo": Fish(
+        name="Fish Sabalo",
+        description="A plump, silvery catch, prized for its rich flavor and hearty nourishment.",
+        depth=5,
+        spawn_months=[0, 1, 2, 3],
+        catch_chance=0.35,
+        growth_rate=0.0015,
+        max_weight=5,
+        movable=True,
+        movable_biomes=["river", "estuary"],
+        move_chance=0.3
+    ),
+
+    "fish_trout": Fish(
+        name="Fish Trout",
+        description="A lively river fish with shimmering scales and delicate, savory flesh.",
+        depth=2,
+        spawn_months=[0, 1, 2, 3],
+        catch_chance=0.35,
+        growth_rate=0.0018,
+        max_weight=2.5,
+        movable=True,
+        movable_biomes=["river", "lake"],
+        move_chance=0.25
+    ),
+
+    "fish_salmon": Fish(
+        name="Fish Salmon",
+        description="A strong swimmer known for its migration and rich, nourishing meat.",
+        depth=5,
+        spawn_months=[0, 1, 4, 5],
+        catch_chance=0.25,
+        growth_rate=0.002,
+        max_weight=6,
+        movable=True,
+        movable_biomes=["river", "estuary", "sea"],
+        move_chance=0.2
+    ),
+
+    "fish_catfish": Fish(
+        name="Fish Catfish",
+        description="A bottom-dwelling fish with whiskers and thick skin, common in muddy waters.",
+        depth=5,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.3,
+        growth_rate=0.0014,
+        max_weight=12,
+        movable=True,
+        movable_biomes=["river", "lake", "estuary"],
+        move_chance=0.15
+    ),
+
+    "fish_piranha": Fish(
+        name="Fish Piranha",
+        description="A fierce river predator with sharp teeth and a taste for blood.",
+        depth=2,
+        spawn_months=[2, 3, 4, 5],
+        catch_chance=0.4,
+        growth_rate=0.0016,
+        max_weight=1.2,
+        movable=True,
+        movable_biomes=["river"],
+        move_chance=0.3
+    ),
+
+    "fish_carp": Fish(
+        name="Fish Carp",
+        description="A common river fish, adaptable and resilient, often seen near calm waters.",
+        depth=2,
+        spawn_months=[0, 1, 2, 3, 4, 5],
+        catch_chance=0.45,
+        growth_rate=0.0017,
+        max_weight=4,
+        movable=True,
+        movable_biomes=["river", "lake", "estuary"],
+        move_chance=0.25
+    ),
+
+    "fish_eel": Fish(
+        name="Fish Eel",
+        description="A slippery, nocturnal fish that hides in the mud and emerges after dusk.",
+        depth=5,
+        spawn_months=[4, 5, 6, 7],
+        catch_chance=0.2,
+        growth_rate=0.0013,
+        max_weight=3,
+        movable=True,
+        movable_biomes=["river", "estuary", "coast"],
+        move_chance=0.15
     ),
 }
 
@@ -1029,17 +1256,6 @@ ITEMS = {
                                buy_price=250,
                                sell_price=85),
 
-    "fishing_pole": Item(name="Fishing Pole",
-                         description="A sturdy pole for fishing. A useful tool for catching food.",
-                         weight=1,
-                         pickable=True,
-                         consumable=False,
-                         equippable=False,
-                         expiration=None,
-                         buy_price=150,
-                         sell_price=100,
-                         fishing=True),
-
     "powder_keg": Item(name="Powder Keg",
                        description="Volatile and dangerous, capable of causing great destruction with a "
                                    "single spark.",
@@ -1085,6 +1301,90 @@ ITEMS = {
                   buy_price=10,
                   sell_price=10,
                   crafting_materials={"stick": 1, "giant_silk": 1, "slime_balls": 1}),
+
+    # Fishing poles.
+
+    "river_fishing_pole": Item(
+        name="River Fishing Pole",
+        description="A simple pole for catching small river fish. Light and easy to use.",
+        weight=1,
+        pickable=True,
+        consumable=False,
+        equippable=False,
+        expiration=None,
+        buy_price=100,
+        sell_price=70,
+        fishing=True,
+        depth_range=2
+    ),
+
+    "deep_river_fishing_pole": Item(
+        name="Deep River Fishing Pole",
+        description="A stronger river pole for larger freshwater fish.",
+        weight=1.5,
+        pickable=True,
+        consumable=False,
+        equippable=False,
+        expiration=None,
+        buy_price=150,
+        sell_price=80,
+        fishing=True,
+        depth_range=5
+    ),
+
+    "sturdy_fishing_pole": Item(name="Sturdy Fishing Pole",
+                                description="A sturdy pole for fishing. A useful tool for catching food.",
+                                weight=1,
+                                pickable=True,
+                                consumable=False,
+                                equippable=False,
+                                expiration=None,
+                                buy_price=150,
+                                sell_price=100,
+                                fishing=True,
+                                depth_range=10),
+
+    "shore_fishing_pole": Item(
+        name="Shore Fishing Pole",
+        description="A pole designed for fishing near the shore. Great for medium-sized fish.",
+        weight=1.5,
+        pickable=True,
+        consumable=False,
+        equippable=False,
+        expiration=None,
+        buy_price=200,
+        sell_price=130,
+        fishing=True,
+        depth_range=20
+    ),
+
+    "sea_fishing_pole": Item(
+        name="Sea Fishing Pole",
+        description="A durable fishing pole for open sea fishing. Can handle larger catches.",
+        weight=2,
+        pickable=True,
+        consumable=False,
+        equippable=False,
+        expiration=None,
+        buy_price=300,
+        sell_price=200,
+        fishing=True,
+        depth_range=30
+    ),
+
+    "ocean_fishing_pole": Item(
+        name="Ocean Fishing Pole",
+        description="A reinforced pole built for deep ocean fishing and massive fish.",
+        weight=2,
+        pickable=True,
+        consumable=False,
+        equippable=False,
+        expiration=None,
+        buy_price=400,
+        sell_price=270,
+        fishing=True,
+        depth_range=40
+    ),
 
     # Places items.
     "bed": Item(name="Bed",
@@ -2015,7 +2315,7 @@ NPCS = {
                                       "harpoon": {"gold": 150},
                                       "hardened_leather_armor": {"gold": 120},
                                       "red_potion": {"gold": 10},
-                                      "fishing_pole": {"gold": 200},
+                                      "coast_fishing_pole": {"gold": 200},
                                       "wood_shield": {"gold": 50},
                                       "telescope": {"gold": 200}},
                            place=[(39, 39)]),
@@ -2661,6 +2961,7 @@ MOBS = {
         items={"slime_balls": 2},
         items_drop_chances=[0.6],
         experience=2,
+        skills=[SKILLS_MOB["attack_slime"]]
     ),
 
     "training_dummy": Mob(
@@ -2876,7 +3177,8 @@ BIOMES = {
             Months.IGNARIS.value: 5,
             Months.OUSKARA.value: -10,
             Months.NERITH.value: -40,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "ash_covered_rocky": Biome(
@@ -2897,8 +3199,11 @@ BIOMES = {
             Months.IGNARIS.value: 45,
             Months.OUSKARA.value: 20,
             Months.NERITH.value: 15,
-        }
+        },
+        fishes_base=FISHES
     ),
+
+    "bai": Biome(),
 
     "building": Biome(
         color=(180, 110, 60, 255),
@@ -2914,7 +3219,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "canyon": Biome(
@@ -2934,7 +3240,8 @@ BIOMES = {
             Months.IGNARIS.value: 25,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 4,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "cave": Biome(
@@ -2954,7 +3261,8 @@ BIOMES = {
             Months.IGNARIS.value: 25,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 4,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "coast": Biome(
@@ -2969,14 +3277,15 @@ BIOMES = {
         req=[],
         pace=4,
         water=True,
-        fishs=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
+        fishes=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
         status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "cold_island_steppe": Biome(
@@ -2997,7 +3306,8 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "dark_forest": Biome(
@@ -3018,7 +3328,8 @@ BIOMES = {
             Months.IGNARIS.value: 25,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "death_valley": Biome(
@@ -3039,7 +3350,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "deep_ocean": Biome(
@@ -3054,15 +3366,16 @@ BIOMES = {
         name="DEEP OCEAN",
         pace=18,
         water=True,
-        fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
-               "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
+        fishes=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
+                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "desert": Biome(
@@ -3083,7 +3396,8 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "desert_coast": Biome(
@@ -3104,7 +3418,8 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "desert_mountains": Biome(
@@ -3125,7 +3440,8 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "desert_river": Biome(
@@ -3141,14 +3457,15 @@ BIOMES = {
         req=[],
         pace=6,
         water=True,
-        fishs=[],
+        fishes=[],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 25,
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "dunes": Biome(
@@ -3169,8 +3486,11 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
+
+    "estuary": Biome(),
 
     "fields": Biome(
         color=(115, 231, 29, 255),
@@ -3190,7 +3510,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "forest": Biome(
@@ -3211,7 +3532,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "frostvale": Biome(
@@ -3227,14 +3549,15 @@ BIOMES = {
         req=[],
         pace=6,
         water=True,
-        fishs=["fish_sabalo"],
+        fishes=["fish_sabalo"],
         status=[PlayerStatus.WALK.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "frozen_coast": Biome(
@@ -3250,14 +3573,15 @@ BIOMES = {
         req=[],
         pace=9,
         water=True,
-        fishs=[],
+        fishes=[],
         status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 16,
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "frozen_sea": Biome(
@@ -3277,7 +3601,7 @@ BIOMES = {
         pace={Months.AURENAR.value: 9,
               Months.NERITH.value: 11},
         water=True,
-        fishs=[],
+        fishes=[],
         status={Months.AURENAR.value: [PlayerStatus.SURF.value],
                 Months.NERITH.value: [PlayerStatus.WALK.value]},
         month_temperatures={
@@ -3285,7 +3609,8 @@ BIOMES = {
             Months.IGNARIS.value: 18,
             Months.OUSKARA.value: 11,
             Months.NERITH.value: 3,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "gates": Biome(
@@ -3305,7 +3630,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "highlands": Biome(
@@ -3325,7 +3651,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "hills": Biome(
@@ -3346,7 +3673,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "hut": Biome(
@@ -3370,7 +3698,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "incandescent_lava": Biome(
@@ -3391,7 +3720,8 @@ BIOMES = {
             Months.IGNARIS.value: 55,
             Months.OUSKARA.value: 25,
             Months.NERITH.value: 20,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "island": Biome(
@@ -3412,7 +3742,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "magic_zone": Biome(
@@ -3432,7 +3763,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "molten_surface": Biome(
@@ -3453,7 +3785,8 @@ BIOMES = {
             Months.IGNARIS.value: 55,
             Months.OUSKARA.value: 25,
             Months.NERITH.value: 20,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "mountains": Biome(
@@ -3473,7 +3806,8 @@ BIOMES = {
             Months.IGNARIS.value: 28,
             Months.OUSKARA.value: 12,
             Months.NERITH.value: 6,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "oasis": Biome(
@@ -3487,14 +3821,15 @@ BIOMES = {
         name="OASIS",
         pace=18,
         water=True,
-        fishs=[],
+        fishes=[],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 23,
             Months.IGNARIS.value: 33,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 5,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "oasis_vegetation": Biome(
@@ -3509,14 +3844,15 @@ BIOMES = {
         name="OASIS",
         pace=18,
         water=False,
-        fishs=[],
+        fishes=[],
         status=[PlayerStatus.WALK.value],
         month_temperatures={
             Months.AURENAR.value: 23,
             Months.IGNARIS.value: 33,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 5,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "ocean": Biome(
@@ -3531,15 +3867,16 @@ BIOMES = {
         name="OCEAN",
         pace=18,
         water=True,
-        fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
-               "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
+        fishes=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
+                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 26,
             Months.OUSKARA.value: 17,
             Months.NERITH.value: 12,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "plains": Biome(
@@ -3560,7 +3897,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "plateau": Biome(
@@ -3581,7 +3919,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "red": Biome(
@@ -3594,7 +3933,11 @@ BIOMES = {
         mobs_base=MOBS,
         name="RED",
         req=[],
-        status=[PlayerStatus.WALK.value]),
+        status=[PlayerStatus.WALK.value],
+        fishes_base=FISHES
+    ),
+
+    "reef": Biome(),
 
     "river": Biome(
         color=(0, 162, 232, 255),
@@ -3608,14 +3951,15 @@ BIOMES = {
         req=[],
         pace=6,
         water=True,
-        fishs=["fish_sabalo"],
+        fishes=["fish_sabalo"],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "rocks": Biome(
@@ -3634,7 +3978,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "rocky_desert": Biome(
@@ -3655,7 +4000,8 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "ruins": Biome(
@@ -3676,7 +4022,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "ruins_desert": Biome(
@@ -3697,7 +4044,8 @@ BIOMES = {
             Months.IGNARIS.value: 35,
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "shrubland": Biome(
@@ -3718,7 +4066,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 14,
             Months.NERITH.value: 6,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "sea": Biome(
@@ -3732,15 +4081,16 @@ BIOMES = {
         name="SEA",
         pace=10,
         water=True,
-        fishs=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
-               "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
+        fishes=["fish_sabalo", "fish_tuna", "fish_swordfish", "fish_snapper", "fish_sardine", "fish_sabalo", "fish_ray",
+                "fish_mahi-mahi", "fish_mackerel", "fish_hammerhead_shark", "fish_grouper", "fish_flounder"],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "seleran_forest": Biome(
@@ -3761,7 +4111,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "snow": Biome(
@@ -3781,7 +4132,8 @@ BIOMES = {
             Months.IGNARIS.value: 15,
             Months.OUSKARA.value: 8,
             Months.NERITH.value: 2,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "snowy_forest": Biome(
@@ -3802,7 +4154,8 @@ BIOMES = {
             Months.IGNARIS.value: 18,
             Months.OUSKARA.value: 11,
             Months.NERITH.value: 3,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "snowy_mountains": Biome(
@@ -3823,7 +4176,8 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "snowy_covered_steppe": Biome(
@@ -3844,7 +4198,8 @@ BIOMES = {
             Months.IGNARIS.value: 20,
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "steppe": Biome(
@@ -3865,7 +4220,8 @@ BIOMES = {
             Months.IGNARIS.value: 24,
             Months.OUSKARA.value: 14,
             Months.NERITH.value: 7,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "town": Biome(
@@ -3887,7 +4243,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "valley": Biome(
@@ -3908,7 +4265,8 @@ BIOMES = {
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "volcanic_mountain": Biome(
@@ -3929,7 +4287,8 @@ BIOMES = {
             Months.IGNARIS.value: 42,
             Months.OUSKARA.value: 17,
             Months.NERITH.value: 12,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "volcanic_rock": Biome(
@@ -3950,7 +4309,8 @@ BIOMES = {
             Months.IGNARIS.value: 45,
             Months.OUSKARA.value: 20,
             Months.NERITH.value: 15,
-        }
+        },
+        fishes_base=FISHES
     ),
 
     "water": Biome(
@@ -3965,14 +4325,15 @@ BIOMES = {
         req=[],
         pace=6,
         water=True,
-        fishs=["fish_sabalo"],
+        fishes=["fish_sabalo"],
         status=[PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
             Months.IGNARIS.value: 30,
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
-        }
+        },
+        fishes_base=FISHES
     ),
 }
 

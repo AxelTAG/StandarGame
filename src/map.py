@@ -1,12 +1,15 @@
 # Imports.
 # Local imports.
+import copy
+
 from .biome import Biome, Entry
+from .entities.entitie import Fish
 from .enums import Months, Season, TimeOfDay, WeekDays
 from .npc import Npc
 from .player import Player
 from .utils import label_pixels, tl_map_set
 from .utils_settings import init_map_setting
-from .globals import MAP_TILE_PATH
+from .globals import MAP_TILE_PATH, FISH_RESPAWNED_LIMIT
 
 # External imports.
 from attrs import define, field
@@ -39,10 +42,14 @@ class Map:
     map_settings: dict = field(default=None)
     npcs: dict[str, Npc] = field(default=None)
     biomes: dict = field(default=None)
+    fishes: dict = field(default=None)
     entries: dict = field(default=None)
     mobs: dict = field(default=None)
     x_len: int = field(init=False)
     y_len: int = field(init=False)
+
+    # Map restrictions.
+    fish_respawned_limit: int = field(default=FISH_RESPAWNED_LIMIT)
 
     # Others.
     last_hour: int = field(default=6)
@@ -68,9 +75,6 @@ class Map:
     # Control methods.
     def get_label(self, x: int, y: int) -> str:
         return self.map_labels[y][x]
-
-    def get_current_biome_name(self, x: int, y: int) -> str:
-        return self.map_settings[(x, y)].name[self.current_month]
 
     # Time methods.
     @property
@@ -262,13 +266,27 @@ class Map:
 
     # Refreshing methods.
     def refresh_biomes(self):
+        refresh_fishs = self.get_fish_quantity() <= FISH_RESPAWNED_LIMIT
         for biome in self.map_settings.values():
             biome.refresh_biome(day=self.day,
+                                month=self.current_month,
                                 neighboors=self.neighbors_from_coord(coord=biome.coordinates))
+            if refresh_fishs:
+                biome.respawn_fishs()
 
     def refresh_map(self) -> None:
         self.refresh_npcs()
         self.refresh_biomes()
+
+    # Biome and climate methods.
+    def get_current_biome_name(self, x: int, y: int) -> str:
+        return self.map_settings[(x, y)].name[self.current_month]
+
+    def get_fish(self, fish: str) -> Fish:
+        return copy.deepcopy(self.fishes.get(fish))
+
+    def get_fish_quantity(self) -> int:
+        return sum([biome.get_fish_quantity() for biome in self.map_settings.values()])
 
     # Player control methods.
     def get_avaible_moves(self, player: Player) -> list:
@@ -307,3 +325,14 @@ class Map:
                 active_moves[idx] = 1
 
         return active_moves
+
+    # Map development methods.
+    def get_number_biomes(self, biome_id: str | list[str]) -> dict[str, int]:
+        if isinstance(biome_id, str):
+            biome_id = [biome_id]
+        result = {}
+        for biome in biome_id:
+            result[biome] = 0
+            for row in self.map_labels:
+                result[biome] += row.count(biome)
+        return result

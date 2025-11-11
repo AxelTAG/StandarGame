@@ -53,6 +53,9 @@ class Item:
     hungry_refill: int = field(default=0)
     thirsty_refill: int = field(default=0)
 
+    # Fishing attributes.
+    depth_range: int = field(default=None)
+
     # Sound attributes.
     tracks: dict = field(default=None)
 
@@ -66,6 +69,10 @@ class Item:
 
     # Temperature attributes.
     warmness: int = field(default=0)
+
+    # Drop attributes.
+    fish_age: int = field(default=None)
+    fish_weight: float = field(default=None)
 
     def __attrs_post_init__(self):
         # Item name attributes.

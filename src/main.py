@@ -190,7 +190,8 @@ class Game:
 
             # Initial settings.
             # Map settings.
-            map_game = Map(mobs=copy.deepcopy(MOBS),
+            map_game = Map(items=copy.deepcopy(ITEMS),
+                           mobs=copy.deepcopy(MOBS),
                            biomes=copy.deepcopy(BIOMES),
                            fishes=copy.deepcopy(FISHES),
                            npcs=copy.deepcopy(NPCS),
@@ -373,7 +374,8 @@ class Game:
                     if actions[choice] == Actions.USE_ITEM:
                         screen, _ = use(player=player,
                                         mapgame=map_game,
-                                        item=player.equip[BodyPart.WAIST].slots_packs[choice - (actions_len - player.belt.slots)])
+                                        item=player.equip[BodyPart.WAIST].slots_packs[
+                                            choice - (actions_len - player.belt.slots)])
                     player.standing = True
 
                 elif action[0] == "assign":  # Assign action.

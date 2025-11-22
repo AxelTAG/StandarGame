@@ -1,9 +1,9 @@
 # Imports.
-# Local imports.
 # External imports.
+import copy
 import random
 
-from attrs import define, field
+from attrs import asdict,define, field
 
 
 @define
@@ -46,6 +46,9 @@ class Fish(Entitie):
     movable_biomes: list[str] = field(default=None)
     move_chance: float = field(default=0)
 
+    # Data attributes.
+    unique_id: str = field(default=None)
+
     def __attrs_post_init__(self):
         # Super init.
         super().__attrs_post_init__()
@@ -60,10 +63,15 @@ class Fish(Entitie):
         if self.age is None:
             self.age = random.randint(a=0, b=int(0.3 * self.max_age))
 
+        # Data attributes.
+        self.unique_id = f"{self.weight: .2f}"
+
     # Growth methods.
     def refresh(self, hours: int) -> None:
+        self.description = f"{self.description}\nWEIGHT: {self.weight}"
         self.weight += hours * self.growth_rate
         self.age += hours
+        self.unique_id = f"{self.weight: .2f}"
 
     def is_alive(self) -> bool:
         return self.age <= self.max_age
@@ -92,9 +100,16 @@ class Fish(Entitie):
                 return place
         return
 
+    # Data methods.
+    def get_data(self) -> dict:
+        return asdict(self, recurse=False)
+
     # Drop methods.
-    def get_drop_item(self):
-        return self.id
+    def get_drop_item(self, base: dict):
+        item = copy.deepcopy(base[self.id])
+        item.set_data(data=self.get_data())
+        item.update_item_by_data()
+        return item
 
 
 @define

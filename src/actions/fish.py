@@ -26,7 +26,7 @@ def fish(player: Player, mapgame: Map, pace_factor: float = 0.3) -> str:
         if any([fish_entitie.depth == fishingpole.depth_range for fishingpole in fishignpoles]):
             if fish_entitie.catch_chance >= random.random():
                 player.place.remove_respawned_fish(fish=fish_entitie)
-                player.add_item(item=fish_entitie.get_drop_item(), quantity=1)
+                player.add_item(item=fish_entitie.get_drop_item(base=mapgame.items), quantity=1)
                 return f"You have caught a {fish_entitie.name}."
     
     mapgame.add_hours(hours_to_add=hours)

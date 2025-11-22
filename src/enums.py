@@ -74,11 +74,12 @@ class FirstMessages(Enum):
     MSG2 = "Waiting for commands."
 
 
-class Items(Enum):
+class ItemTypes(Enum):
     RED_POTION = auto()
     LITLE_RED_POTION = auto()
     GIANT_RED_POTION = auto()
     ANTIDOTE = auto()
+    FISH = auto
 
 
 # Months.

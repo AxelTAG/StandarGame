@@ -5,6 +5,7 @@ import copy
 from .biome import Biome, Entry
 from .entities.entitie import Fish
 from .enums import Months, Season, TimeOfDay, WeekDays
+from .item import Item
 from .npc import Npc
 from .player import Player
 from .utils import label_pixels, tl_map_set
@@ -40,6 +41,7 @@ class Map:
     map_labels: list = field(default=None)
     map_init_settings: dict = field(default=None)
     map_settings: dict = field(default=None)
+    items: dict[str, Item] = field(default=None)
     npcs: dict[str, Npc] = field(default=None)
     biomes: dict = field(default=None)
     fishes: dict = field(default=None)

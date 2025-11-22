@@ -1,9 +1,10 @@
 # Imports.
 # Local imports.
-from .enums import BodyPart
+from .enums import BodyPart, ItemTypes
 
 # External imports.
 from attrs import define, field
+from enum import Enum
 
 
 @define
@@ -12,6 +13,7 @@ class Item:
     name: str = field(default=None)
     description: str = field(default=None)
     id: str = field(default=None)
+    item_type: Enum = field(default=None)
 
     # Item stats.
     attack: int = field(default=0)
@@ -33,6 +35,7 @@ class Item:
     expiration: int | None = field(default=None)
     fishing: bool = field(default=False)
     readable: bool = field(default=False)
+    unique: bool = field(default=False)
 
     # Buy/Sell prices.
     buy_price: int = field(default=None)
@@ -70,9 +73,8 @@ class Item:
     # Temperature attributes.
     warmness: int = field(default=0)
 
-    # Drop attributes.
-    fish_age: int = field(default=None)
-    fish_weight: float = field(default=None)
+    # Data attributes.
+    data: dict = field(default=None)
 
     def __attrs_post_init__(self):
         # Item name attributes.
@@ -88,6 +90,13 @@ class Item:
         for i in range(self.slots):
             self.slots_packs[i] = None
 
+        # Data attributes.
+        if self.data is not None:
+            if self.data.get("unique_id", False):
+                if self.item_type == ItemTypes.FISH:
+                    self.id = f"{self.id}_{self.data['unique_id']}"
+
+    # Buy/Sell methods.
     @property
     def get_buy_price(self):
         attack_value = self.attack * self.attack_price_factor
@@ -155,6 +164,15 @@ class Item:
         if self.has_slot():
             self.slots_packs[slot] = None
 
-    # # Temperature methods.
+    # Temperature methods.
     def get_warmness(self) -> int:
         return self.warmness
+
+    # Data methods.
+    def set_data(self, data: dict) -> None:
+        self.data = data
+
+    def update_item_by_data(self) -> None:
+        for k, v in self.data.items():
+            if getattr(self, k, None) is not None:
+                setattr(self, k, v)

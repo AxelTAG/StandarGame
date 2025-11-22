@@ -564,7 +564,7 @@ class Game:
                     item = find_full_name(partial_name="_".join(action[2:]),
                                           names_list=player.place.get_items(),
                                           original=True)
-                    screen = pick_up(player=player, item=item)
+                    screen = pick_up(item=item, player=player, mapgame=map_game)
 
                 elif action[0] == "read":  # Read action.
                     if len(action) <= 1:
@@ -677,7 +677,7 @@ class Game:
                 if self.admin or player.name == "Tester":
                     if action[:2] == ["dragon", "fortune"]:
                         quantity_item = int(action[3]) if len(action) == 4 else 1
-                        player.add_item(item=action[2], quantity=quantity_item)
+                        player.add_item(item=map_game.get_item_object(item_id=action[2]), quantity=quantity_item)
 
                     elif action[0] == "estimate":
                         screen = f"{map_game.estimate_date(days=int(action[1]))}"

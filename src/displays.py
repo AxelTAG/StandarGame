@@ -453,11 +453,10 @@ def disp_rules() -> None:
 
 # Show inventory display.
 def disp_show_inventory(player: Player):
-    items = [(item, quantity) for item, quantity in player.inventory.items.items()]
     text = "INVENTORY:"
-    for item, quantity in items:
-        text += "\n - " + item.replace("_", " ").title() + ": " + str(quantity)
-    text += "\n - Gold: " + str(player.inventory.gold)
+    for item in player.inventory.get_item_objects:
+        text += f"\n - {item.name}: {player.get_item_quantity(item=item)}"
+    text += f"\n - Gold: {player.get_gold()}"
     return text
 
 

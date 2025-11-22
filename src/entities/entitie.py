@@ -63,8 +63,11 @@ class Fish(Entitie):
         if self.age is None:
             self.age = random.randint(a=0, b=int(0.3 * self.max_age))
 
+        # Basic attributes.
+        self.description = f"{self.description}\nWEIGHT: {self.weight:.2f}"
+
         # Data attributes.
-        self.unique_id = f"{self.weight: .2f}"
+        self.unique_id = f"{self.weight:.2f}"
 
     # Growth methods.
     def refresh(self, hours: int) -> None:

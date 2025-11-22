@@ -42,11 +42,12 @@ def attack(player: Player,
                  mapgame=map_game,
                  enemies=[mob],
                  pace_factor=.05)
-    return win
+    return bool(win)
 
 
 # Buy action.
 def buy(player: Player,
+        mapgame: Map,
         item: str,
         quantity: int,
         cost: dict) -> tuple[str, bool]:
@@ -55,11 +56,11 @@ def buy(player: Player,
             cost_name = underscores(text=k, delete=True).title()
             return f"You don't have enough {cost_name}.", False
 
-    item_name = underscores(text=item, delete=True).title()
-    player.add_item(item=item, quantity=quantity)
+    item_object = mapgame.get_item_object(item_id=item)
+    player.add_item(item=item_object, quantity=quantity)
     for k, v in cost.items():
         player.inventory.discard_item(item=k, quantity=v * quantity)
-    return f"You buy {quantity} {item_name}.", True
+    return f"You buy {quantity} {item_object.name}.", True
 
 
 # Check action.
@@ -80,28 +81,27 @@ def check(player: Player = None, item: str = None, inventory: bool = False) -> s
     return f"There is no {item.title()} here."
 
 
-def craft(player: Player, item: str, quantity: int) -> tuple[str, bool]:
+def craft(player: Player, mapgame: Map, item: str, quantity: int) -> tuple[str, bool]:
     if item not in ITEMS:
         return "This item cannot be craft.", False
 
     items = player.inventory.items
-    item_object = ITEMS[item]
-    item_name = item_object.name
+    item_object = mapgame.get_item_object(item_id=item)
     for mat, mat_amount in item_object.crafting_materials.items():
         material_name = mat.replace("_", " ").title()
         mat_amount_total = mat_amount * quantity
         if mat not in items:
-            answer = f"You haven't {material_name} to craft {item_name}. You need {mat_amount_total} {material_name}."
+            answer = f"You haven't {material_name} to craft {item_object.name}. You need {mat_amount_total} {material_name}."
             return answer, False
         if items[mat] < mat_amount * quantity:
-            answser = (f"You haven't enough {material_name} to craft {item_name}."
+            answser = (f"You haven't enough {material_name} to craft {item_object.name}."
                        f" You need {mat_amount_total} {material_name}.")
             return answser, False
 
     for mat, mat_amount in item_object.crafting_materials.items():
         player.inventory.discard_item(item=mat, quantity=mat_amount * quantity)
 
-    player.add_item(item=item, quantity=quantity)
+    player.add_item(item=item_object, quantity=quantity)
 
     return f"You crafted {quantity} {item_object.name}.", True
 
@@ -408,21 +408,19 @@ def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None
 
 
 # Pick up action.
-def pick_up(player: Player, item: str) -> str:
-    item_name = " ".join(item.split("_")).title()
-    if not item:
+def pick_up(item: str, player: Player, mapgame: Map) -> str:
+    item_object = mapgame.get_item_object(item_id=item)
+
+    if item is None:
         return "You need to specify something. PICK UP ITEM"
 
     if item in player.place.get_items():
-        if item not in ITEMS.keys():
-            return f"There is no {item_name} here."
-
-        if ITEMS[item].pickable:
-            player.add_item(item=item, quantity=1)  # Adding item to inventory.
+        if item_object.pickable:
+            player.add_item(item=item_object, quantity=1)  # Adding item to inventory.
             player.place.remove_item(item=item)  # Removing item from place.
-            return f"You pick up {item_name}."
-        return f"You can't pick {item_name}."
-    return f"There is no {item_name} here."
+            return f"You pick up {item_object.name}."
+        return f"You can't pick {item_object.name}."
+    return f"There is no {item_object.name} here."
 
 
 def read(player: Player, item: str) -> str:
@@ -460,13 +458,13 @@ def sleep_in_bed(player: Player, map_game: Map, time_of_day: int) -> str:
 
 # Sell action.
 def sell(player: Player, item: str, quantity: int, price: int) -> tuple[str, bool]:
-    item_name = underscores(text=item, delete=True).title()
-    if player.has(item=item, amount=quantity):
+    item_object = player.get_item(item=item)
+    if player.has(item=item_object.id, amount=quantity):
         earning = quantity * price
         player.inventory.discard_item(item=item, quantity=quantity)
-        player.inventory.add_item(item="gold", quantity=earning)
-        return f"You sell {quantity} {item_name}. You earn {earning} gold.", True
-    return f"You don't have enough {item_name}.", False
+        player.inventory.add_item(item=player.get_item(item="gold"), quantity=earning)
+        return f"You sell {quantity} {item_object.name}. You earn {earning} gold.", True
+    return f"You don't have enough {item_object.name}.", False
 
 
 # Unequip action.
@@ -480,13 +478,14 @@ def unequip(player: Player, item: str) -> str:
     if not item_object:
         return f"You don't have equipped {item_name}."
 
-    if item_object.id in [slot_item.id for slot_item in player.belt.get_slot_items()]:
-        player.unequip_item(item=item_object)
-        return f"You have unequip {item_object.name}."
+    if player.belt is not None:
+        if item_object.id in [slot_item.id for slot_item in player.belt.get_slot_items()]:
+            player.unequip_item(item=item_object)
+            return f"You have unequip {item_object.name}."
 
     player.unequip_item(item=item_object)
     if item_object.equippable:
-        player.inventory.add_item(item=item, quantity=1)
+        player.inventory.add_item(item=item_object, quantity=1)
     return f"You have unequip {item_object.name}."
 
 

@@ -43,7 +43,7 @@ def get_sell_prices(items: list[str]) -> dict:
     return dict(zip(items, sell_prices))
 
 
-def loop_buy(player: Player, npc: Npc, craft: bool = False) -> tuple[str, bool]:
+def loop_buy(player: Player, npc: Npc, mapgame: Map, craft: bool = False) -> tuple[str, bool]:
     # Print of items.
     items = npc.get_trading_items(item_base=ITEMS)
     items_list, prices_list = displays.disp_show_list_items(player=player, items=items)
@@ -61,6 +61,7 @@ def loop_buy(player: Player, npc: Npc, craft: bool = False) -> tuple[str, bool]:
         quantity = get_number(floor_n=0, ceil_n=999)
         if not quantity == 0:
             transaction, status = buy(player=player,
+                                      mapgame=mapgame,
                                       item=items_list[item_index],
                                       quantity=quantity,
                                       cost=prices_list[item_index])
@@ -68,9 +69,9 @@ def loop_buy(player: Player, npc: Npc, craft: bool = False) -> tuple[str, bool]:
     return "", False
 
 
-def loop_sell(player: Player, npc: Npc) -> tuple[str, bool]:
+def loop_sell(player: Player, npc: Npc, mapgame: Map) -> tuple[str, bool]:
     # Print of items.
-    items = get_sell_prices(items=player.inventory.items.keys())
+    items = get_sell_prices(items=list(player.inventory.items.keys()))
     items_list, prices_list = displays.disp_show_list_items(player=player, items=items, player_quantity=True)
 
     # Item selection.
@@ -105,6 +106,7 @@ def loop_rent(player: Player, npc: Npc, mapgame: Map) -> tuple[str, bool]:
 
     if not item_index == number_of_items:  # Quit condition.
         transaction, status = buy(player=player,
+                                  mapgame=mapgame,
                                   item=items_list[item_index],
                                   quantity=1,
                                   cost=prices_list[item_index])
@@ -208,27 +210,27 @@ def talk(npc: Npc,
 
             if npc.npc_type == NpcTypes.MERCHANT:
                 if answer == 1:
-                    result, _ = loop_buy(player=player, npc=npc, craft=False)
+                    result, _ = loop_buy(player=player, npc=npc, mapgame=mapgame, craft=False)
                 if answer == 2:
-                    result, _ = loop_sell(player=player, npc=npc)
+                    result, _ = loop_sell(player=player, npc=npc, mapgame=mapgame)
 
             if npc.npc_type == NpcTypes.TAVERN_KEEPER:
                 if answer == 1:
-                    result, _ = loop_buy(player=player, npc=npc, craft=False)
+                    result, _ = loop_buy(player=player, npc=npc, mapgame=mapgame, craft=False)
                 if answer == 2:
-                    result, _ = loop_sell(player=player, npc=npc)
+                    result, _ = loop_sell(player=player, npc=npc, mapgame=mapgame)
 
             if npc.npc_type == NpcTypes.ARTISAN:
                 if answer == 1:
-                    result, _ = loop_buy(player=player, npc=npc, craft=True)
+                    result, _ = loop_buy(player=player, npc=npc, mapgame=mapgame, craft=True)
                 if answer == 2:
-                    result, _ = loop_sell(player=player, npc=npc)
+                    result, _ = loop_sell(player=player, npc=npc, mapgame=mapgame)
 
             if npc.npc_type == NpcTypes.INNKEEPER:
                 if answer == 1:
                     result, _ = loop_rent(player=player, npc=npc, mapgame=mapgame)
                 if answer == 2:
-                    result, _ = loop_buy(player=player, npc=npc, craft=False)
+                    result, _ = loop_buy(player=player, npc=npc, mapgame=mapgame, craft=False)
 
             # Adding result to transactions.
             if result:

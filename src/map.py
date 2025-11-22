@@ -328,6 +328,10 @@ class Map:
 
         return active_moves
 
+    # Item methods.
+    def get_item_object(self, item_id: str) -> Item | None:
+        return self.items.get(item_id, None)
+
     # Map development methods.
     def get_number_biomes(self, biome_id: str | list[str]) -> dict[str, int]:
         if isinstance(biome_id, str):

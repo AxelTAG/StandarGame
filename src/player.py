@@ -354,21 +354,24 @@ class Player:
     def set_slot(self, slot: int, item: Item) -> bool:
         return self.equip[BodyPart.WAIST].set_slot(slot=slot, item=item)
 
-    def add_item(self, item: str, quantity: int = 1) -> None:
-        if item in self.item_limits:
-            if item not in self.inventory.items:
-                if quantity >= self.item_limits[item]:
+    def add_item(self, item: Item, quantity: int = 1) -> None:
+        if item.id in self.item_limits:
+            if item.id not in self.inventory.items:
+                if quantity >= self.item_limits[item.id]:
                     self.inventory.add_item(item=item, quantity=self.item_limits[item])
                     return
                 self.inventory.add_item(item=item, quantity=quantity)
                 return
-            if self.inventory.items[item] + quantity >= self.item_limits[item]:
-                self.inventory.items[item] = self.item_limits[item]
+            if self.inventory.items[item.id] + quantity >= self.item_limits[item.id]:
+                self.inventory.items[item.id] = self.item_limits[item.id]
                 return
             self.inventory.add_item(item=item, quantity=quantity)
             return
         self.inventory.add_item(item=item, quantity=quantity)
-        self.update_quests(target=item, amount=quantity)
+        self.update_quests(target=item.id, amount=quantity)
+
+    def get_item(self, item: str) -> Item:
+        return self.inventory.get_item_object(item=item)
 
     def get_equiped_item(self, item: str) -> Item | None:
         for equiped_item in self.get_equiped_items():
@@ -377,9 +380,10 @@ class Player:
         return None
 
     def get_equiped_items(self) -> list[Item]:
-        body_items = [item for item in self.equip.values() if item is not None]
-        belt_items = [item for item in self.belt.get_slot_items() if item is not None]
-        return body_items + belt_items
+        items = [item for item in self.equip.values() if item is not None]
+        if self.belt:
+            items.extend([item for item in self.belt.get_slot_items() if item is not None])
+        return items
 
     def equip_item(self, item: Item) -> None:
         if item.equippable and self.equip[item.body_part] is None:

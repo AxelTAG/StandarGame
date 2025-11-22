@@ -96,6 +96,10 @@ class Item:
                 if self.item_type == ItemTypes.FISH:
                     self.id = f"{self.id}_{self.data['unique_id']}"
 
+    # Property methods.
+    def is_unique(self) -> bool:
+        return self.unique
+
     # Buy/Sell methods.
     @property
     def get_buy_price(self):
@@ -169,6 +173,12 @@ class Item:
         return self.warmness
 
     # Data methods.
+    def get_unique_id(self) -> str:
+        unique_id = self.data.get("unique_id", None)
+        if unique_id is not None:
+            return f"{self.id}_{unique_id}"
+        return self.id
+
     def set_data(self, data: dict) -> None:
         self.data = data
 
@@ -176,3 +186,4 @@ class Item:
         for k, v in self.data.items():
             if getattr(self, k, None) is not None:
                 setattr(self, k, v)
+        self.id = self.get_unique_id()

@@ -234,7 +234,8 @@ class Battle:
         for i, player in enumerate(self.players):
             player_reward = rewards[i * n: (i + 1) * n]
             for item in player_reward:
-                player.add_item(item=item, quantity=1)
+                item_object = self.mapgame.get_item_object(item_id=item)
+                player.add_item(item=item_object, quantity=1)
 
     def reward_expirience(self) -> None:
         expirience = 0

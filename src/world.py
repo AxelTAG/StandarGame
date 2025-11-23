@@ -6,6 +6,7 @@ from .enums import *
 from .item import Item
 from .mob import Mob
 from .npc import Npc
+from .region import Region
 from .skill import Skill
 from .quest import QuestObjective, Quest
 from .status import Buff, Status
@@ -3172,6 +3173,62 @@ MOBS = {
     ),
 }
 
+# Regions.
+REGIONS = {
+    "aerthos": Region(
+        name="AERTHOS",
+        description="The rugged continent of storms, stone plains, and ancient winds.",
+        color_label=Colors.YELLOW.value,
+    ),
+    "aerthos_dune_sea": Region(
+        name="DUNE SEA OF AERTHOS",
+        description="A vast desert of shifting dunes where the sun scorches unbroken horizons.",
+        color_label=Colors.CYAN.value,
+    ),
+    "boreal": Region(
+        name="BOREAL",
+        description="A frigid southern continent shaped by forests, glaciers, and eternal frost.",
+        color_label=Colors.BLUE.value,
+    ),
+    "great_steppe_of_aerthos": Region(
+        name="GREAT STEPPE OF AERTHOS",
+        description="Endless grasslands swept by fierce winds and roaming nomadic clans.",
+        color_label=Colors.VIOLET.value,
+    ),
+    "isle_of_the_burning_crest": Region(
+        name="ISLE OF THE BURNING CREST",
+        description="A volcanic island crowned by fiery peaks and ever-glowing embers.",
+        color_label=Colors.BLACK.value,
+    ),
+    "isle_of_everice": Region(
+        name="ISLE OF EVERICE",
+        description="A frozen island locked in perpetual winter, untouched by the sun’s warmth.",
+        color_label=Colors.WHITE.value,
+    ),
+    "naiwat": Region(
+        name="NAIWAT",
+        description="The ancient continent where Elina awakens, land of two moons and old whispers.",
+        color_label=Colors.ORANGE.value,
+    ),
+    "solara": Region(
+        name="SOLARA",
+        description="A bright and fertile continent blessed with long days and radiant skies.",
+        color_label=Colors.GREN.value,
+    ),
+    "the_silent_north": Region(
+        name="THE SILENT NORTH",
+        description="A remote frozen frontier near Everice, where silence rules the winds.",
+        color_label=Colors.DARK_GREY.value,
+    ),
+    "the_unknown_expanse": Region(
+        name="THE UNKNOWN EXPANSE",
+        description="A mysterious region unmapped by any traveler, shrouded in doubt and rumor.",
+        color_label=Colors.DARK_BLUE.value,
+    ),
+
+    "none": Region(),
+}
+
 # Bioms of map.
 BIOMES = {
     "arctic_tundra": Biome(
@@ -3975,21 +4032,6 @@ BIOMES = {
         fishes_base=FISHES
     ),
 
-    "red": Biome(
-        color=(255, 0, 0, 255),
-        description="Nothing important.",
-        color_label=(255, 0, 0, 255),
-        fight=True,
-        mobs_names=[],
-        mobs_chances=[],
-        mobs_base=MOBS,
-        name="RED",
-        req=[],
-        status=[PlayerStatus.WALK.value],
-        trees_base=TREES,
-        fishes_base=FISHES
-    ),
-
     "reef": Biome(),
 
     "river": Biome(
@@ -4403,6 +4445,21 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
+        fishes_base=FISHES
+    ),
+
+    "none": Biome(
+        color=(255, 0, 0, 255),
+        description="Nothing important.",
+        color_label=(255, 0, 0, 255),
+        fight=True,
+        mobs_names=[],
+        mobs_chances=[],
+        mobs_base=MOBS,
+        name="none",
+        req=[],
+        status=[PlayerStatus.WALK.value],
         trees_base=TREES,
         fishes_base=FISHES
     ),

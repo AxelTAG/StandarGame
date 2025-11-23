@@ -274,11 +274,11 @@ def get_label(x: int, y: int, matrix: np.array) -> str:
 
 
 # Functions that returns tile map of an image, depend on colors.
-def label_pixels(img_path: str) -> list:
+def label_pixels(img_path: str, base: dict) -> list[list]:
     # Open the image.
     img = Image.open(img_path, mode="r")
 
-    # Get the dimensions of the image
+    # Get the dimensions of the image.
     width, height = img.size
 
     # Create a list to store pixel tile_map.
@@ -288,10 +288,10 @@ def label_pixels(img_path: str) -> list:
     for y in range(height):
         img_row = []
         for x in range(width):
-            # Get the color of the pixel at coordinates (x, y)
+            # Get the color of the pixel at coordinates (x, y).
             color = img.getpixel((x, y))
-            biome = next((b for b in BIOMES.values() if b.color_label == color), None)
-            label = biome.id if biome else "red"
+            instance = next((value for value in base.values() if value.color_label == color), None)
+            label = instance.id if instance else "none"
 
             # Assign a label based on the color.
             img_row.append(label)

@@ -4,6 +4,7 @@ HEIGHT = 32
 
 # Map tile.
 MAP_TILE_PATH = "./rsc/tile-01.png"
+REGION_TILE_PATH = "./rsc/tile-region-00.png"
 
 # Save path.
 SAVE_PATH = "../save/"
@@ -24,7 +25,6 @@ DIRECTIONS = {0: "1 - NORTH", 1: "2 - EAST", 2: "3 - SOUTH", 3: "4 - WEST"}
 # Colors.
 WHITE = (255, 255, 255, 255)
 PINK = (255, 105, 180, 255)
-
 
 # Map restrintions.
 FISH_RESPAWNED_LIMIT = 3000

@@ -8,9 +8,10 @@ from .enums import Months, Season, TimeOfDay, WeekDays
 from .item import Item
 from .npc import Npc
 from .player import Player
+from .region import Region
 from .utils import label_pixels, tl_map_set
 from .utils_settings import init_map_setting
-from .globals import MAP_TILE_PATH, FISH_RESPAWNED_LIMIT
+from .globals import FISH_RESPAWNED_LIMIT, MAP_TILE_PATH, REGION_TILE_PATH
 
 # External imports.
 from attrs import define, field
@@ -41,9 +42,11 @@ class Map:
     map_labels: list = field(default=None)
     map_init_settings: dict = field(default=None)
     map_settings: dict = field(default=None)
+    region_labels: list[list] = field(default=None)
     items: dict[str, Item] = field(default=None)
     npcs: dict[str, Npc] = field(default=None)
     biomes: dict = field(default=None)
+    regions: dict = field(default=None)
     fishes: dict = field(default=None)
     entries: dict = field(default=None)
     mobs: dict = field(default=None)
@@ -58,7 +61,7 @@ class Map:
 
     def __attrs_post_init__(self):
         if self.map_labels is None:
-            self.map_labels = label_pixels(MAP_TILE_PATH)
+            self.map_labels = label_pixels(MAP_TILE_PATH, base=self.biomes)
 
         if self.map_init_settings is None:
             pass
@@ -67,6 +70,9 @@ class Map:
             self.map_settings = tl_map_set(tl_map=self.map_labels,
                                            biomes=self.biomes)
             init_map_setting(ms=self.map_settings)
+
+        if self.region_labels is None:
+            self.region_labels = label_pixels(img_path=REGION_TILE_PATH, base=self.regions)
 
         if self.npcs is None:
             self.npcs = {}
@@ -231,8 +237,11 @@ class Map:
             neighbors.append(self.map_settings[(x - 1, y)])
         return neighbors
 
+    def get_region(self, x: int, y: int) -> Region:
+        return self.regions[self.region_labels[y][x]]
+
     def get_region_name(self, x: int, y: int) -> str:
-        return "NAIWAT"
+        return self.get_region(x=x, y=y).name
 
     # Npc methods.
     def check_room_expiration(self, player: Player, npc: str) -> iter:

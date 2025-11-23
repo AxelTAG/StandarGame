@@ -22,6 +22,21 @@ class BodyPart(Enum):
     WAIST = 5
 
 
+class Colors(Enum):
+    WHITE = (255, 255, 255, 255)
+    BLACK = (0, 0, 0, 255)
+    RED = (255, 0, 0, 255)
+    BLUE = (0, 0, 255, 255)
+    GREN = (0, 255, 0, 255)
+    YELLOW = (255, 255, 0, 255)
+    VIOLET = (255, 0, 255, 255)
+    CYAN = (0, 255, 255, 255)
+    DARK_BLUE = (0, 0, 122, 255)
+    DARK_GREY = (122, 122, 122, 255)
+    ORANGE = (255, 122, 0, 255)
+    PINK = (255, 105, 180, 255)
+
+
 class Directions(Enum):
     NORTH = 1
     EAST = 2

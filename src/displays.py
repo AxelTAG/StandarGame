@@ -3,11 +3,11 @@
 from . import globals
 
 from .biome import Biome
-from .enums import Months, BodyPart, Directions
+from .enums import Months, Directions
 from .map import Map
 from .mob import Mob
 from .player import Player
-from .utils import clear, get_label, patron_print, text_2_col, text_ljust, typewriter, underscores
+from .utils import clear, patron_print, text_2_col, text_ljust, typewriter, underscores
 
 INPUT_LABEL = " " * 4 + "# "
 INPUT_LABEL_BATTLE = " # "

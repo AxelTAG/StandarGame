@@ -193,6 +193,7 @@ class Game:
             map_game = Map(items=copy.deepcopy(ITEMS),
                            mobs=copy.deepcopy(MOBS),
                            biomes=copy.deepcopy(BIOMES),
+                           regions=copy.deepcopy(REGIONS),
                            fishes=copy.deepcopy(FISHES),
                            npcs=copy.deepcopy(NPCS),
                            entries=copy.deepcopy(ENTRIES))
@@ -755,6 +756,11 @@ class Game:
                     elif action[:2] == ["count", "biome"]:
                         screen = f"{map_game.get_number_biomes(biome_id=action[2:])}"
 
+                    elif action == ["region", "labels"]:
+                        print(map_game.region_labels)
+                        input()
+                        screen = "Region labels shown."
+
                     elif action[0] == "update":
                         opt = "_".join(action[1:])
                         screen, player, map_game = management.update(player=player, mapgame=map_game, option=opt)
@@ -822,6 +828,7 @@ class Game:
         if is_string:
             return [entitie.id for entitie in entities]
         return [entitie.id_key for entitie in entities]
+
 
 if __name__ == "__main__":
     game = Game(autosave=True)

@@ -11,6 +11,7 @@ from ..utils import underscores
 from ..world import ITEMS
 
 from .battle import battle
+from .check import check
 from .explore import explore
 from .fish import fish
 from .use import use
@@ -63,22 +64,22 @@ def buy(player: Player,
     return f"You buy {quantity} {item_object.name}.", True
 
 
-# Check action.
-def check(player: Player = None, item: str = None, inventory: bool = False) -> str:
-    if player is None:
-        return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
-
-    if not item or item is None:
-        return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
-
-    if item in ITEMS.keys():
-        if inventory:
-            if item in player.inventory.items.keys():
-                return ITEMS[item].description
-
-        if item in player.place.get_items():
-            return ITEMS[item].description
-    return f"There is no {item.title()} here."
+# # Check action.
+# def check(player: Player = None, item: str = None, inventory: bool = False) -> str:
+#     if player is None:
+#         return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
+#
+#     if not item or item is None:
+#         return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
+#
+#     if item in ITEMS.keys():
+#         if inventory:
+#             if item in player.inventory.items.keys():
+#                 return ITEMS[item].description
+#
+#         if item in player.place.get_items():
+#             return ITEMS[item].description
+#     return f"There is no {item.title()} here."
 
 
 def craft(player: Player, mapgame: Map, item: str, quantity: int) -> tuple[str, bool]:
@@ -411,10 +412,10 @@ def look_around(player: Player, map_game: Map, pace_factor: float = 0.2) -> None
 def pick_up(item: str, player: Player, mapgame: Map) -> str:
     item_object = mapgame.get_item_object(item_id=item)
 
-    if item is None:
+    if item_object is None:
         return "You need to specify something. PICK UP ITEM"
 
-    if item in player.place.get_items():
+    if item_object.id in player.place.get_items():
         if item_object.pickable:
             player.add_item(item=item_object, quantity=1)  # Adding item to inventory.
             player.place.remove_item(item=item)  # Removing item from place.

@@ -13,13 +13,6 @@ class Actions(Enum):
     SAVE_AND_QUIT = 6
 
 
-class Directions(Enum):
-    NORTH = 1
-    EAST = 2
-    SOUTH = 3
-    WEST = 4
-
-
 class BodyPart(Enum):
     HEAD = 0
     CHEST = 1
@@ -27,6 +20,13 @@ class BodyPart(Enum):
     LEFT_HAND = 3
     LEGS = 4
     WAIST = 5
+
+
+class Directions(Enum):
+    NORTH = 1
+    EAST = 2
+    SOUTH = 3
+    WEST = 4
 
 
 class EquipCondition(Enum):
@@ -80,6 +80,13 @@ class ItemTypes(Enum):
     GIANT_RED_POTION = auto()
     ANTIDOTE = auto()
     FISH = auto
+
+
+class LeafColors(Enum):
+    GREEN = 0
+    YELLOW = 1
+    RED = 2
+    BROWN = 3
 
 
 # Months.

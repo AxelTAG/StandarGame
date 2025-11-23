@@ -1,7 +1,7 @@
 # Imports.
 # Local imports.
 from .biome import Biome, Entry
-from .entities.entitie import Fish
+from .entities.entitie import Fish, Tree
 from .enums import *
 from .item import Item
 from .mob import Mob
@@ -508,6 +508,21 @@ FISHES = {
         movable_biomes=["river", "estuary", "coast"],
         move_chance=0.15
     ),
+}
+
+# Trees.
+TREES = {
+    "coconut_palm": Tree(
+        name="Coconut Palm",
+        description="A tall palm with sweet coconuts swaying in warm winds.",
+        height=20,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[0, 1, 2, 3],
+        bearing_frencuency=32,
+        bearing_quantity=2,
+        fruit="coconut"
+    )
 }
 
 # Items.
@@ -3178,6 +3193,7 @@ BIOMES = {
             Months.OUSKARA.value: -10,
             Months.NERITH.value: -40,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3200,6 +3216,7 @@ BIOMES = {
             Months.OUSKARA.value: 20,
             Months.NERITH.value: 15,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3220,6 +3237,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3241,6 +3259,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 4,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3262,6 +3281,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 4,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3277,7 +3297,6 @@ BIOMES = {
         req=[],
         pace=4,
         water=True,
-        fishes=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
         status=[PlayerStatus.WALK.value, PlayerStatus.SURF.value],
         month_temperatures={
             Months.AURENAR.value: 20,
@@ -3285,7 +3304,12 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
-        fishes_base=FISHES
+        trees=["coconut_palm"],
+        trees_base=TREES,
+        trees_ratio={"coconut_palm": 0.33},
+        fishes=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
+        fishes_base=FISHES,
+
     ),
 
     "cold_island_steppe": Biome(
@@ -3307,6 +3331,7 @@ BIOMES = {
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3329,6 +3354,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3351,6 +3377,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3375,6 +3402,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3397,6 +3425,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3419,6 +3448,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3441,6 +3471,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3465,6 +3496,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3487,6 +3519,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3511,6 +3544,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3533,6 +3567,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3557,6 +3592,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3581,6 +3617,7 @@ BIOMES = {
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3610,6 +3647,7 @@ BIOMES = {
             Months.OUSKARA.value: 11,
             Months.NERITH.value: 3,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3631,6 +3669,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3652,6 +3691,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3674,6 +3714,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3699,6 +3740,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3721,6 +3763,7 @@ BIOMES = {
             Months.OUSKARA.value: 25,
             Months.NERITH.value: 20,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3743,6 +3786,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3764,6 +3808,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3786,6 +3831,7 @@ BIOMES = {
             Months.OUSKARA.value: 25,
             Months.NERITH.value: 20,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3807,6 +3853,7 @@ BIOMES = {
             Months.OUSKARA.value: 12,
             Months.NERITH.value: 6,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3829,6 +3876,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 5,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3852,6 +3900,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 5,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3876,6 +3925,7 @@ BIOMES = {
             Months.OUSKARA.value: 17,
             Months.NERITH.value: 12,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3898,6 +3948,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3920,6 +3971,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3934,6 +3986,7 @@ BIOMES = {
         name="RED",
         req=[],
         status=[PlayerStatus.WALK.value],
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3959,6 +4012,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -3979,6 +4033,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4001,6 +4056,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4023,6 +4079,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4045,6 +4102,7 @@ BIOMES = {
             Months.OUSKARA.value: 10,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4067,6 +4125,7 @@ BIOMES = {
             Months.OUSKARA.value: 14,
             Months.NERITH.value: 6,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4090,6 +4149,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4112,6 +4172,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4133,6 +4194,7 @@ BIOMES = {
             Months.OUSKARA.value: 8,
             Months.NERITH.value: 2,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4155,6 +4217,7 @@ BIOMES = {
             Months.OUSKARA.value: 11,
             Months.NERITH.value: 3,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4177,6 +4240,7 @@ BIOMES = {
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4199,6 +4263,7 @@ BIOMES = {
             Months.OUSKARA.value: 13,
             Months.NERITH.value: 5,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4221,6 +4286,7 @@ BIOMES = {
             Months.OUSKARA.value: 14,
             Months.NERITH.value: 7,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4244,6 +4310,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4266,6 +4333,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4288,6 +4356,7 @@ BIOMES = {
             Months.OUSKARA.value: 17,
             Months.NERITH.value: 12,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4310,6 +4379,7 @@ BIOMES = {
             Months.OUSKARA.value: 20,
             Months.NERITH.value: 15,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 
@@ -4333,6 +4403,7 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees_base=TREES,
         fishes_base=FISHES
     ),
 }

@@ -2,8 +2,8 @@
 # Local imports.
 from .enums import *
 from .mob import Mob
-from .entities.entitie import Fish
-from .globals import FISH_RATE_RESPAWN
+from .entities.entitie import Fish, Tree
+from .globals import FISH_RATE_RESPAWN, TREES_RATIO
 
 # External imports.
 import copy
@@ -90,13 +90,19 @@ class Biome:
     altitude: int = field(default=5)
     month_temperatures: dict[int, int] = field(default=15, converter=to_default_month_dict)
     water: dict[int, bool] | bool = field(default=False, converter=to_default_month_dict)
+    trees: list[str] = field(default=None)
+    trees_ratio: dict = field(default=None)
+    trees_respawned: list = field(factory=list)
+    trees_quantity: int = field(default=3)
+    trees_base: dict = field(default=None)
     fishes: dict[int, list] | list = field(default=None, converter=none_to_month_dict_list)
     fishes_respawned: list = field(factory=list)
     fishes_respawn_time: dict[int, int] = field(default=16, converter=to_default_month_dict)
     fishes_base: dict = field(default=None)
     _temperature: int = field(init=False)
     _water: bool = field(init=False)
-    _fishs: list = field(init=False)
+    _fishes: list = field(init=False)
+    _fishes_respawn_time: int = field(init=False)
     _current_month: int = field(init=False)
 
     def __attrs_post_init__(self):
@@ -128,11 +134,16 @@ class Biome:
         self._status = self.get_status(month=Months.AURENAR.value)
 
         # Place climate and bioma attributes.
+        if self.trees_ratio is None and self.trees:
+            self.trees_ratio = dict.fromkeys(self.trees, TREES_RATIO)
         self._temperature = self.get_temperature(month=Months.AURENAR.value)
         self._water = self.get_water(month=Months.AURENAR.value)
-        self._fishs = self.get_fishs(month=Months.AURENAR.value)
+        self._fishes = self.get_fishes(month=Months.AURENAR.value)
+        self._fishes_respawn_time = self.get_fishes_respawn_time(month=Months.AURENAR.value)
         self._current_month = Months.AURENAR.value
-        self.respawn_fishs()
+
+        # Fihes.
+        self.respawn_fishes(day=self._fishes_respawn_time)
 
         # Mobs and fighting attributes (Post).
         if self.mobs is None:
@@ -217,10 +228,18 @@ class Biome:
             raise ValueError
         return self.water.get(month, self.get_previous_value(data=self.water, key=month))
 
-    def get_fishs(self, month: int) -> list:
+    def get_trees(self) -> list:
+        return self.trees
+
+    def get_fishes(self, month: int) -> list:
         if month < 0:
             raise ValueError
         return self.fishes.get(month, self.get_previous_value(data=self.fishes, key=month))
+
+    def get_fishes_respawn_time(self, month: int) -> int:
+        if month < 0:
+            raise ValueError
+        return self.fishes_respawn_time.get(month, self.get_previous_value(data=self.fishes, key=month))
 
     def is_accessible_from(self, biome: str) -> bool:
         if self.accessible_from is None:
@@ -290,6 +309,16 @@ class Biome:
             self.respawn_mob(mob=mob)
         self.mobs_check_respawn = True
 
+    def get_mobs_respawned(self) -> list[Mob]:
+        return self.mobs_respawned
+
+    def get_mob(self, mob_id: int | str) -> Mob:
+        for mob in self.mobs_respawned:
+            if mob.id == mob_id:
+                return mob
+            if mob.id_key == mob_id:
+                return mob
+
     def move_mobs(self, biomes: list):
         for mob in self.mobs_respawned:
             place = mob.random_move(places=biomes)
@@ -334,7 +363,7 @@ class Biome:
         self.mobs = mobs
 
     # Refresh methods.
-    def refresh_biome(self, day: int, month: int, neighboors: list) -> None:
+    def refresh_biome(self, day: int, month: int, neighboors: list, fishes: bool = True) -> None:
         # Update of private attributes.
         self._name = self.get_name(month=month)
         self._color = self.get_color(month=month)
@@ -351,7 +380,8 @@ class Biome:
 
         self._temperature = self.get_temperature(month=month)
         self._water = self.get_water(month=month)
-        self._fishs = self.get_fishs(month=month)
+        self._fishes = self.get_fishes(month=month)
+        self._fishes_respawn_time = self.get_fishes_respawn_time(month=month)
 
         self._current_month = month
 
@@ -360,10 +390,12 @@ class Biome:
         self.move_mobs(biomes=neighboors)
         self.respawn_mobs(day=day)
 
-    def get_mob(self, mob_id: int) -> Mob:
-        for mob in self.mobs_respawned:
-            if mob.id == mob_id:
-                return mob
+        # Fruits.
+        self.respawn_fruits(day=day)
+
+        # Fishes.
+        if fishes:
+            self.respawn_fishes(day=day)
 
     def add_npc(self, npc: str) -> None:
         self.npcs.append(npc)
@@ -376,6 +408,46 @@ class Biome:
 
     def remove_item(self, item: str) -> None:
         self.items.remove(item)
+
+    # Tree methods.
+    def respawn_trees(self, base: dict = None) -> None:
+        if base is None:
+            base = self.trees_base
+        if self.trees is None:
+            return
+
+        for tree in random.choices(self.trees, k=random.randint(a=0, b=self.trees_quantity)):
+            if self.trees_ratio[tree] <= random.random():
+                self.trees_respawned.append(copy.deepcopy(self.trees_base[tree]))
+
+    def get_trees_respawned(self) -> list:
+        return self.trees_respawned
+
+    def get_tree_respawned(self, tree_id: str) -> Tree:
+        for tree in self.get_trees_respawned():
+            if tree.id == tree_id:
+                return tree
+
+    def reset_trees_respawned(self) -> None:
+        if self.trees is not None:
+            self.trees_respawned.clear()
+            self.respawn_trees(base=self.trees_base)
+
+    def respawn_fruits(self, day: int, force_respawn: bool = False) -> None:
+        for tree in self.trees_respawned:
+            if force_respawn:
+                self.items.extend(tree.produce_fruit())
+                return
+
+            if not day % tree.bearing_frencuency == 0:
+                return
+
+            if self._current_month not in tree.bearing_months:
+                return
+
+            if tree.fruit in self.items:
+                return
+            self.items.extend(tree.produce_fruit())
 
     # Fish methods.
     def get_fishs_respawned(self) -> list:
@@ -390,18 +462,26 @@ class Biome:
     def remove_respawned_fish(self, fish: Fish) -> None:
         self.fishes_respawned.remove(fish)
 
-    def respawn_fishs(self, base: dict = None) -> None:
+    def respawn_fishes(self, day: int, base: dict = None, force_respawn: bool = False) -> None:
         if base is None:
             base = self.fishes_base
         if self.fishes is None:
             return
+        if not force_respawn:
+            if not day % self._fishes_respawn_time == 0:
+                return
+
         month = self._current_month
-        fishes = self.add_entities_from_base(entities=self.get_fishs(month=month), base=base)
+        fishes = self.add_entities_from_base(entities=self.get_fishes(month=month), base=base)
         fish_entities = [fish for fish in fishes if month in fish.spawn_months]
         if fishes:
             if random.random() < FISH_RATE_RESPAWN:
                 fishs_to_respawn = random.choices(fish_entities, k=2)
                 self.fishes_respawned.extend(fishs_to_respawn)
+
+    def reset_fishes_respawned(self) -> None:
+        self.fishes_respawned.clear()
+        self.respawn_fishes(day=self._fishes_respawn_time)
 
     # Static methods.
     @staticmethod
@@ -461,8 +541,12 @@ class Entry(Biome):
         # Place climate and bioma attributes.
         self._temperature = self.get_temperature(month=Months.AURENAR.value)
         self._water = self.get_water(month=Months.AURENAR.value)
-        self._fishs = self.get_fishs(month=Months.AURENAR.value)
+        self._fishes = self.get_fishes(month=Months.AURENAR.value)
+        self._fishes_respawn_time = self.get_fishes_respawn_time(month=Months.AURENAR.value)
         self._current_month = Months.AURENAR.value
+
+        # Fihes.
+        self.respawn_fishes(day=self._fishes_respawn_time)
 
         # Mobs and fighting attributes (Post).
         if self.mobs is None:

@@ -1,9 +1,13 @@
 # Imports.
+# Local imports.
+from .. import enums
+
 # External imports.
 import copy
 import random
 
 from attrs import asdict,define, field
+from enum import Enum
 
 
 @define
@@ -117,7 +121,26 @@ class Fish(Entitie):
 
 @define
 class Tree(Entitie):
-    pass
+    # Morphology and fruit bearing attributes.
+    height: int = field(default=12)
+    leaf_color: Enum = field(default=None)
+    fruit_bearing: bool = field(default=False)
+    bearing_months: list[int] = field(default=None)
+    bearing_frencuency: int = field(default=16)
+    bearing_quantity: int = field(default=3)
+    fruit: str = field(default=None)
+
+    def __attrs_post_init__(self):
+        # Super init.
+        super().__attrs_post_init__()
+
+        if self.leaf_color is None:
+            self.leaf_color = enums.LeafColors.GREEN
+
+    def produce_fruit(self) -> list:
+        if not self.fruit_bearing:
+            return []
+        return [self.fruit] * random.randint(a=0, b=self.bearing_quantity)
 
 
 @define

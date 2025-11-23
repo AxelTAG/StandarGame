@@ -429,6 +429,9 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
             value.set_x(j)
             value.set_y(i)
             value.reset_mobs(force_respawn=True)
+            value.reset_trees_respawned()
+            value.respawn_fruits(day=None, force_respawn=True)
+            value.respawn_fishes(day=None, force_respawn=True)
             dictionary[key] = value
     return dictionary
 

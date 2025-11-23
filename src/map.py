@@ -268,13 +268,13 @@ class Map:
 
     # Refreshing methods.
     def refresh_biomes(self):
-        refresh_fishs = self.get_fish_quantity() <= FISH_RESPAWNED_LIMIT
+        refresh_fishes = self.get_fish_quantity() <= FISH_RESPAWNED_LIMIT
+
         for biome in self.map_settings.values():
             biome.refresh_biome(day=self.day,
                                 month=self.current_month,
-                                neighboors=self.neighbors_from_coord(coord=biome.coordinates))
-            if refresh_fishs:
-                biome.respawn_fishs()
+                                neighboors=self.neighbors_from_coord(coord=biome.coordinates),
+                                fishes=refresh_fishes)
 
     def refresh_map(self) -> None:
         self.refresh_npcs()

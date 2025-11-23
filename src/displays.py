@@ -314,8 +314,9 @@ def disp_new_game(existent_player: Player = None) -> None:
 def disp_look_around(place: Biome) -> str:
     items = place.get_items()
     mobs = place.mobs_respawned
+    trees = place.get_trees_respawned()
 
-    if not items and not mobs:
+    if not any([bool(items), bool(mobs), bool(trees)]):
         return "Nothing special here."
 
     text = "You have looked around and found:"
@@ -326,6 +327,11 @@ def disp_look_around(place: Biome) -> str:
     if mobs:
         for mob in mobs:
             text += "\n - " + mob.name.title() + "."
+
+    if trees:
+        for tree in trees:
+            text += "\n - " + tree.name.title() + "."
+
     return text
 
 

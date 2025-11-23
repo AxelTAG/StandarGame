@@ -424,17 +424,19 @@ class Game:
 
                 elif action[0] == "check":  # Check action.
                     if len(action) == 1:
-                        screen = check(player=player, item=" ".join(action[1:]))
+                        screen = check(mapgame=map_game)
 
-                    elif action[1] in ["inv", "inventory"]:
-                        item = find_full_name(partial_name="_".join(action[2:]),
-                                              names_list=list(player.inventory.items.keys()))
-                        screen = check(player=player, item=item, inventory=True)
-
-                    else:
-                        item = find_full_name(partial_name="_".join(action[1:]),
-                                              names_list=player.place.get_items())
-                        screen = check(player=player, item=item)
+                    partial_name = "_".join(action[1:])
+                    inventory = False
+                    if "inv" in action or "inventory" in action:
+                        inventory = True
+                        partial_name = "_".join(action[2:])
+                    keys = self.get_id_keys(entities=player.inventory.get_item_objects) + ["gold"]
+                    keys.extend(self.get_id_keys(entities=player.place.get_trees_respawned()))
+                    keys.extend(player.place.get_items())
+                    keys.extend(self.get_id_keys(entities=player.place.get_mobs_respawned(), is_string=False))
+                    target = find_full_name(partial_name=partial_name, names_list=keys)
+                    screen = check(mapgame=map_game, player=player, target=target, inventory=inventory)
 
                 elif action == ["draw", "map"]:  # Update of map action.
                     tower_of_eldra = map_game.map_settings[(34, 42)].entries["tower_of_eldra"].entries[
@@ -815,6 +817,11 @@ class Game:
     def set_music_volume(volume: float) -> None:
         pygame.mixer.music.set_volume(volume=volume)
 
+    @staticmethod
+    def get_id_keys(entities: list, is_string: bool = True):
+        if is_string:
+            return [entitie.id for entitie in entities]
+        return [entitie.id_key for entitie in entities]
 
 if __name__ == "__main__":
     game = Game(autosave=True)

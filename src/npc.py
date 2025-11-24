@@ -27,8 +27,14 @@ class Npc:
     bed_key_message: str = field(default=None)
     bed_low_message: str = field(default=None)
 
-    # Crafting items.
+    # Crafting items attributes.
     crafting_items: dict[str, dict[str, int]] = field(default=None)
+
+    # Transporting places attributes.
+    transport_time_of_day: list[int] = field(default=None)
+    transport_places: dict[tuple, dict] = field(default=None)
+    transport_confirm_message: list[str] = field(default=None)
+    transport_arrive_message: list[str] = field(default=None)
 
     # Talking attributes.
     hist_messages: dict = field(init=False)
@@ -175,6 +181,10 @@ class Npc:
 
     def get_bed_items(self) -> dict:
         return self.buy_beds
+
+    # Transport methods.
+    def get_transport_places(self) -> dict[tuple, dict]:
+        return self.transport_places
 
     # Quest methods.
     def has_quest(self, completed: bool = False) -> bool:

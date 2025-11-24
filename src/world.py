@@ -125,6 +125,7 @@ BUFFS = {
 }
 
 SKILLS = {
+    # Normal attack.
     "attack": Skill(
         id="attack",
         name="Attack",
@@ -132,7 +133,7 @@ SKILLS = {
         element=SkillElements.NEUTRAL.value,
         power=0,
         cost=0,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         accuracy=1,
         desviation=1,
         critical_factor=1.05,
@@ -148,6 +149,7 @@ SKILLS = {
         tags=["attack"]
     ),
 
+    # Attacks with weapons.
     "lunge": Skill(
         id="lunge",
         name="Lunge",
@@ -155,7 +157,7 @@ SKILLS = {
         element=SkillElements.NEUTRAL.value,
         power=5,
         cost=2,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         accuracy=0.6,
         desviation=2,
         critical_chance=0.5,
@@ -182,11 +184,15 @@ SKILLS = {
         element=SkillElements.NEUTRAL.value,
         power=4,
         cost=3,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         accuracy=0.4,
         desviation=3,
         critical_chance=0.2,
         cooldown=0,
+        status_effects=[
+            Status.gen_stun(duration=2, stacks=1, max_stacks=1, source="Hammer Crush"),
+        ],
+        status_accuracy=[0.7],
         scaling={
             "strength": 0.1,
             "attack": 1,
@@ -199,6 +205,29 @@ SKILLS = {
         },
         tags=["hammer_crush"],
     ),
+
+    # Magic attacks.
+    "fire_ground": Skill(
+        id="fire_ground",
+        name="Fire Ground",
+        description="",
+        element=SkillElements.FIRE.value,
+        power=1,
+        cost=6,
+        skill_type=SkillType.ATTACK.value,
+        accuracy=1,
+        desviation=0,
+        critical_chance=0,
+        cooldown=0,
+        status_effects=[
+            Status.gen_burn(duration=10, stacks=1, max_stacks=1, source="Fire Ground"),
+        ],
+        status_accuracy=[1],
+        scaling={
+            "vit": 0.2,
+        },
+        tags=["fire_ground"],
+    ),
 }
 
 SKILLS_MOB = {
@@ -209,7 +238,7 @@ SKILLS_MOB = {
         element=SkillElements.NEUTRAL.value,
         power=3,
         cost=0,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         desviation=1,
         accuracy=1,
         critical_chance=0,
@@ -228,7 +257,7 @@ SKILLS_MOB = {
         element=SkillElements.NEUTRAL.value,
         power=1,
         cost=0,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         desviation=0,
         accuracy=1,
         critical_chance=0,
@@ -247,7 +276,7 @@ SKILLS_MOB = {
         element=SkillElements.NEUTRAL.value,
         power=2,
         cost=0,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         desviation=1,
         accuracy=1,
         critical_chance=0,
@@ -266,7 +295,7 @@ SKILLS_MOB = {
         element=SkillElements.NEUTRAL.value,
         power=1,
         cost=0,
-        type=SkillType.ATTACK.value,
+        skill_type=SkillType.ATTACK.value,
         desviation=0,
         accuracy=1,
         critical_chance=0,
@@ -606,6 +635,21 @@ ITEMS = {
                             expiration=None,
                             buy_price=500,
                             sell_price=150),
+
+    "hammer": Item(name="Hammer",
+                   description="Heavy and crushing, capable of stunning foes with a well-placed, thunderous strike.",
+                   attack=3,
+                   defense=0,
+                   precision=0,
+                   evasion=0,
+                   weight=4,
+                   body_part=BodyPart.RIGHT_HAND,
+                   pickable=True,
+                   consumable=False,
+                   equippable=True,
+                   expiration=None,
+                   buy_price=100,
+                   sell_price=50),
 
     "hardened_leather_armor": Item(name="Hardened Leather Armor",
                                    description=("Thick, reinforced leather armor. Flexible and offers decent "
@@ -2035,6 +2079,26 @@ NPCS = {
                               0: ["What business would a dragon have in these lands, traveler? Curious... and"
                                   " troubling, isn’t it?"]},
                           place_night=[(39, 39), "inn", "first_room"]),
+
+    # "captain_thorne": Npc(name="captain thorne",
+    #                       npc_type=NpcTypes.CAPTAIN,
+    #                       transport_time_of_day=[TimeOfDay.MORNING.value, TimeOfDay.AFTERNOON.value],
+    #                       transport_places={
+    #                           (39, 39): {"gold": 20, "days": 10},
+    #                           (56, 40): {"gold": 20, "days": 10}},
+    #                       transport_confirm_message=["Are you sure you want to go there?"],
+    #                       transport_arrive_message=["Finally, we have arrived. Take care, and may Eldra watch over"
+    #                                                 " you."],
+    #                       messages_morning={
+    #                           0: ["Ahoy, traveler. I'm Captain Thorne.",
+    #                               "You see my ship there? We will sail today."],
+    #                           1: ["Where do you want to go?"]},
+    #                       messages_night={
+    #                           0: ["I'm tired of been Captain. Maybe I should be a farmer."]},
+    #                       place=[(39, 39)],
+    #                       answers={
+    #                           1: "I want to sail"
+    #                       }),
 
     "captain_zelian": Npc(name="captain zelian",
                           npc_type=NpcTypes.CAPTAIN,

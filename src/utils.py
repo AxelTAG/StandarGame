@@ -437,11 +437,17 @@ def tl_map_set(tl_map: list, biomes: dict) -> dict:
 
 
 # Typewriter function.
-def typewriter(text: str, speed: float = 0.01) -> None:
+def typewriter(text: str, speed: float = 0.01, previous_text: str = None, last_text: str = None) -> None:
+    if previous_text is not None:
+        sys.stdout.write(previous_text)
+        sys.stdout.flush()
     for char in text:
         sys.stdout.write(char)
         sys.stdout.flush()
         time.sleep(speed)
+    if last_text is not None:
+        sys.stdout.write(last_text)
+        sys.stdout.flush()
 
 
 def underscores(text: str, delete: bool = False) -> str:

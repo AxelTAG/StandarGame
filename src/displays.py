@@ -294,6 +294,19 @@ def disp_main_screen():
     print()
 
 
+def disp_narration(narration: list[str] = None, speed: float = 0.3) -> None:
+    for _ in range(2):
+        clear()
+        disp_title()
+        print("\n" * 2)
+        print("    ")
+        if narration is None:
+            typewriter(text=f". . .", speed=speed, previous_text=" " * 4)
+            return
+    for line in narration:
+        typewriter(text=line, speed=speed)
+
+
 def disp_new_game(existent_player: Player = None) -> None:
     if existent_player is None:
         print(" < NEW DREAM >")

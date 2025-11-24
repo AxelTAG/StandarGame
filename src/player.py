@@ -31,6 +31,7 @@ class Player:
     exp: int = field(default=0)  # Actual experience points.
     expmax: int = field(default=10)  # Max experience points for level up.
     vital_energy: int = field(default=5)
+    vital_energy_avaible: bool = field(default=False)
 
     # Player basis attributes.
     b_hpmax: int = field(default=25)
@@ -97,6 +98,9 @@ class Player:
     last_place: Biome | Entry = field(default=None)
     last_entry: Entry = field(default=None)
     standing: bool = field(default=True)
+
+    # Time attributes.
+    time_on: bool = field(default=True)
 
     # Lvl up attributes.
     st_points: int = field(default=0)
@@ -238,12 +242,6 @@ class Player:
         return None
 
     # Current status methods.
-    def has_vital_energy(self) -> bool:
-        if hasattr(self, "vital_energy"):
-            if self.vital_energy > 0:
-                return True
-        return False
-
     def is_alive(self) -> bool:
         return self.hp > 0
 
@@ -261,14 +259,27 @@ class Player:
                     return
                 status.stacks -= amount
 
+    # Vital energy methods.
+    def active_vital_energy(self) -> None:
+        self.vital_energy_avaible = True
+
+    def deactive_vital_energy(self) -> None:
+        self.vital_energy_avaible = False
+
     def recover_vital_energy(self, amount: int) -> None:
         self.vital_energy = min(self.vital_energy + amount, self.vital_energy_max)
 
+    def drain_vital_energy(self, amount: int) -> None:
+        self.vital_energy = max(0, self.vital_energy - amount)
+    
     def use_vital_energy(self, amount: int) -> bool:
         if self.vital_energy >= amount:
             self.vital_energy -= amount
             return True
         return False
+
+    def has_vital_energy(self) -> bool:
+        return self.vital_energy_avaible
 
     def get_vital_energy(self) -> int:
         return self.vital_energy
@@ -599,6 +610,13 @@ class Player:
         for status in self.statuses:
             if status_type == status.status_type:
                 return status
+
+    # Time methods.
+    def set_time_on(self) -> None:
+        self.time_on = True
+
+    def set_time_off(self) -> None:
+        self.time_on = False
 
     # Fighting methods.
     def get_standar_attack(self) -> Skill:

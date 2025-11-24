@@ -236,8 +236,7 @@ class Game:
                     displays.disp_title()
                     print("\n" * 2)
                     print("    ")
-                    typewriter(text=f" . . .",
-                               speed=0.3)
+                    displays.disp_narration()
                 talk(npc=map_game.npcs["whispers"],
                      player=player,
                      mapgame=map_game)
@@ -276,10 +275,12 @@ class Game:
                 player.refresh_temperature_status()
                 player.refresh_buffs()
                 player.refresh_status()
-                player.refresh_hungry(hour=map_game.get_hours,
-                                      last_hour=hours)
-                player.refresh_thirsty(hour=map_game.get_hours,
-                                       last_hour=hours)
+                if player.time_on:
+                    player.refresh_hungry(hour=map_game.get_hours,
+                                          last_hour=hours)
+                    player.refresh_thirsty(hour=map_game.get_hours,
+                                           last_hour=hours)
+                    player.set_time_on()
                 player.refresh_vital_energy(hour=map_game.get_hours,
                                             last_hour=hours)
             player.refresh_quests()
@@ -673,9 +674,17 @@ class Game:
                             screen = f"{action[2].title()} is not a time of day."
                             player.standing = True
 
-                # --- admin commans.
+                # -------- admin commans.
                 if action[0] == "poweradmin":
                     self.admin = True
+
+                if action == ["fenix", "recover"]:
+                    player.heal(amount=9999)
+                    player.recover_vital_energy(amount=9999)
+
+                if action == ["player", "active", "vital", "energy"]:
+                    player.active_vital_energy()
+                    screen = "Vital energy was activated."
 
                 if self.admin or player.name == "Tester":
                     if action[:2] == ["dragon", "fortune"]:
@@ -706,8 +715,11 @@ class Game:
                         screen = f"You have lvl up {quantity} levels."
 
                     elif action[:2] == ["add", "skill"]:
-                        player.add_skill(SKILLS["lunge"])
-                        screen = f"{action[2].title()} has been learned."
+                        if action[2] in SKILLS.keys():
+                            player.add_skill(SKILLS[action[2]])
+                            screen = f"{underscores(text=action[2], delete=True).title()} has been learned."
+                        else:
+                            screen = "Not valid skill."
 
                     elif action[0] == "precision":
                         screen = f"{player.precision}"

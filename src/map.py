@@ -290,7 +290,10 @@ class Map:
         self.refresh_biomes()
 
     # Biome and climate methods.
-    def get_current_biome_name(self, x: int, y: int) -> str:
+    def get_biome(self, x: int, y: int) -> Biome:
+        return self.map_settings[(x, y)]
+
+    def get_biome_name(self, x: int, y: int) -> str:
         return self.map_settings[(x, y)].name[self.current_month]
 
     def get_fish(self, fish: str) -> Fish:

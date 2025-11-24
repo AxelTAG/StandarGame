@@ -16,7 +16,7 @@ class Skill:
     element: int
     power: int
     cost: int
-    type: int
+    skill_type: int
     desviation: int = field(default=1)
     accuracy: float = field(default=1)
     critical_factor: float = field(default=1.4)

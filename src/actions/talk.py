@@ -1,5 +1,5 @@
 # Local imports.
-from .actions import buy, sell, get_item
+from .actions import buy, sell, get_item, transport
 from .. import displays
 from .. import utils
 from ..enums import NpcTypes, ObjectiveType, QuestStatus
@@ -121,6 +121,32 @@ def loop_rent(player: Player, npc: Npc, mapgame: Map) -> tuple[str, bool]:
     return "", False
 
 
+def loop_transport(player: Player, npc: Npc, mapgame: Map):
+    # Print of items.
+    places = npc.get_transport_places()
+    places_without_player_place = {k: v for k, v in places.items() if k != player.place.coordinates}
+    places_names = [mapgame.get_biome_name(x=x, y=y) for x, y in places_without_player_place.keys()]
+    dict_places = dict(zip(places_names, places_without_player_place.values()))
+    places_list, prices_list = displays.disp_show_list_items(player=player, items=dict_places)
+
+    # Place selection.
+    number_of_items = len(places_list)
+    place_index = get_number(floor_n=1, ceil_n=number_of_items + 1) - 1
+
+    if not place_index == number_of_items:
+        if npc.transport_confirm_message is not None:
+            displays.disp_standard_tw(npc.name, npc.transport_confirm_message)
+        confirmation = get_answer(answers={1: "Yes"})
+        if confirmation == 1:
+            return transport(player=player,
+                             mapgame=mapgame,
+                             place=list(places_without_player_place.keys())[place_index],
+                             cost=dict_places[places_list[place_index]])
+        if npc.transport_arrive_message is not None:
+            displays.disp_standard_tw(npc.name, npc.transport_arrive_message)
+    return "", False
+
+
 def talk(npc: Npc,
          player: Player,
          mapgame: Map) -> str:
@@ -190,6 +216,12 @@ def talk(npc: Npc,
     displays.disp_standard_tw(npc.name, npc.messages[0])  # Printing first message.
     npc.hist_messages[0] = True  # Turning True first message of NPC.
 
+    # Npc with skips.
+    if npc.npc_type == NpcTypes.CAPTAIN or NpcTypes.TRANSPORTER:
+        if mapgame.current_time_of_day not in npc.transport_time_of_day:
+            return f"You talked with {npc.name.title()}."
+
+    # Npc with answers.
     transactions, result = "", ""
     while bool(npc.answers.keys()):
         # Answers for npc.
@@ -231,6 +263,13 @@ def talk(npc: Npc,
                     result, _ = loop_rent(player=player, npc=npc, mapgame=mapgame)
                 if answer == 2:
                     result, _ = loop_buy(player=player, npc=npc, mapgame=mapgame, craft=False)
+
+            if npc.npc_type == NpcTypes.CAPTAIN or npc.npc_type == NpcTypes.TRANSPORTER:
+                if answer == 1:
+                    result, state = loop_transport(player=player, npc=npc, mapgame=mapgame)
+                    if state:
+                        return result
+                    return result
 
             # Adding result to transactions.
             if result:

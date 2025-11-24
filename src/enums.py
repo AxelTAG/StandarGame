@@ -210,6 +210,7 @@ class NpcTypes(Enum):
     CARAVANNER = 83
     ANIMAL = 84
     ELDER = 85
+    TRANSPORTER = 86
     WHISPERS = 471993
 
 

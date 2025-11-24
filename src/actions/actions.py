@@ -64,24 +64,6 @@ def buy(player: Player,
     return f"You buy {quantity} {item_object.name}.", True
 
 
-# # Check action.
-# def check(player: Player = None, item: str = None, inventory: bool = False) -> str:
-#     if player is None:
-#         return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
-#
-#     if not item or item is None:
-#         return "What do you want to check? CHECK ITEM for items at places or CHECK INV ITEM for items in the inventory."
-#
-#     if item in ITEMS.keys():
-#         if inventory:
-#             if item in player.inventory.items.keys():
-#                 return ITEMS[item].description
-#
-#         if item in player.place.get_items():
-#             return ITEMS[item].description
-#     return f"There is no {item.title()} here."
-
-
 def craft(player: Player, mapgame: Map, item: str, quantity: int) -> tuple[str, bool]:
     if item not in ITEMS:
         return "This item cannot be craft.", False
@@ -466,6 +448,28 @@ def sell(player: Player, item: str, quantity: int, price: int) -> tuple[str, boo
         player.inventory.add_item(item=player.get_item(item="gold"), quantity=earning)
         return f"You sell {quantity} {item_object.name}. You earn {earning} gold.", True
     return f"You don't have enough {item_object.name}.", False
+
+
+def transport(player: Player,
+              mapgame: Map,
+              place: tuple,
+              cost: dict) -> tuple[str, bool]:
+    for k, v in cost.items():
+        if k == "days":
+            continue
+        if not player.has(item=k, amount=v):
+            cost_name = underscores(text=k, delete=True).title()
+            return f"You don't have enough {cost_name}.", False
+
+    place_name = mapgame.get_biome_name(x=place[0], y=place[1])
+    player.set_place(place=mapgame.get_biome(x=place[0], y=place[1]))
+    for k, v in cost.items():
+        player.inventory.discard_item(item=k, quantity=v)
+    player.set_time_off()
+    mapgame.add_days(days_to_add=cost["days"])
+    displays.disp_narration()
+
+    return f"You traveled to {place_name}. It took {cost['days']} days.", True
 
 
 # Unequip action.

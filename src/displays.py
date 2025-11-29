@@ -489,19 +489,16 @@ def disp_sleep(place: Biome) -> str:
 
 def disp_statuses(entitie: Player | Mob, onbattle: bool = False) -> str:
     statuses_list = []
-    for status in entitie.statuses:
+    statuses = entitie.statuses + entitie.statuses_saved if onbattle else entitie.statuses
+
+    for status in statuses:
         statuses_list.append(f"{status.name.upper()}")
         if status.is_damaging():
             statuses_list[-1] += f" [{status.stacks}]"
         if status.is_sttuner() or status.is_paralyzer():
-            statuses_list[-1] += f" [{status.duration}]"
-
-    if onbattle:
-        for status in entitie.statuses_save:
-            statuses_list.append(f"{status.name.upper()}")
-            if status.is_damaging():
-                statuses_list[-1] += f" [{status.stacks}]"
-            if status.is_sttuner() or status.is_paralyzer():
+            if onbattle:
+                statuses_list[-1] += f" [{status.duration + 1}]"
+            if not onbattle:
                 statuses_list[-1] += f" [{status.duration}]"
 
     if not onbattle:

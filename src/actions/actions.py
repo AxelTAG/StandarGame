@@ -10,6 +10,7 @@ from ..player import Player
 from ..utils import underscores
 from ..world import ITEMS
 
+from .assign import assign
 from .battle import battle
 from .check import check
 from .explore import explore

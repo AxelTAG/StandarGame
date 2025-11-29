@@ -185,7 +185,7 @@ SKILLS = {
         power=4,
         cost=3,
         skill_type=SkillType.ATTACK.value,
-        accuracy=0.4,
+        accuracy=0.7,
         desviation=3,
         critical_chance=0.2,
         cooldown=0,
@@ -302,15 +302,15 @@ SKILLS_MOB = {
         cooldown=0,
         status_effects=[
             Status.gen_poison(duration=20, stacks=1, max_stacks=3, source="Training Dummy"),
-            Status.gen_paralyze(duration=1, stacks=1, max_stacks=1, source="Training Dummy"),
+            Status.gen_stun(duration=1, stacks=1, max_stacks=1, source="Training Dummy"),
             Status.gen_freeze(duration=2, stacks=1, max_stacks=1, source="Training Dummy"),
         ],
-        status_accuracy=[0.0, 0.0, 0.5],
+        status_accuracy=[0.0, 0.5, 0.0],
         scaling={
             "attack": 1,
         },
         requirements_equip={},
-        tags=["attack_little_slime"]
+        tags=["attack_training_dummy"]
     ),
 }
 
@@ -3046,8 +3046,8 @@ MOBS = {
 
     "training_dummy": Mob(
         name="Training Dummy",
-        hp=99,
-        hpmax=99,
+        hp=999,
+        hpmax=999,
         description="A wooden target that strikes back unexpectedly, teaching adventurers the pain of careless blows.",
         attack=1,
         defense=1,

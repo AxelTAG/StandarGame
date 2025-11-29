@@ -381,30 +381,14 @@ class Game:
                     player.standing = True
 
                 elif action[0] == "assign":  # Assign action.
+                    quantity = 1
                     if len(action) < 2:
                         screen = displays.disp_assign(player.st_points)
-                    elif player.st_points:
-                        if action[1] in ["strength", "str"]:
-                            player.strength += 1
-                            player.st_points -= 1
-                            screen = "You have assigned a skill point to strength."
-                        elif action[1] in ["agility", "agi"]:
-                            player.agility += 1
-                            player.st_points -= 1
-                            screen = "You have assigned a skill point to agility."
-                        elif action[1] in ["resistance", "res"]:
-                            player.resistance += 1
-                            player.st_points -= 1
-                            screen = "You have assigned a skill point to resistance."
-                        elif action[1] in ["vitality", "vit"]:
-                            player.vitality += 1
-                            player.st_points -= 1
-                            screen = "You have assigned a skill point to vitality."
-                    elif player.st_points == 0:
-                        screen = "You have no more skill points left."
-                    else:
-                        "That is not posible."
-                    player.standing = True
+                    if len(action) == 3:
+                        quantity = int(action[2])
+                    if len(action) >= 2:
+                        screen = assign(player=player, stat=action[1], quantity=quantity)
+                        player.standing = True
 
                 elif action[0] == "attack":  # Attack action.
                     if len(action) == 1:
@@ -760,7 +744,8 @@ class Game:
                         for mob in action[2:]:
                             if mob in MOBS.keys():
                                 e.append(copy.deepcopy(MOBS[mob]))
-                        battle(players=[player], enemies=e, mapgame=map_game)
+                        if e:
+                            battle(players=[player], enemies=e, mapgame=map_game)
 
                     elif action == ["active", "moves"]:
                         screen = f"{map_game.get_avaible_moves(player=player)}"

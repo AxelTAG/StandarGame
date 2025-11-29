@@ -8,6 +8,7 @@ import copy
 import random
 
 from attrs import define, field
+from enum import Enum
 
 
 @define
@@ -34,7 +35,8 @@ class Mob:
     stun: bool = field(default=False)
     paralyze: bool = field(default=False)
     statuses: list[Status] = field(factory=list)
-    statuses_save: list[Status] = field(factory=list)
+    statuses_pre: list[Status] = field(factory=list)
+    statuses_saved: list[Status] = field(factory=list)
 
     # Combats attributes.
     attack: int = field(default=0)
@@ -99,12 +101,35 @@ class Mob:
         return self.hp > 0
 
     # Statuses methods.
-    def add_status(self, status: Status) -> None:
-        if status is Status:
-            self.statuses.append(copy.deepcopy(status))
+    def add_status(self, status: Status, onbattle: bool = False) -> None:
+        # if onbattle:
+        #     self.add_pre_status(status=status)
+        #     return
+        active_status = self.get_status(status_type=status.status_type)
+        if active_status is not None:
+            active_status.apply_stack(other=status)
+            return
+        self.statuses.append(copy.deepcopy(status))
+
+    def add_status_saved(self, status: Status) -> None:
+        self.statuses_saved.append(status)
+
+    def add_pre_status(self, status: Status):
+        self.statuses_pre.append(copy.deepcopy(status))
 
     def discard_status(self, status: Status) -> None:
         self.statuses.remove(status)
+
+    def discard_pre_status(self) -> None:
+        self.statuses_pre.clear()
+
+    def clear_statuses_saved(self) -> None:
+        self.statuses_saved.clear()
+
+    def get_status(self, status_type: Enum) -> Status | None:
+        for status in self.statuses:
+            if status_type == status.status_type:
+                return status
 
     def is_visible(self) -> bool:
         return random.random() >= self.visibility
@@ -115,19 +140,45 @@ class Mob:
     def is_paralyze(self) -> bool:
         return self.paralyze
 
-    def set_stun(self, value) -> None:
-        if value is bool:
+    def set_stun(self, value: bool) -> None:
+        if isinstance(value, bool):
             self.stun = value
+            return
+        raise ValueError("Value must be bool.")
+
+    def set_paralyze(self, value: bool) -> None:
+        if isinstance(value, bool):
+            self.paralyze = value
+            return
+        raise ValueError("Value must be bool.")
+
+    def apply_status_effects(self, status: Status, tick: bool = True) -> None:
+        if status.is_sttuner():
+            self.set_stun(value=True)
+        if status.is_paralyzer():
+            self.set_paralyze(value=True)
+        if tick:
+            if status.is_damaging():
+                self.hp -= status.stacks
+            status.tick(entity=self)
+            if status.duration <= 0:
+                self.statuses.remove(status)
+                self.add_status_saved(status=status)
 
     def refresh_status(self, onbattle: bool = False) -> None:
+        self.set_stun(value=False)
+        self.set_paralyze(value=False)
+        self.clear_statuses_saved()
         for status in self.statuses:
-            if status.damaging:
-                self.hp -= status.stacks
-            if status.stunner:
-                self.set_stun(value=True)
-            status.tick(entity=self)
-            if status.stacks <= 0:
-                self.discard_status(status=status)
+            self.apply_status_effects(status=status, tick=True)
+
+        if not onbattle:
+            pass
+
+        # for status in self.statuses_pre:
+        #     self.add_status(status=status)
+        #     self.apply_status_effects(status=status, tick=False)
+        # self.discard_pre_status()
 
     # Item methods.
     def get_experience(self) -> int:
@@ -152,6 +203,8 @@ class Mob:
         return odds
 
     def drop_items(self) -> list:
+        if self.items is None:
+            return []
         quantity = random.randint(a=0, b=len(self.items))
         items = list(set(random.choices(population=[*self.items.keys()],
                                         cum_weights=self.get_drop_odds(),
@@ -195,9 +248,9 @@ class Mob:
             if skill.id == "mob_attack":
                 return skill
 
-    def attack_to(self, target) -> tuple[bool, bool, int, bool, list]:
+    def attack_to(self, target, onbattle: bool = False) -> tuple[bool, bool, int, bool, list]:
         skill = self.get_standar_attack()
-        return skill.action(caster=self, target=target)
+        return skill.action(caster=self, target=target, onbattle=onbattle)
 
     def take_damage(self, damage: int) -> int:
         efective_dmg = max(0, damage - self.defense)

@@ -139,7 +139,7 @@ class Battle:
                 target = self.select_target_enemy()
                 avaible, requirement, cause = player.is_skill_available(skill=skill)
                 if avaible:
-                    fail, _, damage, critical, effects = skill.action(caster=player, target=target)
+                    fail, _, damage, critical, effects = skill.action(caster=player, target=target, onbattle=True)
                     if fail:
                         self.screen.append(f"{player.name} has failed the skill {skill.name}.")
                     if critical:
@@ -195,8 +195,15 @@ class Battle:
             return succes
 
     def enemy_action(self, enemy: Mob, players: list[Player]) -> None:
+        if enemy.is_stun():
+            self.screen.append(f"{enemy.name} was stunned and cannot attack.")
+            return
+        if enemy.is_paralyze():
+            self.screen.append(f"{enemy.name} was paralyzed and cannot attack.")
+            return
+
         target = random.choice([player for player in players if player.is_alive()])
-        fail, _, damage, critical, effects = enemy.attack_to(target=target)
+        fail, _, damage, critical, effects = enemy.attack_to(target=target, onbattle=True)
         if fail:
             self.screen.append(f"{enemy.name} has failed the attack.")
             return

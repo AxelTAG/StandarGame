@@ -65,7 +65,8 @@ class Player:
 
     # Status attributes.
     statuses: list[Status] = field(factory=list)
-    statuses_save: list[Status] = field(factory=list)
+    statuses_pre: list[Status] = field(factory=list)
+    statuses_saved: list[Status] = field(factory=list)
 
     hungry: int = field(default=100)
     thirsty: int = field(default=100)
@@ -516,10 +517,29 @@ class Player:
         return self.paralyze
 
     def set_stun(self, value: bool) -> None:
-        self.stun = value
+        if isinstance(value, bool):
+            self.stun = value
+            return
+        raise ValueError("Value must be bool.")
 
     def set_paralyze(self, value: bool) -> None:
-        self.paralyze = value
+        if isinstance(value, bool):
+            self.paralyze = value
+            return
+        raise ValueError("Value must be bool.")
+
+    def apply_status_effects(self, status: Status, tick: bool = True) -> None:
+        if status.is_sttuner():
+            self.set_stun(value=True)
+        if status.is_paralyzer():
+            self.set_paralyze(value=True)
+        if tick:
+            if status.is_damaging():
+                self.hp -= status.stacks
+            status.tick(entity=self)
+            if status.duration <= 0:
+                self.statuses.remove(status)
+                self.add_status_saved(status=status)
 
     def refresh_hungry(self, hour: int, last_hour: int) -> None:
         if self.hungry > 0:
@@ -558,18 +578,9 @@ class Player:
     def refresh_status(self, onbattle: bool = False) -> None:
         self.set_stun(value=False)
         self.set_paralyze(value=False)
-        self.discard_save_statuses()
+        self.clear_statuses_saved()
         for status in self.statuses:
-            if status.is_damaging():
-                self.hp -= status.stacks
-            if status.is_sttuner():
-                self.set_stun(value=True)
-            if status.is_paralyzer():
-                self.set_paralyze(value=True)
-            status.tick(entity=self)
-            if status.duration <= 0:
-                self.add_save_status(status=status)
-                self.discard_status(status=status)
+            self.apply_status_effects(status=status, tick=True)
 
         if not onbattle:
             if self.hungry < 10:
@@ -577,6 +588,11 @@ class Player:
 
             if self.thirsty < 10:
                 self.hp -= 1
+
+        # for status in self.statuses_pre:
+        #     self.add_status(status=status)
+        #     self.apply_status_effects(status=status, tick=False)
+        # self.discard_pre_status()
 
     def add_hungry(self, amount: int) -> None:
         if self.hungry + amount > 100:
@@ -590,21 +606,30 @@ class Player:
             return
         self.thirsty += amount
 
-    def add_status(self, status: Status) -> None:
+    def add_status(self, status: Status, onbattle: bool = False) -> None:
+        # if onbattle:
+        #     self.add_pre_status(status=copy.deepcopy(status))
+        #     return
         active_status = self.get_status(status_type=status.status_type)
         if active_status is not None:
             active_status.apply_stack(other=status)
             return
         self.statuses.append(copy.deepcopy(status))
 
-    def add_save_status(self, status: Status) -> None:
-        self.statuses_save.append(status)
+    def add_status_saved(self, status: Status) -> None:
+        self.statuses_saved.append(status)
+
+    def add_pre_status(self, status: Status):
+        self.statuses_pre.append(status)
 
     def discard_status(self, status: Status) -> None:
         self.statuses.remove(status)
 
-    def discard_save_statuses(self) -> None:
-        self.statuses_save.clear()
+    def discard_pre_status(self) -> None:
+        self.statuses_pre.clear()
+
+    def clear_statuses_saved(self) -> None:
+        self.statuses_saved.clear()
 
     def get_status(self, status_type: Enum) -> Status | None:
         for status in self.statuses:
@@ -624,9 +649,9 @@ class Player:
             if skill.id == "attack":
                 return skill
 
-    def attack_to(self, target) -> tuple[bool, bool, int, bool, list]:
+    def attack_to(self, target, onbattle: bool = False) -> tuple[bool, bool, int, bool, list]:
         skill = self.get_standar_attack()
-        return skill.action(caster=self, target=target)
+        return skill.action(caster=self, target=target, onbattle=onbattle)
         
     def take_damage(self, damage: int) -> int:
         efective_dmg = max(0, damage - self.defense)

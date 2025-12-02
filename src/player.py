@@ -3,7 +3,7 @@
 import copy
 
 from .biome import Biome, Entry
-from .enums import Actions, BodyPart, PlayerStatus, ObjectiveType, RequirementType, StatusType
+from .enums import Actions, BodyPart, Cities, PlayerStatus, ObjectiveType, RequirementType, StatusType
 from .globals import MAP_X_LENGTH, MAP_Y_LENGTH
 from .skill import Skill
 from .inventory import Inventory
@@ -12,7 +12,6 @@ from .status import Buff, Status
 from .quest import Quest
 
 # External imports.
-import random
 import numpy as np
 from attr import define, field
 from datetime import timedelta, datetime
@@ -116,9 +115,11 @@ class Player:
     map: np.array = field(default=None)
     map_labels: list = field(default=None)
 
-    # Quests.
+    # Quests attributes.
     quests_in_progress: list = field(factory=list)
     quests_completed: list = field(factory=list)
+
+    reputation: dict[str, int] = field(default=None)
 
     # Skills attributes.
     skills: list[Skill] = field(factory=list)
@@ -167,6 +168,9 @@ class Player:
             # Make sure equip is a dictionary with the correct keys.
             valid_keys = set(BodyPart)
             self.equip = {key: self.equip.get(key) for key in valid_keys}
+
+        if self.reputation is None:
+            self.reputation = {item.value: 0 for item in Cities}
 
         if self.events is None:
             self.events = {
@@ -366,7 +370,10 @@ class Player:
     def set_slot(self, slot: int, item: Item) -> bool:
         return self.equip[BodyPart.WAIST].set_slot(slot=slot, item=item)
 
-    def add_item(self, item: Item, quantity: int = 1) -> None:
+    def add_item(self, item: Item | str, quantity: int = 1) -> None:
+        if isinstance(item, str):
+            item = self.inventory.get_item_object(item=item)
+
         if item.id in self.item_limits:
             if item.id not in self.inventory.items:
                 if quantity >= self.item_limits[item.id]:
@@ -428,6 +435,11 @@ class Player:
     def add_quest(self, quest: Quest) -> None:
         self.quests_in_progress.append(quest)
 
+    def get_quest(self, quest: str) -> Quest:
+        for q in self.get_quests():
+            if q.id == quest:
+                return q
+
     def get_quests(self, in_progress: bool = True, completed: bool = True) -> list[Quest]:
         quests = []
         if in_progress:
@@ -436,7 +448,9 @@ class Player:
             quests.extend(self.quests_completed)
         return quests
 
-    def remove_quest(self, quest: Quest) -> None:
+    def remove_quest(self, quest: Quest | str) -> None:
+        if isinstance(quest, str):
+            quest = self.get_quest(quest=quest)
         if quest.is_completed():
             self.quests_completed.append(quest)
             self.quests_completed.sort(key=lambda q: q.title)
@@ -451,7 +465,7 @@ class Player:
 
     def refresh_quests(self) -> None:
         for quest in self.get_quests(completed=False):
-            for objetive in filter(lambda obj: obj.status_type == ObjectiveType.COLLECT, quest.objectives):
+            for objetive in filter(lambda obj: obj.type == ObjectiveType.COLLECT, quest.objectives):
                 target = objetive.target
                 quest.update_progress(target=target, amount=self.inventory.items.get(target, 0), carry=True)
 
@@ -606,10 +620,7 @@ class Player:
             return
         self.thirsty += amount
 
-    def add_status(self, status: Status, onbattle: bool = False) -> None:
-        # if onbattle:
-        #     self.add_pre_status(status=copy.deepcopy(status))
-        #     return
+    def add_status(self, status: Status) -> None:
         active_status = self.get_status(status_type=status.status_type)
         if active_status is not None:
             active_status.apply_stack(other=status)
@@ -657,6 +668,14 @@ class Player:
         efective_dmg = max(0, damage - self.defense)
         self.hp = max(0, self.hp - efective_dmg)
         return efective_dmg
+
+    # Reputation methos.
+    def get_city_reputation(self, city: str) -> int:
+        return self.reputation[city]
+
+    def add_reputation(self, city: str, amount: int) -> None:
+        self.reputation[city] += amount
+        self.update_quests(target=city, amount=amount)
 
     # Other methods.
     def refresh_time_played(self, time_close: timedelta | datetime, time_init: timedelta | datetime) -> None:

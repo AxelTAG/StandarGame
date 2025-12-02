@@ -22,6 +22,15 @@ class BodyPart(Enum):
     WAIST = 5
 
 
+class Cities(Enum):
+    EPIIAT = "epiiat"
+    AQUIRI = "aquiri"
+    ANTINA = "antina"
+    THELM = "thelm"
+    SOLARA = "solara"
+    VEYLAN = "veylan"
+
+
 class Colors(Enum):
     WHITE = (255, 255, 255, 255)
     BLACK = (0, 0, 0, 255)
@@ -220,6 +229,7 @@ class ObjectiveType(Enum):
     KILL = auto()
     TALK = auto()
     DELIVER = auto()
+    REPUTATION = auto()
 
     # Not implemented.
     ESCORT = auto()

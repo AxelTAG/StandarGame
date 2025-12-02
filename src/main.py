@@ -206,6 +206,11 @@ class Game:
                             inventory=Inventory(item_base=ITEMS),
                             skills=[SKILLS["attack"]])
 
+            # Standard quests.
+            player.add_quest(quest=QUESTS["reputation_test"])
+            for quest in player.get_quests():
+                quest.start()
+
             # Location setting.
             map_game.map_settings[(12, 24)].entries["hut"].name = player.name + "'s Hut"
 

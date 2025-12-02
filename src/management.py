@@ -24,6 +24,12 @@ def event_handler(player: Player,
         player.hp = 0
         return False, True
 
+    # Quest/Event control
+    # if player.get_quest(quest="reputation_test").is_completed():
+    #     disp_standard_tw(name="Whisppers",
+    #                      message=["This is working..."])
+    #     player.remove_quest(quest="reputation_test")
+
     # Event of Goblin Chief (1/3).
     goblin_chiefs_bedroom = mapgame.place_from_list([(25, 24), "cave_entrance", "cave_pit", "cave_basin",
                                                      "cave_gallery", "chiefs_cave", "goblin_chief_bedroom"])

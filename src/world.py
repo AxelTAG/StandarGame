@@ -1786,17 +1786,33 @@ QUEST_OBJETIVES = {
         type=ObjectiveType.DELIVER,
         target="ant_nynaeve",
         deliver_item="water",
-        deliver_amount=1)
+        deliver_amount=1),
+
+    # Reputation quest objectives.
+    "reputation_test": QuestObjective(
+        type=ObjectiveType.REPUTATION,
+        target="epiiat",
+        amount=10),
 }
 
+
 QUESTS = {
+    # Reputation quests.
+    "reputation_test": Quest(
+        id="reputation_test",
+        title="Reputation Test",
+        description="Earn reputation in Epiiat.",
+        objectives=[QUEST_OBJETIVES["reputation_test"]],
+        rewards={"gold": 100},
+    ),
+
     # Kill quests.
     "slime_slayer_I": Quest(
         id="slime_slayer_I",
         title="The Slimy Slayer",
         description="Defeat 5 Little Slimes.",
         objectives=[QUEST_OBJETIVES["slime_slayer_I"]],
-        rewards={"gold": 15},
+        rewards={"gold": 15, "epiiat": 5},
         messages_start={
             0: ["Hello there! I will guide you to this tutorial.",
                 "For now, just take down 5 Slimes. And return to me again."],
@@ -1816,7 +1832,7 @@ QUESTS = {
         title="The Slimy Slayer II",
         description="Defeat 2 Slimes.",
         objectives=[QUEST_OBJETIVES["slime_slayer_II"]],
-        rewards={"gold": 30, "red_potion": 1},
+        rewards={"gold": 30, "red_potion": 1, "epiiat": 5},
         messages_start={
             0: ["Those Little Slimes were only the beginning. Are you ready for the next quest?"],
             1: ["Now, I need you to face their stronger kin — the Slimes.",
@@ -1843,7 +1859,7 @@ QUESTS = {
         title="Meet Ant Nynaeve",
         description="Search for Ant Nynaeve and talk with her.",
         objectives=[QUEST_OBJETIVES["meet_ant_nynaeve"]],
-        rewards={"gold": 10},
+        rewards={"gold": 10, "epiiat": 5},
         messages_start={
             0: ["For your next task, I need you to find Nynaeve.,",
                 "I haven’t seen her in some time—she may be in trouble.",
@@ -1870,7 +1886,7 @@ QUESTS = {
         title="Gathering Coconuts",
         description="Collect 5 coconuts from the nearby palm trees.",
         objectives=[QUEST_OBJETIVES["coco_collect_I"]],
-        rewards={"gold": 10},
+        rewards={"gold": 10, "epiiat": 5},
         remove=True,
         messages_start={
             0: ["I need some fresh coconuts. Can you bring me five of them?"],
@@ -1893,7 +1909,7 @@ QUESTS = {
         title="Water for Nynaeve",
         description="Loial asked you to deliver fresh water to Nynaeve, who might be in need.",
         objectives=[QUEST_OBJETIVES["water_for_nynaeve"]],
-        rewards={"gold": 10},
+        rewards={"gold": 10, "epiiat": 5},
         remove=True,
         messages_start={
             0: ["Nynaeve may need fresh water. Could you deliver it to her?"],
@@ -1919,10 +1935,10 @@ NPCS = {
                          0: ["Hello there! Today I have no mision to give you."],
                      },
                      quests=[
-                         QUESTS["water_for_nynaeve"],
                          QUESTS["coco_collect_I"],
                          QUESTS["slime_slayer_I"],
                          QUESTS["slime_slayer_II"],
+                         QUESTS["water_for_nynaeve"],
                          QUESTS["meet_ant_nynaeve"],
                      ],
                      place=[(12, 24)]),

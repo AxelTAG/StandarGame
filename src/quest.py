@@ -15,6 +15,9 @@ class QuestObjective:
     deliver_item: str = None
     deliver_amount: int = None
 
+    def __attrs_post_init__(self):
+        pass
+
     def update(self, target: str, amount: int = 1,
                deliver_item: str = None,
                deliver_amount: int = None,
@@ -43,6 +46,12 @@ class QuestObjective:
         if self.type == ObjectiveType.DELIVER:
             if self.target == target and self.deliver_item == deliver_item and self.deliver_amount == deliver_amount:
                 self.progress = self.amount
+                return
+            return
+
+        if self.type == ObjectiveType.REPUTATION:
+            if self.target == target:
+                self.progress += amount
                 return
             return
 

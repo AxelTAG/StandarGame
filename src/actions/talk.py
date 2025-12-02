@@ -201,11 +201,14 @@ def talk(npc: Npc,
             reward = npc.complete_quest(quest=quest)
             reward_msg = f"{npc.name.title()} gives you: "
             for item, amount in reward.items():
+                if item in player.reputation.keys():
+                    player.add_reputation(city=item, amount=amount)
+                    continue
                 player.add_item(item=item, quantity=amount)
                 item_object = get_item(item_name=item)
                 reward_msg += f"{amount} {item_object.name}, "
             if quest.remove:
-                for objetive in filter(lambda q: q.status_type == ObjectiveType.COLLECT, quest.objectives):
+                for objetive in filter(lambda q: q.type == ObjectiveType.COLLECT, quest.objectives):
                     player.inventory.discard_item(item=objetive.target, quantity=objetive.amount)
             player.remove_quest(quest=quest)
             return f"{reward_msg[:-2]}. You talked with {npc.name.title()}."

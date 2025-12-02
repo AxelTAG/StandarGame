@@ -230,10 +230,10 @@ class ObjectiveType(Enum):
     TALK = auto()
     DELIVER = auto()
     REPUTATION = auto()
+    EXPLORE = auto()
 
     # Not implemented.
     ESCORT = auto()
-    EXPLORE = auto()
     CRAFT = auto()
     PUZZLE = auto()
     TIMED = auto()

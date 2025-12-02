@@ -324,6 +324,7 @@ class Player:
             self.y = place.y
             self.outside = True
         self.place = place
+        self.update_quests(target=f"({self.x}, {self.y})", amount=1)
 
     # Player inventory methods.
     def has(self, item: str, amount: int = None) -> bool:

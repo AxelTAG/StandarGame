@@ -51,7 +51,13 @@ class QuestObjective:
 
         if self.type == ObjectiveType.REPUTATION:
             if self.target == target:
-                self.progress += amount
+                self.progress = min(self.progress + amount, self.amount)
+                return
+            return
+
+        if self.type == ObjectiveType.EXPLORE:
+            if self.target == target:
+                self.progress = min(self.progress + amount, self.amount)
                 return
             return
 

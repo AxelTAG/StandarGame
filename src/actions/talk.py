@@ -220,7 +220,7 @@ def talk(npc: Npc,
     npc.hist_messages[0] = True  # Turning True first message of NPC.
 
     # Npc with skips.
-    if npc.npc_type == NpcTypes.CAPTAIN or NpcTypes.TRANSPORTER:
+    if npc.npc_type == NpcTypes.CAPTAIN or npc.npc_type == NpcTypes.TRANSPORTER:
         if mapgame.current_time_of_day not in npc.transport_time_of_day:
             return f"You talked with {npc.name.title()}."
 

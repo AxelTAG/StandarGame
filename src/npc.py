@@ -42,23 +42,23 @@ class Npc:
     # Temporal and placing attriubtes.
     hour_morning: int = field(default=6)
     place_morning: list = field(default=None)
-    messages_morning: list[int: list[str]] = field(default=None)
-    answers_morning: list[int: list[str]] = field(default=None)
+    messages_morning: dict[int: list[str]] = field(default=None)
+    answers_morning: dict[int: list[str]] = field(default=None)
 
     hour_afternoon: int = field(default=12)
     place_afternoon: list = field(default=None)
-    messages_afternoon: list[int: list[str]] = field(default=None)
-    answers_afternoon: list[int: list[str]] = field(default=None)
+    messages_afternoon: dict[int: list[str]] = field(default=None)
+    answers_afternoon: dict[int: list[str]] = field(default=None)
 
     hour_evening: int = field(default=18)
     place_evening: list = field(default=None)
-    messages_evening: list[int: list[str]] = field(default=None)
-    answers_evening: list[int: list[str]] = field(default=None)
+    messages_evening: dict[int: list[str]] = field(default=None)
+    answers_evening: dict[int: list[str]] = field(default=None)
 
     hour_night: int = field(default=22)
     place_night: list = field(default=None)
-    messages_night: list[int: list[str]] = field(default=None)
-    answers_night: list[int: list[str]] = field(default=None)
+    messages_night: dict[int: list[str]] = field(default=None)
+    answers_night: dict[int: list[str]] = field(default=None)
 
     # Listen attributes.
     tracks: dict = field(default=None)
@@ -97,12 +97,27 @@ class Npc:
         self.reset_hist_messages()
         self.refresh_temporal(hour=6)
 
-    # Refresh and status methods.
+    # Messages and answer methods.
+    def clear_messages_answers(self, messages: bool = True, answers: bool = True) -> None:
+        if messages:
+            self.messages = {}
+            self.messages_morning = {}
+            self.messages_afternoon = {}
+            self.messages_evening = {}
+            self.messages_night = {}
+        if answers:
+            self.answers = {}
+            self.answers_morning = {}
+            self.answers_afternoon = {}
+            self.answers_evening = {}
+            self.answers_night = {}
+
     def reset_hist_messages(self):
         self.hist_messages = {}
         for _ in self.messages.keys():
             self.hist_messages[_] = False
 
+    # Refresh and status methods.
     def current_temporal(self, hour: int) -> int:
         if self.hour_night < self.hour_morning:
             if self.hour_night <= hour < self.hour_morning:
@@ -183,6 +198,9 @@ class Npc:
         return self.buy_beds
 
     # Transport methods.
+    def add_transport_place(self, place_coordinate: tuple, place_price: dict[str, int]) -> None:
+        self.transport_places[tuple] = place_price
+
     def get_transport_places(self) -> dict[tuple, dict]:
         return self.transport_places
 
@@ -191,6 +209,18 @@ class Npc:
         if completed:
             return bool(self.quests)
         return any([not quest.is_rewarded() for quest in self.quests])
+
+    def add_quest(self, quest: Quest) -> None:
+        self.quests.append(quest)
+
+    def remove_quest(self, quest: Quest | str) -> None:
+        if isinstance(quest, str):
+            for q in self.quests:
+                if q.id == quest:
+                    self.quests.remove(q)
+                    return
+        if quest in self.quests:
+            self.quests.remove(quest)
 
     def get_first_quest(self):
         quests = [quest for quest in self.quests if not quest.is_rewarded()]

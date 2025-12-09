@@ -54,6 +54,7 @@ def use(player: Player,
         for neighbor in mapgame.neighbors_from_coord((player.x, player.y)):
             if "rocks" in neighbor.req:
                 neighbor.req.remove("rocks")
+                neighbor.remove_item("rocks", player=player)
                 player.inventory.discard_item(item=item.id, quantity=1)
                 explosion = True
         if explosion:

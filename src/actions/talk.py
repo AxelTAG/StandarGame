@@ -150,20 +150,6 @@ def loop_transport(player: Player, npc: Npc, mapgame: Map):
 def talk(npc: Npc,
          player: Player,
          mapgame: Map) -> str:
-    # Update of quests with TALK objective.
-    player.update_quests(target=npc.id, amount=1)
-    # Update of quests with DELIVERY objective.
-    for quest in player.get_quests(completed=False):
-        for objetive in quest.objectives:
-            if objetive.type == ObjectiveType.DELIVER:
-                if player.has(item=objetive.deliver_item, amount=objetive.deliver_amount):
-                    player.update_quests(target=npc.id,
-                                         amount=1,
-                                         deliver_item=objetive.deliver_item,
-                                         deliver_amount=objetive.deliver_amount)
-                    if objetive.is_done():
-                        player.inventory.discard_item(item=objetive.deliver_item,
-                                                      quantity=objetive.deliver_amount)
     # Npc with quest.
     if npc.has_quest():
         quest = npc.get_first_quest()
@@ -213,6 +199,21 @@ def talk(npc: Npc,
             player.remove_quest(quest=quest)
             return f"{reward_msg[:-2]}. You talked with {npc.name.title()}."
         return f"You talked with {npc.name.title()}."
+
+    # Update of quests with TALK objective.
+    player.update_quests(target=npc.id, amount=1)
+    # Update of quests with DELIVERY objective.
+    for quest in player.get_quests(completed=False):
+        for objetive in quest.objectives:
+            if objetive.type == ObjectiveType.DELIVER:
+                if player.has(item=objetive.deliver_item, amount=objetive.deliver_amount):
+                    player.update_quests(target=npc.id,
+                                         amount=1,
+                                         deliver_item=objetive.deliver_item,
+                                         deliver_amount=objetive.deliver_amount)
+                    if objetive.is_done():
+                        player.inventory.discard_item(item=objetive.deliver_item,
+                                                      quantity=objetive.deliver_amount)
 
     # Npc whithout quests.
     # First message of npc.

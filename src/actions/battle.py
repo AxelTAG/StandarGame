@@ -42,6 +42,7 @@ class Battle:
     players: list[Player] | Player
     enemies: list[Mob] | Mob
     mapgame: Map
+    data_battle: dict = field(factory=dict)
     turn: int = field(default=1)
 
     # Escape attributes.
@@ -216,10 +217,16 @@ class Battle:
         return
 
     def is_victory(self) -> bool:
-        return all(not enemy.is_alive() for enemy in self.enemies)
+        limit = 0
+        if "mob_life_limit" in self.data_battle:
+            limit = self.data_battle["mob_life_limit"]
+        return all(not enemy.is_alive(limit=limit) for enemy in self.enemies)
 
     def is_defeat(self) -> bool:
-        return all(not player.is_alive() for player in self.players)
+        limit = 0
+        if "player_life_limit" in self.data_battle:
+            limit = self.data_battle["mob_life_limit"]
+        return all(not player.is_alive(limit=limit) for player in self.players)
 
     def apply_statuses(self):
         """Applies effects of all active statuses."""
@@ -327,6 +334,6 @@ class Battle:
         pass
 
 
-def battle(players: list[Player], enemies: list[Mob], mapgame: Map, **kwargs) -> int:
+def battle(players: list[Player], enemies: list[Mob], mapgame: Map, **kwargs) -> bool:
     fight = Battle(players=players, enemies=enemies, mapgame=mapgame, **kwargs)
     return fight.run()

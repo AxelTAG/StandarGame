@@ -18,7 +18,9 @@ class QuestObjective:
     def __attrs_post_init__(self):
         pass
 
-    def update(self, target: str, amount: int = 1,
+    def update(self,
+               target: str,
+               amount: int = 1,
                deliver_item: str = None,
                deliver_amount: int = None,
                carry: bool = False) -> None:
@@ -61,8 +63,23 @@ class QuestObjective:
                 return
             return
 
+        if self.type == ObjectiveType.EAT:
+            if self.target == target:
+                self.progress = min(self.progress + amount, self.amount)
+                return
+            return
+
+        if self.type == ObjectiveType.DESTROY:
+            if self.target == target:
+                self.progress = min(self.progress + amount, self.amount)
+                return
+            return
+
     def is_done(self) -> bool:
         return self.progress >= self.amount
+
+    def complete_objective(self) -> None:
+        self.progress = self.amount
 
 
 @define
@@ -130,3 +147,8 @@ class Quest:
             if objetive.type == ObjectiveType.DELIVER:
                 items[objetive.deliver_item] = objetive.deliver_amount
         return items
+
+    def complete_quest(self) -> None:
+        for objetive in self.objectives:
+            objetive.complete_objective()
+        self.update_progress(target="")

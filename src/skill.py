@@ -23,7 +23,7 @@ class Skill:
     critical_chance: float = field(default=0)
     cooldown: int = field(default=0)
     status_effects: list = field(factory=list)
-    status_accuracy: list = field(factory=list)
+    status_accuracy: list[float] = field(factory=list)
     scaling: dict = field(factory=dict)
     scaling_critical: dict = field(factory=dict)
     requirements_equip: dict = field(factory=dict)

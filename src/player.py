@@ -86,7 +86,7 @@ class Player:
     resistance_paralyze: float = field(default=0)
 
     # Temperature attributes.
-    temperature: int = field(default=36)
+    temperature: int = field(default=0)
 
     # Player location attributes.
     x: int = field(default=12)
@@ -162,7 +162,8 @@ class Player:
                           BodyPart.RIGHT_HAND: None,
                           BodyPart.LEFT_HAND: None,
                           BodyPart.WAIST: None,
-                          BodyPart.LEGS: None}
+                          BodyPart.LEGS: None,
+                          BodyPart.FEET: None}
 
         else:
             # Make sure equip is a dictionary with the correct keys.
@@ -247,8 +248,8 @@ class Player:
         return None
 
     # Current status methods.
-    def is_alive(self) -> bool:
-        return self.hp > 0
+    def is_alive(self, limit: int = 0) -> bool:
+        return self.hp > limit
 
     def heal(self, amount: int) -> None:
         if self.hp + amount < self.hpmax:
@@ -302,7 +303,7 @@ class Player:
     def lvl_up(self, quantity: int = 1) -> None:
         self.level += quantity
         self.exp = 0
-        self.expmax = 10 * self.level + self.level ** 2
+        self.expmax = int(10 * self.level + (10 * self.level) ** 0.5)
         self.st_points += 3 * quantity
 
         self.b_hpmax += 2 * quantity
@@ -324,7 +325,8 @@ class Player:
             self.y = place.y
             self.outside = True
         self.place = place
-        self.update_quests(target=f"({self.x}, {self.y})", amount=1)
+        if self.outside:
+            self.update_quests(target=f"({self.x}, {self.y})", amount=1)
 
     # Player inventory methods.
     def has(self, item: str, amount: int = None) -> bool:
@@ -435,9 +437,17 @@ class Player:
     # Quest methods.
     def add_quest(self, quest: Quest) -> None:
         self.quests_in_progress.append(quest)
+        quest.start()
 
-    def get_quest(self, quest: str) -> Quest:
-        for q in self.get_quests():
+    def has_quest(self, quest: Quest | str) -> bool:
+        if isinstance(quest, str):
+            for q in self.quests_in_progress:
+                if q.id == quest:
+                    return True
+        return quest in self.quests_in_progress
+
+    def get_quest(self, quest: str, in_progress: bool = True, completed: bool = True) -> Quest:
+        for q in self.get_quests(in_progress=in_progress, completed=completed):
             if q.id == quest:
                 return q
 
@@ -582,13 +592,13 @@ class Player:
     def refresh_temperature_status(self) -> None:
         self.refresh_temperature()
         if self.temperature > 45:
-            self.add_status(status=Status.gen_freeze(duration=2, stacks=2, max_stacks=1, source="biome"))
+            self.add_status(status=Status.gen_burn(duration=2, stacks=2, max_stacks=20, source="biome"))
         if 40 <= self.temperature <= 45:
-            self.add_status(status=Status.gen_burn(duration=2, stacks=1, max_stacks=1, source="biome"))
+            self.add_status(status=Status.gen_burn(duration=2, stacks=1, max_stacks=8, source="biome"))
         if 25 <= self.temperature <= 30:
-            self.add_status(status=Status.gen_freeze(duration=2, stacks=1, max_stacks=1, source="biome"))
+            self.add_status(status=Status.gen_freeze(duration=2, stacks=1, max_stacks=8, source="biome"))
         if self.temperature <= 25:
-            self.add_status(status=Status.gen_freeze(duration=2, stacks=2, max_stacks=1, source="biome"))
+            self.add_status(status=Status.gen_freeze(duration=2, stacks=2, max_stacks=20, source="biome"))
 
     def refresh_status(self, onbattle: bool = False) -> None:
         self.set_stun(value=False)

@@ -4,3 +4,4 @@ numpy
 Pillow
 pygame
 PyQt5
+dill

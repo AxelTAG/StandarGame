@@ -20,6 +20,7 @@ class BodyPart(Enum):
     LEFT_HAND = 3
     LEGS = 4
     WAIST = 5
+    FEET = 6
 
 
 class Cities(Enum):
@@ -231,6 +232,8 @@ class ObjectiveType(Enum):
     DELIVER = auto()
     REPUTATION = auto()
     EXPLORE = auto()
+    EAT = auto()
+    DESTROY = auto()
 
     # Not implemented.
     ESCORT = auto()

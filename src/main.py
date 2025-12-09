@@ -191,6 +191,7 @@ class Game:
             # Initial settings.
             # Map settings.
             map_game = Map(items=copy.deepcopy(ITEMS),
+                           quests=copy.deepcopy(QUESTS),
                            mobs=copy.deepcopy(MOBS),
                            biomes=copy.deepcopy(BIOMES),
                            regions=copy.deepcopy(REGIONS),
@@ -206,13 +207,15 @@ class Game:
                             inventory=Inventory(item_base=ITEMS),
                             skills=[SKILLS["attack"]])
 
-            # Standard quests.
-            player.add_quest(quest=QUESTS["reputation_test"])
-            for quest in player.get_quests():
-                quest.start()
-
-            # Location setting.
-            map_game.map_settings[(12, 24)].entries["hut"].name = player.name + "'s Hut"
+            # Preset of player.
+            player.add_quest(quest=map_game.quests["quest_exit_the_hut"])
+            player.add_quest(quest=map_game.quests["quest_firefrost_first_encounter"])
+            player.add_item(item=copy.deepcopy(map_game.items["linen_shirt"]))
+            player.add_item(item=copy.deepcopy(map_game.items["linen_trousers"]))
+            player.add_item(item=copy.deepcopy(map_game.items["worn_boots"]))
+            player.equip_item(item=player.get_item(item="linen_shirt"))
+            player.equip_item(item=player.get_item(item="linen_trousers"))
+            player.equip_item(item=player.get_item(item="worn_boots"))
 
             # Introduction setting.
             map_game.npcs["whispers"].messages = {
@@ -225,9 +228,18 @@ class Game:
 
             # Dragon Firefrost setting.
             map_game.npcs["dragon_firefrost"].messages = {
-                0: [player.name + "...", "You finally come to me...",
-                    "Destiny calls for a dance of fire and frost between us...",
-                    "Ready your blade..."]}
+                0: [
+                    player.name + "...",
+                    "At last… after all this time, you stand before me again.",
+                    "A thousand winters have passed, yet here you stand—unchanged in spirit.",
+                    "Your stance… tense, cautious. Hm.",
+                    "Your eyes… searching, wary...",
+                    "... so this is how it must be.",
+                    "Very well...",
+                    "come...",
+                    "let the valley witness our first clash in an age."
+                    ]
+            }
 
             # End message of setting.
             typewriter(text=f"\n\n   All set, {self.player_name}. The dream is live. Step in when you're ready.",
@@ -273,7 +285,7 @@ class Game:
             # Map refresh.
             if not (map_game.get_hours == hours):
                 # Map refresh.
-                map_game.refresh_map()
+                map_game.refresh_map(player=player, mapgame=map_game)
 
                 # Player status refresh.
                 player.refresh_temperature()
@@ -320,7 +332,7 @@ class Game:
                             queue_mob.append(mob)
                     if queue_mob:
                         number_enemies = min(1 + int(random.random() > 0.5), len(queue_mob))
-                        enemies = random.choices(player.place.mobs_respawned, k=number_enemies)
+                        enemies = random.sample(player.place.mobs_respawned, k=number_enemies)
                         win = battle(players=[player],
                                      mapgame=map_game,
                                      enemies=enemies)
@@ -328,7 +340,7 @@ class Game:
                             enemies_names = [enemy.name for enemy in enemies]
                             screen += f"\n You battled width {' and '.join(enemies_names)}."
 
-            if self.play:
+            if self.play and player.is_alive():
                 # Draw of general stats.
                 clear()
                 displays.disp_play(player=player,
@@ -342,7 +354,11 @@ class Game:
 
                 # Input action.
                 print()
-                action = input(" " * 2 + "# ").lower().split()
+                if not self.first_setting:
+                    action = input(" " * 2 + "# ").lower().split()
+                if self.first_setting:
+                    map_game.add_hours(hours_to_add=1)
+                    self.first_setting = False
                 if not action:
                     action = ["None"]
                     player.standing = True
@@ -390,8 +406,10 @@ class Game:
                     if len(action) < 2:
                         screen = displays.disp_assign(player.st_points)
                     if len(action) == 3:
-                        quantity = int(action[2])
-                    if len(action) >= 2:
+                        quantity = 1
+                        if action[2].isdigit():
+                            quantity = int(action[2])
+                    if len(action) >= 2 < 4:
                         screen = assign(player=player, stat=action[1], quantity=quantity)
                         player.standing = True
 
@@ -732,7 +750,7 @@ class Game:
                         player.vision = 1000
                         screen = f"Now you have god vision."
 
-                    elif action == ["dict", "map", "npcs"]:
+                    elif action[:2] == ["dict", "map"]:
                         if len(action) == 3:
                             try:
                                 screen = f"{getattr(map_game, action[2])}"
@@ -757,6 +775,11 @@ class Game:
 
                     elif action[:2] == ["count", "biome"]:
                         screen = f"{map_game.get_number_biomes(biome_id=action[2:])}"
+
+                    elif action[:2] == ["count", "mob"]:
+                        screen = "Command must recive: COUNT MOB COORD1 COORD2 MOB_ID"
+                        if not len(action) < 5:
+                            screen = f"{map_game.get_number_of_mobs(coord1=eval(action[2]), coord2=eval(action[3]), mob_id=action[4])}"
 
                     elif action == ["region", "labels"]:
                         print(map_game.region_labels)

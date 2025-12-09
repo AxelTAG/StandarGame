@@ -73,6 +73,9 @@ class Item:
     # Temperature attributes.
     warmness: int = field(default=0)
 
+    # Biome affectations attributes.
+    blocker: bool = field(default=False)
+
     # Data attributes.
     data: dict = field(default=None)
 
@@ -171,6 +174,10 @@ class Item:
     # Temperature methods.
     def get_warmness(self) -> int:
         return self.warmness
+
+    # Blocker methods.
+    def is_blocker(self) -> bool:
+        return self.blocker
 
     # Data methods.
     def get_unique_id(self) -> str:

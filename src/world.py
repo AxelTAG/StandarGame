@@ -231,6 +231,154 @@ SKILLS = {
 }
 
 SKILLS_MOB = {
+    "attack_bandit": Skill(
+        id="mob_attack",
+        name="Attack Bandit",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=3,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_bandit"]
+    ),
+
+    "attack_basilisk": Skill(
+        id="mob_attack",
+        name="Attack Basilisk",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=19,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_basilisk"]
+    ),
+
+    "attack_climbing_goblin": Skill(
+        id="mob_attack",
+        name="Attack Climbing Goblin",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=14,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_climbing_goblin"]
+    ),
+
+    "attack_dragon": Skill(
+        id="mob_attack",
+        name="Attack Dragon FireFrost",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=36,  # attack 30 * 1.2
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_dragon_firefrost"]
+    ),
+
+    "attack_dryad": Skill(
+        id="mob_attack",
+        name="Attack Dryad",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=12,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=0,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_dryad"]
+    ),
+
+    "attack_giant_blind_spider": Skill(
+        id="mob_attack",
+        name="Attack Giant Blind Spider",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=20,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        status_effects=[
+            Status.gen_poison(duration=20, stacks=1, max_stacks=2, source="Giant Blind Spider"),
+            Status.gen_paralyze(duration=1, stacks=1, max_stacks=1, source="Giant Blind Spider"),
+        ],
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_giant_blind_spider"]
+    ),
+
+    "attack_giant_slime": Skill(
+        id="mob_attack",
+        name="Attack Giant Slime",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=3,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=0,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_giant_slime"]
+    ),
+
+    "attack_giant_spider": Skill(
+        id="mob_attack",
+        name="Attack Giant Spider",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=14,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=5,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_giant_spider"]
+    ),
+
     "attack_goblin": Skill(
         id="mob_attack",
         name="Attack Goblin",
@@ -241,13 +389,34 @@ SKILLS_MOB = {
         skill_type=SkillType.ATTACK.value,
         desviation=1,
         accuracy=1,
-        critical_chance=0,
+        critical_factor=1.2,
+        critical_chance=0.2,
         cooldown=0,
         scaling={
             "attack": 1,
         },
         requirements_equip={},
         tags=["attack_goblin"]
+    ),
+
+    "attack_goblin_chief": Skill(
+        id="mob_attack",
+        name="Attack Goblin Chief",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=12,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=3,
+        accuracy=1,
+        critical_factor=1.3,
+        critical_chance=0.3,
+        cooldown=0,
+        scaling={
+            "attack": 1,
+        },
+        requirements_equip={},
+        tags=["attack_goblin_chief"]
     ),
 
     "attack_little_slime": Skill(
@@ -260,7 +429,8 @@ SKILLS_MOB = {
         skill_type=SkillType.ATTACK.value,
         desviation=0,
         accuracy=1,
-        critical_chance=0,
+        critical_factor=1.2,
+        critical_chance=0.2,
         cooldown=0,
         scaling={
             "attack": 1,
@@ -279,6 +449,7 @@ SKILLS_MOB = {
         skill_type=SkillType.ATTACK.value,
         desviation=1,
         accuracy=1,
+        critical_factor=0,
         critical_chance=0,
         cooldown=0,
         scaling={
@@ -298,19 +469,310 @@ SKILLS_MOB = {
         skill_type=SkillType.ATTACK.value,
         desviation=0,
         accuracy=1,
+        critical_factor=0,
         critical_chance=0,
         cooldown=0,
-        status_effects=[
-            Status.gen_poison(duration=20, stacks=1, max_stacks=3, source="Training Dummy"),
-            Status.gen_stun(duration=1, stacks=1, max_stacks=1, source="Training Dummy"),
-            Status.gen_freeze(duration=2, stacks=1, max_stacks=1, source="Training Dummy"),
-        ],
-        status_accuracy=[0.0, 0.5, 0.0],
         scaling={
             "attack": 1,
         },
         requirements_equip={},
         tags=["attack_training_dummy"]
+    ),
+
+    "attack_goblin_hunter": Skill(
+        id="mob_attack",
+        name="Attack Goblin Hunter",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=7,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_goblin_hunter"]
+    ),
+
+    "attack_goblin_war_chief": Skill(
+        id="mob_attack",
+        name="Attack Goblin War Chief",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=15,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_goblin_war_chief"]
+    ),
+
+    "attack_goblin_war": Skill(
+        id="mob_attack",
+        name="Attack War Goblin",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=6,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_goblin_war"]
+    ),
+
+    "attack_poison_slime": Skill(
+        id="mob_attack",
+        name="Attack Poison Slime",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=3,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=2,
+        accuracy=1,
+        critical_factor=1.5,
+        critical_chance=0.2,
+        cooldown=0,
+        status_effects=[Status.gen_poison(duration=20, stacks=1, max_stacks=1, source="Poison Slime")],
+        status_accuracy=[0.2],
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_poison_slime"]
+    ),
+
+    "attack_poison_spider": Skill(
+        id="mob_attack",
+        name="Attack Poison Spider",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=5,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.25,
+        critical_chance=0.2,
+        cooldown=0,
+        status_effects=[Status.gen_poison(duration=20, stacks=1, max_stacks=2, source="Poison Slime")],
+        status_accuracy=[0.2],
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_poison_spider"]
+    ),
+
+    "attack_shadow_wolf": Skill(
+        id="mob_attack",
+        name="Attack Shadow Wolf",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=10,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_shadow_wolf"]
+    ),
+
+    "attack_skeleton_warrior": Skill(
+        id="mob_attack",
+        name="Attack Skeleton Warrior",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=20,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_skeleton_warrior"]
+    ),
+
+    "attack_orc": Skill(
+        id="mob_attack",
+        name="Attack Orc",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=6,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_orc"]
+    ),
+
+    "attack_spectral_foxshade": Skill(
+        id="mob_attack",
+        name="Attack Spectral Foxshade",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=10,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_spectral_foxshade"]
+    ),
+
+    "attack_spectrum": Skill(
+        id="mob_attack",
+        name="Attack Spectrum",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=17,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_spectrum"]
+    ),
+
+    "attack_troll": Skill(
+        id="mob_attack",
+        name="Attack Troll",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=14,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=3,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        status_effects=[
+            Status.gen_stun(duration=1, stacks=1, max_stacks=1, source="Troll")
+        ],
+        status_accuracy=[0.2],
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_troll"]
+    ),
+
+    "attack_undead_warrior": Skill(
+        id="mob_attack",
+        name="Attack Undead Warrior",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=16,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_undead_warrior"]
+    ),
+
+    "attack_watchful_goblin": Skill(
+        id="mob_attack",
+        name="Attack Watchful Goblin",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=3,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_watchful_goblin"]
+    ),
+
+    "attack_wild_boar": Skill(
+        id="mob_attack",
+        name="Attack Wild Boar",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=4,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_wild_boar"]
+    ),
+
+    "attack_young_dragon": Skill(
+        id="mob_attack",
+        name="Attack Young Dragon",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=20,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_young_dragon"]
+    ),
+
+    "attack_zombie": Skill(
+        id="mob_attack",
+        name="Attack Zombie",
+        description="A basic physical strike.",
+        element=SkillElements.NEUTRAL.value,
+        power=5,
+        cost=0,
+        skill_type=SkillType.ATTACK.value,
+        desviation=1,
+        accuracy=1,
+        critical_factor=1.2,
+        critical_chance=0.2,
+        cooldown=0,
+        scaling={"attack": 1},
+        requirements_equip={},
+        tags=["attack_zombie"]
     ),
 }
 
@@ -755,6 +1217,39 @@ ITEMS = {
                           buy_price=150,
                           sell_price=25),
 
+    "linen_shirt": Item(name="Linen Shirt",
+                        description="Light and breathable, offering simple comfort for travels under sun or shade.",
+                        attack=0,
+                        defense=0,
+                        precision=0,
+                        evasion=0,
+                        weight=0,
+                        body_part=BodyPart.CHEST,
+                        pickable=True,
+                        consumable=False,
+                        equippable=True,
+                        expiration=None,
+                        buy_price=25,
+                        sell_price=15,
+                        warmness=8),
+
+    "linen_trousers": Item(name="Linen Trousers",
+                           description="Durable and soft, ideal for wandering through forests, fields, or "
+                                       "bustling towns.",
+                           attack=0,
+                           defense=0,
+                           precision=0,
+                           evasion=0,
+                           weight=0,
+                           body_part=BodyPart.LEGS,
+                           pickable=True,
+                           consumable=False,
+                           equippable=True,
+                           expiration=None,
+                           buy_price=25,
+                           sell_price=15,
+                           warmness=5),
+
     "longsword": Item(name="Longsword",
                       description="A finely crafted longsword. Perfect for dealing heavy, precise strikes.",
                       attack=4,
@@ -938,6 +1433,23 @@ ITEMS = {
                         expiration=None,
                         buy_price=100,
                         sell_price=20),
+
+    "worn_boots": Item(name="Worn Boots",
+                       description="Sturdy and dependable, giving steady footing across rugged paths and "
+                                   "quiet roads.",
+                       attack=0,
+                       defense=0,
+                       precision=0,
+                       evasion=0,
+                       weight=0,
+                       body_part=BodyPart.FEET,
+                       pickable=True,
+                       consumable=False,
+                       equippable=True,
+                       expiration=None,
+                       buy_price=25,
+                       sell_price=15,
+                       warmness=5),
 
     # Consumable items.
     "antinas_beer": Item(name="Antinas's Beer",
@@ -1303,6 +1815,13 @@ ITEMS = {
                      buy_price=30,
                      sell_price=25),
 
+    "wood": Item(name="Wood",
+                 description="A piece of sturdy wood, useful for crafting tools, fires, or simple repairs.",
+                 weight=1,
+                 pickable=True,
+                 buy_price=15,
+                 sell_price=10),
+
     # Usable items
     "explorer_telescope": Item(name="Explorer Telescope",
                                description="Enhanced vision, revealing distant lands with greater clarity and detail "
@@ -1363,7 +1882,6 @@ ITEMS = {
                   crafting_materials={"stick": 1, "giant_silk": 1, "slime_balls": 1}),
 
     # Fishing poles.
-
     "river_fishing_pole": Item(
         name="River Fishing Pole",
         description="A simple pole for catching small river fish. Light and easy to use.",
@@ -1446,6 +1964,19 @@ ITEMS = {
         depth_range=40
     ),
 
+    # Quest items.
+    "marlins_fish_tuna": Item(name="Marlin's Fish Tuna",
+                              description="A fast ocean fish, highly valued for its delicious and versatile meat."
+                                          " Marlin gave it to you for a delivery.",
+                              id="marlins_fish_tuna",
+                              weight=1,
+                              droppable=False,
+                              buy_price=80,
+                              sell_price=60,
+                              hungry_refill=70,
+                              thirsty_refill=10,
+                              ),
+
     # Places items.
     "bed": Item(name="Bed",
                 description="Simple yet soft, promising warmth and restful sleep in humble surroundings",
@@ -1466,6 +1997,14 @@ ITEMS = {
                  weight=500,
                  buy_price=1000,
                  sell_price=700),
+
+    "broken_boat": Item(
+        name="Broken Boat",
+        description="A damaged wooden vessel, its hull cracked and barely afloat after harsh storms.",
+        weight=650,
+        buy_price=200,
+        sell_price=80
+    ),
 
     "giant_telescope": Item(name="Giant Telescope",
                             description="Giant Telescope, towering and precise, reveals distant lands and secrets "
@@ -1502,6 +2041,14 @@ ITEMS = {
                                "go somewhere far,",
                                "Past... illegible... lights and... illegible...,",
                                "And lie beneath the quiet stars."]),
+
+    "rockfall": Item(
+        name="Rockfall",
+        description="",
+        weight=80000,
+        droppable=False,
+        blocker=True,
+    ),
 
     # Innkeeper room keys.
     "aliras_first_room_key": Item(name="Lyssia's First Room Key",
@@ -1742,12 +2289,6 @@ ITEMS = {
                  pickable=True,
                  droppable=True),
 
-    "marlins_fish_tuna": Item(name="Marlin's Fish Tuna",
-                              description="A fast ocean fish, highly valued for its delicious and versatile meat."
-                                          " Marlin gave it to you for his friend Brann.",
-                              id="marlins_fish_tuna",
-                              droppable=False),
-
     "dragon_scales": Item(name="Dragon Scales",
                           description="A fast ocean fish, highly valued for its delicious and versatile meat."
                                       " Marlin gave it to you for his friend Brann.",
@@ -1756,22 +2297,10 @@ ITEMS = {
 
 # Quests.
 QUEST_OBJETIVES = {
-    # Kill quest objectives.
-    "slime_slayer_I": QuestObjective(
-        type=ObjectiveType.KILL,
-        target="little_slime",
-        amount=5
-    ),
-    "slime_slayer_II": QuestObjective(
-        type=ObjectiveType.KILL,
-        target="slime",
-        amount=2
-    ),
-
     # Talk quest objectives.
     "meet_ant_nynaeve": QuestObjective(
         type=ObjectiveType.TALK,
-        target="ant_nynaeve"
+        target="islander_nynaeve"
     ),
 
     # Collect quest objectives.
@@ -1784,7 +2313,7 @@ QUEST_OBJETIVES = {
     # Delivery quest objectives.
     "water_for_nynaeve": QuestObjective(
         type=ObjectiveType.DELIVER,
-        target="ant_nynaeve",
+        target="islander_nynaeve",
         deliver_item="water",
         deliver_amount=1),
 
@@ -1795,163 +2324,482 @@ QUEST_OBJETIVES = {
         amount=10),
 }
 
-
 QUESTS = {
-    # Reputation quests.
-    "reputation_test": Quest(
-        id="reputation_test",
-        title="Reputation Test",
-        description="Earn reputation in Epiiat.",
-        objectives=[QUEST_OBJETIVES["reputation_test"]],
-        rewards={"gold": 100},
+    # Starter quests.
+    "quest_exit_the_hut": Quest(
+        id="quest_exit_the_hut",
+        title="Step Into the Light",
+        description="You awaken inside a dim hut. A faint breeze calls you outside.",
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.EXPLORE,
+                target="(12, 24)",
+                amount=1
+            )
+        ],
     ),
 
-    # Kill quests.
+    "quest_eat_soup": Quest(
+        id="quest_eat_soup",
+        title="Warmth in a Bowl",
+        description="A fragrant aroma fills the hut. Maybe you should EAT the soup.",
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.EAT,
+                target="soup",
+                amount=1
+            )
+        ],
+    ),
+
+    "quest_find_loial": Quest(
+        id="quest_find_loial",
+        title="Where Is Loial?",
+        description=(
+            "Nynaeve seems worried. Loial hasn't returned from the Isla lumberyard. "
+            "She asks you to find him and make sure he is safe or need some help."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.TALK,
+                target="islander_loial",
+                amount=1
+            )
+        ],
+        rewards={"soup": 1, "apple": 1, "water": 1},
+        messages_start={
+            0: [
+                "Have you seen Loial?",
+                "He went to the lumberyard earlier on Isla… but he hasn’t returned.",
+                "Could you check on him?"
+            ],
+        },
+        messages_in_progress={
+            0: [
+                "Please, check the Isla lumberyard. Loial might need help."
+            ],
+        },
+        messages_reward={
+            0: [
+                "Oh, good… you found him. He must have just lost track of time."
+            ]
+        },
+    ),
+
+    "quest_deliver_wood": Quest(
+        id="quest_deliver_wood",
+        title="Deliver the Wood",
+        description=(
+            "Loial has finished cutting a bundle of wood but cannot leave the lumberyard. "
+            "He asks you to carry it to the Hut and deliver it to Nynaeve."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.DELIVER,
+                target="islander_nynaeve",
+                amount=1,
+                deliver_item="wood",
+                deliver_amount=1,
+            )
+        ],
+        rewards={"water": 1, "bread": 1},
+        messages_start={
+            0: [
+                "Ah it's you..., could you lend me a hand?",
+                "I’ve chopped this wood, but I can’t leave the lumberyard right now.",
+                "Please take it to Nynaeve at the Hut—she’ll know what to do with it."
+            ],
+        },
+        answers_start={
+            1: "Yes I can help"
+        },
+        messages_in_progress={
+            0: [
+                "Please, deliver that wood to Nynaeve at the Hut."
+            ],
+        },
+        messages_reward={
+            0: [
+                "Ah, wonderful. Nynaeve received the wood safely?",
+                "Thank you. You’ve helped more than you know."
+            ]
+        },
+    ),
+
     "slime_slayer_I": Quest(
         id="slime_slayer_I",
         title="The Slimy Slayer",
-        description="Defeat 5 Little Slimes.",
-        objectives=[QUEST_OBJETIVES["slime_slayer_I"]],
-        rewards={"gold": 15, "epiiat": 5},
+        description=(
+            "Loial is troubled by a group of little slimes lingering near his cabin. "
+            "He asks you to get rid of them before they cause trouble."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.KILL,
+                target="little_slime",
+                amount=5
+            ),
+        ],
+        rewards={"little_red_potion": 2},
+
         messages_start={
-            0: ["Hello there! I will guide you to this tutorial.",
-                "For now, just take down 5 Slimes. And return to me again."],
+            0: [
+                "Ah, you're here. Good.",
+                "I’m having a small problem… little slimes have appeared around the hut.",
+                "You can use LOOK AROUND to spot them, then ATTACK to deal with them.",
+                "There should be five of them lurking nearby.",
+                "Could you handle this for me?"
+            ],
+            1: [
+                "Perfect. When you're done, come back to me."
+            ]
         },
+        answers_start={
+            1: "Yes, I can help",
+        },
+
         messages_in_progress={
-            0: ["Keep going, you haven’t defeated all 5 Little Slimes yet."],
+            0: [
+                "The little slimes should still be nearby.",
+                "Remember: LOOK AROUND to find them, ATTACK to fight them."
+            ],
         },
+
         messages_reward={
-            0: ["Well done, hero! The slimes won’t bother us anymore.",
-                "Here, take these 15 gold coins as your reward.",
-                "Come back to me when you are ready for your next mission."],
+            0: [
+                "You did it! The area finally feels safe again.",
+                "Thank you, truly. These creatures can be more annoying than they look."
+            ]
         }
     ),
 
     "slime_slayer_II": Quest(
         id="slime_slayer_II",
-        title="The Slimy Slayer II",
-        description="Defeat 2 Slimes.",
-        objectives=[QUEST_OBJETIVES["slime_slayer_II"]],
-        rewards={"gold": 30, "red_potion": 1, "epiiat": 5},
+        title="The Slime Slayer II",
+        description=(
+            "Loial asks you to deal with stronger slimes nearby. "
+            "He mentions a sword stored in the small room that might help, "
+            "and that he needs the area safe to repair a small boat on the coast."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.KILL,
+                target="slime",
+                amount=2
+            )
+        ],
+        rewards={"red_potion": 1},
+
         messages_start={
-            0: ["Those Little Slimes were only the beginning. Are you ready for the next quest?"],
-            1: ["Now, I need you to face their stronger kin — the Slimes.",
-                "Defeat 2 of them and return here safely."],
+            0: [
+                "Those little slimes weren’t the only ones… stronger ones have appeared.",
+                "I need the area cleared soon—there’s a small boat on the coast that I must repair.",
+                "In the small room beside the hut, you can find a sword.",
+                "Once you pick it up, remember to EQUIP it before fighting.",
+                "It should help you deal with these tougher slimes."
+            ],
+            1: [
+                "Good. Grab the sword and EQUIP it if you haven't already.",
+                "And watch yourself—these slimes are far stronger.",
+                "Once the area is safe, I can finally work on that broken boat."
+            ],
         },
+
         answers_start={
-            1: "Yes",
-            2: "No",
+            1: "Yes"
         },
+
         messages_in_progress={
-            0: ["Be careful! Slimes are tougher than their smaller cousins.",
-                "You’ve got this — just focus and stay alert. Defeat 2 Slimes."],
+            0: [
+                "Make sure your sword is equipped.",
+                "Use LOOK AROUND to find the stronger slimes, then ATTACK as usual.",
+                "I can't repair the boat until the area is secure."
+            ],
         },
+
         messages_reward={
-            0: ["Incredible work! You’ve defeated the Slimes.",
-                "Take these 30 gold coins and a potion as your reward.",
-                "Return when you’re ready — greater challenges await."],
+            0: [
+                "Excellent work! Those slimes were much tougher.",
+                "Now that the area is clear, I can start repairing the boat on the coast.",
+                "Once it's fixed, you’ll be able to use it. It may take me 3 days..."
+            ],
         }
     ),
 
-    # Talk quests.
-    "meet_ant_nynaeve": Quest(
-        id="meet_ant_nynaeve",
-        title="Meet Ant Nynaeve",
-        description="Search for Ant Nynaeve and talk with her.",
-        objectives=[QUEST_OBJETIVES["meet_ant_nynaeve"]],
-        rewards={"gold": 10, "epiiat": 5},
+    # Epiiat quests.
+    "quest_goblin_chief": Quest(
+        id="quest_goblin_chief",
+        title="The Goblin Chief Of Epiiat",
+        description="The mayor of Epiiat fears for his missing daughter, Maisie, who vanished near the "
+                    "goblin-infested woods. Rumors speak of a ruthless Goblin Chief leading the creatures. Finding "
+                    "him may be the only way to uncover what happened and bring Maisie home safely.",
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.KILL,
+                target="goblin_chief",
+                amount=1
+            )
+        ],
+        rewards={"hardened_leather_armor": 1, "gold": 50},
+
         messages_start={
-            0: ["For your next task, I need you to find Nynaeve.,",
-                "I haven’t seen her in some time—she may be in trouble.",
-                "Could you search her for me?"],
+            0: [
+                "Welcome to Epiiat, traveler.",
+                "Though I greet you as I would any of our own, my heart is heavy with concern. My"
+                " daughter, Maisie, has gone missing.",
+                "She wandered off days ago, and no trace of her remains. If your path allows it, "
+                "please keep an eye out for her.",
+                "The villagers and I are desperate for her safe return."
+            ],
         },
-        answers_start={
-            1: "Yes",
-            2: "No",
-        },
+
         messages_in_progress={
-            0: ["Please, have you found Ant Nynaeve yet?",
-                "She should be wandering near the shore."],
+            0: [
+                "Every passing hour weighs on me… I try to stay strong for the village, but a father’s worry "
+                "is hard to hide.",
+                "Maisie has always been brave, wandering farther than she should… I should have been stricter.",
+                "If the goblins truly have her, Light help them if I ever lay my hands on their chief."
+            ],
         },
+
         messages_reward={
-            0: ["You spoke with her? Wonderful!",
-                "Now I know where to find her again.",
-                "Take this, my thanks for your kindness."],
+            0: [
+                "I’ve heard the tale from my daughter, Maisie. You rescued her from the clutches of those "
+                "vile goblins.",
+                "I thank you, not as a mayor, but as a father. Our village owes you a debt we cannot repay.",
+                "Please, accept this reward—a small token of our gratitude. Epiiat's doors are always open to you,"
+                " brave soul."
+            ],
         }
     ),
 
-    # Collect quests.
-    "coco_collect_I": Quest(
-        id="coco_collect_I",
-        title="Gathering Coconuts",
-        description="Collect 5 coconuts from the nearby palm trees.",
-        objectives=[QUEST_OBJETIVES["coco_collect_I"]],
-        rewards={"gold": 10, "epiiat": 5},
-        remove=True,
+    # Aquiri quests.
+    "quest_marlin_fish_for_brann": Quest(
+        id="quest_marlin_fish_for_brann",
+        title="Marlin want to deliver fish to Brann",
+        description="",
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.DELIVER,
+                target="fisherman_brann",
+                amount=1,
+                deliver_item="marlins_fish_tuna",
+                deliver_amount=3,
+            )
+        ],
+        rewards={"gold": 20},
+
         messages_start={
-            0: ["I need some fresh coconuts. Can you bring me five of them?"],
+            0: ["Ahoy, traveler!",
+                "I’ve got a delivery of fish for my friend down south. The waters there have been"
+                " tricky lately, so I’ve had to catch extra here in town.",
+                "Problem is, I’ve been so busy fishing, I haven’t found the time to make the"
+                " trip!"],
+            1: ["Thank you for offering to help! I need you to deliver two tuna to my friend Brann "
+                "in the south. He’ll be waiting—it’s a special request."],
         },
+
         answers_start={
-            1: "Yes, I'll collect them.",
-            2: "No, not right now.",
+            1: "I can help you with the delivery",
+        },
+
+        messages_in_progress={
+            0: [
+                "Ah, it’s you! Tell me, have you managed to deliver that fish to my friend in the south? I’ve been "
+                "wondering if it arrived fresh!"
+            ],
+        },
+
+        messages_reward={
+            0: [
+                "Thank you for delivering the tuna to Brann! You’ve been a great help.",
+                "But now I’m worried about another shipment I sent with a caravan to Epiiat.",
+                "I haven’t heard back from them."
+            ],
+        }
+    ),
+
+    "quest_find_caravan_leader_darek": Quest(
+        id="quest_find_caravan_leader_darek",
+        title="What happen with the Caravan?",
+        description=(
+            "Marlin is concerned about a caravan he sent toward Epiiat. "
+            "He hasn't received any news from them and fears something may have happened "
+            "on the road. He asked you to investigate their whereabouts."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.TALK,
+                target="caravan_leader_darek",
+                amount=1
+            )
+        ],
+        rewards={"gold": 25},
+        messages_start={
+            0: [
+                "Thanks again for delivering that order to Brann! Now, there’s something else...",
+                "I’m worried about a shipment I sent with a caravan to Epiiat. I haven’t heard from them.",
+                "Could you check on them for me? I’d really appreciate it."
+            ],
         },
         messages_in_progress={
-            0: ["Have you found the coconuts yet? I still need five."],
+            0: [
+                "The caravan still hasn't checked in... Please, let me know the moment you find something."
+            ],
         },
         messages_reward={
-            0: ["Perfect! These coconuts will do just fine. Here’s your reward."],
+            0: [
+                "A derrumbe in the valley? That explains the delay. Thank you for letting me know!"
+            ]
         },
     ),
 
-    # Deliver quests.
-    "water_for_nynaeve": Quest(
-        id="water_for_nynaeve",
-        title="Water for Nynaeve",
-        description="Loial asked you to deliver fresh water to Nynaeve, who might be in need.",
-        objectives=[QUEST_OBJETIVES["water_for_nynaeve"]],
-        rewards={"gold": 10, "epiiat": 5},
-        remove=True,
+    "quest_destroy_rocks_on_valley": Quest(
+        id="quest_destry_rocks_on_valley",
+        title="What happen with the Caravan?",
+        description=(
+            "Marlin discovered that a massive rockfall is blocking the valley road. "
+            "The caravan cannot proceed until the path is cleared. He believes explosives "
+            "might be necessary to break through and hints that Captain Thorne may have some."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.DESTROY,
+                target="rockfall",
+                amount=1
+            )
+        ],
+        rewards={"gold": 30},
         messages_start={
-            0: ["Nynaeve may need fresh water. Could you deliver it to her?"],
-        },
-        answers_start={
-            1: "Yes",
-            2: "No",
+            0: [
+                "So the caravan was stopped by a rockfall in the valley? That explains everything...",
+                "If that path stays blocked, no one will be able to travel to or from Epiiat safely.",
+                "..., I think I saw Captain Thorne loading some onto his ship recently...",
+                "Could you clear out those rocks? Something tells me you might just be able to handle it."
+            ],
         },
         messages_in_progress={
-            0: ["Please, bring the water to Nynaeve as soon as possible."],
+            0: [
+                "The caravan’s still stuck behind that rockfall.",
+                "I saw Captain Thorne might have explosives aboard his ship.",
+                "If you can get your hands on them, you should be able to clear the valley."
+            ],
         },
         messages_reward={
-            0: ["Thank you, this will help her a lot."],
+            0: [
+                "Ah, you've done it! The valley is clear at last. I can’t thank you enough for your help.",
+                "Here, take this as a token of my gratitude."
+            ]
         },
+    ),
+
+    "quest_gareth_deliver": Quest(
+        id="quest_gareth_deliver",
+        title="A Delivery for Gareth",
+        description=(
+            "Marlin has entrusted you with delivering a package of fresh tunas to Gareth, "
+            "a villager in Antina. With the travel permit he gave you, you can reach the town "
+            "without trouble. Gareth has been waiting on this delivery for days."
+        ),
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.DELIVER,
+                target="marlins_fish_tuna",
+                amount=3
+            )
+        ],
+        rewards={"fishingpole": 1},
+        remove=True,
+        messages_start={
+            0: ["Ahoy, traveler! It's you again!",
+                "I have one last favor to ask. Could you deliver this package to Antina for me?"
+                ],
+        },
+        messages_in_progress={
+            0: [
+                "Ah, have you managed to deliver those tunas to Gareth yet?",
+                "I hope he’s gotten them by now. He's been waiting on those for quite some time. Let me know if you"
+                "ran into any trouble!"
+            ],
+        },
+        messages_reward={
+            0: [
+                "You made the delivery? Wonderful! Gareth must be relieved.",
+                "Thank you for handling that for me. I knew I could count on you.",
+                "Here—take this fishing pole. You’ve earned it, and I’m sure it’ll serve you well on the road."
+            ]
+        },
+    ),
+
+    "quest_firefrost_first_encounter": Quest(
+        id="quest_firefrost_first_encounter",
+        title="The First Clash with FireFrost",
+        description="A mysterious force calls to you from deep within Naiwat. Following the whispers of the wind, "
+                    "you encounter FireFrost—a majestic dragon whose presence feels strangely familiar. "
+                    "Though its intentions are unclear, the creature challenges you, testing your strength.",
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.KILL,
+                target="dragon",
+                amount=1
+            )
+        ],
+        messages_start={
+            0: [
+
+            ],
+        },
+
+        messages_in_progress={
+            0: [
+
+            ],
+        },
+
+        messages_reward={
+            0: [
+
+            ],
+        }
     ),
 }
 
 # NPCs.
 NPCS = {
-    "ant_loial": Npc(name="ant loial",
-                     npc_type=NpcTypes.VETERAN,
-                     messages={
-                         0: ["Hello there! Today I have no mision to give you."],
-                     },
-                     quests=[
-                         QUESTS["coco_collect_I"],
-                         QUESTS["slime_slayer_I"],
-                         QUESTS["slime_slayer_II"],
-                         QUESTS["water_for_nynaeve"],
-                         QUESTS["meet_ant_nynaeve"],
-                     ],
-                     place=[(12, 24)]),
+    "islander_loial": Npc(
+        name="Islander Loial",
+        npc_type=NpcTypes.VETERAN,
+        id="islander_loial",
+        place_morning=[(13, 23)],
+        messages_morning={
+            0: ["Ah, you look in good shape today.",
+                "I’m already at work—these trees won’t fell themselves."]
+        },
+        messages_afternoon={
+            0: ["This is taking longer than I thought…",
+                "My stomach’s growling too. A bowl of Nynaeve’s soup would do wonders right now."]
+        },
+        messages_evening={
+            0: ["Still not done… Seems I’ll need to sharpen this axe if I want any chance of finishing."]
+        },
+        messages_night={
+            0: ["I’m exhausted… but I must keep going.",
+                "Once I finish here, I still need to look at the boat—its hull won’t mend itself."]
+        },
+    ),
 
-    "ant_nynaeve": Npc(name="ant nynaeve",
-                       npc_type=NpcTypes.VETERAN,
-                       messages={
-                           0: ["Oh, hello dear one.",
-                               "I wander the shore, seeking seashells and hidden treasures.",
-                               "The ocean whispers secrets to those who listen."],
-                       },
-                       id="ant_nynaeve",
-                       place=[(10, 25)]),
+    "islander_nynaeve": Npc(
+        name="Islander Nynaeve",
+        npc_type=NpcTypes.VETERAN,
+        messages={
+            0: [
+                "Oh! You’re already up? I didn’t expect you out of bed so soon. Come here and TALK with me for "
+                "a moment.",
+            ],
+        },
+        id="islander_nynaeve",
+        place=[(12, 24)]
+    ),
 
     "artisan_brenwick": Npc(name="artisan brenwick",
                             npc_type=NpcTypes.ARTISAN,
@@ -2096,25 +2944,6 @@ NPCS = {
                                   " troubling, isn’t it?"]},
                           place_night=[(39, 39), "inn", "first_room"]),
 
-    # "captain_thorne": Npc(name="captain thorne",
-    #                       npc_type=NpcTypes.CAPTAIN,
-    #                       transport_time_of_day=[TimeOfDay.MORNING.value, TimeOfDay.AFTERNOON.value],
-    #                       transport_places={
-    #                           (39, 39): {"gold": 20, "days": 10},
-    #                           (56, 40): {"gold": 20, "days": 10}},
-    #                       transport_confirm_message=["Are you sure you want to go there?"],
-    #                       transport_arrive_message=["Finally, we have arrived. Take care, and may Eldra watch over"
-    #                                                 " you."],
-    #                       messages_morning={
-    #                           0: ["Ahoy, traveler. I'm Captain Thorne.",
-    #                               "You see my ship there? We will sail today."],
-    #                           1: ["Where do you want to go?"]},
-    #                       messages_night={
-    #                           0: ["I'm tired of been Captain. Maybe I should be a farmer."]},
-    #                       place=[(39, 39)],
-    #                       answers={
-    #                           1: "I want to sail"
-    #                       }),
 
     "captain_zelian": Npc(name="captain zelian",
                           npc_type=NpcTypes.CAPTAIN,
@@ -2148,7 +2977,7 @@ NPCS = {
                                     "You finally come to me...",
                                     "Destiny calls for a dance of fire and frost between us...",
                                     "Ready your blade..."]},
-                            place=[(23, 48)]),
+                            place=[(56, 92)]),
 
     "elder_lirian": Npc(name="elder lirian",
                         npc_type=NpcTypes.ELDER,
@@ -2171,22 +3000,13 @@ NPCS = {
     "fisherman_marlin": Npc(name="fisherman marlin",
                             npc_type=NpcTypes.FISHERMAN,
                             messages={
-                                0: ["Ahoy, traveler!",
-                                    "I’ve got a delivery of fish for my friend down south. The waters there have been"
-                                    " tricky lately, so I’ve had to catch extra here in town.",
-                                    "Problem is, I’ve been so busy fishing, I haven’t found the time to make the"
-                                    " trip!"],
-                                1: ["Thank you for offering to help! I need you to deliver two tuna to my friend Brann "
-                                    "in the south. He’ll be waiting—it’s a special request."]},
-                            answers={
-                                1: "I can help you with the delivery"},
+                                0: ["Ah, it's a quiet day today. The sea's calm, but the fish are being stubborn.",
+                                    "Still, there's always something peaceful about being near the water.",
+                                    "If you’re ever in need of some good fish, you know where to find me."],
+                            },
                             leave_message=["Safe travels, friend! May the waters guide you to calm shores."],
                             place_morning=[(39, 38)],
                             place_night=[(39, 38), "marlins_hut"]),
-
-    # "Ho there, stranger! Fancy a tale from the sea? Ah, the ocean's my life.", "You know, my brother's a guard in
-    # the city, watches over the folks there. " "Dangerous duty, but he's got a heart as sturdy as a ship's hull.",
-    # "If you ever find yourself in Antina City, look for Guard Lorian. Tell him Marlin " "from Aqiri says hello."
 
     "goblin_griznuk": Npc(name="chief goblin griznuk",
                           npc_type=NpcTypes.MONSTER,
@@ -2305,17 +3125,19 @@ NPCS = {
                               0: ["Zzzzz... zzzz... uhgzz..."]},
                           place=[(24, 40), "edrions_house"]),
 
-    "mayor_thorian": Npc(name="mayor thorian",
-                         npc_type=NpcTypes.MAYOR,
-                         messages={
-                             0: ["Welcome to Epiiat, traveler.",
-                                 "Though I greet you as I would any of our own, my heart is heavy with concern. My"
-                                 " daughter, Maisie, has gone missing.",
-                                 "She wandered off days ago, and no trace of her remains. If your path allows it, "
-                                 "please keep an eye out for her.",
-                                 "The villagers and I are desperate for her safe return."]},
-                         place_morning=[(22, 28), "mayors_house"],
-                         place_night=[(22, 28), "temple"]),
+    "mayor_thorian": Npc(
+        name="mayor thorian",
+        npc_type=NpcTypes.MAYOR,
+        messages={
+            0: ["Welcome to Epiiat, traveler.",
+                "Though I greet you as I would any of our own, my heart is heavy with concern. My"
+                " daughter, Maisie, has gone missing.",
+                "She wandered off days ago, and no trace of her remains. If your path allows it, "
+                "please keep an eye out for her.",
+                "The villagers and I are desperate for her safe return."]},
+        place_morning=[(22, 28), "mayors_house"],
+        place_night=[(22, 28), "temple"]
+    ),
 
     "mayors_daughter_maisie": Npc(name="mayor's daughter maisie",
                                   npc_type=NpcTypes.MAYORS_DAUGHTER,
@@ -2698,7 +3520,8 @@ MOBS = {
         escape_chance=0.4,
         items={"gold": 15, "red_potion": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.2, 0.1],
-        experience=4
+        experience=4,
+        skills=[SKILLS_MOB["attack_bandit"]],
     ),
     "basilisk": Mob(
         name="Basilisk",
@@ -2716,7 +3539,8 @@ MOBS = {
         escape_chance=20,
         items={"basilisk_fangs": 2},
         items_drop_chances=[0.7],
-        experience=14
+        experience=14,
+        skills=[SKILLS_MOB["attack_basilisk"]],
     ),
     "climbing_goblin": Mob(
         name="Climbing Goblin",
@@ -2734,7 +3558,8 @@ MOBS = {
         escape_chance=40,
         items={"gold": 20, "red_potion": 1, "wood_shield": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.1, 0.05, 0.05],
-        experience=10
+        experience=10,
+        skills=[SKILLS_MOB["attack_climbing_goblin"]],
     ),
 
     "dragon": Mob(
@@ -2742,6 +3567,7 @@ MOBS = {
         hp=150,
         hpmax=150,
         description="A legendary beast of fire and ice, guarding ancient treasures with unyielding might.",
+        id_key="dragon",
         attack=30,
         defense=10,
         evasion=0.5,
@@ -2751,9 +3577,10 @@ MOBS = {
         poison_stacks=0,
         poison_chance=0,
         escape_chance=0,
-        items={"scales": 8},
+        items={"dragon_scales": 8},
         items_drop_chances=[1],
-        experience=888
+        experience=888,
+        skills=[SKILLS_MOB["attack_dragon"]],
     ),
 
     "dryad": Mob(
@@ -2772,7 +3599,8 @@ MOBS = {
         escape_chance=50,
         items={},
         items_drop_chances=[],
-        experience=12
+        experience=12,
+        skills=[SKILLS_MOB["attack_dryad"]],
     ),
 
     "giant_blind_spider": Mob(
@@ -2791,7 +3619,8 @@ MOBS = {
         escape_chance=5,
         items={"giant_silk": 1},
         items_drop_chances=[0.5],
-        experience=15
+        experience=15,
+        skills=[SKILLS_MOB["attack_giant_blind_spider"]],
     ),
 
     "giant_slime": Mob(
@@ -2810,7 +3639,8 @@ MOBS = {
         escape_chance=50,
         items={"slime_balls": 2, "red_potion": 1},
         items_drop_chances=[0.5, 0.2],
-        experience=3
+        experience=3,
+        skills=[SKILLS_MOB["attack_giant_slime"]],
     ),
 
     "giant_spider": Mob(
@@ -2830,6 +3660,7 @@ MOBS = {
         items={"giant_silk": 1, "red_potion": 1},
         items_drop_chances=[0.6, 0.2],
         experience=11,
+        skills=[SKILLS_MOB["attack_giant_spider"]],
     ),
 
     "goblin": Mob(
@@ -2849,7 +3680,7 @@ MOBS = {
         items={"gold": 5, "little_red_potion": 1, "red_potion": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.4, 0.2, 0.4],
         experience=3,
-        skills=[SKILLS_MOB["attack_goblin"]]
+        skills=[SKILLS_MOB["attack_goblin"]],
     ),
 
     "goblin_chief": Mob(
@@ -2869,6 +3700,7 @@ MOBS = {
         items={"gold": 60, "red_potion": 5},
         items_drop_chances=[0.5, 0.7],
         experience=30,
+        skills=[SKILLS_MOB["attack_goblin_chief"]],
     ),
 
     "goblin_hunter": Mob(
@@ -2888,6 +3720,7 @@ MOBS = {
         items={"gold": 10, "little_red_potion": 1, "bone_sword": 1, "bone_shield": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.1, 0.1, 0.05, 0.05],
         experience=4,
+        skills=[SKILLS_MOB["attack_goblin_hunter"]],
     ),
 
     "goblin_war_chief": Mob(
@@ -2907,6 +3740,7 @@ MOBS = {
         items={"gold": 30, "red_potion": 1, "iron_shield": 1, "axe": 1},
         items_drop_chances=[0.8, 0.05, 0.05, 0.05],
         experience=12,
+        skills=[SKILLS_MOB["attack_goblin_war_chief"]],
     ),
 
     "goblin_war": Mob(
@@ -2926,6 +3760,7 @@ MOBS = {
         items={"gold": 10, "bone_sword": 1, "bone_shield": 1},
         items_drop_chances=[0.5, 0.1, 0.1],
         experience=4,
+        skills=[SKILLS_MOB["attack_goblin_war"]],
     ),
 
     "little_slime": Mob(
@@ -2968,6 +3803,7 @@ MOBS = {
         items={"slime_balls": 2},
         items_drop_chances=[0.4],
         experience=2,
+        skills=[SKILLS_MOB["attack_poison_slime"]],
     ),
 
     "poison_spider": Mob(
@@ -2987,6 +3823,7 @@ MOBS = {
         items={"giant_silk": 1, "poison_gland": 1},
         items_drop_chances=[0.4, 0.2],
         experience=5,
+        skills=[SKILLS_MOB["attack_poison_spider"]],
     ),
 
     "rabbit": Mob(
@@ -3019,6 +3856,7 @@ MOBS = {
         items={"wolf_fur": 1, "wolf_claw": 2},
         items_drop_chances=[0.3, 0.2],
         experience=15,
+        skills=[SKILLS_MOB["attack_shadow_wolf"]],
     ),
 
     "skeleton_warrior": Mob(
@@ -3038,6 +3876,7 @@ MOBS = {
         items={"bone_sword": 1, "bone_shield": 1},
         items_drop_chances=[0.4, 0.4],
         experience=13,
+        skills=[SKILLS_MOB["attack_skeleton_warrior"]],
     ),
 
     "slime": Mob(
@@ -3048,12 +3887,12 @@ MOBS = {
         attack=3,
         defense=1,
         evasion=0.3,
-        precision=0.6,
+        precision=0.5,
         critical_coeficient=1.5,
         critical_chance=40,
         poison_stacks=0,
         poison_chance=0,
-        escape_chance=50,
+        escape_chance=60,
         items={"slime_balls": 2},
         items_drop_chances=[0.6],
         experience=2,
@@ -3098,6 +3937,7 @@ MOBS = {
         items={"gold": 20, "red_potion": 1, "antidote": 1},
         items_drop_chances=[0.5, 0.2, 0.1],
         experience=5,
+        skills=[SKILLS_MOB["attack_orc"]],
     ),
 
     "spectral_foxshade": Mob(
@@ -3118,6 +3958,7 @@ MOBS = {
         items_drop_chances=[0.9],
         experience=25,
         escape_mob_probability=0.5,
+        skills=[SKILLS_MOB["attack_spectral_foxshade"]],
     ),
     "spectrum": Mob(
         name="Spectrum",
@@ -3136,6 +3977,7 @@ MOBS = {
         items={},
         items_drop_chances=[],
         experience=16,
+        skills=[SKILLS_MOB["attack_spectrum"]],
     ),
     "troll": Mob(
         name="Troll",
@@ -3154,6 +3996,7 @@ MOBS = {
         items={"gold": 15, "red_potion": 1, "bludgeon": 1},
         items_drop_chances=[0.5, 0.2, 0.1],
         experience=12,
+        skills=[SKILLS_MOB["attack_troll"]],
     ),
 
     "undead_warrior": Mob(
@@ -3173,6 +4016,7 @@ MOBS = {
         items={"gold": 20, "rusty_sword": 1, "rusty_shield": 1},
         items_drop_chances=[0.4, 0.2, 0.2],
         experience=16,
+        skills=[SKILLS_MOB["attack_undead_warrior"]],
     ),
 
     "watchful_goblin": Mob(
@@ -3192,6 +4036,7 @@ MOBS = {
         items={"gold": 5, "bones": 1},
         items_drop_chances=[0.5, 0.05],
         experience=3,
+        skills=[SKILLS_MOB["attack_watchful_goblin"]],
     ),
 
     "wild_boar": Mob(
@@ -3211,6 +4056,7 @@ MOBS = {
         items={"boar_tusk": 2},
         items_drop_chances=[0.4],
         experience=3,
+        skills=[SKILLS_MOB["attack_wild_boar"]],
         escape_mob_probability=0.4
     ),
 
@@ -3231,6 +4077,7 @@ MOBS = {
         items={"dragon_scales": 2},
         items_drop_chances=[0.7],
         experience=30,
+        skills=[SKILLS_MOB["attack_young_dragon"]],
     ),
 
     "zombie": Mob(
@@ -3250,6 +4097,7 @@ MOBS = {
         items={"rotten_flesh": 3},
         items_drop_chances=[0.5],
         experience=7,
+        skills=[SKILLS_MOB["attack_zombie"]],
     ),
 }
 
@@ -3287,7 +4135,7 @@ REGIONS = {
     ),
     "naiwat": Region(
         name="NAIWAT",
-        description="The ancient continent where Elina awakens, land of two moons and old whispers.",
+        description="The ancient continent where you have awakened, land of two moons and old whispers.",
         color_label=Colors.ORANGE.value,
     ),
     "solara": Region(
@@ -4652,13 +5500,14 @@ ENTRIES = {
         name="CHIEF'S CAVE",
         entry_type=EntryType.CAVE,
         mobs_base=MOBS,
-        fight=True, ),
+        fight=True),
 
     "sub_cave_2_2": Entry(
         description="Goblin chief's bedroom, dimly lit by flickering torches, the room is strewn with riches and "
                     "treasures. Shackled prisoners lie in the shadows, while the chief’s bed, made of rough furs, "
                     "dominates the chaotic space.",
         name="GOBLIN CHIEF'S BEDROOM",
+        id="goblin_chief_bedroom",
         entry_type=EntryType.CAVE,
         mobs_base=MOBS,
         fight=False),
@@ -4834,10 +5683,28 @@ ENTRIES = {
         mobs_base=MOBS
     ),
 
-    "hut_12_24": Entry(
-        description="Island hut, a cozy retreat adorned with a bed, a table, two chairs, and a window, "
+    "hut_12_24_lobby": Entry(
+        name="NYNAEVE'S HUT",
+        description="A humble living and dining space where a wooden table, scattered utensils, and soft lantern "
+                    "light create a warm island welcome.",
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
+
+    "hut_12_24_nynaeve_room": Entry(
+        name="NYNAEVE'S ROOM",
+        description="A warm, tidy chamber filled with herbal scents; shelves brim with vials,"
+                    " cloths, and worn journals.",
+        items=["bed"],
+        entry_type=EntryType.HUT,
+        mobs_base=MOBS
+    ),
+
+    "hut_12_24_son_room": Entry(
+        name="LITTLE ROOM",
+        description="A cozy room adorned with a bed, a table, two chairs, and a window, "
                     "invites serenity amid nature's whispers.",
-        items=["bed", "short_sword", "bread", "apple", "water", "bier", "old_book", "travelers_belt"],
+        items=["old_book", "short_sword", "travelers_belt", "bed"],
         entry_type=EntryType.HUT,
         mobs_base=MOBS
     ),

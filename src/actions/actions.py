@@ -138,6 +138,7 @@ def drink(player: Player, item: str) -> str:
     player.add_hungry(amount=item_object.hungry_refill)
     player.add_thirsty(amount=item_object.thirsty_refill)
     player.inventory.discard_item(item=item, quantity=1)
+    player.update_quests(target=item_object.id, amount=1)
     return f"You have drunk {item_object.name}."
 
 
@@ -180,6 +181,7 @@ def eat(player: Player, item: str) -> str:
     player.add_hungry(amount=item_object.hungry_refill)
     player.add_thirsty(amount=item_object.thirsty_refill)
     player.inventory.discard_item(item=item, quantity=1)
+    player.update_quests(target=item_object.id, amount=1)
     return f"You have eaten {item_object.name}."
 
 

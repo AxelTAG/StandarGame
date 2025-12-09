@@ -274,7 +274,13 @@ class Biome:
         return biome in self.accessible_to
 
     # Mobs methods.
-    def has_mob_respawned(self, mob_id: int) -> bool:
+    def has_mob_respawned(self, mob_id: int | str) -> bool:
+        if isinstance(mob_id, str):
+            for mob in self.mobs_respawned:
+                if mob.id_key == mob_id:
+                    return True
+            return False
+
         for mob in self.mobs_respawned:
             if mob.id == mob_id:
                 return True
@@ -286,8 +292,9 @@ class Biome:
         self.discard_mobs()
         self.respawn_mobs(day=self._mobs_respawn_time)
 
-    def respawn_mob(self, mob: str) -> None:
-        self.add_mob_respawned(mob=copy.deepcopy(self.mobs_base[mob]))
+    def respawn_mob(self, mob: str, amount: int = 1) -> None:
+        for _ in range(amount):
+            self.add_mob_respawned(mob=copy.deepcopy(self.mobs_base[mob]))
 
     def respawn_mobs(self, day: int) -> None:
         if self.mobs_check_respawn:
@@ -318,6 +325,13 @@ class Biome:
                 return mob
             if mob.id_key == mob_id:
                 return mob
+
+    def get_mob_quantity(self, mob_id: str = None) -> int:
+        if mob_id is None:
+            return len(self.mobs_respawned)
+        if self.has_mob_respawned(mob_id=mob_id):
+            return [mob.id_key for mob in self.mobs_respawned].count(mob_id)
+        return 0
 
     def move_mobs(self, biomes: list):
         for mob in self.mobs_respawned:
@@ -397,17 +411,22 @@ class Biome:
         if fishes:
             self.respawn_fishes(day=day)
 
+    # Npc methods.
     def add_npc(self, npc: str) -> None:
+        if npc in self.npcs:
+            return
         self.npcs.append(npc)
-
-    def add_item(self, item: str) -> None:
-        self.items.append(item)
 
     def remove_npc(self, npc: str) -> None:
         self.npcs.remove(npc)
 
-    def remove_item(self, item: str) -> None:
+    def add_item(self, item: str) -> None:
+        self.items.append(item)
+
+    def remove_item(self, item: str, player=None) -> None:
         self.items.remove(item)
+        if player:
+            player.update_quests(target=item, amount=1)
 
     # Tree methods.
     def respawn_trees(self, base: dict = None) -> None:

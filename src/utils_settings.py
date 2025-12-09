@@ -1,33 +1,39 @@
 # Imports.
 # Local imports.
-from .world import ENTRIES
+# External imports.
 
 
 # INIT MAP SETTING function that initialized the settings of map biomes.
-def init_map_setting(ms: dict):
-    # TODO: borrar al finalizar la test hut de 12,24.
-
+def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: dict):
     # (12, 24)
     ms[(12, 24)].description = ("Solitary hut amidst lush foliage, surrounded by the symphony of waves and "
                                 "the serenity of untouched nature.")
-    ms[(12, 24)].entries = {"hut": ENTRIES["hut_12_24"],
-                            "test_hut": ENTRIES["test_hut"]}  # TODO: borrar este entrie.
+    ms[(12, 24)].entries = {"hut": entries["hut_12_24_lobby"]}
+    ms[(12, 24)].entries["hut"].entries = {
+        "nynaeve_room": entries["hut_12_24_nynaeve_room"],
+        "little_room": entries["hut_12_24_son_room"]
+    }
     ms[(12, 24)].entries["hut"].leave_entry = ms[(12, 24)]
+    ms[(12, 24)].entries["hut"].entries["nynaeve_room"].leave_entry = ms[(12, 24)].entries["hut"]
+    ms[(12, 24)].entries["hut"].entries["little_room"].leave_entry = ms[(12, 24)].entries["hut"]
     ms[(12, 24)].fight = False
     ms[(12, 24)].name = "ISLAND"
-    ms[(12, 24)].respawn_mob(mob="training_dummy")  # TODO: borrar este mob.
+
+    # (13, 23)
+    ms[(13, 23)].description = ("Dense foliage and vibrant wildlife surround a secluded logging outpost, where felled "
+                                "timber and rough-cut planks lie among towering emerald trees.")
 
     # (13, 37)
     ms[(13, 37)].description = ("Rolling highlands with windswept grass, a sturdy artisan’s cabin billowing smoke from "
                                 "its forge, and a tall stone tower overlooking the vast horizon.")
     ms[(13, 37)].name = "HIGHLANDS"
-    ms[(13, 37)].entries = {"artisan_shop": ENTRIES["artisan_shop"]}
+    ms[(13, 37)].entries = {"artisan_shop": entries["artisan_shop"]}
     ms[(13, 37)].entries["artisan_shop"].leave_entry = ms[(13, 37)]
 
     # (13, 47)
     ms[(13, 47)].description = ("Isolated shelter amid dangers, where rustling leaves and distant howls "
                                 "suggest that safety within is uncertain at best.")
-    ms[(13, 47)].entries = {"hut": ENTRIES["hut_13_47"]}
+    ms[(13, 47)].entries = {"hut": entries["hut_13_47"]}
     ms[(13, 47)].entries["hut"].leave_entry = ms[(13, 47)]
 
     # (14, 24)
@@ -37,15 +43,15 @@ def init_map_setting(ms: dict):
     # (14, 25)
     ms[(14, 25)].description = ("Seaside with swaying palm trees, echoing waves, and vibrant life. "
                                 "Anchored boat gently resting by the shore.")
-    ms[(14, 25)].items = ["boat"]
+    ms[(14, 25)].items = ["broken_boat"]
 
     # (14, 36)
     ms[(14, 36)].description = ("Rolling highlands with windswept grass, a sturdy artisan’s cabin billowing smoke from "
                                 "its forge, and a tall stone tower overlooking the vast horizon.")
     ms[(14, 36)].name = "HIGHLANDS"
-    ms[(14, 36)].entries = {"tower": ENTRIES["tower_of_karun_floor_1"]}
+    ms[(14, 36)].entries = {"tower": entries["tower_of_karun_floor_1"]}
     ms[(14, 36)].entries["tower"].leave_entry = ms[(14, 36)]
-    ms[(14, 36)].entries["tower"].entries = {"second_floor": ENTRIES["tower_of_karun_floor_2"]}
+    ms[(14, 36)].entries["tower"].entries = {"second_floor": entries["tower_of_karun_floor_2"]}
     ms[(14, 36)].entries["tower"].entries["second_floor"].items = ["giant_telescope"]
 
     # (17, 27)
@@ -63,12 +69,12 @@ def init_map_setting(ms: dict):
     # (21, 29)
     ms[(21, 29)].description = ("Inn district, cozy tavern, lively marketplace, and quaint cottages "
                                 "surround the inviting town.")
-    ms[(21, 29)].entries = {"inn": ENTRIES["mirabelles_inn"],
-                            "small_house": ENTRIES["house_epiiat_small"],
-                            "house": ENTRIES["house_epiiat_normal"]}
+    ms[(21, 29)].entries = {"inn": entries["mirabelles_inn"],
+                            "small_house": entries["house_epiiat_small"],
+                            "house": entries["house_epiiat_normal"]}
     ms[(21, 29)].entries["inn"].leave_entry = ms[(21, 29)]
-    ms[(21, 29)].entries["inn"].entries = {"main_room": ENTRIES["mirabelles_main_room"],
-                                           "small_room": ENTRIES["mirabelles_small_room"]}
+    ms[(21, 29)].entries["inn"].entries = {"main_room": entries["mirabelles_main_room"],
+                                           "small_room": entries["mirabelles_small_room"]}
     ms[(21, 29)].entries["inn"].entries["main_room"].leave_entry = ms[(21, 29)].entries["inn"]
     ms[(21, 29)].entries["inn"].entries["small_room"].leave_entry = ms[(21, 29)].entries["inn"]
     ms[(21, 29)].entries["small_house"].leave_entry = ms[(21, 29)]
@@ -84,9 +90,9 @@ def init_map_setting(ms: dict):
     ms[(22, 28)].description = "Village hub, Mayor's office, bustling square, and a quaint temple create the " \
                                "heart of community life."
     ms[(22, 28)].name = "TOWN CENTER"
-    ms[(22, 28)].entries = {"mayors_house": ENTRIES["house_epiiat_mayor"],
-                            "wooden_house": ENTRIES["house_epiiat_wooden"],
-                            "temple": ENTRIES["temple_epiiat"]}
+    ms[(22, 28)].entries = {"mayors_house": entries["house_epiiat_mayor"],
+                            "wooden_house": entries["house_epiiat_wooden"],
+                            "temple": entries["temple_epiiat"]}
     ms[(22, 28)].entries["mayors_house"].leave_entry = ms[(22, 28)]
     ms[(22, 28)].entries["wooden_house"].leave_entry = ms[(22, 28)]
     ms[(22, 28)].entries["temple"].leave_entry = ms[(22, 28)]
@@ -101,7 +107,7 @@ def init_map_setting(ms: dict):
                                 " squares. The sacred structure beckons pilgrims and whispers tales of"
                                 " ancient reverence")
     ms[(22, 40)].name = "ANTINA'S SANCTUARY"
-    ms[(22, 40)].entries = {"temple": ENTRIES["temple_antina"]}
+    ms[(22, 40)].entries = {"temple": entries["temple_antina"]}
     ms[(22, 40)].entries["temple"].leave_entry = ms[(22, 40)]
 
     # (22, 41)
@@ -109,22 +115,22 @@ def init_map_setting(ms: dict):
     ms[(22, 41)].description = "Antina's post-gate district, winding streets lead to residential quarters " \
                                "and training grounds. Stone structures bear the weight of history, weaving a" \
                                " tapestry of everyday life beyond the bustling entrance gates."
-    ms[(22, 41)].entries = {"potion_shop": ENTRIES["potion_shop_antina"]}
+    ms[(22, 41)].entries = {"potion_shop": entries["potion_shop_antina"]}
     ms[(22, 41)].entries["potion_shop"].leave_entry = ms[(22, 41)]
 
     # (22, 42)
     ms[(22, 42)].description = "Cobbled lanes weave among lively taverns and cozy inns, offering weary " \
                                "travelers respite. A symphony of laughter, music, and clinking tankards fills" \
                                " the air, creating an inviting atmosphere."
-    ms[(22, 42)].entries = {"tavern": ENTRIES["the_golden_tankard_tavern"],
-                            "inn": ENTRIES["aliras_inn"]}
+    ms[(22, 42)].entries = {"tavern": entries["the_golden_tankard_tavern"],
+                            "inn": entries["aliras_inn"]}
     ms[(22, 42)].entries["tavern"].leave_entry = ms[(22, 42)]
     ms[(22, 42)].entries["inn"].leave_entry = ms[(22, 42)]
     ms[(22, 42)].entries["inn"].entries = {
-        "first_room": ENTRIES["aliras_first_room"],
-        "second_room": ENTRIES["aliras_second_room"],
-        "third_room": ENTRIES["aliras_third_room"],
-        "fourth_room": ENTRIES["aliras_fourth_room"]}
+        "first_room": entries["aliras_first_room"],
+        "second_room": entries["aliras_second_room"],
+        "third_room": entries["aliras_third_room"],
+        "fourth_room": entries["aliras_fourth_room"]}
     ms[(22, 42)].entries["inn"].entries["first_room"].leave_entry = ms[(22, 42)].entries["inn"]
     ms[(22, 42)].entries["inn"].entries["second_room"].leave_entry = ms[(22, 42)].entries["inn"]
     ms[(22, 42)].entries["inn"].entries["third_room"].leave_entry = ms[(22, 42)].entries["inn"]
@@ -136,7 +142,7 @@ def init_map_setting(ms: dict):
     ms[(23, 39)].description = "Antina's castle precinct, towering fortress crowned with turrets dominates " \
                                "the cityscape. Home to nobility and adorned with banners, the castle " \
                                "overlooks sprawling courtyards, embodying the seat of power in Antina."
-    ms[(23, 39)].entries = {"castle": ENTRIES["castle"]}
+    ms[(23, 39)].entries = {"castle": entries["castle"]}
     ms[(23, 39)].entries["castle"].leave_entry = ms[(23, 39)]
     ms[(23, 39)].name = "ANTINA'S CASTLE"
 
@@ -156,10 +162,10 @@ def init_map_setting(ms: dict):
     ms[(23, 42)].description = "Quaint abodes line tranquil streets, adorned with blooming gardens. A serene" \
                                " enclave where the city's heartbeat echoes in the everyday rhythms of its" \
                                " residents."
-    ms[(23, 42)].entries = {"mid_house": ENTRIES["house_antina_gareth"],
-                            "small_house": ENTRIES["house_antina_small"],
-                            "white_house": ENTRIES["house_antina_white"],
-                            "family_house": ENTRIES["house_antina_family"]}
+    ms[(23, 42)].entries = {"mid_house": entries["house_antina_gareth"],
+                            "small_house": entries["house_antina_small"],
+                            "white_house": entries["house_antina_white"],
+                            "family_house": entries["house_antina_family"]}
     ms[(23, 42)].entries["mid_house"].leave_entry = ms[(23, 42)]
     ms[(23, 42)].entries["small_house"].leave_entry = ms[(23, 42)]
     ms[(23, 42)].entries["white_house"].leave_entry = ms[(23, 42)]
@@ -167,9 +173,6 @@ def init_map_setting(ms: dict):
     ms[(23, 42)].name = "ANTINA'S RESIDENTIAL QUARTER"
 
     # (23, 48)
-    ms[(23, 48)].description = "Frozen valley under the watchful gaze of a dragon, crystalized landscapes " \
-                               "echo with the dragon's silent vigil, as icy winds and shimmering frost create" \
-                               " an otherworldly ambiance."
     ms[(23, 48)].name = "FROSTVALE"
 
     # (24, 40)
@@ -177,8 +180,8 @@ def init_map_setting(ms: dict):
                                " enclave where the city's heartbeat echoes in the everyday rhythms of its " \
                                "residents."
     ms[(24, 40)].name = "ANTINA'S RESIDENTIAL QUARTER"
-    ms[(24, 40)].entries = {"edrions_house": ENTRIES["house_antina_edrion"],
-                            "arics_house": ENTRIES["house_antina_aric"]}
+    ms[(24, 40)].entries = {"edrions_house": entries["house_antina_edrion"],
+                            "arics_house": entries["house_antina_aric"]}
 
     # (24, 41)
     ms[(24, 41)].description = "Antina's post-gate district, winding streets lead to residential quarters and" \
@@ -192,7 +195,7 @@ def init_map_setting(ms: dict):
                                 " merchants peddle wares to the fervent spectators, creating an "
                                 "electrifying atmosphere.")
     ms[(24, 42)].name = "ANTINA'S ARENA"
-    ms[(24, 42)].entries = {"arena": ENTRIES["arena_antina"]}
+    ms[(24, 42)].entries = {"arena": entries["arena_antina"]}
     ms[(24, 42)].entries["arena"].leave_entry = ms[(24, 42)]
 
     # (25, 24)
@@ -203,25 +206,25 @@ def init_map_setting(ms: dict):
     ms[(25, 24)].name = "HIGHLANDS"
 
     # (25, 24): Cave - stage 0
-    cave_13_0 = ENTRIES["cave_25_24"]
+    cave_13_0 = entries["cave_25_24"]
     cave_13_0.leave_entry = ms[(25, 24)]
     ms[(25, 24)].entries = {"cave_entrance": cave_13_0}
 
     # (25, 24): Cave - stage 1
-    sub_cave_1_0 = ENTRIES["sub_cave_1_0"]
-    sub_cave_1_1 = ENTRIES["sub_cave_1_1"]
-    sub_cave_1_2 = ENTRIES["sub_cave_1_2"]
+    sub_cave_1_0 = entries["sub_cave_1_0"]
+    sub_cave_1_1 = entries["sub_cave_1_1"]
+    sub_cave_1_2 = entries["sub_cave_1_2"]
 
     cave_13_0.entries = {"cave_pit": sub_cave_1_0,
                          "hole": sub_cave_1_1,
                          "big_cave": sub_cave_1_2}
 
     # (25, 24): Cave - stage 2
-    sub_cave_2_0 = ENTRIES["sub_cave_2_0"]
-    sub_cave_2_1 = ENTRIES["sub_cave_2_1"]
-    sub_cave_2_2 = ENTRIES["sub_cave_2_2"]
-    sub_cave_2_3 = ENTRIES["sub_cave_2_3"]
-    sub_cave_2_4 = ENTRIES["sub_cave_2_4"]
+    sub_cave_2_0 = entries["sub_cave_2_0"]
+    sub_cave_2_1 = entries["sub_cave_2_1"]
+    sub_cave_2_2 = entries["sub_cave_2_2"]
+    sub_cave_2_3 = entries["sub_cave_2_3"]
+    sub_cave_2_4 = entries["sub_cave_2_4"]
 
     sub_cave_1_0.entries = {"cave_entrance": cave_13_0,
                             "cave_basin": sub_cave_2_0}
@@ -231,9 +234,9 @@ def init_map_setting(ms: dict):
                             "cave_chamber": sub_cave_2_4}
 
     # (25, 24): Cave - stage 3
-    sub_cave_3_0 = ENTRIES["sub_cave_3_0"]
-    sub_cave_3_1 = ENTRIES["sub_cave_3_1"]
-    sub_cave_3_2 = ENTRIES["sub_cave_3_2"]
+    sub_cave_3_0 = entries["sub_cave_3_0"]
+    sub_cave_3_1 = entries["sub_cave_3_1"]
+    sub_cave_3_2 = entries["sub_cave_3_2"]
 
     sub_cave_2_0.entries = {"cave_pit": sub_cave_1_0,
                             "cave_gallery": sub_cave_3_0}
@@ -247,7 +250,7 @@ def init_map_setting(ms: dict):
     sub_cave_2_4.entries = {"big_cave": sub_cave_1_2}
 
     # (25, 24): Cave - stage 4
-    sub_cave_4_0 = ENTRIES["sub_cave_4_0"]
+    sub_cave_4_0 = entries["sub_cave_4_0"]
     sub_cave_4_0.leave_entry = ms[(19, 0)]
 
     sub_cave_3_0.entries = {"cave_basin": sub_cave_2_0,
@@ -259,8 +262,7 @@ def init_map_setting(ms: dict):
                             "cave_passageway_entrance": sub_cave_2_3}
     sub_cave_3_2.entries = {"cave_passageway_entrance": sub_cave_2_3,
                             "cave_passageway_exit": sub_cave_3_1}
-    sub_cave_4_0.entries = {"cave_passageway_exit": sub_cave_3_1,
-                            "surface": ms[(31, 24)]}
+    sub_cave_4_0
 
     # (25, 41)
     ms[(25, 41)].name = "EAST GATES"
@@ -280,20 +282,20 @@ def init_map_setting(ms: dict):
     # (31, 24)
     ms[(31, 24)].description = "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these " \
                                "perilous elevated lands."
-    ms[(31, 24)].entries = {"cave_entrance": ENTRIES["sub_cave_4_0"]}
+    ms[(31, 24)].entries = {"cave_entrance": entries["sub_cave_4_0"]}
 
     # (34, 25)
     ms[(34, 25)].description = "Abandoned woodland hut, dilapidated and forgotten, this rustic abode near the" \
                                " forest stands as a silent witness to nature's reclamation."
     ms[(34, 25)].name = "FOREST"
-    ms[(34, 25)].entries = {"hut": ENTRIES["hut_34_25"]}
+    ms[(34, 25)].entries = {"hut": entries["hut_34_25"]}
     ms[(34, 25)].entries["hut"].leave_entry = ms[(34, 25)]
 
     # (34, 42)
-    first_floor = ENTRIES["tower_of_eldra_floor_1"]
+    first_floor = entries["tower_of_eldra_floor_1"]
     first_floor.leave_entry = ms[(34, 42)]
 
-    second_floor = ENTRIES["tower_of_eldra_floor_2"]
+    second_floor = entries["tower_of_eldra_floor_2"]
     second_floor.leave_entry = first_floor
 
     ms[(34, 42)].description = ("Vast, rocky expanse crowned with a solitary wooden tower. The structure "
@@ -303,13 +305,13 @@ def init_map_setting(ms: dict):
     ms[(34, 42)].entries["tower_of_eldra"].entries = {"tower_of_eldra_second_floor": second_floor}
 
     # (36, 42)
-    ms[(36, 42)].entries = {"cave": ENTRIES["cave_39_43"]}
+    ms[(36, 42)].entries = {"cave": entries["cave_39_43"]}
 
     # (34, 51)
     ms[(34, 51)].description = ("Sandy shores meet grassy dunes, where a weathered hut stands, surrounded"
                                 " by scattered driftwood and the soothing sound of crashing waves.")
     ms[(34, 51)].name = "COAST"
-    ms[(34, 51)].entries = {"coast_hut": ENTRIES["hut_34_51"]}
+    ms[(34, 51)].entries = {"coast_hut": entries["hut_34_51"]}
     ms[(34, 51)].entries["coast_hut"].leave_entry = ms[(34, 51)]
 
     # (38, 39)
@@ -324,8 +326,8 @@ def init_map_setting(ms: dict):
                                "lone fisherman casts his net into the glistening waters, capturing the " \
                                "essence of maritime tranquility."
     ms[(39, 38)].name = "AQUIRI'S VILLAGE"
-    ms[(39, 38)].entries = {"marlins_hut": ENTRIES["house_aquiri_marlin"],
-                            "house": ENTRIES["house_aquiri_normal"]}
+    ms[(39, 38)].entries = {"marlins_hut": entries["house_aquiri_marlin"],
+                            "house": entries["house_aquiri_normal"]}
     ms[(39, 38)].entries["marlins_hut"].leave_entry = ms[(39, 38)]
     ms[(39, 38)].entries["house"].leave_entry = ms[(39, 38)]
 
@@ -333,18 +335,18 @@ def init_map_setting(ms: dict):
     ms[(39, 39)].description = "Seaside fishing hamlet, colorful boats bob gently in the harbor, while " \
                                "weathered cottages line the shore of this picturesque coastal community."
     ms[(39, 39)].entries = {
-        "inn": ENTRIES["lyssias_inn"],
-        "coast_stone_house": ENTRIES["house_aquiri_stone"],
-        "thornes_ship": ENTRIES["thornes_ship"]}
+        "inn": entries["lyssias_inn"],
+        "coast_stone_house": entries["house_aquiri_stone"],
+        "thornes_ship": entries["thornes_ship"]}
 
     ms[(39, 39)].entries["inn"].leave_entry = ms[(39, 39)]
     ms[(39, 39)].entries["coast_stone_house"].leave_entry = ms[(39, 39)]
     ms[(39, 39)].entries["thornes_ship"].leave_entry = ms[(39, 39)]
 
     ms[(39, 39)].entries["inn"].entries = {
-        "first_room": ENTRIES["lyssias_first_room"],
-        "second_room": ENTRIES["lyssias_second_room"],
-        "third_room": ENTRIES["lyssias_third_room"]}
+        "first_room": entries["lyssias_first_room"],
+        "second_room": entries["lyssias_second_room"],
+        "third_room": entries["lyssias_third_room"]}
     ms[(39, 39)].entries["inn"].entries["first_room"].leave_entry = ms[(39, 39)].entries["inn"]
     ms[(39, 39)].entries["inn"].entries["second_room"].leave_entry = ms[(39, 39)].entries["inn"]
     ms[(39, 39)].entries["inn"].entries["third_room"].leave_entry = ms[(39, 39)].entries["inn"]
@@ -352,9 +354,21 @@ def init_map_setting(ms: dict):
 
     # (39, 43)
     ms[(39, 43)].entries = {
-        "cave": ENTRIES["cave_39_43"]}
+        "cave": entries["cave_39_43"]}
     ms[(39, 43)].entries["cave"].leave_entry = ms[(39, 43)]
 
     ms[(39, 43)].entries["cave"].entries = {
         "coast": ms[(39, 43)],
         "plateu": ms[(35, 42)]}
+
+    # NPCS init settings.
+    # Quests.
+    if npcs is not None:
+        # Epiiat.
+        npcs["mayor_thorian"].add_quest(quest=quests["quest_goblin_chief"])
+
+        # Aquiri.
+        npcs["fisherman_marlin"].add_quest(quest=quests["quest_marlin_fish_for_brann"])
+        npcs["fisherman_marlin"].add_quest(quest=quests["quest_find_caravan_leader_darek"])
+        npcs["fisherman_marlin"].add_quest(quest=quests["quest_destroy_rocks_on_valley"])
+        npcs["fisherman_marlin"].add_quest(quest=quests["quest_gareth_deliver"])

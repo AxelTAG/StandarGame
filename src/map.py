@@ -9,9 +9,11 @@ from .item import Item
 from .npc import Npc
 from .player import Player
 from .region import Region
+from .events.timer import Timer
 from .utils import label_pixels, tl_map_set
 from .utils_settings import init_map_setting
 from .globals import FISH_RESPAWNED_LIMIT, MAP_TILE_PATH, REGION_TILE_PATH
+from .quest import Quest
 
 # External imports.
 from attrs import define, field
@@ -44,20 +46,25 @@ class Map:
     map_settings: dict = field(default=None)
     region_labels: list[list] = field(default=None)
     items: dict[str, Item] = field(default=None)
+    quests: dict[str, Quest] = field(default=None)
     npcs: dict[str, Npc] = field(default=None)
     biomes: dict = field(default=None)
+    entries: dict = field(default=None)
     regions: dict = field(default=None)
     fishes: dict = field(default=None)
-    entries: dict = field(default=None)
     mobs: dict = field(default=None)
     x_len: int = field(init=False)
     y_len: int = field(init=False)
 
-    # Map restrictions.
+    # Map restrictions attributes.
     fish_respawned_limit: int = field(default=FISH_RESPAWNED_LIMIT)
 
-    # Others.
+    # Event attributes.
+    timers: list = field(factory=list)
+
+    # Others attributes.
     last_hour: int = field(default=6)
+    last_day: int = field(default=1)
 
     def __attrs_post_init__(self):
         if self.map_labels is None:
@@ -69,7 +76,11 @@ class Map:
         if self.map_settings is None:
             self.map_settings = tl_map_set(tl_map=self.map_labels,
                                            biomes=self.biomes)
-            init_map_setting(ms=self.map_settings)
+            init_map_setting(ms=self.map_settings,
+                             biomes=self.biomes,
+                             entries=self.entries,
+                             npcs=self.npcs,
+                             quests=self.quests)
 
         if self.region_labels is None:
             self.region_labels = label_pixels(img_path=REGION_TILE_PATH, base=self.regions)
@@ -83,6 +94,18 @@ class Map:
     # Control methods.
     def get_label(self, x: int, y: int) -> str:
         return self.map_labels[y][x]
+
+    def get_number_of_mobs(self, coord1: tuple, coord2: tuple, mob_id: str = None) -> int:
+        x1, y1 = coord1
+        x2, y2 = coord2
+
+        mob_quantity = 0
+
+        for y in range(y1, y2 + 1):
+            for x in range(x1, x2 + 1):
+                mob_quantity += self.map_settings[(x, y)].get_mob_quantity(mob_id=mob_id)
+
+        return mob_quantity
 
     # Time methods.
     @property
@@ -154,6 +177,7 @@ class Map:
             self.add_days(days_to_add=hours_sum // self.day_duration)
 
     def add_days(self, days_to_add: int) -> None:
+        self.last_day = self.day
         days_sum = self.day + days_to_add
         if days_sum <= self.month_duration:
             self.day = days_sum
@@ -285,9 +309,10 @@ class Map:
                                 neighboors=self.neighbors_from_coord(coord=biome.coordinates),
                                 fishes=refresh_fishes)
 
-    def refresh_map(self) -> None:
+    def refresh_map(self, **kwargs) -> None:
         self.refresh_npcs()
         self.refresh_biomes()
+        self.refresh_timers(**kwargs)
 
     # Biome and climate methods.
     def get_biome(self, x: int, y: int) -> Biome:
@@ -325,6 +350,9 @@ class Map:
 
             ms_tile = self.map_settings[(nx, ny)]
 
+            if any(self.get_item_object(item_id=item).is_blocker() for item in ms_tile.get_items()):
+                continue
+
             if not ms_tile.is_accessible_from(biome=current_tile):
                 continue
 
@@ -354,3 +382,33 @@ class Map:
             for row in self.map_labels:
                 result[biome] += row.count(biome)
         return result
+
+    # Timer methods.
+    def add_timer(self, timer: Timer) -> None:
+        self.timers.append(timer)
+
+    def get_timers(self) -> list[Timer]:
+        return self.timers
+
+    def get_timer(self, timer_id: str) -> Timer:
+        for timer in self.get_timers():
+            if timer.id == timer_id:
+                return timer
+
+    def has_timer(self, timer_id: str) -> bool:
+        return self.get_timer(timer_id=timer_id) is not None
+
+    def remove_timer(self, timer_id: str) -> None:
+        if self.has_timer(timer_id=timer_id):
+            self.timers.remove(self.get_timer(timer_id=timer_id))
+
+    def refresh_timers(self, **kwargs) -> None:
+        # TODO: hot fix de repiticion de timers al guardar y cargar.
+        timer_ids = [t.id for t in self.get_timers()]
+        for t in self.get_timers():
+            for _ in range(timer_ids.count(t.id) - 1):
+                self.remove_timer(timer_id=t.id)
+        # Esto es del código.
+        for timer in self.get_timers():
+            days = self.day - timer.day if self.day > timer.day else self.month_duration - timer.day + self.day
+            timer.tick(days=days, **kwargs)

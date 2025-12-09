@@ -518,7 +518,10 @@ def disp_talk(place: Biome, mapgame: Map) -> str:
     if place.get_npc():
         msg = "You want to talk to:"
         for i, npc in enumerate(place.get_npc()):
-            msg += "\n - " + npc.replace("_", " ").title()
+            warning = ""
+            if mapgame.npcs[npc].has_quest():
+                warning = " [!]"
+            msg += f"\n - {npc.replace('_', ' ').title()}{warning}"
         return msg
     else:
         return "No one is here."

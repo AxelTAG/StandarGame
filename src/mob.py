@@ -97,8 +97,8 @@ class Mob:
             return True
         return False
 
-    def is_alive(self) -> bool:
-        return self.hp > 0
+    def is_alive(self, limit: int = 0) -> bool:
+        return self.hp > limit
 
     # Statuses methods.
     def add_status(self, status: Status, onbattle: bool = False) -> None:

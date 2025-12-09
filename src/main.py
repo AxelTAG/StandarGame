@@ -808,7 +808,15 @@ class Game:
         input(" > ")
 
     def show_settings(self):
-        pass
+        # Display.
+        displays.disp_show_options(game=self)
+
+        # Choice selection.
+        selection = input(" # ")
+
+        if selection == "1":
+            value = float(input(" # Introduce volume value: "))
+            self.set_music_volume(volume=value)
 
     @staticmethod
     def close():
@@ -846,7 +854,7 @@ class Game:
 
     @staticmethod
     def set_music_volume(volume: float) -> None:
-        pygame.mixer.music.set_volume(volume=volume)
+        pygame.mixer.music.set_volume(volume)
 
     @staticmethod
     def get_id_keys(entities: list, is_string: bool = True):

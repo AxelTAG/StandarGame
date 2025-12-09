@@ -233,6 +233,16 @@ def disp_show_list_items(player: Player, items: dict, player_quantity: bool = Fa
     return items_list, prices_list
 
 
+def disp_show_options(game):
+    clear()
+    disp_title()
+    print(" < OPTIONS >")
+    print()
+    print(" 1 - MUSIC VOLUME")
+    print(" 0 - QUIT")
+    print()
+
+
 def disp_skill_selection(entitie: Player | Mob, prefix: str = "", subfix: str = "") -> None:
     print()
     print(f"{prefix}SELECT THE SKILL: ")

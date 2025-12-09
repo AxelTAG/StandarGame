@@ -199,7 +199,7 @@ class Npc:
 
     # Transport methods.
     def add_transport_place(self, place_coordinate: tuple, place_price: dict[str, int]) -> None:
-        self.transport_places[tuple] = place_price
+        self.transport_places[place_coordinate] = place_price
 
     def get_transport_places(self) -> dict[tuple, dict]:
         return self.transport_places

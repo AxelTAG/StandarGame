@@ -2019,7 +2019,7 @@ ITEMS = {
     "old_book": Item(name="Old Book",
                      description="A weathered tome with brittle pages, faint ink, and a lingering scent of forgotten "
                                  "stories.",
-                     pickable=True,
+                     pickable=False,
                      readable=True,
                      weight=0.35,
                      title="Illegible Title",

@@ -31,4 +31,4 @@ def check(mapgame: Map,
     if tree is not None:
         return tree.description
 
-    return f"There is no {item.title()} here."
+    return f"There is no {target.title()} here."

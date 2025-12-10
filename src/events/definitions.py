@@ -69,12 +69,16 @@ def call_completed_find_loial(player: Player, mapgame: Map) -> None:
             "How are you feeling today?"
         ]
     }
+    mapgame.npcs["islander_nynaeve"].answers_morning = {}
+
     mapgame.npcs["islander_nynaeve"].messages_afternoon = {
         0: [
             "You seem full of energy.",
             "If you have time, maybe Loial could use a hand with the island tasks."
         ]
     }
+    mapgame.npcs["islander_nynaeve"].answers_afternoon = {}
+
     mapgame.npcs["islander_nynaeve"].messages_evening = {
         0: [
             "You know… we were very worried when we found you lying on the beach.",
@@ -98,6 +102,7 @@ def call_completed_find_loial(player: Player, mapgame: Map) -> None:
             "We should all get some rest."
         ]
     }
+    mapgame.npcs["islander_nynaeve"].answers_night = {}
 
     mapgame.npcs["islander_loial"].add_quest(quest=mapgame.quests["quest_deliver_wood"])
 
@@ -155,12 +160,16 @@ def call_completed_deliver_wood(player: Player, mapgame: Map) -> None:
             "How are you feeling today?"
         ]
     }
+    mapgame.npcs["islander_nynaeve"].answers_morning = {}
+
     mapgame.npcs["islander_nynaeve"].messages_afternoon = {
         0: [
             "You seem full of energy.",
             "If you have time, maybe Loial could use a hand with the island tasks."
         ]
     }
+    mapgame.npcs["islander_nynaeve"].answers_afternoon = {}
+
     mapgame.npcs["islander_nynaeve"].messages_evening = {
         0: [
             "You know… we were very worried when we found you lying on the beach.",

@@ -420,6 +420,7 @@ class Biome:
     def remove_npc(self, npc: str) -> None:
         self.npcs.remove(npc)
 
+    # Item methods.
     def add_item(self, item: str) -> None:
         self.items.append(item)
 
@@ -427,6 +428,9 @@ class Biome:
         self.items.remove(item)
         if player:
             player.update_quests(target=item, amount=1)
+
+    def has_item(self, item_id: str) -> bool:
+        return item_id in self.items
 
     # Tree methods.
     def respawn_trees(self, base: dict = None) -> None:

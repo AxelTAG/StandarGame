@@ -277,7 +277,7 @@ def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: 
     ms[(26, 29)].name = "VALLEY"
 
     # (27, 29)
-    ms[(27, 29)].req = ["rocks"]
+    ms[(27, 29)].add_item("rockfall")
 
     # (31, 24)
     ms[(31, 24)].description = "Rugged terrain, sinister caves, and sneaky goblin tribes dominate these " \

@@ -32,7 +32,7 @@ class Npc:
 
     # Transporting places attributes.
     transport_time_of_day: list[int] = field(default=None)
-    transport_places: dict[tuple, dict] = field(default=None)
+    transport_places: dict[tuple, dict] = field(factory=dict)
     transport_confirm_message: list[str] = field(default=None)
     transport_arrive_message: list[str] = field(default=None)
 
@@ -101,16 +101,16 @@ class Npc:
     def clear_messages_answers(self, messages: bool = True, answers: bool = True) -> None:
         if messages:
             self.messages = {}
-            self.messages_morning = {}
-            self.messages_afternoon = {}
-            self.messages_evening = {}
-            self.messages_night = {}
+            self.messages_morning = None
+            self.messages_afternoon = None
+            self.messages_evening = None
+            self.messages_night = None
         if answers:
             self.answers = {}
-            self.answers_morning = {}
-            self.answers_afternoon = {}
-            self.answers_evening = {}
-            self.answers_night = {}
+            self.answers_morning = None
+            self.answers_afternoon = None
+            self.answers_evening = None
+            self.answers_night = None
 
     def reset_hist_messages(self):
         self.hist_messages = {}
@@ -152,7 +152,7 @@ class Npc:
                 self.messages = self.messages_afternoon
             if self.answers_afternoon is not None:
                 self.answers = self.answers_afternoon
-            if self.place_afternoon:
+            if self.place_afternoon is not None:
                 self.place = self.place_afternoon
             return
 

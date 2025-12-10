@@ -375,7 +375,7 @@ class Game:
                         screen = "You're carrying too much weight to move."
 
                     elif player.outside:
-                        screen, player.standing = move(player=player, map_game=map_game, mv=action[0])
+                        screen, player.standing = move(player=player, mapgame=map_game, mv=int(action[0]))
 
                     else:
                         screen = "You are in " + player.place.get_name(month=map_game.current_month).title().replace(
@@ -732,8 +732,10 @@ class Game:
                         screen = f"{player.precision}"
 
                     elif action[0] == "teleport":
-                        player.set_place(map_game.map_settings[(int(action[1]), int(action[2]))])
-                        screen = f"You have teleported to {action[1]} {action[2]}."
+                        screen = f"Coordinates are not valid: {action[1]} {action[2]}."
+                        if action[1].isdigit() and action[2].isdigit():
+                            player.set_place(map_game.map_settings[(int(action[1]), int(action[2]))])
+                            screen = f"You have teleported to {action[1]} {action[2]}."
 
                     elif action[:2] == ["time", "travel"]:
                         map_game.add_days(days_to_add=int(action[2]))

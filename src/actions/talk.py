@@ -142,8 +142,6 @@ def loop_transport(player: Player, npc: Npc, mapgame: Map):
                              mapgame=mapgame,
                              place=list(places_without_player_place.keys())[place_index],
                              cost=dict_places[places_list[place_index]])
-        if npc.transport_arrive_message is not None:
-            displays.disp_standard_tw(npc.name, npc.transport_arrive_message)
     return "", False
 
 
@@ -166,6 +164,7 @@ def talk(npc: Npc,
             player.add_quest(quest=npc.give_quest(quest=quest))
             verify_quests_memory(quest1=quest, quest2=player.quests_in_progress[-1])
             for item, amount in quest.give_items().items():
+                print(f"{item}, {amount}")
                 player.add_item(item=item, quantity=amount)
             return f"New quest: {quest.description} You talked with {npc.name.title()}."
 
@@ -272,6 +271,8 @@ def talk(npc: Npc,
                 if answer == 1:
                     result, state = loop_transport(player=player, npc=npc, mapgame=mapgame)
                     if state:
+                        if npc.transport_arrive_message is not None:
+                            displays.disp_standard_tw(npc.name, npc.transport_arrive_message)
                         return result
                     return result
 

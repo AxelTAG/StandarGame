@@ -446,7 +446,7 @@ class Player:
                     return True
         return quest in self.quests_in_progress
 
-    def get_quest(self, quest: str, in_progress: bool = True, completed: bool = True) -> Quest:
+    def get_quest(self, quest: str, in_progress: bool = True, completed: bool = True) -> Quest | None:
         for q in self.get_quests(in_progress=in_progress, completed=completed):
             if q.id == quest:
                 return q

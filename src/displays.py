@@ -195,16 +195,17 @@ def disp_player_play_actions(player: Player,
             x_pos, y_pos = player.x, player.y
         biome_name = player.get_biome_label(x=x_pos, y=y_pos)
         if move:
-            moves_labels.append(f"{Directions(i).name} ({biome_name})")
+            moves_labels.append(f"{i} - {Directions(i).name} ({biome_name})")
 
     # Actions.
     _, actions_labels = player.get_available_actions(onbattle=False)
 
-    actions = []
-    for i, label in enumerate(actions_labels[0:1] + moves_labels):
-        actions.append(f"{prefix}{i} - {label.upper()}{subfix}")
+    actions = [f"{prefix}{0} - {actions_labels[0].upper()}{subfix}"]
+
+    for i, label in enumerate(moves_labels):
+        actions.append(f"{prefix}{label.upper()}{subfix}")
         if display:
-            print(f"{prefix}{i} - {label.upper()}{subfix}")
+            print(f"{prefix}{label.upper()}{subfix}")
     for i, label in enumerate(actions_labels[1:], 5):
         actions.append(f"{prefix}{i} - {label.upper()}{subfix}")
         if display:

@@ -2577,7 +2577,10 @@ QUESTS = {
     "quest_marlin_fish_for_brann": Quest(
         id="quest_marlin_fish_for_brann",
         title="Marlin want to deliver fish to Brann",
-        description="",
+        description="Marlin needs help delivering a batch of fresh tuna to his friend Brann, who "
+                    "lives in the southern region. Busy with constant fishing, he hasn’t been able "
+                    "to make the trip himself. He has entrusted you with bringing the fish safely "
+                    "to Brann before it loses its freshness.",
         objectives=[
             QuestObjective(
                 type=ObjectiveType.DELIVER,
@@ -2655,7 +2658,7 @@ QUESTS = {
     ),
 
     "quest_destroy_rocks_on_valley": Quest(
-        id="quest_destry_rocks_on_valley",
+        id="quest_destroy_rocks_on_valley",
         title="What happen with the Caravan?",
         description=(
             "Marlin discovered that a massive rockfall is blocking the valley road. "
@@ -2943,7 +2946,6 @@ NPCS = {
                               0: ["What business would a dragon have in these lands, traveler? Curious... and"
                                   " troubling, isn’t it?"]},
                           place_night=[(39, 39), "inn", "first_room"]),
-
 
     "captain_zelian": Npc(name="captain zelian",
                           npc_type=NpcTypes.CAPTAIN,
@@ -3577,7 +3579,7 @@ MOBS = {
         poison_stacks=0,
         poison_chance=0,
         escape_chance=0,
-        items={"dragon_scales": 8},
+        items={},
         items_drop_chances=[1],
         experience=888,
         skills=[SKILLS_MOB["attack_dragon"]],
@@ -5270,7 +5272,7 @@ BIOMES = {
         mobs_base=MOBS,
         name="TOWN",
         req=[],
-        accessible_from=["gates"],
+        accessible_from=["gates", "town"],
         accessible_to=["gates", "town"],
         pace=2,
         status=[PlayerStatus.WALK.value],

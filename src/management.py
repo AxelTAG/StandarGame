@@ -142,7 +142,8 @@ def map_control_handling(player: Player,
 
     # Guard Lorian ddetention.
     if "guard_lorian" in player.last_place.get_npc() and player.place == mapgame.map_settings[(24, 41)]:
-        if not player.events["antinas_permission"]:
+        quest = player.get_quest("quest_gareth_deliver")
+        if quest is None or not quest.is_started():
             talk(npc=mapgame.npcs["guard_lorian"], player=player, mapgame=mapgame)
             player.set_place(place=player.last_place)
 

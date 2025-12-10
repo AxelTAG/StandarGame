@@ -322,66 +322,24 @@ def listen(player: Player, map_game: Map, entitie: str) -> str:
 
 # Move function.
 def move(player: Player,
-         map_game: Map,
-         mv: str,
+         mapgame: Map,
+         mv: int,
          pace_factor: float = 1) -> tuple[str, bool]:
-    x, y = player.x, player.y
-    map_height, map_width = map_game.x_len, map_game.y_len
-    tl_map, ms = map_game.map_labels, map_game.map_settings
-    inventory = player.inventory.items
-    events = [event for event in player.events.keys() if event == True]
+    directions = [
+        (0, -1, "You moved North."),  # North
+        (1, 0, "You moved East."),  # East
+        (0, 1, "You moved South."),  # South
+        (-1, 0, "You moved West.")  # West
+    ]
+    avaible_moves = mapgame.get_avaible_moves(player=player)
 
-    # Move North.
-    if (y > 0 and all(req in [*inventory.keys()] + events for req in
-                      ms[(x, y - 1)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x, y - 1)].get_status(month=map_game.current_month) and mv == "1"):
-        if (tl_map[y - 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
-                tl_map[y - 1][x] != "town" and tl_map[y][x] != "town") or (
-                tl_map[y][x] == "town" and tl_map[y - 1][x] in ["town", "gates"]):
-            player.x, player.y = x, y - 1
-            player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-            return "You moved North.", False
+    if not avaible_moves[mv - 1]:
+        return "You can't move there.", True
 
-    # Move East.
-    if (x < map_height and all(
-            req in [*inventory.keys()] + events for req in
-            ms[(x + 1, y)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x + 1, y)].get_status(month=map_game.current_month) and mv == "2"):
-        if (tl_map[y][x + 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
-                tl_map[y][x + 1] != "town" and tl_map[y][x] != "town") or (
-                tl_map[y][x] == "town" and tl_map[y][x + 1] in ["town", "gates"]):
-            player.x, player.y = x + 1, y
-            player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-            return "You moved East.", False
-
-    # Move South.
-    if (y < map_width and all(
-            req in [*inventory.keys()] + events for req in
-            ms[(x, y + 1)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x, y + 1)].get_status(month=map_game.current_month) and mv == "3"):
-        if (tl_map[y + 1][x] == "town" and tl_map[y][x] in ["gates", "town"]) or (
-                tl_map[y + 1][x] != "town" and tl_map[y][x] != "town") or (
-                tl_map[y][x] == "town" and tl_map[y + 1][x] in ["town", "gates"]):
-            player.x, player.y = x, y + 1
-            player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-            return "You moved South.", False
-
-    # Move West.
-    if (x > 0 and all(req in [*inventory.keys()] + events for req in
-                      ms[(x - 1, y)].get_req(month=map_game.current_month)) and player.status
-            in ms[(x - 1, y)].get_status(month=map_game.current_month) and mv == "4"):
-        if (tl_map[y][x - 1] == "town" and tl_map[y][x] in ["gates", "town"]) or (
-                tl_map[y][x - 1] != "town" and tl_map[y][x] != "town") or (
-                tl_map[y][x] == "town" and tl_map[y][x - 1] in ["town", "gates"]):
-            player.x, player.y = x - 1, y
-            player.set_place(place=map_game.map_settings[(player.x, player.y)])
-            map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
-            return "You moved West.", False
-
-    return "You can't move there.", True
+    dx, dy, screen = directions[mv - 1]
+    player.set_place(place=mapgame.map_settings[(player.x + dx, player.y + dy)])
+    mapgame.add_hours(hours_to_add=int(player.place.get_pace(month=mapgame.current_month) * pace_factor))
+    return screen, False
 
 
 # Look around action.

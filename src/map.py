@@ -328,7 +328,7 @@ class Map:
         return sum([biome.get_fish_quantity() for biome in self.map_settings.values()])
 
     # Player control methods.
-    def get_avaible_moves(self, player: Player) -> list:
+    def get_avaible_moves(self, player: Player) -> list[int]:
         active_moves = [0, 0, 0, 0]
         month = self.current_month
         current_tile = self.map_labels[player.y][player.x]

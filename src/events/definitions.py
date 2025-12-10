@@ -420,6 +420,13 @@ def call_started_quest_marlin_fish_for_brann(player: Player, mapgame: Map) -> No
         ]
     }
 
+    mapgame.npcs["fisherman_brann"].messages_morning = {
+        0: [
+            "Oh, by the tides! You’ve brought Marlin’s tuna, haven’t you? I wasn’t sure he’d manage to send it.",
+            "Thank you, traveler! This means more to me than you know."
+        ]
+    }
+
     mapgame.refresh_npcs()
 
 
@@ -673,7 +680,8 @@ def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map)
             "The seas look calmer today, and that dragon hasn't shown itself since dawn.",
             "If you’re looking to leave port, I can take you—my crew is ready to set sail whenever you are.",
             "Just say the word, and we’ll chart a course to the next harbor."
-        ]
+        ],
+        1: ["Where will the wind take us?"]
     }
 
     mapgame.npcs["captain_thorne"].messages_evening = {
@@ -684,7 +692,7 @@ def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map)
     }
     mapgame.npcs["captain_thorne"].add_transport_place(place_coordinate=(39, 39), place_price={"gold": 20, "days": 10})
     mapgame.npcs["captain_thorne"].add_transport_place(place_coordinate=(56, 40), place_price={"gold": 20, "days": 10})
-    mapgame.npcs["captain_thorne"].transport_time_of_day = [TimeOfDay.MORNING.value, TimeOfDay.AFTERNOON.value],
+    mapgame.npcs["captain_thorne"].transport_time_of_day = [TimeOfDay.MORNING.value, TimeOfDay.AFTERNOON.value]
     mapgame.npcs["captain_thorne"].transport_confirm_message = ["Are you sure you want to go there?"]
     mapgame.npcs["captain_thorne"].transport_arrive_message = ["Finally, we have arrived. Take care, and may Eldra "
                                                                "watch over you."]
@@ -697,7 +705,7 @@ def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map)
     player.remove_quest(quest="quest_firefrost_first_encounter")
 
     # Other changes.
-    mapgame.map_settings[(0, 0)].entries["hut"].items.append("origami_flowers")
+    mapgame.map_settings[(12, 24)].entries["hut"].entries["little_room"].items.append("origami_flowers")
 
 
 event_completed_quest_firefrost_first_encounter = Event(

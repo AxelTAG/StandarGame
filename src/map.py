@@ -410,5 +410,9 @@ class Map:
                 self.remove_timer(timer_id=t.id)
         # Esto es del código.
         for timer in self.get_timers():
-            days = self.day - timer.day if self.day > timer.day else self.month_duration - timer.day + self.day
+            if self.day >= self.last_day:
+                days = self.day - self.last_day
+                timer.tick(days=days, **kwargs)
+                return
+            days = self.day + self.month_duration - self.last_day
             timer.tick(days=days, **kwargs)

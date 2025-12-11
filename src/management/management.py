@@ -1,13 +1,13 @@
 # Imports.
 # Local imports.
-from .actions.talk import talk
-from . import displays
-from .events.definitions import *
-from .map import Map
-from .player import Player
-from .events.timer import Timer
-from . import utils
-from .world import *
+from ..actions.talk import talk
+from .. import displays
+from ..events.definitions import *
+from ..events.timer import Timer
+from ..map import Map
+from ..player import Player
+from .. import utils
+from ..world import *
 
 # External imports.
 # import pickle
@@ -155,7 +155,7 @@ def load(path_usavepkl: str = "./save/cfg_save.pkl",
     """Checks corruption of files and finally loads src."""
     if check_hash:
         load_hash = utils.load_dict_from_txt(path_hsave)
-        if not utils.get_hash("../save/cfg_save.pkl") == load_hash["hash"]:
+        if not utils.get_hash("../../save/cfg_save.pkl") == load_hash["hash"]:
             return False, " Corrupted file.", None, None
 
     player = import_player(path_usavepkl)

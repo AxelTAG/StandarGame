@@ -4,6 +4,7 @@ from . import globals
 
 from .biome import Biome
 from .enums import Months, Directions
+from .management.save import SaveMetadata
 from .map import Map
 from .mob import Mob
 from .player import Player
@@ -318,7 +319,7 @@ def disp_narration(narration: list[str] = None, speed: float = 0.3) -> None:
         typewriter(text=line, speed=speed)
 
 
-def disp_new_game(existent_player: Player = None) -> None:
+def disp_new_game(existent_player: SaveMetadata = None) -> None:
     if existent_player is None:
         print(" < NEW DREAM >")
         print()
@@ -327,7 +328,7 @@ def disp_new_game(existent_player: Player = None) -> None:
         print()
         print(" There is already a dream existing, do you want to delete it?")
         print()
-        print(f" NAME: {existent_player.name} / LVL: {existent_player.level}")
+        print(f" NAME: {existent_player.player_name} / LVL: {existent_player.player_level}")
         print()
         print(" 1 - Yes")
         print(" 2 - No")

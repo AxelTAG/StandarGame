@@ -2,13 +2,14 @@
 # Locals imports.
 from . import enums
 from . import globals
-from . import management
 
 from .actions.actions import *
 from .actions.talk import talk
 from .inventory import Inventory
 from .map import Map
 from .player import Player
+from .management import management
+from .management.save import *
 from .utils import clear, check_name, find_full_name, typewriter
 from .world import *
 
@@ -44,13 +45,14 @@ class Game:
     # Play variables.
     fight: bool = field(default=False)
     standing: bool = field(default=True)
+    player: Player = field(init=False)
     mapgame: Map = field(init=False)
 
     # Admin.
     admin: bool = field(default=False)
 
     # Existent player.
-    existent_player: Player = field(init=False)
+    metadata: SaveMetadata = field(init=False)
     player_name: str = field(init=False)
 
     # Settings.
@@ -72,7 +74,7 @@ class Game:
         self.loaded_game = False
 
         # Existent player.
-        self.existent_player = management.import_player(path="./save/cfg_save.pkl")
+        self.metadata = load_metadata()
 
     def show_intro(self) -> None:
         # Enter screen.
@@ -109,13 +111,13 @@ class Game:
     def show_new_game(self) -> None:
         displays.clear()
         displays.disp_title()
-        displays.disp_new_game(existent_player=self.existent_player)
+        displays.disp_new_game(existent_player=self.metadata)
 
         selection = ""
-        if self.existent_player:
+        if self.metadata:
             selection = input(" # ")
 
-        if self.existent_player is None or selection == "1":
+        if self.metadata is None or selection == "1":
             player_name = ""
             while not check_name(player_name):
                 print()
@@ -136,14 +138,14 @@ class Game:
         typewriter(text=" Drifting through the veil of dreams... Please wait.",
                    speed=0.01)
 
-        load_state, load_msg, player, map_game = management.load(check_hash=False)
+        load_state, load_msg, savegame = load_game(check_hash=False)
 
         if load_state:
             self.loaded_game = load_state
             self.menu = False
             self.play = True
-            self.existent_player = player
-            self.mapgame = map_game
+            self.player = savegame.player
+            self.mapgame = savegame.mapgame
 
         if not load_state:
             print()
@@ -151,7 +153,7 @@ class Game:
 
         print()
         print()
-        typewriter(text=f" Welcome back, {self.existent_player.name}. Your dream continues...",
+        typewriter(text=f" Welcome back, {self.metadata.player_name}. Your dream continues...",
                    speed=0.01)
         print()
         print()
@@ -174,7 +176,7 @@ class Game:
     def show_play(self):
         # Loading existent map.
         if self.loaded_game:
-            player = self.existent_player
+            player = self.player
             map_game = self.mapgame
             self.first_setting = False
 
@@ -309,9 +311,10 @@ class Game:
                 self.play, self.menu = False, True
                 displays.disp_game_loss()
 
-                management.save(player=player,
-                                mapgame=map_game,
-                                time_init=time_init)
+                save_game(player=player,
+                          mapgame=map_game,
+                          timeinit=time_init)
+                save_metadata(player=player)
 
             # Getting hours.
             hours = map_game.get_hours
@@ -368,7 +371,10 @@ class Game:
                     self.play = False
                     self.menu = True
                     self.loaded_game = False
-                    management.save(player=player, mapgame=map_game, time_init=time_init)
+                    save_game(player=player,
+                              mapgame=map_game,
+                              timeinit=time_init)
+                    save_metadata(player=player)
 
                 if action[0] in ["1", "2", "3", "4"]:  # Move action.
                     if not player.move_available:
@@ -829,7 +835,7 @@ class Game:
                   mapgame: Map,
                   time_init: datetime) -> None:
         thread = threading.Thread(
-            target=management.save,
+            target=save_game,
             args=(player, mapgame, time_init))
         thread.daemon = True
         thread.start()

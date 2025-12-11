@@ -139,8 +139,7 @@ def export_dict_to_txt(dictionary: dict, file_path: str) -> None:
         with open(file_path, 'w') as doc:
             write_recursive(doc, dictionary)
     except OSError:
-        print("Unable to save the file.")
-        input(" > ")
+        raise OSError("Unable to save the file.")
 
 
 # Export player function.

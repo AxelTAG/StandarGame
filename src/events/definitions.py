@@ -330,6 +330,12 @@ def trigger_goblin_chief_battle(player: Player, mapgame: Map) -> bool:
 def timer_mayors_daughter_maisie_return(mapgame: Map, **kwargs):
     mapgame.npcs["mayors_daughter_maisie"].clear_messages_answers()
 
+    mapgame.npcs["mayors_daughter_maisie"].messages = {
+        0: ["Thank you, brave one!",
+            "If not for your help, I might have tried to escape through one of the hidden passages in the cave.",
+            "I saw them but had no chance to explore. Your courage saved me before I could take the risk.",
+            "I owe you my life."]}
+
     mapgame.npcs["mayors_daughter_maisie"].place_morning = [(22, 28)]
     mapgame.npcs["mayors_daughter_maisie"].place_evening = [(22, 28), "mayors_house"]
 
@@ -358,6 +364,7 @@ def call_goblin_chief_battle(player: Player, mapgame: Map) -> bool | None:
     mapgame.npcs["mayors_daughter_maisie"].messages = {
         0: ["My father, the mayor, will want to thank you properly. Please, come back with me to the village.",
             "Words cannot express my gratitude, but I hope our people can repay your bravery."]}
+    mapgame.refresh_npcs()
 
     if not player.has_quest(quest="quest_goblin_chief"):
         player.add_quest(quest=mapgame.quests["quest_goblin_chief"])
@@ -560,7 +567,7 @@ def call_completed_quest_destroy_rocks_on_valley(player: Player, mapgame: Map) -
 
 
 event_completed_quest_destroy_rocks_on_valley = Event(
-    action=call_completed_quest_find_caravan_leader_darek
+    action=call_completed_quest_destroy_rocks_on_valley
 )
 
 

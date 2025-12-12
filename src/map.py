@@ -138,8 +138,16 @@ class Map:
         return WeekDays(self.day % self.week_duration).name
 
     @property
+    def current_day(self) -> int:
+        return self.day
+
+    @property
     def current_month(self) -> int:
         return self.month
+
+    @property
+    def current_year(self) -> int:
+        return self.year
 
     @property
     def current_season(self):
@@ -230,13 +238,18 @@ class Map:
 
         return year + 1, months, days
 
-    def is_major_date(self, first_date: tuple[int, int, int], second_date: tuple[int, int, int]):
+    def is_major_date(self, first_date: tuple[int, int, int], second_date: tuple[int, int, int]) -> bool | None:
         if first_date is None or second_date is None:
             return None
 
         date_1 = (first_date[0] - 1) * self.year_duration_days + first_date[1] * self.month_duration + first_date[2]
         date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
         return date_1 < date_2
+
+    def days_difference(self, first_date: tuple[int, int, int], second_date: tuple[int, int, int]) -> int:
+        date_1 = (first_date[0] - 1) * self.year_duration_days + first_date[1] * self.month_duration + first_date[2]
+        date_2 = (second_date[0] - 1) * self.year_duration_days + second_date[1] * self.month_duration + second_date[2]
+        return abs(date_1 - date_2)
 
     # Place methods.
     def place_from_list(self, place_list: list) -> Biome | Entry:
@@ -403,16 +416,6 @@ class Map:
             self.timers.remove(self.get_timer(timer_id=timer_id))
 
     def refresh_timers(self, **kwargs) -> None:
-        # TODO: hot fix de repiticion de timers al guardar y cargar.
-        timer_ids = [t.id for t in self.get_timers()]
-        for t in self.get_timers():
-            for _ in range(timer_ids.count(t.id) - 1):
-                self.remove_timer(timer_id=t.id)
-        # Esto es del código.
         for timer in self.get_timers():
-            if self.day >= self.last_day:
-                days = self.day - self.last_day
-                timer.tick(days=days, **kwargs)
-                return
-            days = self.day + self.month_duration - self.last_day
-            timer.tick(days=days, **kwargs)
+            if self.is_major_date(first_date=timer.date, second_date=self.current_date):
+                timer.tick(days=self.days_difference(first_date=self.current_date, second_date=timer.date), **kwargs)

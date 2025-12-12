@@ -272,13 +272,14 @@ def heal(player: Player, amount: int) -> tuple[str, int]:
 def land(player: Player, map_game: Map, pace_factor: float = 0.2) -> str:
     x, y = player.x, player.y
 
-    if player.status == PlayerStatus.SURF.value and map_game.map_labels[y][x] not in ["sea", "river"]:
+    if player.status == PlayerStatus.SURF.value and map_game.map_labels[y][x] not in ["sea", "river", "oasis"]:
         player.status = PlayerStatus.WALK.value
 
         map_game.map_settings[(x, y)].items.append("boat")
-        if not map_game.map_settings[(x, y)].description.items().count("boat"):
-            for k, v in map_game.map_settings[(x, y)].description.items():
-                map_game.map_settings[(x, y)].description[k] += " Anchored boat gently resting by the shore."
+        for k, v in player.place.description.items():
+            if v.count("Anchored boat gently resting by the shore."):
+                continue
+            player.place.description[k] += " Anchored boat gently resting by the shore."
 
         map_game.add_hours(hours_to_add=int(player.place.get_pace(month=map_game.current_month) * pace_factor))
         return "You have land."

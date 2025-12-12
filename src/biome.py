@@ -298,6 +298,8 @@ class Biome:
 
     def respawn_mobs(self, day: int) -> None:
         if self.mobs_check_respawn:
+            if not day % self._mobs_respawn_time == 0:
+                self.mobs_check_respawn = False
             return
 
         if not bool(self._mobs_names):
@@ -493,6 +495,8 @@ class Biome:
         if not force_respawn:
             if not day % self._fishes_respawn_time == 0:
                 return
+        if len(self.fishes_respawned) > 0:
+            return
 
         month = self._current_month
         fishes = self.add_entities_from_base(entities=self.get_fishes(month=month), base=base)

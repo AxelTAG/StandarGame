@@ -264,8 +264,12 @@ def timer_call_loial_repair_boat(mapgame: Map, **kwargs):
     mapgame.npcs["islander_loial"].place = [(12, 24)]
     mapgame.npcs["islander_loial"].place = [(12, 24), "hut", "nynaeve_room"]
 
+    displays.clear()
+    input("SE HA EJECUTADO EL TIMER DE REPAIR BOAT")
+    input(">")
     mapgame.map_settings[(14, 25)].add_item(item="boat")
     mapgame.map_settings[(14, 25)].remove_item(item="broken_boat")
+    mapgame.map_settings[(14, 25)].add_item(item="apple")
 
     mapgame.refresh_npcs()
 
@@ -311,7 +315,9 @@ def call_rewarded_slime_slayer_II(player: Player, mapgame: Map) -> None:
         id="loial_repair_boat",
         duration=3,
         on_finish=timer_call_loial_repair_boat,
-        day=mapgame.day
+        day=mapgame.current_day,
+        month=mapgame.current_month,
+        year=mapgame.current_year
     ))
 
 
@@ -376,7 +382,9 @@ def call_goblin_chief_battle(player: Player, mapgame: Map) -> bool | None:
             id="mayors_daughter_maisie_return",
             duration=4,
             on_finish=timer_mayors_daughter_maisie_return,
-            day=mapgame.day
+            day=mapgame.current_day,
+            month=mapgame.current_month,
+            year=mapgame.current_year
         )
     )
 
@@ -562,7 +570,9 @@ def call_completed_quest_destroy_rocks_on_valley(player: Player, mapgame: Map) -
             id="mayors_daughter_maisie_return",
             duration=3,
             on_finish=timer_caravan_move,
-            day=mapgame.day
+            day=mapgame.current_day,
+            month=mapgame.current_month,
+            year=mapgame.current_year
         )
     )
 

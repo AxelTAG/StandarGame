@@ -27,6 +27,8 @@ class Timer:
     remaining: int = field(default=None)
     on_finish: Optional[Callable[[dict], None]] = field(default=None)
     day: int = field(default=None)
+    month: int = field(default=None)
+    year: int = field(default=None)
 
     # Internal flag to avoid calling the callback more than once
     _callback_triggered: bool = field(default=False, init=False)
@@ -45,6 +47,10 @@ class Timer:
         if self.remaining < 0:
             raise ValueError("Timer remaining time must be a non-negative integer.")
 
+    @property
+    def date(self) -> tuple[int, int, int]:
+        return self.year, self.month,  self.day,
+
     def tick(self, days: int = 1, **kwargs):
         """
         Advance the timer by a given number of days.
@@ -60,6 +66,7 @@ class Timer:
         if self.is_finished():
             return
 
+        self.day += days
         self.remaining = max(0, self.remaining - days)
 
         if self.remaining == 0 and not self._callback_triggered:

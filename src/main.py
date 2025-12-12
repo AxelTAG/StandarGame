@@ -696,6 +696,8 @@ class Game:
                 if action == ["fenix", "recover"]:
                     player.heal(amount=9999)
                     player.recover_vital_energy(amount=9999)
+                    player.hungry = 100
+                    player.thirsty = 100
 
                 if action == ["player", "active", "vital", "energy"]:
                     player.active_vital_energy()

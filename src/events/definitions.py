@@ -193,6 +193,7 @@ def call_completed_deliver_wood(player: Player, mapgame: Map) -> None:
             "We should all get some rest."
         ]
     }
+    mapgame.npcs["islander_nynaeve"].answers_night = {}
 
     mapgame.npcs["islander_nynaeve"].place_morning = [(12, 24)]
     mapgame.npcs["islander_nynaeve"].place_afternoon = [(12, 24)]

@@ -730,7 +730,7 @@ event_completed_quest_firefrost_first_encounter = Event(
 
 
 # Veylan events.
-def call_quest_complete_explore_veylan():
+def call_quest_complete_explore_veylan(player: Player, mapgame: Map) -> None:
     displays.disp_standard_tw(
         name="Whispers",
         message=[

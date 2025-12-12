@@ -361,6 +361,9 @@ def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: 
         "coast": ms[(39, 43)],
         "plateu": ms[(35, 42)]}
 
+    # (56, 40)
+    ms[(56, 40)].name = "VEYLAN PORT"
+
     # NPCS init settings.
     # Quests.
     if npcs is not None:

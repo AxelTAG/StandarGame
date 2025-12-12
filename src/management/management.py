@@ -96,6 +96,10 @@ def event_handler(player: Player,
     if is_quest_completed(player=player, quest_id="quest_firefrost_first_encounter"):
         event_completed_quest_firefrost_first_encounter.execute(player=player, mapgame=mapgame)
 
+    # Veylan quests/events.
+    if is_quest_completed(player=player, quest_id="quest_explore_veylan"):
+        event_completed_quest_complete_explore_veylan.execute(player=player, mapgame=mapgame)
+
     return True, False
 
 

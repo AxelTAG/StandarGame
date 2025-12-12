@@ -221,8 +221,9 @@ def talk(npc: Npc,
 
     # Npc with skips.
     if npc.npc_type == NpcTypes.CAPTAIN or npc.npc_type == NpcTypes.TRANSPORTER:
-        if mapgame.current_time_of_day not in npc.transport_time_of_day:
-            return f"You talked with {npc.name.title()}."
+        if npc.transport_time_of_day is not None:
+            if mapgame.current_time_of_day not in npc.transport_time_of_day:
+                return f"You talked with {npc.name.title()}."
 
     # Npc with answers.
     transactions, result = "", ""

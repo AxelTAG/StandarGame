@@ -212,6 +212,8 @@ class Game:
             # Preset of player.
             player.add_quest(quest=map_game.quests["quest_exit_the_hut"])
             player.add_quest(quest=map_game.quests["quest_firefrost_first_encounter"])
+            player.add_quest(quest=map_game.quests["quest_explore_veylan"])
+
             player.add_item(item=copy.deepcopy(map_game.items["linen_shirt"]))
             player.add_item(item=copy.deepcopy(map_game.items["linen_trousers"]))
             player.add_item(item=copy.deepcopy(map_game.items["worn_boots"]))

@@ -727,3 +727,19 @@ def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map)
 event_completed_quest_firefrost_first_encounter = Event(
     action=call_completed_quest_firefrost_first_encounter,
 )
+
+
+# Veylan events.
+def call_quest_complete_explore_veylan():
+    displays.disp_standard_tw(
+        name="Whispers",
+        message=[
+            "Soon… our paths will cross again beneath shifting skies.",
+            "Until that moment, tread lightly—Aerthos hides many perils, and Thelm… far darker still."
+        ]
+    )
+
+
+event_completed_quest_complete_explore_veylan = Event(
+    action=call_quest_complete_explore_veylan,
+)

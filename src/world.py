@@ -1014,7 +1014,296 @@ TREES = {
         bearing_frencuency=32,
         bearing_quantity=2,
         fruit="coconut"
-    )
+    ),
+
+    "apple_tree": Tree(
+        name="Apple Tree",
+        description="A sturdy tree bearing crisp, sweet apples during cool early autumn.",
+        height=14,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[4, 5],
+        bearing_frencuency=24,
+        bearing_quantity=2,
+        fruit="apple"
+    ),
+
+    "walnut_tree": Tree(
+        name="Walnut Tree",
+        description="A broad-canopied tree producing rich walnuts as autumn deepens.",
+        height=16,
+        leaf_color=LeafColors.DARK_GREEN,
+        fruit_bearing=True,
+        bearing_months=[5],
+        bearing_frencuency=32,
+        bearing_quantity=2,
+        fruit="walnut"
+    ),
+
+    "pear_tree": Tree(
+        name="Pear Tree",
+        description="A gentle tree yielding soft, fragrant pears by late summer.",
+        height=13,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[3],  # Verano tardío
+        bearing_frencuency=20,
+        bearing_quantity=3,
+        fruit="pear"
+    ),
+
+    "plum_tree": Tree(
+        name="Plum Tree",
+        description="A slender tree that produces juicy plums in midsummer.",
+        height=12,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[2],  # Verano temprano
+        bearing_frencuency=22,
+        bearing_quantity=4,
+        fruit="plum"
+    ),
+
+    "orange_tree": Tree(
+        name="Orange Tree",
+        description="A fragrant citrus tree yielding bright oranges in late spring.",
+        height=11,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[5, 6, 7],  # Primavera tardía
+        bearing_frencuency=20,
+        bearing_quantity=5,
+        fruit="orange"
+    ),
+
+    "fig_tree": Tree(
+        name="Fig Tree",
+        description="A wide, knotted tree offering sweet figs during warm summer days.",
+        height=10,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[3, 4],
+        bearing_frencuency=18,
+        bearing_quantity=3,
+        fruit="fig"
+    ),
+
+    "almond_tree": Tree(
+        name="Almond Tree",
+        description="A pale-barked tree producing hard-shelled almonds at the end of winter.",
+        height=15,
+        leaf_color=LeafColors.LIGHT_GREEN,
+        fruit_bearing=True,
+        bearing_months=[3, 4],
+        bearing_frencuency=28,
+        bearing_quantity=2,
+        fruit="almond"
+    ),
+
+    "cherry_tree": Tree(
+        name="Cherry Tree",
+        description="A blossom-rich tree yielding tart red cherries in mid-spring.",
+        height=12,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[0, 3],
+        bearing_frencuency=16,
+        bearing_quantity=6,
+        fruit="cherry"
+    ),
+
+    "pomegranate_tree": Tree(
+        name="Pomegranate Tree",
+        description="A hardy tree bearing ruby pomegranates through warm, late-summer days.",
+        height=9,
+        leaf_color=LeafColors.DARK_GREEN,
+        fruit_bearing=True,
+        bearing_months=[3],
+        bearing_frencuency=20,
+        bearing_quantity=3,
+        fruit="pomegranate"
+    ),
+
+    "hazelnut_tree": Tree(
+        name="Hazelnut Tree",
+        description="A dense shrub-tree producing smooth-shelled hazelnuts in early autumn.",
+        height=8,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[4, 5],
+        bearing_frencuency=30,
+        bearing_quantity=3,
+        fruit="hazelnut"
+    ),
+
+    "apricot_tree": Tree(
+        name="Apricot Tree",
+        description="A soft-barked tree yielding tender apricots early in summer.",
+        height=12,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[2],
+        bearing_frencuency=20,
+        bearing_quantity=3,
+        fruit="apricot"
+    ),
+
+    "peach_tree": Tree(
+        name="Peach Tree",
+        description="A warm-climate tree producing sweet, fuzzy peaches in mid-summer.",
+        height=13,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[3, 4],
+        bearing_frencuency=18,
+        bearing_quantity=4,
+        fruit="peach"
+    ),
+
+    "quince_tree": Tree(
+        name="Quince Tree",
+        description="A hardy tree bearing fragrant yellow quinces in early autumn.",
+        height=14,
+        leaf_color=LeafColors.DARK_GREEN,
+        fruit_bearing=True,
+        bearing_months=[4],  # Otoño temprano
+        bearing_frencuency=28,
+        bearing_quantity=2,
+        fruit="quince"
+    ),
+
+    "mulberry_tree": Tree(
+        name="Mulberry Tree",
+        description="A broad tree producing clusters of dark, sweet mulberries.",
+        height=15,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[2, 3],
+        bearing_frencuency=24,
+        bearing_quantity=3,
+        fruit="mulberry"
+    ),
+
+    "olive_tree": Tree(
+        name="Olive Tree",
+        description="A resilient tree thriving in dry climates, bearing ripe olives in late summer.",
+        height=10,
+        leaf_color=LeafColors.GRAY_GREEN,
+        fruit_bearing=True,
+        bearing_months=[3],  # Verano tardío
+        bearing_frencuency=32,
+        bearing_quantity=3,
+        fruit="olive"
+    ),
+
+    "date_palm": Tree(
+        name="Date Palm",
+        description="A desert palm producing sweet dates as summer fades.",
+        height=18,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[3],
+        bearing_frencuency=24,
+        bearing_quantity=4,
+        fruit="date"
+    ),
+
+    "blueberry_bush": Tree(
+        name="Blueberry Bush",
+        description="A low, dense bush covered in small blue berries during spring.",
+        height=3,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[2, 3, 4],
+        bearing_frencuency=10,
+        bearing_quantity=6,
+        fruit="blueberry"
+    ),
+
+    "raspberry_bush": Tree(
+        name="Raspberry Bush",
+        description="A thorny bush producing bright red raspberries in early summer.",
+        height=3,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[2, 3, 4],
+        bearing_frencuency=10,
+        bearing_quantity=6,
+        fruit="raspberry"
+    ),
+
+    "blackberry_bush": Tree(
+        name="Blackberry Bush",
+        description="A wild tangle of vines yielding dark, juicy blackberries in mid-summer.",
+        height=4,
+        leaf_color=LeafColors.DARK_GREEN,
+        fruit_bearing=True,
+        bearing_months=[2, 3, 4],
+        bearing_frencuency=12,
+        bearing_quantity=7,
+        fruit="blackberry"
+    ),
+
+    "cranberry_bush": Tree(
+        name="Cranberry Bush",
+        description="A wetland shrub bearing tart red cranberries as autumn arrives.",
+        height=3,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[4, 5],  # Otoño temprano
+        bearing_frencuency=14,
+        bearing_quantity=5,
+        fruit="cranberry"
+    ),
+
+    "gooseberry_bush": Tree(
+        name="Gooseberry Bush",
+        description="A round bush producing pale green gooseberries in late spring.",
+        height=3,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[0, 1, 2],
+        bearing_frencuency=12,
+        bearing_quantity=2,
+        fruit="gooseberry"
+    ),
+
+    "elderberry_bush": Tree(
+        name="Elderberry Bush",
+        description="A dark-leaved bush heavy with purple berries in late summer.",
+        height=4,
+        leaf_color=LeafColors.DARK_GREEN,
+        fruit_bearing=True,
+        bearing_months=[3],
+        bearing_frencuency=16,
+        bearing_quantity=6,
+        fruit="elderberry"
+    ),
+
+    "strawberry_patch": Tree(
+        name="Strawberry Patch",
+        description="A creeping plant patch yielding bright red strawberries early in summer.",
+        height=1,
+        leaf_color=LeafColors.GREEN,
+        fruit_bearing=True,
+        bearing_months=[2],
+        bearing_frencuency=8,
+        bearing_quantity=8,
+        fruit="strawberry"
+    ),
+
+    "lingonberry_bush": Tree(
+        name="Lingonberry Bush",
+        description="A cold-tolerant shrub giving small red berries late in autumn.",
+        height=2,
+        leaf_color=LeafColors.DARK_GREEN,
+        fruit_bearing=True,
+        bearing_months=[5],
+        bearing_frencuency=18,
+        bearing_quantity=4,
+        fruit="lingonberry"
+    ),
+
 }
 
 # Items.
@@ -1483,6 +1772,101 @@ ITEMS = {
                   sell_price=1,
                   hungry_refill=20,
                   thirsty_refill=2),
+
+    "walnut": Item(
+        name="Walnut",
+        description="A hard-shelled walnut with rich, oily flesh. Restores hunger moderately.",
+        attack=0,
+        defense=0,
+        precision=0,
+        evasion=0,
+        weight=0.1,
+        pickable=True,
+        consumable=True,
+        equippable=False,
+        expiration=None,
+        edible=True,
+        buy_price=1,
+        sell_price=1,
+        hungry_refill=15,
+        thirsty_refill=0
+    ),
+
+    "hazelnut": Item(
+        name="Hazelnut",
+        description="A small, sweet nut with a crunchy shell. Lightly nourishing.",
+        attack=0,
+        defense=0,
+        precision=0,
+        evasion=0,
+        weight=0.05,
+        pickable=True,
+        consumable=True,
+        equippable=False,
+        expiration=None,
+        edible=True,
+        buy_price=1,
+        sell_price=1,
+        hungry_refill=10,
+        thirsty_refill=0
+    ),
+
+    "peach": Item(
+        name="Peach",
+        description="A soft, juicy peach with fragrant flesh. Refreshing and sweet.",
+        attack=0,
+        defense=0,
+        precision=0,
+        evasion=0,
+        weight=0.15,
+        pickable=True,
+        consumable=True,
+        equippable=False,
+        expiration=None,
+        edible=True,
+        buy_price=1,
+        sell_price=1,
+        hungry_refill=18,
+        thirsty_refill=10
+    ),
+
+    "mulberry": Item(
+        name="Mulberry",
+        description="A cluster of dark, sweet berries packed with natural sugars.",
+        attack=0,
+        defense=0,
+        precision=0,
+        evasion=0,
+        weight=0.05,
+        pickable=True,
+        consumable=True,
+        equippable=False,
+        expiration=None,
+        edible=True,
+        buy_price=1,
+        sell_price=1,
+        hungry_refill=12,
+        thirsty_refill=4
+    ),
+
+    "gooseberry": Item(
+        name="Gooseberry",
+        description="A tart green berry with a bright, refreshing flavor.",
+        attack=0,
+        defense=0,
+        precision=0,
+        evasion=0,
+        weight=0.05,
+        pickable=True,
+        consumable=True,
+        equippable=False,
+        expiration=None,
+        edible=True,
+        buy_price=1,
+        sell_price=1,
+        hungry_refill=10,
+        thirsty_refill=3
+    ),
 
     "antidote": Item(name="Antidote",
                      description="A small vial that cures poison. Essential for survival in venomous areas.",
@@ -2051,7 +2435,7 @@ ITEMS = {
     ),
 
     # Innkeeper room keys.
-    "aliras_first_room_key": Item(name="Lyssia's First Room Key",
+    "aliras_first_room_key": Item(name="Aliras's First Room Key",
                                   description="Polished and ornate, grants access to a refined room in a bustling"
                                               " metropolis.",
                                   id="aliras_first_room_key",
@@ -2059,7 +2443,7 @@ ITEMS = {
                                   expiration=30,
                                   buy_price=15),
 
-    "aliras_second_room_key": Item(name="Lyssia's Second Room Key",
+    "aliras_second_room_key": Item(name="Aliras's Second Room Key",
                                    description="Polished and ornate, grants access to a refined room in a bustling"
                                                " metropolis.",
                                    id="aliras_second_room_key",
@@ -2067,7 +2451,7 @@ ITEMS = {
                                    expiration=30,
                                    buy_price=10),
 
-    "aliras_third_room_key": Item(name="Lyssia's Third Room Key",
+    "aliras_third_room_key": Item(name="Aliras's Third Room Key",
                                   description="Polished and ornate, grants access to a refined room in a bustling"
                                               " metropolis.",
                                   id="aliras_third_room_key",
@@ -2075,7 +2459,7 @@ ITEMS = {
                                   expiration=30,
                                   buy_price=8),
 
-    "aliras_fourth_room_key": Item(name="Lyssia's Fourth Room Key",
+    "aliras_fourth_room_key": Item(name="Aliras's Fourth Room Key",
                                    description="Polished and ornate, grants access to a refined room in a bustling"
                                                " metropolis.",
                                    id="aliras_fourth_room_key",
@@ -2083,7 +2467,7 @@ ITEMS = {
                                    expiration=30,
                                    buy_price=8),
 
-    "lyssias_first_room_key": Item(name="Lyssia's First Room Key",
+    "lyssias_first_room_key": Item(name="Aliras's First Room Key",
                                    description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
                                                " ocean waves.",
                                    id="lyssias_first_room_key",
@@ -2091,7 +2475,7 @@ ITEMS = {
                                    expiration=30,
                                    buy_price=12),
 
-    "lyssias_second_room_key": Item(name="Lyssia's Second Room Key",
+    "lyssias_second_room_key": Item(name="Aliras's Second Room Key",
                                     description="Weathered and salty, unlocks a cozy room overlooking the tranquil"
                                                 " ocean waves.",
                                     id="lyssias_second_room_key",
@@ -2107,7 +2491,7 @@ ITEMS = {
                                    expiration=30,
                                    buy_price=5),
 
-    "mirabelles_small_room_key": Item(name="Mirabelle's Small Room Key",
+    "mirabelles_small_room_key": Item(name="Mirabelle's Main Room Key",
                                       description="Small room key, worn and simple, granting access to a modest inn"
                                                   " chamber.",
                                       id="mirabelles_small_room_key",
@@ -2297,26 +2681,6 @@ ITEMS = {
 
 # Quests.
 QUEST_OBJETIVES = {
-    # Talk quest objectives.
-    "meet_ant_nynaeve": QuestObjective(
-        type=ObjectiveType.TALK,
-        target="islander_nynaeve"
-    ),
-
-    # Collect quest objectives.
-    "coco_collect_I": QuestObjective(
-        type=ObjectiveType.COLLECT,
-        target="coconut",
-        amount=5
-    ),
-
-    # Delivery quest objectives.
-    "water_for_nynaeve": QuestObjective(
-        type=ObjectiveType.DELIVER,
-        target="islander_nynaeve",
-        deliver_item="water",
-        deliver_amount=1),
-
     # Reputation quest objectives.
     "reputation_test": QuestObjective(
         type=ObjectiveType.REPUTATION,
@@ -2707,8 +3071,10 @@ QUESTS = {
         objectives=[
             QuestObjective(
                 type=ObjectiveType.DELIVER,
-                target="marlins_fish_tuna",
-                amount=3
+                target="villager_gareth",
+                amount=1,
+                deliver_item="marlins_fish_tuna",
+                deliver_amount=3,
             )
         ],
         rewards={"fishingpole": 1},
@@ -2737,13 +3103,44 @@ QUESTS = {
     "quest_firefrost_first_encounter": Quest(
         id="quest_firefrost_first_encounter",
         title="The First Clash with FireFrost",
-        description="A mysterious force calls to you from deep within Naiwat. Following the whispers of the wind, "
-                    "you encounter FireFrost—a majestic dragon whose presence feels strangely familiar. "
-                    "Though its intentions are unclear, the creature challenges you, testing your strength.",
+        description="You’ve heard mentions of Veylan, a remote region rarely visited by travelers. "
+                    "Your task is simple: reach its boundary and confirm that the route remains safe "
+                    "for future journeys.",
         objectives=[
             QuestObjective(
                 type=ObjectiveType.KILL,
                 target="dragon",
+                amount=1
+            )
+        ],
+        messages_start={
+            0: [
+
+            ],
+        },
+
+        messages_in_progress={
+            0: [
+
+            ],
+        },
+
+        messages_reward={
+            0: [
+
+            ],
+        }
+    ),
+
+    # Veylan quests.
+    "quest_explore_veylan": Quest(
+        id="quest_explore_veylan",
+        title="",
+        description="",
+        objectives=[
+            QuestObjective(
+                type=ObjectiveType.EXPLORE,
+                target="(56, 40)",
                 amount=1
             )
         ],
@@ -4292,8 +4689,8 @@ BIOMES = {
             Months.NERITH.value: 8,
         },
         trees=["coconut_palm"],
-        trees_base=TREES,
         trees_ratio={"coconut_palm": 0.33},
+        trees_base=TREES,
         fishes=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
         fishes_base=FISHES,
 
@@ -4554,6 +4951,8 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees=["walnut_tree", "hazelnut_tree", "mulberry_tree", "gooseberry_bush"],
+        trees_ratio={"walnut_tree": 0.2, "hazelnut_tree": 0.05, "mulberry_tree": 0.05, "gooseberry_bush":0.05},
         trees_base=TREES,
         fishes_base=FISHES
     ),
@@ -4935,6 +5334,8 @@ BIOMES = {
             Months.OUSKARA.value: 15,
             Months.NERITH.value: 8,
         },
+        trees=["apple_tree", "peach_tree"],
+        trees_ratio={"apple_tree": 0.1, "peach_tree": 0.05},
         trees_base=TREES,
         fishes_base=FISHES
     ),

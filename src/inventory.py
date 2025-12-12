@@ -55,8 +55,9 @@ class Inventory:
         return False
 
     def discard_item_from_base(self, item: str) -> None:
-        if item not in self.item_base_original_keys:
-            del self.item_base[item]
+        if item in self.item_base_original_keys:
+            return
+        del self.item_base[item]
 
     def drop_item(self, item: str, quantity: int) -> bool:
         return self.discard_item(item=item, quantity=quantity)

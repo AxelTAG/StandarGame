@@ -112,6 +112,9 @@ class LeafColors(Enum):
     YELLOW = 1
     RED = 2
     BROWN = 3
+    DARK_GREEN = 4
+    LIGHT_GREEN = 5
+    GRAY_GREEN = 6
 
 
 # Months.

@@ -33,13 +33,13 @@ class Player:
     vital_energy_avaible: bool = field(default=False)
 
     # Player basis attributes.
-    b_hpmax: int = field(default=25)
-    b_vital_energy: int = field(default=5)
-    b_attack: int = field(default=2)
-    b_defense: int = field(default=1)
-    b_evasion: float = field(default=0)
-    b_precision: float = field(default=0.6)
-    b_weight_carry: float = field(default=5)
+    base_hpmax: int = field(default=25)
+    base_vital_energy: int = field(default=5)
+    base_attack: int = field(default=2)
+    base_defense: int = field(default=1)
+    base_evasion: float = field(default=0)
+    base_precision: float = field(default=0.6)
+    base_weight_carry: float = field(default=5)
 
     # Stats attributes.
     strength: int = field(default=0)
@@ -126,6 +126,7 @@ class Player:
 
     # Others.
     events: dict = field(default=None)
+    dream_catched=field(default=False)
     time_played: timedelta = field(default=timedelta(seconds=0))
 
     def __attrs_post_init__(self):
@@ -195,22 +196,22 @@ class Player:
     @property
     def attack(self) -> int:
         item_attack_sum = sum(item.attack for item in self.equip.values() if isinstance(item, Item))
-        return int(self.b_attack + self.strength * self.attack_factor + item_attack_sum)
+        return int(self.base_attack + self.strength * self.attack_factor + item_attack_sum)
 
     @property
     def defense(self) -> int:
         item_defense_sum = sum(item.defense for item in self.equip.values() if isinstance(item, Item))
-        return int(self.b_defense + self.resistance * self.defence_factor + item_defense_sum)
+        return int(self.base_defense + self.resistance * self.defence_factor + item_defense_sum)
 
     @property
     def evasion(self) -> float:
         item_evasion_sum = sum(item.evasion for item in self.equip.values() if isinstance(item, Item))
-        return self.b_evasion + self.agility * self.evasion_factor + item_evasion_sum
+        return self.base_evasion + self.agility * self.evasion_factor + item_evasion_sum
 
     @property
     def precision(self) -> float:
         item_precision_sum = sum(item.precision for item in self.equip.values() if isinstance(item, Item))
-        return self.b_precision + self.agility * self.precision_factor + item_precision_sum
+        return self.base_precision + self.agility * self.precision_factor + item_precision_sum
 
     @property
     def speed(self) -> float:
@@ -218,11 +219,11 @@ class Player:
 
     @property
     def hpmax(self) -> int:
-        return int(self.b_hpmax + self.vitality * self.vitality_factor)
+        return int(self.base_hpmax + self.vitality * self.vitality_factor)
 
     @property
     def vital_energy_max(self) -> int:
-        return int(self.b_vital_energy + self.vitality * self.vital_energy_factor)
+        return int(self.base_vital_energy + self.vitality * self.vital_energy_factor)
 
     @property
     def exploration_radius(self):
@@ -230,7 +231,7 @@ class Player:
 
     @property
     def weight_carry(self):
-        return self.strength * 2.5 + self.b_weight_carry
+        return self.strength * 2.5 + self.base_weight_carry
 
     @property
     def current_weight(self):
@@ -306,11 +307,11 @@ class Player:
         self.expmax = int(10 * self.level + (10 * self.level) ** 0.5)
         self.st_points += 3 * quantity
 
-        self.b_hpmax += 2 * quantity
-        self.b_attack += 0.4 * quantity
-        self.b_defense += 0.20 * quantity
-        self.b_precision += 0.005 * quantity
-        self.b_evasion += 0.01 * quantity
+        self.base_hpmax += 2 * quantity
+        self.base_attack += 0.4 * quantity
+        self.base_defense += 0.20 * quantity
+        self.base_precision += 0.005 * quantity
+        self.base_evasion += 0.01 * quantity
 
     # Player place methods.
     def set_place(self, place: Biome | Entry) -> None:

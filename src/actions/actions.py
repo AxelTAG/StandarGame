@@ -91,7 +91,8 @@ def craft(player: Player, mapgame: Map, item: str, quantity: int) -> tuple[str, 
 
 
 # Draw map action.
-def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploration_radius: float = None) -> str:
+def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploration_radius: float = None,
+             preset: list = None) -> str:
     if not player.place.draw_map:
         return "You can't draw map here. You can't explore for it."
 
@@ -105,6 +106,12 @@ def draw_map(player: Player, map_game: Map, pace_factor: float = 0.5, exploratio
         if 0 <= x < map_game.x_len and 0 <= y < map_game.y_len:
             player.map[y][x] = map_game.map_settings[(x, y)].get_color(month=map_game.current_month)
             player.map_labels[y][x] = map_game.map_settings[(x, y)].name[map_game.current_month].upper()
+
+    # Preset.
+    if preset:
+        for coordinates in preset:
+            map_tile(x=coordinates[0], y=coordinates[1])
+        return "You have explored the area and mapped it out."
 
     # Map the boxes within the circular radius.
     for i in range(max(0, player.x - int(exploration_radius)),

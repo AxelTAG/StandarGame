@@ -55,8 +55,9 @@ class Skill:
         self.normalize_dict(dictionary=self.scaling_critical, normalize_dict=scaling_critical)
 
     def damage(self, caster) -> int:
-        power = random.randint(a=self.power - self.desviation, b=self.power + self.desviation)
-        return int(max(0, power + self.scale(caster=caster)))
+        scale = self.scale(caster=caster)
+        total_power = random.randint(a=self.power + scale - self.desviation, b=self.power + scale + self.desviation)
+        return int(max(0, total_power))
 
     def is_critical_hit(self, caster) -> bool:
         critical_chance = min(self.critical_chance + self.scale_critical(caster=caster), 0.95)

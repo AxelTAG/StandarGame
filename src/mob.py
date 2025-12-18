@@ -16,7 +16,6 @@ class Mob:
     # Basics attributes.
     name: str = field(default=None)
     hp: int = field(default=None)
-    hpmax: int = field(default=None)
     vital_energy: int = field(default=0)
     vital_energy_max: int = field(default=0)
     description: str = field(default="...")
@@ -39,19 +38,14 @@ class Mob:
     statuses_saved: list[Status] = field(factory=list)
 
     # Combats attributes.
-    attack: int = field(default=0)
-    defense: int = field(default=0)
-    evasion: float = field(default=0)
-    precision: float = field(default=0)
+    base_hpmax: int = field(default=10)
+    base_attack: int = field(default=1)
+    base_defense: int = field(default=0)
+    base_evasion: float = field(default=0.2)
+    base_precision: float = field(default=0.5)
 
     critical_coeficient: float = field(default=1)
     critical_chance: float = field(default=0)
-
-    poison_duration: int = field(default=0)
-    poison_stacks: int = field(default=0)
-    poison_max_stacks: int = field(default=0)
-    poison_source: str = field(default=None)
-    poison_chance: float = field(default=0)
 
     escape_chance: float = field(default=50)
 
@@ -62,7 +56,7 @@ class Mob:
     # Drop attributes.
     items: dict = field(default=None)
     items_drop_chances: list = field(default=None)
-    experience: int = field(default=0)
+    base_experience: int = field(default=0)
 
     # Fighting attributes.
     speed: float = field(default=1)
@@ -74,9 +68,13 @@ class Mob:
     escape_mob_probability: float = field(default=0)
 
     def __attrs_post_init__(self):
+        # Level attributes.
+        if self.level is None:
+            self.level = 1
+
         # Basics attributes.
-        if self.hpmax is None:
-            self.hpmax = self.hp
+        if self.hp is None:
+            self.hp = self.hpmax
 
         if self.vital_energy_max is None:
             self.vital_energy_max = self.vital_energy
@@ -102,9 +100,6 @@ class Mob:
 
     # Statuses methods.
     def add_status(self, status: Status, onbattle: bool = False) -> None:
-        # if onbattle:
-        #     self.add_pre_status(status=status)
-        #     return
         active_status = self.get_status(status_type=status.status_type)
         if active_status is not None:
             active_status.apply_stack(other=status)
@@ -175,12 +170,11 @@ class Mob:
         if not onbattle:
             pass
 
-        # for status in self.statuses_pre:
-        #     self.add_status(status=status)
-        #     self.apply_status_effects(status=status, tick=False)
-        # self.discard_pre_status()
-
     # Item methods.
+    @property
+    def experience(self) -> int:
+        return self.base_experience + self.level * 1
+
     def get_experience(self) -> int:
         return self.experience
 
@@ -243,6 +237,26 @@ class Mob:
         return False
 
     # Fighting methods.
+    @property
+    def hpmax(self) -> int:
+        return self.base_hpmax + self.level * 5
+
+    @property
+    def attack(self) -> int:
+        return int(self.base_attack + self.level / 2)
+
+    @property
+    def defense(self) -> int:
+        return int(self.base_defense + self. level / 3)
+
+    @property
+    def evasion(self) -> float:
+        return min(1.00, self.base_evasion + self.level * 0.01)
+
+    @property
+    def precision(self) -> float:
+        return min(1.00, self.base_precision + self.level * 0.01)
+
     def get_standar_attack(self) -> Skill:
         for skill in self.skills:
             if skill.id == "mob_attack":
@@ -253,7 +267,7 @@ class Mob:
         return skill.action(caster=self, target=target, onbattle=onbattle)
 
     def take_damage(self, damage: int) -> int:
-        efective_dmg = max(0, damage - self.defense)
+        efective_dmg = max(0, damage - self.base_defense)
         self.hp = max(0, self.hp - efective_dmg)
         return efective_dmg
 

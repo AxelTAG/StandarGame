@@ -104,7 +104,7 @@ class ItemTypes(Enum):
     LITLE_RED_POTION = auto()
     GIANT_RED_POTION = auto()
     ANTIDOTE = auto()
-    FISH = auto
+    FISH = auto()
 
 
 class LeafColors(Enum):

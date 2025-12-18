@@ -153,7 +153,7 @@ def disp_info(entitie: Player | Mob, onbattle: bool = False) -> str:
         text_info += f"\n VITAL ENERGY: {int(entitie.vital_energy)} / {entitie.vital_energy_max}"
         text_info += f"\n {disp_bar(current_value=entitie.vital_energy, max_value=entitie.vital_energy_max, width=25)}"
     text_info += f"\n{disp_statuses(entitie=entitie, onbattle=onbattle)}"
-    text_info += f"\n ATTACK: {int(entitie.attack)}"
+    text_info += f"\n ATTACK: {int(entitie.base_attack)}"
     return text_info
 
 

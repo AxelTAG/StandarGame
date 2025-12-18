@@ -99,7 +99,7 @@ class Mob:
         return self.hp > limit
 
     # Statuses methods.
-    def add_status(self, status: Status, onbattle: bool = False) -> None:
+    def add_status(self, status: Status) -> None:
         active_status = self.get_status(status_type=status.status_type)
         if active_status is not None:
             active_status.apply_stack(other=status)

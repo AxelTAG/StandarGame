@@ -64,7 +64,7 @@ class Skill:
         critical = critical_chance >= random.random()
         return critical
 
-    def action(self, caster, target, onbattle: bool = False) -> tuple[bool, bool, int, bool, list]:
+    def action(self, caster, target) -> tuple[bool, bool, int, bool, list]:
         fail, avaible, effective_damage, critical, effects = False, False, 0, False, []
 
         if not caster.use_vital_energy(amount=self.cost):
@@ -82,7 +82,7 @@ class Skill:
             damage *= self.critical_factor
 
         if self.status_effects:
-            effects = self.apply_statuses(target=target, onbattle=onbattle)
+            effects = self.apply_statuses(target=target)
 
         effective_damage = int(target.take_damage(damage=int(damage)))
 
@@ -102,12 +102,12 @@ class Skill:
                 factor += v * getattr(caster, k)
         return factor
 
-    def apply_statuses(self, target, onbattle: bool = False) -> list:
+    def apply_statuses(self, target) -> list:
         effects_applied = []
         for i, status in enumerate(self.status_effects):
             if self.status_accuracy[i] >= random.random():
                 effects_applied.append(status)
-                target.add_status(status=status, onbattle=onbattle)
+                target.add_status(status=status)
         return effects_applied
 
     def check_requirements(self,

@@ -3764,7 +3764,7 @@ NPCS = {
     "traveler_sylas": Npc(name="traveler sylas",
                           npc_type=NpcTypes.TRAVELER,
                           messages={
-                              0: ["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration.",
+                              0: ["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration (EXPLORE).",
                                   "Hidden wonders and untold tales await those who venture beyond the familiar. May "
                                   "your steps be guided by curiosity, and may the world unveil its mysteries before "
                                   "you."]},
@@ -3805,7 +3805,7 @@ NPCS = {
     "villager_merrin": Npc(name="villager merrin",
                            npc_type=NpcTypes.VILLAGER,
                            messages={
-                               0: ["Oh, traveler, have you heard? The mayor’s daughter, Elara, has gone missing.",
+                               0: ["Oh, traveler, have you heard? The mayor’s daughter, Maisie, has gone missing.",
                                    "Some say she wandered too far, but I fear the worst... The goblins have been"
                                    " lurking near the forest caves lately. It’s possible they’ve taken her.",
                                    "I hope I’m wrong, but we need help before it’s too late."]},

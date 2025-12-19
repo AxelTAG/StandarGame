@@ -615,11 +615,6 @@ class Player:
             if self.thirsty < 10:
                 self.hp -= 1
 
-        # for status in self.statuses_pre:
-        #     self.add_status(status=status)
-        #     self.apply_status_effects(status=status, tick=False)
-        # self.discard_pre_status()
-
     def add_hungry(self, amount: int) -> None:
         if self.hungry + amount > 100:
             self.hungry = 100
@@ -674,7 +669,7 @@ class Player:
 
     def attack_to(self, target, onbattle: bool = False) -> tuple[bool, bool, int, bool, list]:
         skill = self.get_standar_attack()
-        return skill.action(caster=self, target=target, onbattle=onbattle)
+        return skill.action(caster=self, target=target)
         
     def take_damage(self, damage: int) -> int:
         efective_dmg = max(0, damage - self.defense)

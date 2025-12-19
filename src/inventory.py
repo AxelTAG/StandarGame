@@ -17,7 +17,8 @@ class Inventory:
         if self.items is None:
             self.items = {"red_potion": 2, "little_red_potion": 2}
 
-        self.item_base_original_keys = list(self.item_base.keys())
+        if self.item_base is not None:
+            self.item_base_original_keys = list(self.item_base.keys())
 
     def add_item(self, item: Item, quantity: int) -> bool:
         if item.id == "gold":

@@ -1,9 +1,12 @@
 # Imports.
 # Local imports.
+import copy
+
 from ..actions.talk import talk
 from .. import displays
 from ..events.definitions import *
 from ..events.timer import Timer
+from ..inventory import Inventory
 from ..map import Map
 from ..player import Player
 from .. import utils
@@ -11,6 +14,8 @@ from ..world import *
 
 # External imports.
 # import pickle
+import attrs
+import difflib
 import dill as pickle
 from datetime import datetime
 
@@ -211,71 +216,88 @@ def save(player: Player,
     utils.export_dict_to_txt(dictionary={"hash": utils.get_hash(path_usavepkl)}, file_path=path_hsave)
 
 
-def update(player: Player,
-           mapgame: Map,
-           option: str) -> tuple[str, Player, Map]:
+def get_attrs(obj):
+    if attrs.has(obj.__class__):
+        return {
+            f.name: getattr(obj, f.name)
+            for f in attrs.fields(obj.__class__)
+        }
+    return vars(obj)
+
+
+def quick_migrate(old_object: object, new_object: object) -> None:
+    RENAMED_ATTRS = {}
+
+    old_attrs = get_attrs(old_object)
+    new_attrs = get_attrs(new_object)
+    new_attr_names = list(new_attrs.keys())
+
+    for name, value in old_attrs.items():
+        if name in new_attrs:
+            setattr(new_object, name, value)
+            continue
+
+        new_name = RENAMED_ATTRS.get(name)
+        if new_name and new_name in new_attrs:
+            setattr(new_object, new_name, value)
+            continue
+
+        matches = difflib.get_close_matches(
+            name, new_attr_names, n=1, cutoff=0.75
+        )
+        if matches:
+            setattr(new_object, matches[0], value)
+
+
+def update_game(player: Player,
+                mapgame: Map,
+                option: str) -> str:
     """
     Updates class Player and class Map.
     """
+    # Map updates.
+    if option == "map_all":
+        mapgame.items = copy.deepcopy(ITEMS)
+        # mapgame.quests = copy.deepcopy(QUESTS)
+        # mapgame.npcs = copy.deepcopy(NPCS)
+        # mapgame.biomes = copy.deepcopy(BIOMES)
+        # mapgame.entries = copy.deepcopy(ENTRIES)
+        mapgame.fishes = copy.deepcopy(FISHES)
+        mapgame.mobs = copy.deepcopy(MOBS)
+
+        for biome in mapgame.map_settings.values():
+            biome.reset_mobs(force_respawn=True)
+
+        for entrie in mapgame.entries.values():
+            entrie.reset_mobs(force_respawn=True)
+
+        return "Dream map was all updated."
+
     if option == "map_npcs":
-        mapgame.npcs = NPCS.copy()
-        return "Update NPCS MAP succesfully.", player, mapgame
+        mapgame.npcs = copy.deepcopy(NPCS)
+        return "Dream NPCS MAP updated."
 
     if option == "map_mobs":
-        mapgame.mobs = MOBS.copy()
-        return "Update MOBS MAP succesfully.", player, mapgame
+        mapgame.mobs = copy.deepcopy(MOBS)
+        return "Dream MOBS MAP updated."
 
     if option == "player":
+        # All attributes.
         new_player = Player(name=player.name,
-                            hp=player.hp,
-                            level=player.level,
-                            exp=player.exp,
-                            expmax=player.expmax,
-                            hungry=player.hungry,
-                            thirsty=player.thirsty,
-                            status=player.status,
-                            poison=player.poison,
-                            freeze=player.freeze,
-                            base_hpmax=player.base_hpmax,
-                            base_attack=player.base_attack,
-                            base_defense=player.base_defense,
-                            base_evasion=player.base_evasion,
-                            base_precision=player.base_precision,
-                            base_weight_carry=player.base_weight_carry,
-                            strength=player.strength,
-                            resistance=player.resistance,
-                            agility=player.agility,
-                            vitality=player.vitality,
-                            dexterity=player.dexterity,
-                            attack_factor=player.attack_factor,
-                            defence_factor=player.defence_factor,
-                            evasion_factor=player.evasion_factor,
-                            precision_factor=player.precision_factor,
-                            vitality_factor=player.vitality_factor,
-                            vision=player.vision,
-                            x=player.x,
-                            y=player.y,
-                            x_cp=player.x_cp,
-                            y_cp=player.y_cp,
-                            outside=player.outside,
                             place=player.place,
                             last_place=player.last_place,
                             last_entry=player.last_entry,
-                            st_points=player.st_points,
-                            sk_points=player.sk_points,
                             inventory=player.inventory,
-                            equip=player.equip,
-                            map=player.map,
-                            events=player.events,
-                            time_played=player.time_played)
-        return "Player class updated.", new_player, mapgame
+                            skills=[SKILLS["attack"]])
+        quick_migrate(old_object=player, new_object=new_player)
+        player = new_player
 
-    if option == "map_13_0":
-        sub_cave_2_3 = ENTRIES["sub_cave_2_3"]
-        sub_cave_3_1 = ENTRIES["sub_cave_3_1"]
-        mapgame.map_settings[(25, 24)].entries["big_cave"].entries["passageway_cave_entrance"].entries[
-            "goblin_dining_gallery"].entries = {"cave_passageway_entrance": sub_cave_2_3,
-                                                "cave_passageway_exit": sub_cave_3_1}
-        return "Update MAP 13 0 succesfully.", player, mapgame
+        # Skills.
+        updated_skills = []
+        for skill in player.skills:
+            updated_skills.append(SKILLS[skill.id])
+        player.skills = updated_skills
 
-    return "Nothing done.", player, mapgame
+        return "Dream of Player was updated."
+
+    return "Nothing done."

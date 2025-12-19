@@ -264,7 +264,7 @@ class Mob:
 
     def attack_to(self, target, onbattle: bool = False) -> tuple[bool, bool, int, bool, list]:
         skill = self.get_standar_attack()
-        return skill.action(caster=self, target=target, onbattle=onbattle)
+        return skill.action(caster=self, target=target)
 
     def take_damage(self, damage: int) -> int:
         efective_dmg = max(0, damage - self.base_defense)

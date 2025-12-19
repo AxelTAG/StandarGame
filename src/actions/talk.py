@@ -164,7 +164,6 @@ def talk(npc: Npc,
             player.add_quest(quest=npc.give_quest(quest=quest))
             verify_quests_memory(quest1=quest, quest2=player.quests_in_progress[-1])
             for item, amount in quest.give_items().items():
-                print(f"{item}, {amount}")
                 player.add_item(item=item, quantity=amount)
             return f"New quest: {quest.description} You talked with {npc.name.title()}."
 

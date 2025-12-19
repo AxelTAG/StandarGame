@@ -19,6 +19,8 @@ STANDARD_PARTY_DEFEAT_MSG = "Defeat... Your party has fallen."
 STANDARD_FIRST_MSG = "Defeat the enemy!"
 STANDARD_ESCAPE_MSG = "You have escaped."
 STANDARD_NOT_ESCAPE_MSG = "You have not escaped."
+STANDARD_MOB_ESCAPE_MSG = "The enemy tries to escape and succeeds."
+STANDARD_MOB_NOT_ESCAPE_MSG = "The enemy tries to escape but fails."
 STANDARD_NOT_ENOUGH_VT_MSG = "You have not enough vital energy."
 STANDARD_NOT_ENOUGH_LEVEL_MSG = "You don't have the required level to use this skill."
 STANDARD_NOT_EQUIPED_MSG = "You don't have the required equipment to use this skill."
@@ -48,6 +50,7 @@ class Battle:
     # Escape attributes.
     escape: bool = field(default=False)
     escape_chance: float = field(default=None)
+    mob_escape: bool = field(default=False)
 
     # Display attributes.
     screen: list = field(default=None)
@@ -57,6 +60,8 @@ class Battle:
     msg_defeat: str = field(default=None)
     msg_escape: str = field(default=None)
     msg_not_escape: str = field(default=None)
+    msg_mob_escape: str = field(default=None)
+    msg_mob_not_escape: str = field(default=None)
     msg_lvl_up: str = field(default=None)
 
     # Map game settings atrributes.
@@ -80,10 +85,17 @@ class Battle:
                 self.msg_defeat = STANDARD_DEFEAT_MSG
             if len(self.enemies) > 1:
                 self.msg_defeat = STANDARD_PARTY_DEFEAT_MSG
+
         if self.msg_escape is None:
             self.msg_escape = STANDARD_ESCAPE_MSG
         if self.msg_not_escape is None:
             self.msg_not_escape = STANDARD_NOT_ESCAPE_MSG
+
+        if self.msg_mob_escape is None:
+            self.msg_mob_escape = STANDARD_MOB_ESCAPE_MSG
+        if self.msg_mob_not_escape is None:
+            self.msg_mob_not_escape = STANDARD_MOB_NOT_ESCAPE_MSG
+
         if self.msg_lvl_up is None:
             self.msg_lvl_up = displays.PLAYER_LVL_UP_MSG
 
@@ -140,7 +152,7 @@ class Battle:
                 target = self.select_target_enemy()
                 avaible, requirement, cause = player.is_skill_available(skill=skill)
                 if avaible:
-                    fail, _, damage, critical, effects = skill.action(caster=player, target=target, onbattle=True)
+                    fail, _, damage, critical, effects = skill.action(caster=player, target=target)
                     if fail:
                         self.screen.append(f"{player.name} has failed the skill {skill.name}.")
                     if critical:
@@ -201,6 +213,14 @@ class Battle:
             return
         if enemy.is_paralyze():
             self.screen.append(f"{enemy.name} was paralyzed and cannot attack.")
+            return
+
+        if enemy.escape_mob_probability > 0:
+            if enemy.escape_mob_probability >= random.random():
+                self.screen.append(self.msg_mob_escape)
+                self.mob_escape = True
+                return
+            self.screen.append(self.msg_mob_not_escape)
             return
 
         target = random.choice([player for player in players if player.is_alive()])
@@ -295,6 +315,9 @@ class Battle:
 
             if self.escape:
                 break
+            if self.mob_escape:
+                break
+
             self.apply_statuses()
             self.turn += 1
             self.pause()
@@ -309,6 +332,8 @@ class Battle:
         if self.is_defeat():
             self.screen.append(self.msg_defeat)
         if self.escape:
+            pass
+        if self.mob_escape:
             pass
         self.display(players=self.players, enemies=self.enemies, screen=self.compile_strings(self.screen))
         self.mapgame.add_hours(hours_to_add=int(self.turn * self.pace_factor))

@@ -4122,7 +4122,7 @@ MOBS = {
     ),
 
     "goblin_war": Mob(
-        name="War Goblin",
+        name="Goblin War",
         description="A vicious goblin berserker, charging into battle with reckless abandon.",
         level=7,
         base_attack=3,

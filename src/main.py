@@ -426,9 +426,9 @@ class Game:
                         screen = displays.disp_attack()
                     else:
                         mob = find_full_name(partial_name=" ".join(action[1:]),
-                                             names_list=[m.name.lower() for m in player.place.mobs_respawned])
+                                             names_list=[m.id_key for m in player.place.mobs_respawned])
                         if mob:
-                            mob = player.place.get_mob(mob_id=MobTypes[underscores(mob)].value)
+                            mob = player.place.get_mob(mob_id=mob)
                             win = attack(player=player,
                                          map_game=map_game,
                                          mob=mob)

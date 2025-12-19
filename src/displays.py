@@ -147,7 +147,7 @@ def disp_info(entitie: Player | Mob, onbattle: bool = False) -> str:
         return ""
     text_info = ""
     text_info += entitie.name.upper()
-    text_info += f"\n HP: {int(entitie.hp)} / {entitie.hpmax}"
+    text_info += f"\n HP: {int(entitie.hp)} / {entitie.hpmax} | LEVEL: {entitie.level}"
     text_info += f"\n {disp_bar(current_value=entitie.hp, max_value=entitie.hpmax, width=25)}"
     if entitie.has_vital_energy():
         text_info += f"\n VITAL ENERGY: {int(entitie.vital_energy)} / {entitie.vital_energy_max}"

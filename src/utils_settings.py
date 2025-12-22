@@ -3,7 +3,6 @@
 # External imports.
 
 
-# INIT MAP SETTING function that initialized the settings of map biomes.
 def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: dict):
     # (12, 24)
     ms[(12, 24)].description = ("Solitary hut amidst lush foliage, surrounded by the symphony of waves and "
@@ -251,7 +250,7 @@ def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: 
 
     # (25, 24): Cave - stage 4
     sub_cave_4_0 = entries["sub_cave_4_0"]
-    sub_cave_4_0.leave_entry = ms[(19, 0)]
+    sub_cave_4_0.leave_entry = ms[(31, 24)]
 
     sub_cave_3_0.entries = {"cave_basin": sub_cave_2_0,
                             "chiefs_cave": sub_cave_2_1,
@@ -262,7 +261,6 @@ def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: 
                             "cave_passageway_entrance": sub_cave_2_3}
     sub_cave_3_2.entries = {"cave_passageway_entrance": sub_cave_2_3,
                             "cave_passageway_exit": sub_cave_3_1}
-    sub_cave_4_0
 
     # (25, 41)
     ms[(25, 41)].name = "EAST GATES"
@@ -375,3 +373,6 @@ def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: 
         npcs["fisherman_marlin"].add_quest(quest=quests["quest_find_caravan_leader_darek"])
         npcs["fisherman_marlin"].add_quest(quest=quests["quest_destroy_rocks_on_valley"])
         npcs["fisherman_marlin"].add_quest(quest=quests["quest_gareth_deliver"])
+
+
+    # Biomes with reinit.

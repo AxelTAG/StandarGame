@@ -1,5 +1,6 @@
 # Imports.
 # Locals imports.
+from . import displays
 from . import enums
 from . import globals
 
@@ -149,15 +150,17 @@ class Game:
 
         if not load_state:
             print()
-            print(load_msg)
+            print()
+            typewriter(text=f" {load_msg}")
+            self.pause()
+            return
 
         print()
         print()
         typewriter(text=f" Welcome back, {self.metadata.player_name}. Your dream continues...",
                    speed=0.01)
         print()
-        print()
-        input(" > ")
+        self.pause()
 
     def main(self):
         self.show_intro()
@@ -766,7 +769,7 @@ class Game:
                             quantity = 1
                         else:
                             quantity = int(action[2])
-                        player.lvl_up(quantity=quantity)
+                        player.level_up(quantity=quantity)
                         screen = f"You have lvl up {quantity} levels."
 
                     elif action[:2] == ["add", "skill"]:
@@ -861,12 +864,17 @@ class Game:
         selection = input(" # ")
 
         if selection == "1":
-            value = float(input(" # Introduce volume value: "))
+            value = float(input(" # Introduce volume value [0.00 - 1.00]: "))
             self.set_music_volume(volume=value)
 
     @staticmethod
-    def close():
+    def close() -> None:
         exit()
+
+    @staticmethod
+    def pause(label: str = " > ") -> None:
+        print()
+        input(label)
 
     @staticmethod
     def auto_save(player: Player,

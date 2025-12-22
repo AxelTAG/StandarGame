@@ -4,6 +4,7 @@ import copy
 
 from ..actions.talk import talk
 from .. import displays
+from ..enums import PlayerStatus
 from ..events.definitions import *
 from ..events.timer import Timer
 from ..inventory import Inventory
@@ -181,13 +182,11 @@ def load(path_usavepkl: str = "./save/cfg_save.pkl",
 
 def reinit(player: Player, mapgame: Map):
     # Player reinit.
-    player.hp = int(player.hpmax)
-    player.set_place(place=mapgame.map_settings[(player.x_cp, player.y_cp)])
-    player.status = 0
-    player.poison = 0
-    player.hungry = 48
-    player.thirsty = 48
-    player.exp = 0
+    player.reinit_after_death()
+
+    for biome in mapgame.map_settings.values():
+        # TODO: terminar la función.
+        pass
 
     # Map reinit.
     utils.reset_map(ms=mapgame.map_settings,
@@ -195,7 +194,9 @@ def reinit(player: Player, mapgame: Map):
 
 
 def repair(player: Player, mapgame: Map):
-    pass
+    place = mapgame.place_from_list(place_list=[(25, 24), "cave_entrance", "cave_pit", "cave_basin", "cave_gallery",
+                                                "cave_passageway_exit", "chimney"])
+    place.leave_entry = mapgame.map_settings[(31, 24)]
 
 
 # Save function.

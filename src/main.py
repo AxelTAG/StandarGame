@@ -696,6 +696,10 @@ class Game:
                     opt = "_".join(action[1:])
                     screen = management.update_game(player=player, mapgame=map_game, option=opt)
 
+                elif action[0] == "repair":
+                    management.repair(player=player, mapgame=map_game)
+                    screen = "Game repaired."
+
                 # if action == ["catch", "dream"]:
                 #     if not player.dream_catched:
                 #         player.lvl_up(quantity=3)

@@ -197,6 +197,7 @@ def repair(player: Player, mapgame: Map):
     place = mapgame.place_from_list(place_list=[(25, 24), "cave_entrance", "cave_pit", "cave_basin", "cave_gallery",
                                                 "cave_passageway_exit", "chimney"])
     place.leave_entry = mapgame.map_settings[(31, 24)]
+    player.set_place(place=mapgame.map_settings[(31, 24)])
 
 
 # Save function.

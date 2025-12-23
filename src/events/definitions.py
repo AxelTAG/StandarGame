@@ -265,9 +265,9 @@ def timer_call_loial_repair_boat(mapgame: Map, **kwargs):
     mapgame.npcs["islander_loial"].place = [(12, 24), "hut", "nynaeve_room"]
 
     displays.clear()
-    mapgame.map_settings[(14, 25)].add_item(item_id="boat")
+    mapgame.map_settings[(14, 25)].add_item(item="boat")
     mapgame.map_settings[(14, 25)].remove_item(item="broken_boat")
-    mapgame.map_settings[(14, 25)].add_item(item_id="apple")
+    mapgame.map_settings[(14, 25)].add_item(item="apple")
 
     mapgame.refresh_npcs()
 

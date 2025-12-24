@@ -284,7 +284,8 @@ def update_game(player: Player,
         return "Dream MOBS MAP updated."
 
     if option[:3] == "npc":
-        mapgame.npcs[option[3:]] = copy.deepcopy(NPCS[option[3:]])
+        mapgame.npcs[option[4:]] = copy.deepcopy(NPCS[option[4:]])
+        return f"Npc {mapgame.npcs[option[4:]].name.title()} updated."
 
     if option == "player":
         # All attributes.

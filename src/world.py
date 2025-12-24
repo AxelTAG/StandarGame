@@ -3609,7 +3609,7 @@ NPCS = {
                                      "spear": {"gold": 250},
                                      "spike_shield": {"gold": 150},
                                      "tower_shield": {"gold": 150}},
-                            quantity_message="How many #item do you want to #action?",
+                          quantity_message="How many #item do you want to #action?",
                           place=[(24, 42)]),
 
     "merchant_roland": Npc(name="merchant roland",
@@ -3630,7 +3630,7 @@ NPCS = {
                                       "sword": {"gold": 300},
                                       "iron_shield": {"gold": 150},
                                       "torch": {"gold": 20}},
-quantity_message="How many #item do you want to #action?",
+                           quantity_message="How many #item do you want to #action?",
                            place=[(23, 41)]),
 
     "merchant_selena": Npc(name="merchant selena",
@@ -3652,7 +3652,7 @@ quantity_message="How many #item do you want to #action?",
                                       "coast_fishing_pole": {"gold": 200},
                                       "wood_shield": {"gold": 50},
                                       "telescope": {"gold": 200}},
-quantity_message="How many #item do you want to #action?",
+                           quantity_message="How many #item do you want to #action?",
                            place=[(39, 39)]),
 
     "sailor_kael": Npc(name="sailor kael",
@@ -3770,7 +3770,8 @@ quantity_message="How many #item do you want to #action?",
     "traveler_sylas": Npc(name="traveler sylas",
                           npc_type=NpcTypes.TRAVELER,
                           messages={
-                              0: ["Greetings, wanderer. A word of wisdom for your journey: always embrace exploration (EXPLORE).",
+                              0: [
+                                  "Greetings, wanderer. A word of wisdom for your journey: always embrace exploration (EXPLORE).",
                                   "Hidden wonders and untold tales await those who venture beyond the familiar. May "
                                   "your steps be guided by curiosity, and may the world unveil its mysteries before "
                                   "you."]},
@@ -4891,7 +4892,7 @@ BIOMES = {
             Months.NERITH.value: 8,
         },
         trees=["walnut_tree", "hazelnut_tree", "mulberry_tree", "gooseberry_bush"],
-        trees_ratio={"walnut_tree": 0.2, "hazelnut_tree": 0.05, "mulberry_tree": 0.05, "gooseberry_bush":0.05},
+        trees_ratio={"walnut_tree": 0.2, "hazelnut_tree": 0.05, "mulberry_tree": 0.05, "gooseberry_bush": 0.05},
         trees_base=TREES,
         fishes_base=FISHES
     ),

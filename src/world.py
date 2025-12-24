@@ -3609,6 +3609,7 @@ NPCS = {
                                      "spear": {"gold": 250},
                                      "spike_shield": {"gold": 150},
                                      "tower_shield": {"gold": 150}},
+                            quantity_message="How many #item do you want to #action?",
                           place=[(24, 42)]),
 
     "merchant_roland": Npc(name="merchant roland",
@@ -3629,7 +3630,8 @@ NPCS = {
                                       "sword": {"gold": 300},
                                       "iron_shield": {"gold": 150},
                                       "torch": {"gold": 20}},
-                           place_morning=[(23, 41)]),
+quantity_message="How many #item do you want to #action?",
+                           place=[(23, 41)]),
 
     "merchant_selena": Npc(name="merchant selena",
                            npc_type=NpcTypes.MERCHANT,
@@ -3650,6 +3652,7 @@ NPCS = {
                                       "coast_fishing_pole": {"gold": 200},
                                       "wood_shield": {"gold": 50},
                                       "telescope": {"gold": 200}},
+quantity_message="How many #item do you want to #action?",
                            place=[(39, 39)]),
 
     "sailor_kael": Npc(name="sailor kael",
@@ -3682,7 +3685,8 @@ NPCS = {
                                            "cheese": {"gold": 4},
                                            "soup": {"gold": 2},
                                            "water": {"gold": 1},
-                                           "antinas_beer": {"gold": 2}}),
+                                           "antinas_beer": {"gold": 2}},
+                                quantity_message="How many #item do you want to #action?"),
 
     "traveler_clara": Npc(name="traveler clara",
                           npc_type=NpcTypes.TRAVELER,

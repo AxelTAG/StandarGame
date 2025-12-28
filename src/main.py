@@ -217,9 +217,6 @@ class Game:
             player.add_quest(quest=map_game.quests["quest_firefrost_first_encounter"])
             player.add_quest(quest=map_game.quests["quest_explore_veylan"])
 
-            player.add_item(item=copy.deepcopy(map_game.items["linen_shirt"]))
-            player.add_item(item=copy.deepcopy(map_game.items["linen_trousers"]))
-            player.add_item(item=copy.deepcopy(map_game.items["worn_boots"]))
             player.equip_item(item=player.get_item(item="linen_shirt"))
             player.equip_item(item=player.get_item(item="linen_trousers"))
             player.equip_item(item=player.get_item(item="worn_boots"))
@@ -604,6 +601,11 @@ class Game:
                     screen = displays.disp_show_inventory(player)
                     player.standing = True
 
+                elif action[:2] == ["show", "quests"]:
+                    quest_id = action[2] if len(action) == 3 else None
+                    screen = quests(player=player, mapgame=map_game, quest_id=quest_id)
+                    player.standing = True
+
                 elif action[0] == "sleep":  # Sleep action.
                     if len(action) <= 2:
                         screen = displays.disp_sleep(player.place)
@@ -615,6 +617,7 @@ class Game:
                                                   map_game=map_game,
                                                   time_of_day=enums.TimeOfDay[action[2].upper()].value)
                             player.x_cp, player.y_cp = player.x, player.y
+                            player.place_checkpoint = player.place
                             player.standing = True
 
                             # Autosave.

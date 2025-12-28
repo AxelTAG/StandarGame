@@ -15,6 +15,7 @@ from .battle import battle
 from .check import check
 from .explore import explore
 from .fish import fish
+from .quests import quests
 from .use import use
 
 # External imports.

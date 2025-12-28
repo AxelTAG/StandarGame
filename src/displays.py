@@ -214,6 +214,16 @@ def disp_player_play_actions(player: Player,
     return "\n".join(actions)
 
 
+def disp_quests(player: Player, mapgame: Map, quest_id: str = None) -> str:
+    paragraph = "QUESTS IN PROGRESS:\n"
+    if quest_id is None:
+        quests = [f"- {quest.title}: {quest.description}" for quest in player.get_quests(completed=False)]
+        return paragraph + "\n".join(quests)
+
+    quest = player.get_quest(quest=quest_id, completed=False)
+    return paragraph + f"- {quest.title}: {quest.description}"
+
+
 def disp_show_list_items(player: Player, items: dict, player_quantity: bool = False) -> tuple[list, list]:
     print()
     items_list, prices_list, n, item_stock = [], [], 0, ""

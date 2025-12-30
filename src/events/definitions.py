@@ -265,9 +265,9 @@ def timer_call_loial_repair_boat(mapgame: Map, **kwargs):
     mapgame.npcs["islander_loial"].place = [(12, 24), "hut", "nynaeve_room"]
 
     displays.clear()
-    mapgame.map_settings[(14, 25)].add_item(item="boat")
+    mapgame.map_settings[(14, 25)].add_item(item_id="boat")
     mapgame.map_settings[(14, 25)].remove_item(item="broken_boat")
-    mapgame.map_settings[(14, 25)].add_item(item="apple")
+    mapgame.map_settings[(14, 25)].add_item(item_id="apple")
 
     mapgame.refresh_npcs()
 
@@ -752,3 +752,30 @@ def call_quest_complete_explore_veylan(player: Player, mapgame: Map) -> None:
 event_completed_quest_complete_explore_veylan = Event(
     action=call_quest_complete_explore_veylan,
 )
+
+
+# Events list.
+event_list = [
+    event_completed_exit_the_hut,
+    event_completed_eat_soup,
+    event_started_find_loial,
+    event_completed_find_loial,
+    event_completed_deliver_wood,
+    event_completed_slime_slayer_I,
+    event_rewarded_slime_slayer_II,
+
+    event_goblin_chief_battle,
+    event_completed_goblin_chief,
+    event_rewarded_goblin_chief,
+
+    event_started_quest_marlin_fish_for_brann,
+    event_completed_quest_marlin_fish_for_brann,
+    event_completed_quest_find_caravan_leader_darek,
+    event_completed_quest_destroy_rocks_on_valley,
+    event_completed_quest_gareth_deliver,
+
+    event_firefrost_first_encounter_battle,
+    event_completed_quest_firefrost_first_encounter,
+
+    event_completed_quest_complete_explore_veylan,
+]

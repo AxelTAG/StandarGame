@@ -185,12 +185,7 @@ def reinit(player: Player, mapgame: Map):
     player.reinit_after_death()
 
     for biome in mapgame.map_settings.values():
-        # TODO: terminar la función.
-        pass
-
-    # Map reinit.
-    utils.reset_map(ms=mapgame.map_settings,
-                    keys=[(14, 25), (18, 26)])
+        biome.reinit_items_now()
 
 
 def repair(player: Player, mapgame: Map):

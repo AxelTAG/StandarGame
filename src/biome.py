@@ -105,6 +105,9 @@ class Biome:
     _fishes_respawn_time: int = field(init=False)
     _current_month: int = field(init=False)
 
+    # Reinit attributes.
+    reinit_items: dict = field(factory=dict)
+
     def __attrs_post_init__(self):
         # Common attributes.
         if self.entries is None:
@@ -156,6 +159,10 @@ class Biome:
         if self.mobs_respawned is None:
             self.mobs_respawned = []
             self.respawn_mobs(day=self.mobs_respawn_time[Months.AURENAR.value])
+
+        # Reinit attributes.
+        if not self.reinit_items:
+            self.reinit_items = {}
 
     @property
     def temperature(self) -> int:
@@ -423,16 +430,19 @@ class Biome:
         self.npcs.remove(npc)
 
     # Item methods.
-    def add_item(self, item: str) -> None:
-        self.items.append(item)
+    def add_item(self, item_id: str, quantity: int = 1) -> None:
+        self.items.extend([item_id] * quantity)
 
-    def remove_item(self, item: str, player=None) -> None:
-        self.items.remove(item)
+    def remove_item(self, item: str, remove_all: bool = False, player=None) -> None:
+        while self.has_item(item_id=item):
+            self.items.remove(item)
+            if not remove_all:
+                return
         if player:
             player.update_quests(target=item, amount=1)
 
-    def has_item(self, item_id: str) -> bool:
-        return item_id in self.items
+    def has_item(self, item_id: str, quantity: int = 1) -> bool:
+        return self.items.count(item_id) >= quantity
 
     # Tree methods.
     def respawn_trees(self, base: dict = None) -> None:
@@ -509,6 +519,21 @@ class Biome:
     def reset_fishes_respawned(self) -> None:
         self.fishes_respawned.clear()
         self.respawn_fishes(day=self._fishes_respawn_time)
+
+    # Reinit methods.
+    def has_reinit_items(self) -> bool:
+        return bool(self.reinit_items)
+
+    def reinit_items_now(self) -> None:
+        if not self.reinit_items:
+            return
+        for item_id, quantity in self.reinit_items:
+            if quantity <= 0:
+                if self.has_item(item_id=item_id):
+                    self.remove_item(item=item_id, remove_all=True)
+            if not self.has_item(item_id=item_id, quantity=quantity):
+                difference = quantity - self.items.count(item_id)
+                self.add_item(item_id=item_id, quantity=difference)
 
     # Static methods.
     @staticmethod

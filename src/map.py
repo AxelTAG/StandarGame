@@ -5,6 +5,7 @@ import copy
 from .biome import Biome, Entry
 from .entities.entitie import Fish
 from .enums import Months, Season, TimeOfDay, WeekDays
+from .events.events import Event
 from .item import Item
 from .npc import Npc
 from .player import Player
@@ -60,6 +61,7 @@ class Map:
     fish_respawned_limit: int = field(default=FISH_RESPAWNED_LIMIT)
 
     # Event attributes.
+    events: list = field(factory=list)
     timers: list = field(factory=list)
 
     # Others attributes.
@@ -90,22 +92,6 @@ class Map:
 
         self.x_len = len(self.map_labels) - 1
         self.y_len = len(self.map_labels[0]) - 1
-
-    # Control methods.
-    def get_label(self, x: int, y: int) -> str:
-        return self.map_labels[y][x]
-
-    def get_number_of_mobs(self, coord1: tuple, coord2: tuple, mob_id: str = None) -> int:
-        x1, y1 = coord1
-        x2, y2 = coord2
-
-        mob_quantity = 0
-
-        for y in range(y1, y2 + 1):
-            for x in range(x1, x2 + 1):
-                mob_quantity += self.map_settings[(x, y)].get_mob_quantity(mob_id=mob_id)
-
-        return mob_quantity
 
     # Time methods.
     @property
@@ -280,15 +266,18 @@ class Map:
     def get_region_name(self, x: int, y: int) -> str:
         return self.get_region(x=x, y=y).name
 
+    def get_label(self, x: int, y: int) -> str:
+        return self.map_labels[y][x]
+
     # Npc methods.
+    def add_npc(self, npc_key: str, npc: Npc) -> None:
+        self.npcs[npc_key] = npc
+
     def check_room_expiration(self, player: Player, npc: str) -> iter:
         for item, date in self.npcs[npc].room_expirations.items():
             if item in player.inventory.items.keys():
                 if self.is_major_date(date, self.current_date):
                     yield item
-
-    def add_npc(self, npc_key: str, npc: Npc) -> None:
-        self.npcs[npc_key] = npc
 
     def refresh_npcs(self) -> None:
         time_of_days, hours_time_of_days = [], []
@@ -312,16 +301,7 @@ class Map:
             if npc.place is not None:
                 self.place_from_list(place_list=npc.place).add_npc(npc=npc_key)
 
-    # Refreshing methods.
-    def refresh_biomes(self):
-        refresh_fishes = self.get_fish_quantity() <= FISH_RESPAWNED_LIMIT
-
-        for biome in self.map_settings.values():
-            biome.refresh_biome(day=self.day,
-                                month=self.current_month,
-                                neighboors=self.neighbors_from_coord(coord=biome.coordinates),
-                                fishes=refresh_fishes)
-
+    # Map methods.
     def refresh_map(self, **kwargs) -> None:
         self.refresh_npcs()
         self.refresh_biomes()
@@ -339,6 +319,28 @@ class Map:
 
     def get_fish_quantity(self) -> int:
         return sum([biome.get_fish_quantity() for biome in self.map_settings.values()])
+
+    def refresh_biomes(self):
+        refresh_fishes = self.get_fish_quantity() <= FISH_RESPAWNED_LIMIT
+
+        for biome in self.map_settings.values():
+            biome.refresh_biome(day=self.day,
+                                month=self.current_month,
+                                neighboors=self.neighbors_from_coord(coord=biome.coordinates),
+                                fishes=refresh_fishes)
+
+    # Mob methods.
+    def get_number_of_mobs(self, coord1: tuple, coord2: tuple, mob_id: str = None) -> int:
+        x1, y1 = coord1
+        x2, y2 = coord2
+
+        mob_quantity = 0
+
+        for y in range(y1, y2 + 1):
+            for x in range(x1, x2 + 1):
+                mob_quantity += self.map_settings[(x, y)].get_mob_quantity(mob_id=mob_id)
+
+        return mob_quantity
 
     # Player control methods.
     def get_avaible_moves(self, player: Player) -> list[int]:
@@ -419,3 +421,17 @@ class Map:
         for timer in self.get_timers():
             if self.is_major_date(first_date=timer.date, second_date=self.current_date):
                 timer.tick(days=self.days_difference(first_date=self.current_date, second_date=timer.date), **kwargs)
+            if timer.is_finished():
+                self.remove_timer(timer_id=timer.id)
+
+    # Event methods.
+    def add_event(self, event: Event) -> None:
+        return self.events.append(event)
+
+    def get_events(self) -> list[Event]:
+        return self.events
+
+    def get_event(self, event_id: str) -> Event:
+        for event in self.get_events():
+            if event.id == event_id:
+                return event

@@ -95,6 +95,7 @@ class Player:
     y_cp: int = field(default=24)
     outside: bool = field(default=False)
     place: Biome | Entry = field(default=None)
+    place_checkpoint: Biome | Entry = field(default=None)
     last_place: Biome | Entry = field(default=None)
     last_entry: Entry = field(default=None)
     standing: bool = field(default=True)
@@ -118,7 +119,6 @@ class Player:
     # Quests attributes.
     quests_in_progress: list = field(factory=list)
     quests_completed: list = field(factory=list)
-
     reputation: dict[str, int] = field(default=None)
 
     # Skills attributes.
@@ -130,15 +130,18 @@ class Player:
     time_played: timedelta = field(default=timedelta(seconds=0))
 
     def __attrs_post_init__(self):
+        # Basic attributes.
         if len(self.name) > 12:
             self.name = self.name[:12]
 
+        # Place attributes.
         if self.last_place is None:
             self.last_place = Biome()
 
         if self.last_entry is None:
             self.last_entry = Entry()
 
+        # Inventory attributes.
         if self.inventory is None:
             self.inventory = Inventory()
 
@@ -150,6 +153,7 @@ class Player:
                 "antidote": 10
             }
 
+        # Map attributes.
         if self.map is None:
             self.map = np.zeros(shape=(MAP_X_LENGTH, MAP_Y_LENGTH, 4), dtype=np.uint8)
             self.map[:, :, 3] = np.ones(shape=(MAP_X_LENGTH, MAP_Y_LENGTH), dtype=np.uint8) * 255
@@ -157,6 +161,7 @@ class Player:
         if self.map_labels is None:
             self.map_labels = [["UNEXPLORED" for _ in range(MAP_X_LENGTH)] for _ in range(MAP_Y_LENGTH)]
 
+        # Equip attributes.
         if self.equip is None:
             self.equip = {BodyPart.HEAD: None,
                           BodyPart.CHEST: None,
@@ -171,27 +176,13 @@ class Player:
             valid_keys = set(BodyPart)
             self.equip = {key: self.equip.get(key) for key in valid_keys}
 
+        # Quest attributes.
         if self.reputation is None:
             self.reputation = {item.value: 0 for item in Cities}
 
+        # Other attributes.
         if self.events is None:
-            self.events = {
-                "goblin_chief_crown_1": False,
-                "goblin_chief_crown_2": False,
-                "goblin_chief_crown_3": False,
-
-                "marlin_quests_1": False,
-                "marlin_quests_2": False,
-                "marlin_quests_3": False,
-                "marlin_quests_4": False,
-                "caravan_date_arrive": None,
-                "caravan_arrive": False,
-                "marlin_quests_5": False,
-                "marlin_quests_6": False,
-                "antinas_permission": False,
-
-                "dragon_win": False,
-            }
+            self.events = {}
 
     @property
     def attack(self) -> int:
@@ -291,17 +282,17 @@ class Player:
     def get_vital_energy(self) -> int:
         return self.vital_energy
 
-    # Player lvl up attributes.
+    # Player level methods.
     def add_exp(self, amount: int) -> bool:
         self.exp += amount
 
         if self.exp >= self.expmax:
-            self.lvl_up()
+            self.level_up()
             return True
         else:
             return False
 
-    def lvl_up(self, quantity: int = 1) -> None:
+    def level_up(self, quantity: int = 1) -> None:
         self.level += quantity
         self.exp = 0
         self.expmax = int(10 * self.level + (10 * self.level) ** 0.5)
@@ -675,6 +666,14 @@ class Player:
         efective_dmg = max(0, damage - self.defense)
         self.hp = max(0, self.hp - efective_dmg)
         return efective_dmg
+
+    def reinit_after_death(self) -> None:
+        self.heal(amount=self.hpmax)
+        self.set_place(place=self.place_checkpoint)
+        self.status = PlayerStatus.WALK.value
+        self.hungry = 48
+        self.thirsty = 48
+        self.exp = 0
 
     # Reputation methos.
     def get_city_reputation(self, city: str) -> int:

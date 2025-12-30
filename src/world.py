@@ -3118,9 +3118,7 @@ QUESTS = {
     "quest_firefrost_first_encounter": Quest(
         id="quest_firefrost_first_encounter",
         title="The First Clash with FireFrost",
-        description="You’ve heard mentions of Veylan, a remote region rarely visited by travelers. "
-                    "Your task is simple: reach its boundary and confirm that the route remains safe "
-                    "for future journeys.",
+        description="No description.",
         objectives=[
             QuestObjective(
                 type=ObjectiveType.KILL,
@@ -3150,8 +3148,8 @@ QUESTS = {
     # Veylan quests.
     "quest_explore_veylan": Quest(
         id="quest_explore_veylan",
-        title="",
-        description="",
+        title="Arrive to Veylan",
+        description="Explore the map to reach Veylan.",
         objectives=[
             QuestObjective(
                 type=ObjectiveType.EXPLORE,

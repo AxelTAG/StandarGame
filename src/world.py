@@ -4630,6 +4630,7 @@ BIOMES = {
         trees_base=TREES,
         fishes=["fish_sabalo", "fish_tuna", "fish_snapper", "fish_sardine", "fish_ray", "fish_mahi-mahi"],
         fishes_base=FISHES,
+        reinit_items={"boat": 0},
 
     ),
 
@@ -4771,7 +4772,8 @@ BIOMES = {
             Months.NERITH.value: 2,
         },
         trees_base=TREES,
-        fishes_base=FISHES
+        fishes_base=FISHES,
+        reinit_items={"boat": 0},
     ),
 
     "desert_mountains": Biome(
@@ -4942,7 +4944,8 @@ BIOMES = {
             Months.NERITH.value: 5,
         },
         trees_base=TREES,
-        fishes_base=FISHES
+        fishes_base=FISHES,
+        reinit_items={"boat": 0},
     ),
 
     "frozen_sea": Biome(
@@ -5225,7 +5228,8 @@ BIOMES = {
             Months.NERITH.value: 5,
         },
         trees_base=TREES,
-        fishes_base=FISHES
+        fishes_base=FISHES,
+        reinit_items={"boat": 0},
     ),
 
     "ocean": Biome(
@@ -5476,7 +5480,7 @@ BIOMES = {
         mobs_base=MOBS,
         name="SELERAN FOREST",
         req=[],
-        pace=8,
+        pace=0,
         status=[PlayerStatus.WALK.value],
         month_temperatures={
             Months.AURENAR.value: 20,

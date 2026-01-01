@@ -527,7 +527,8 @@ class Biome:
     def reinit_items_now(self) -> None:
         if not self.reinit_items:
             return
-        for item_id, quantity in self.reinit_items:
+
+        for item_id, quantity in self.reinit_items.items():
             if quantity <= 0:
                 if self.has_item(item_id=item_id):
                     self.remove_item(item=item_id, remove_all=True)

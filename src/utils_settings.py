@@ -59,6 +59,7 @@ def init_map_setting(ms: dict, biomes: dict, entries: dict, npcs: dict, quests: 
                                "captivated by the rhythmic dance of the waves and the boundless horizon " \
                                "stretching before them. Anchored boat gently resting by the shore."
     ms[(17, 27)].items = ["boat"]
+    ms[(17, 27)].reinit_items = {"boat": 1}
 
     # (21, 28)
     ms[(21, 28)].description = ("Northern village entrance, sturdy gates open to a cozy haven, framed by "

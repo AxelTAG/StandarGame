@@ -210,7 +210,8 @@ class Game:
                             last_place=map_game.map_settings[(12, 24)].entries["hut"],
                             last_entry=map_game.map_settings[(12, 24)].entries["hut"],
                             inventory=Inventory(item_base=ITEMS),
-                            skills=[SKILLS["attack"]])
+                            skills=[SKILLS["attack"]],
+                            place_checkpoint=map_game.map_settings[(12, 24)].entries["hut"])
 
             # Preset of player.
             player.add_quest(quest=map_game.quests["quest_exit_the_hut"])

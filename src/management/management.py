@@ -21,22 +21,22 @@ import dill as pickle
 from datetime import datetime
 
 
-def is_quest_started(player: Player, quest_id: str) -> bool:
-    quest = player.get_quest(quest=quest_id, in_progress=True, completed=False)
+def is_quest_started(entitie: Player | Map, quest_id: str) -> bool:
+    quest = entitie.get_quest(quest_id=quest_id, in_progress=True, completed=True)
     if quest is None:
         return False
     return quest.is_started()
 
 
-def is_quest_completed(player: Player, quest_id: str) -> bool:
-    quest = player.get_quest(quest=quest_id, in_progress=True, completed=False)
+def is_quest_completed(entitie: Player | Map, quest_id: str) -> bool:
+    quest = entitie.get_quest(quest_id=quest_id, in_progress=True, completed=True)
     if quest is None:
         return False
     return quest.is_completed()
 
 
-def is_quest_rewarded(player: Player, quest_id: str) -> bool:
-    quest = player.get_quest(quest=quest_id, in_progress=True, completed=True)
+def is_quest_rewarded(entitie: Player | Map, quest_id: str) -> bool:
+    quest = entitie.get_quest(quest_id=quest_id, in_progress=True, completed=True)
     if quest is None:
         return False
     return quest.is_rewarded()
@@ -53,58 +53,58 @@ def event_handler(player: Player,
 
     # Quest/Event control
     # Starter quests/events.
-    if is_quest_completed(player=player, quest_id="quest_exit_the_hut"):
-        event_completed_exit_the_hut.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_exit_the_hut"):
+        mapgame.get_event(event_id="event_completed_exit_the_hut").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_eat_soup"):
-        event_completed_eat_soup.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_eat_soup"):
+        mapgame.get_event(event_id="event_completed_eat_soup").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_find_loial"):
-        event_completed_find_loial.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_find_loial"):
+        mapgame.get_event(event_id="event_completed_find_loial").execute(player=player, mapgame=mapgame)
 
-    if is_quest_started(player=player, quest_id="quest_deliver_wood"):
-        event_started_find_loial.execute(player=player, mapgame=mapgame)
+    if is_quest_started(entitie=mapgame, quest_id="quest_deliver_wood"):
+        mapgame.get_event(event_id="event_started_find_loial").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_deliver_wood"):
-        event_completed_deliver_wood.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_deliver_wood"):
+        mapgame.get_event(event_id="event_completed_deliver_wood").execute(player=player, mapgame=mapgame)
 
-    if is_quest_started(player=player, quest_id="slime_slayer_I"):
-        event_completed_slime_slayer_I.execute(player=player, mapgame=mapgame)
+    if is_quest_started(entitie=mapgame, quest_id="slime_slayer_I"):
+        mapgame.get_event(event_id="event_completed_slime_slayer_I").execute(player=player, mapgame=mapgame)
 
-    if is_quest_rewarded(player=player, quest_id="slime_slayer_II"):
-        event_rewarded_slime_slayer_II.execute(player=player, mapgame=mapgame)
+    if is_quest_rewarded(entitie=mapgame, quest_id="slime_slayer_II"):
+        mapgame.get_event(event_id="event_rewarded_slime_slayer_II").execute(player=player, mapgame=mapgame)
 
     # Epiiat quests/events.
-    event_goblin_chief_battle.execute(player=player, mapgame=mapgame)
+    mapgame.get_event(event_id="event_goblin_chief_battle").execute(player=player, mapgame=mapgame)
 
-    if is_quest_rewarded(player=player, quest_id="quest_goblin_chief"):
-        event_rewarded_goblin_chief.execute(player=player, mapgame=mapgame)
+    if is_quest_rewarded(entitie=mapgame, quest_id="quest_goblin_chief"):
+        mapgame.get_event(event_id="event_rewarded_goblin_chief").execute(player=player, mapgame=mapgame)
 
     # Aquiri quests/events.
-    if is_quest_started(player=player, quest_id="quest_marlin_fish_for_brann"):
-        event_started_quest_marlin_fish_for_brann.execute(player=player, mapgame=mapgame)
+    if is_quest_started(entitie=mapgame, quest_id="quest_marlin_fish_for_brann"):
+        mapgame.get_event(event_id="event_started_quest_marlin_fish_for_brann").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_marlin_fish_for_brann"):
-        event_completed_quest_marlin_fish_for_brann.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_marlin_fish_for_brann"):
+        mapgame.get_event(event_id="event_completed_quest_marlin_fish_for_brann").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_find_caravan_leader_darek"):
-        event_completed_quest_find_caravan_leader_darek.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_find_caravan_leader_darek"):
+        mapgame.get_event(event_id="event_completed_quest_find_caravan_leader_darek").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_destroy_rocks_on_valley"):
-        event_completed_quest_destroy_rocks_on_valley.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_destroy_rocks_on_valley"):
+        mapgame.get_event("event_completed_quest_destroy_rocks_on_valley").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_gareth_deliver"):
-        event_completed_quest_gareth_deliver.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_gareth_deliver"):
+        mapgame.get_event(event_id="event_completed_quest_gareth_deliver").execute(player=player, mapgame=mapgame)
 
     # FireFrost first encounter quests/events.
-    event_firefrost_first_encounter_battle.execute(player=player, mapgame=mapgame)
+    mapgame.get_event(event_id="event_firefrost_first_encounter_battle").execute(player=player, mapgame=mapgame)
 
-    if is_quest_completed(player=player, quest_id="quest_firefrost_first_encounter"):
-        event_completed_quest_firefrost_first_encounter.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_firefrost_first_encounter"):
+        mapgame.get_event(event_id="event_completed_quest_firefrost_first_encounter").execute(player=player, mapgame=mapgame)
 
     # Veylan quests/events.
-    if is_quest_completed(player=player, quest_id="quest_explore_veylan"):
-        event_completed_quest_complete_explore_veylan.execute(player=player, mapgame=mapgame)
+    if is_quest_completed(entitie=mapgame, quest_id="quest_explore_veylan"):
+        mapgame.get_event(event_id="event_completed_quest_complete_explore_veylan").execute(player=player, mapgame=mapgame)
 
     return True, False
 

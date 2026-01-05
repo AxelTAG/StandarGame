@@ -46,6 +46,7 @@ def call_completed_exit_the_hut(player: Player, mapgame: Map) -> None:
 
 
 event_completed_exit_the_hut = Event(
+    id="event_completed_exit_the_hut",
     action=call_completed_exit_the_hut
 )
 
@@ -56,6 +57,7 @@ def call_completed_eat_soup(player: Player, mapgame: Map) -> None:
 
 
 event_completed_eat_soup = Event(
+    id="event_completed_eat_soup",
     action=call_completed_eat_soup
 )
 
@@ -110,6 +112,7 @@ def call_completed_find_loial(player: Player, mapgame: Map) -> None:
 
 
 event_completed_find_loial = Event(
+    id="event_completed_find_loial",
     action=call_completed_find_loial
 )
 
@@ -147,6 +150,7 @@ def call_started_deliver_wood(player: Player, mapgame: Map) -> None:
 
 
 event_started_find_loial = Event(
+    id="event_started_find_loial",
     action=call_started_deliver_wood
 )
 
@@ -212,6 +216,7 @@ def call_completed_deliver_wood(player: Player, mapgame: Map) -> None:
 
 
 event_completed_deliver_wood = Event(
+    id="event_completed_deliver_wood",
     action=call_completed_deliver_wood
 )
 
@@ -224,6 +229,7 @@ def call_completed_slime_slayer_I(player: Player, mapgame: Map) -> None:
 
 
 event_completed_slime_slayer_I = Event(
+    id="event_completed_slime_slayer_I",
     action=call_completed_slime_slayer_I
 )
 
@@ -259,10 +265,10 @@ def timer_call_loial_repair_boat(mapgame: Map, **kwargs):
         ]
     }
 
-    mapgame.npcs["islander_loial"].place = [(13, 23)]
-    mapgame.npcs["islander_loial"].place = [(12, 25), "hut"]
-    mapgame.npcs["islander_loial"].place = [(12, 24)]
-    mapgame.npcs["islander_loial"].place = [(12, 24), "hut", "nynaeve_room"]
+    mapgame.npcs["islander_loial"].place_morning = [(13, 23)]
+    mapgame.npcs["islander_loial"].place_afternoon = [(12, 25), "hut"]
+    mapgame.npcs["islander_loial"].place_evening = [(12, 24)]
+    mapgame.npcs["islander_loial"].place_night = [(12, 24), "hut", "nynaeve_room"]
 
     displays.clear()
     mapgame.map_settings[(14, 25)].add_item(item_id="boat")
@@ -321,13 +327,14 @@ def call_rewarded_slime_slayer_II(player: Player, mapgame: Map) -> None:
 
 
 event_rewarded_slime_slayer_II = Event(
+    id="event_rewarded_slime_slayer_II",
     action=call_rewarded_slime_slayer_II
 )
 
 
 # Epiiat events.
 def trigger_goblin_chief_battle(player: Player, mapgame: Map) -> bool:
-    quest = player.get_quest(quest="quest_goblin_chief")
+    quest = player.get_quest(quest_id="quest_goblin_chief")
     if quest is None or quest.is_in_progress():
         return player.place.id == "goblin_chief_bedroom"
     return False
@@ -374,7 +381,7 @@ def call_goblin_chief_battle(player: Player, mapgame: Map) -> bool | None:
 
     if not player.has_quest(quest="quest_goblin_chief"):
         player.add_quest(quest=mapgame.quests["quest_goblin_chief"])
-        player.get_quest(quest="quest_goblin_chief").complete_quest()
+        player.get_quest(quest_id="quest_goblin_chief").complete_quest()
 
     mapgame.add_timer(
         timer=Timer(
@@ -391,6 +398,7 @@ def call_goblin_chief_battle(player: Player, mapgame: Map) -> bool | None:
 
 
 event_goblin_chief_battle = Event(
+    id="event_goblin_chief_battle",
     action=call_goblin_chief_battle,
     trigger=trigger_goblin_chief_battle,
     one_execution=False
@@ -411,6 +419,7 @@ def call_completed_goblin_chief(player: Player, mapgame: Map) -> None:
 
 
 event_completed_goblin_chief = Event(
+    id="event_completed_goblin_chief",
     action=call_completed_goblin_chief
 )
 
@@ -429,6 +438,7 @@ def call_rewarded_goblin_chief(player: Player, mapgame: Map) -> None:
 
 
 event_rewarded_goblin_chief = Event(
+    id="event_rewarded_goblin_chief",
     action=call_rewarded_goblin_chief
 )
 
@@ -455,6 +465,7 @@ def call_started_quest_marlin_fish_for_brann(player: Player, mapgame: Map) -> No
 
 
 event_started_quest_marlin_fish_for_brann = Event(
+    id="event_started_quest_marlin_fish_for_brann",
     action=call_started_quest_marlin_fish_for_brann
 )
 
@@ -478,6 +489,7 @@ def call_completed_quest_marlin_fish_for_brann(player: Player, mapgame: Map) -> 
 
 
 event_completed_quest_marlin_fish_for_brann = Event(
+    id="event_completed_quest_marlin_fish_for_brann",
     action=call_completed_quest_marlin_fish_for_brann
 )
 
@@ -487,6 +499,7 @@ def call_completed_quest_find_caravan_leader_darek(player: Player, mapgame: Map)
 
 
 event_completed_quest_find_caravan_leader_darek = Event(
+    id="event_completed_quest_find_caravan_leader_darek",
     action=call_completed_quest_find_caravan_leader_darek
 )
 
@@ -577,6 +590,7 @@ def call_completed_quest_destroy_rocks_on_valley(player: Player, mapgame: Map) -
 
 
 event_completed_quest_destroy_rocks_on_valley = Event(
+    id="event_completed_quest_destroy_rocks_on_valley",
     action=call_completed_quest_destroy_rocks_on_valley
 )
 
@@ -589,13 +603,14 @@ def call_completed_quest_gareth_deliver(player: Player, mapgame: Map) -> None:
 
 
 event_completed_quest_gareth_deliver = Event(
+    id="event_completed_quest_gareth_deliver",
     action=call_completed_quest_gareth_deliver
 )
 
 
 # FireFrost first encounter.
 def trigger_firefrost_first_encounter_battle(player: Player, mapgame: Map) -> bool:
-    quest = player.get_quest(quest="quest_firefrost_first_encounter")
+    quest = player.get_quest(quest_id="quest_firefrost_first_encounter")
     if quest is None or quest.is_in_progress():
         return player.place.id == "frostvale"
     return False
@@ -615,6 +630,7 @@ def call_firefrost_first_encounter_battle(player: Player, mapgame: Map) -> bool 
 
 
 event_firefrost_first_encounter_battle = Event(
+    id="event_firefrost_first_encounter_battle",
     action=call_firefrost_first_encounter_battle,
     trigger=trigger_firefrost_first_encounter_battle,
     one_execution=False,
@@ -735,6 +751,7 @@ def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map)
 
 
 event_completed_quest_firefrost_first_encounter = Event(
+    id="event_completed_quest_firefrost_first_encounter",
     action=call_completed_quest_firefrost_first_encounter,
 )
 
@@ -751,12 +768,13 @@ def call_quest_complete_explore_veylan(player: Player, mapgame: Map) -> None:
 
 
 event_completed_quest_complete_explore_veylan = Event(
+    id="event_completed_quest_complete_explore_veylan",
     action=call_quest_complete_explore_veylan,
 )
 
 
 # Events list.
-event_list = [
+EVENTS = [
     event_completed_exit_the_hut,
     event_completed_eat_soup,
     event_started_find_loial,

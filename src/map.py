@@ -431,7 +431,17 @@ class Map:
     def get_events(self) -> list[Event]:
         return self.events
 
-    def get_event(self, event_id: str) -> Event:
+    def get_event(self, event_id: str) -> Event | None:
         for event in self.get_events():
             if event.id == event_id:
                 return event
+
+    # Quest methods.
+    def get_quest(self, quest_id: Quest, in_progress: bool = True, completed: bool = True) -> Quest | None:
+        for quest in self.quests.values():
+            if quest.is_in_progress() and not in_progress:
+                return None
+            if quest.is_completed() and not completed:
+                return None
+            if quest.id == quest_id:
+                return quest

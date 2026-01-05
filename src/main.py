@@ -9,6 +9,7 @@ from .actions.talk import talk
 from .inventory import Inventory
 from .map import Map
 from .player import Player
+from .events.definitions import EVENTS
 from .management import management
 from .management.save import *
 from .utils import clear, check_name, find_full_name, typewriter
@@ -202,7 +203,8 @@ class Game:
                            regions=copy.deepcopy(REGIONS),
                            fishes=copy.deepcopy(FISHES),
                            npcs=copy.deepcopy(NPCS),
-                           entries=copy.deepcopy(ENTRIES))
+                           entries=copy.deepcopy(ENTRIES),
+                           events=copy.deepcopy(EVENTS))
 
             # Player.
             player = Player(name=self.player_name,

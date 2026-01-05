@@ -220,7 +220,7 @@ def disp_quests(player: Player, mapgame: Map, quest_id: str = None) -> str:
         quests = [f"- {quest.title}: {quest.description}" for quest in player.get_quests(completed=False)]
         return paragraph + "\n".join(quests)
 
-    quest = player.get_quest(quest=quest_id, completed=False)
+    quest = player.get_quest(quest_id=quest_id, completed=False)
     return paragraph + f"- {quest.title}: {quest.description}"
 
 

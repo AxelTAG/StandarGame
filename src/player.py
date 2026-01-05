@@ -438,9 +438,9 @@ class Player:
                     return True
         return quest in self.quests_in_progress
 
-    def get_quest(self, quest: str, in_progress: bool = True, completed: bool = True) -> Quest | None:
+    def get_quest(self, quest_id: str, in_progress: bool = True, completed: bool = True) -> Quest | None:
         for q in self.get_quests(in_progress=in_progress, completed=completed):
-            if q.id == quest:
+            if q.id == quest_id:
                 return q
 
     def get_quests(self, in_progress: bool = True, completed: bool = True) -> list[Quest]:
@@ -453,7 +453,7 @@ class Player:
 
     def remove_quest(self, quest: Quest | str) -> None:
         if isinstance(quest, str):
-            quest = self.get_quest(quest=quest)
+            quest = self.get_quest(quest_id=quest)
         if quest.is_completed():
             self.quests_completed.append(quest)
             self.quests_completed.sort(key=lambda q: q.title)
@@ -670,6 +670,7 @@ class Player:
     def reinit_after_death(self) -> None:
         self.heal(amount=self.hpmax)
         self.set_place(place=self.place_checkpoint)
+        self.x, self.y = self.x_cp, self.y_cp
         self.status = PlayerStatus.WALK.value
         self.hungry = 48
         self.thirsty = 48

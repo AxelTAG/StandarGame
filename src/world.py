@@ -1385,7 +1385,8 @@ ITEMS = {
                             equippable=True,
                             expiration=None,
                             buy_price=500,
-                            sell_price=150),
+                            sell_price=150,
+                            warmness=8),
 
     "hammer": Item(name="Hammer",
                    description="Heavy and crushing, capable of stunning foes with a well-placed, thunderous strike.",
@@ -1416,7 +1417,8 @@ ITEMS = {
                                    equippable=True,
                                    expiration=None,
                                    buy_price=300,
-                                   sell_price=60),
+                                   sell_price=60,
+                                   warmness=8),
 
     "harpoon": Item(name="Harpoon",
                     description="A sharp harpoon for striking enemies from a distance. Balanced and quick.",
@@ -1489,7 +1491,8 @@ ITEMS = {
                           equippable=True,
                           expiration=None,
                           buy_price=200,
-                          sell_price=35),
+                          sell_price=35,
+                          warmness=8),
 
     "leather_boots": Item(name="Leather Boots",
                           description="Sturdy boots made of leather. Offers some defense for your legs.",
@@ -1584,7 +1587,8 @@ ITEMS = {
                         equippable=True,
                         expiration=None,
                         buy_price=700,
-                        sell_price=200),
+                        sell_price=200,
+                        warmness=8),
 
     "rusty_shield": Item(name="Rusty Shield",
                          description="Dented and weak, offers minimal protection but tells tales of bygone battles.",
@@ -3784,7 +3788,7 @@ NPCS = {
                             place=[(21, 28)]),
 
     # Villager from Epiiat.
-    "villager_doran": Npc(name="villager_doran",
+    "villager_doran": Npc(name="villager doran",
                           npc_type=NpcTypes.VILLAGER,
                           messages_morning={
                               0: ["Zzzz... zzz... Zzzz...",

@@ -68,7 +68,9 @@ class Player:
     statuses_saved: list[Status] = field(factory=list)
 
     hungry: int = field(default=100)
+    hungry_limit: int = field(default=20)
     thirsty: int = field(default=100)
+    thirsty_limit: int = field(default=20)
     status: int = field(default=PlayerStatus.WALK.value)
 
     poison: bool = field(default=False)
@@ -600,10 +602,10 @@ class Player:
             self.apply_status_effects(status=status, tick=True)
 
         if not onbattle:
-            if self.hungry < 10:
+            if self.hungry < self.hungry_limit:
                 self.hp -= 1
 
-            if self.thirsty < 10:
+            if self.thirsty < self.thirsty_limit:
                 self.hp -= 1
 
     def add_hungry(self, amount: int) -> None:

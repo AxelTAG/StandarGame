@@ -266,7 +266,7 @@ def timer_call_loial_repair_boat(mapgame: Map, **kwargs):
     }
 
     mapgame.npcs["islander_loial"].place_morning = [(13, 23)]
-    mapgame.npcs["islander_loial"].place_afternoon = [(12, 25), "hut"]
+    mapgame.npcs["islander_loial"].place_afternoon = [(12, 24), "hut"]
     mapgame.npcs["islander_loial"].place_evening = [(12, 24)]
     mapgame.npcs["islander_loial"].place_night = [(12, 24), "hut", "nynaeve_room"]
 

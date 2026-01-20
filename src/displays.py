@@ -135,11 +135,41 @@ def disp_game_loss() -> None:
     input("    > ")
 
 
-def disp_bar(current_value: int, max_value: int, width: int = 25) -> str:
+def disp_bar(current_value: int,
+             max_value: int,
+             width: int = 25,
+             fill_ch: str = "█",
+             unfill_ch: str = "-",
+             border_ch: str = "|",
+             reverse: bool = False) -> str:
     hits = int(width * (current_value / max_value))
     no_hits = width - int(width * (max(current_value, 0) / max_value))
-    hpbar = "|" + "█" * hits + "-" * no_hits + "|"
+    if reverse:
+        hits, no_hits = no_hits, hits
+    hpbar = border_ch + fill_ch * hits + unfill_ch * no_hits + border_ch
     return hpbar
+
+
+def disp_bar_uniform(
+        current_value: int,
+        max_value: int,
+        porcentages: list[float],
+        fill_ch: str = "/",
+        unfill_ch: str = "-",
+        border_ch: str = "",
+        reverse: bool = False) -> str:
+
+    width = len(porcentages)
+    current_porcentage = current_value / max_value
+    current_match = sum([current_porcentage >= value for value in porcentages])
+
+    return disp_bar(current_value=current_match,
+                    max_value=width,
+                    width=width,
+                    fill_ch=fill_ch,
+                    unfill_ch=unfill_ch,
+                    border_ch=border_ch,
+                    reverse=reverse)
 
 
 def disp_info(entitie: Player | Mob, onbattle: bool = False) -> str:
@@ -375,7 +405,6 @@ def disp_play(player: Player,
               mapgame: Map,
               screen: str,
               width: int) -> None:
-
     text1 = disp_play_location_and_time(player=player, mapgame=mapgame, prefix="", subfix="")
     text2 = player.place.get_description(month=mapgame.current_month)
     text3 = disp_play_info(player=player)
@@ -432,18 +461,19 @@ def disp_play_info(player: Player) -> str:
     name = f"NAME: {player.name.upper()}"
     exp_level = f"EXP: {player.exp}/{player.expmax} | LVL: {player.level}"
     exp_bar = disp_bar(current_value=player.exp, max_value=player.expmax, width=18)
+    hungry_thirsty = f"{disp_bar_uniform(current_value=player.hungry, max_value=100, porcentages=[player.hungry_limit / 100, 0.5, 0.8])} {disp_bar_uniform(current_value=player.thirsty, max_value=100, porcentages=[player.thirsty_limit / 100, 0.5, 0.8])}"
     hp = f"HP: {player.hp} / {player.hpmax}"
     hp_bar = f"{disp_bar(current_value=player.hp, max_value=player.hpmax, width=30)}"
 
     vt, vt_bar = "", ""
     if player.has_vital_energy():
         vt = f"VITAL ENERGY: {int(player.vital_energy)} / {player.vital_energy_max}"
-        vt_bar = f"{disp_bar(current_value=player.vital_energy, max_value=player.vital_energy_max, width=25)}"
+        vt_bar = f"{disp_bar(current_value=player.vital_energy, max_value=player.vital_energy_max, width=22)} "
 
     statuses = disp_statuses(entitie=player, onbattle=False)
     gold = f"GOLD: {player.get_gold()}"
 
-    info_line = [name, exp_level, exp_bar, hp, hp_bar, vt, vt_bar, statuses, gold]
+    info_line = [name, exp_level, exp_bar, hp, hp_bar, vt, vt_bar + hungry_thirsty, statuses, gold]
     return "\n".join([info for info in info_line if info])
 
 
@@ -524,9 +554,9 @@ def disp_statuses(entitie: Player | Mob, onbattle: bool = False) -> str:
                 statuses_list[-1] += f" [{status.duration}]"
 
     if not onbattle:
-        if entitie.hungry <= 10:
+        if entitie.hungry <= entitie.hungry_limit:
             statuses_list.append(f"HUNGRY")
-        if entitie.thirsty <= 10:
+        if entitie.thirsty <= entitie.thirsty_limit:
             statuses_list.append(f"THIRSTY")
 
     if not statuses_list:

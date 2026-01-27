@@ -13,7 +13,7 @@ from .quest import Quest
 
 # External imports.
 import numpy as np
-from attr import define, field
+from attrs import define, field, fields, has
 from datetime import timedelta, datetime
 from enum import Enum
 
@@ -39,7 +39,7 @@ class Player:
     base_defense: int = field(default=1)
     base_evasion: float = field(default=0)
     base_precision: float = field(default=0.6)
-    base_weight_carry: float = field(default=5)
+    base_weight_carry: float = field(default=10)
 
     # Stats attributes.
     strength: int = field(default=0)
@@ -128,8 +128,12 @@ class Player:
 
     # Others.
     events: dict = field(default=None)
-    dream_catched=field(default=False)
+    dream_catched = field(default=False)
     time_played: timedelta = field(default=timedelta(seconds=0))
+
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
 
     def __attrs_post_init__(self):
         # Basic attributes.
@@ -186,6 +190,107 @@ class Player:
         if self.events is None:
             self.events = {}
 
+        # Update attributes.
+        self.__updatable__ = (
+            # Identity / progress.
+            "name",
+            "level",
+            "exp",
+            "expmax",
+
+            # Vital stats.
+            "hp",
+            "vital_energy",
+            "vital_energy_avaible",
+
+            # Base attributes.
+            "base_hpmax",
+            "base_vital_energy",
+            "base_attack",
+            "base_defense",
+            "base_evasion",
+            "base_precision",
+            "base_weight_carry",
+
+            # Primary stats.
+            "strength",
+            "resistance",
+            "agility",
+            "vitality",
+            "dexterity",
+            "vision",
+            "perception",
+            "presence",
+
+            # Buffs.
+            "buffs",
+            "buffs_applied",
+
+            # Status.
+            "statuses",
+            "statuses_pre",
+            "statuses_saved",
+
+            "hungry",
+            "thirsty",
+            "status",
+
+            "poison",
+            "freeze",
+            "burn",
+            "stun",
+            "bleed",
+            "paralyze",
+
+            # Resistances.
+            "resistance_poison",
+            "resistance_freeze",
+            "resistance_burn",
+            "resistance_stun",
+            "resistance_bleed",
+            "resistance_paralyze",
+
+            # Temperature.
+            "temperature",
+
+            # Location.
+            "x",
+            "y",
+            "x_cp",
+            "y_cp",
+            "outside",
+            "place",
+            "place_checkpoint",
+            "last_place",
+            "last_entry",
+            "standing",
+
+            # Time.
+            "time_on",
+
+            # Level up.
+            "st_points",
+            "sk_points",
+
+            # Inventory / equipment.
+            "equip",
+
+            # World state.
+            "map",
+            "map_labels",
+
+            # Quests / skills.
+            "quests_in_progress",
+            "quests_completed",
+            "reputation",
+            "skills",
+
+            # Misc.
+            "events",
+            "dream_catched",
+            "time_played",
+        )
+
     @property
     def attack(self) -> int:
         item_attack_sum = sum(item.attack for item in self.equip.values() if isinstance(item, Item))
@@ -224,7 +329,7 @@ class Player:
 
     @property
     def weight_carry(self):
-        return self.strength * 2.5 + self.base_weight_carry
+        return self.strength * 0.5 + self.base_weight_carry
 
     @property
     def current_weight(self):
@@ -271,7 +376,7 @@ class Player:
 
     def drain_vital_energy(self, amount: int) -> None:
         self.vital_energy = max(0, self.vital_energy - amount)
-    
+
     def use_vital_energy(self, amount: int) -> bool:
         if self.vital_energy >= amount:
             self.vital_energy -= amount
@@ -402,9 +507,11 @@ class Player:
         return items
 
     def equip_item(self, item: Item) -> None:
+        # Body equip.
         if item.equippable and self.equip[item.body_part] is None:
             self.equip[item.body_part] = item
             return
+        # Belt equip.
         if self.has_slot_empty():
             self.set_slot(slot=self.get_first_slot_empty(), item=item)
 
@@ -455,7 +562,9 @@ class Player:
 
     def remove_quest(self, quest: Quest | str) -> None:
         if isinstance(quest, str):
-            quest = self.get_quest(quest_id=quest)
+            quest = self.get_quest(quest_id=quest, completed=False)
+            if quest is None:
+                return
         if quest.is_completed():
             self.quests_completed.append(quest)
             self.quests_completed.sort(key=lambda q: q.title)
@@ -663,7 +772,7 @@ class Player:
     def attack_to(self, target, onbattle: bool = False) -> tuple[bool, bool, int, bool, list]:
         skill = self.get_standar_attack()
         return skill.action(caster=self, target=target)
-        
+
     def take_damage(self, damage: int) -> int:
         efective_dmg = max(0, damage - self.defense)
         self.hp = max(0, self.hp - efective_dmg)
@@ -728,3 +837,44 @@ class Player:
                 quantity = self.get_item_quantity(item=item)
                 action_labels.append(f"{item_name} [{quantity}]")
         return actions, action_labels
+
+    # Update methods.
+    def update_from_instance(self, old, mapgame):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old, mapgame=mapgame)
+
+    def _after_migration(self, old, mapgame) -> None:
+        def get_from_match(entitie: list, entities: list, match: str):
+            return next((i for i in entities if getattr(i, match) == getattr(entitie, match)), None)
+
+        def update_from_match(entities: list, base_entities: list, match: str) -> list:
+            return [get_from_match(entitie=entitie, entities=base_entities, match=match) for entitie in entities]
+
+        def update_instances(entities: list, old_entities: list, match: str) -> None:
+            for entitie in entities:
+                old_instance = get_from_match(entitie=entitie, entities=old_entities, match=match)
+                if old_instance is None:
+                    continue
+                entitie.update(old=old_instance)
+
+        # Update of inventory.
+        self.inventory.update_from_instance(old=old.inventory)  # TODO: falta updatear bien la base_item.
+
+        # Update of quests.
+        self.quests_in_progress = update_from_match(entities=self.quests_in_progress,
+                                                    base_entities=list(mapgame.quests.values()),
+                                                    match="id")

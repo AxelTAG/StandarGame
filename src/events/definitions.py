@@ -14,9 +14,11 @@ import copy
 
 
 # Starter events.
-def call_completed_exit_the_hut(player: Player, mapgame: Map) -> None:
-    displays.disp_narration()
-    talk(npc=mapgame.npcs["islander_nynaeve"], player=player, mapgame=mapgame)
+def call_completed_exit_the_hut(player: Player, mapgame: Map, update: bool = False) -> None:
+    if not update:
+        displays.disp_narration()
+        talk(npc=mapgame.npcs["islander_nynaeve"], player=player, mapgame=mapgame)
+
     player.remove_quest(quest="quest_exit_the_hut")
 
     mapgame.npcs["islander_nynaeve"].clear_messages_answers()
@@ -51,7 +53,7 @@ event_completed_exit_the_hut = Event(
 )
 
 
-def call_completed_eat_soup(player: Player, mapgame: Map) -> None:
+def call_completed_eat_soup(player: Player, mapgame: Map, update: bool = False) -> None:
     player.remove_quest(quest="quest_eat_soup")
     mapgame.npcs["islander_nynaeve"].add_quest(quest=mapgame.quests["quest_find_loial"])
 
@@ -62,7 +64,7 @@ event_completed_eat_soup = Event(
 )
 
 
-def call_completed_find_loial(player: Player, mapgame: Map) -> None:
+def call_completed_find_loial(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["islander_nynaeve"].clear_messages_answers()
 
     mapgame.npcs["islander_nynaeve"].messages_morning = {
@@ -117,7 +119,7 @@ event_completed_find_loial = Event(
 )
 
 
-def call_started_deliver_wood(player: Player, mapgame: Map) -> None:
+def call_started_deliver_wood(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["islander_nynaeve"].clear_messages_answers()
 
     mapgame.npcs["islander_nynaeve"].messages_morning = {
@@ -155,7 +157,7 @@ event_started_find_loial = Event(
 )
 
 
-def call_completed_deliver_wood(player: Player, mapgame: Map) -> None:
+def call_completed_deliver_wood(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["islander_nynaeve"].clear_messages_answers()
 
     mapgame.npcs["islander_nynaeve"].messages_morning = {
@@ -221,7 +223,7 @@ event_completed_deliver_wood = Event(
 )
 
 
-def call_completed_slime_slayer_I(player: Player, mapgame: Map) -> None:
+def call_completed_slime_slayer_I(player: Player, mapgame: Map, update: bool = False) -> None:
     if mapgame.get_number_of_mobs(coord1=(11, 23), coord2=(13, 25), mob_id="little_slime") <= 5:
         mapgame.map_settings[(11, 23)].respawn_mob(mob="little_slime", amount=2)
         mapgame.map_settings[(12, 23)].respawn_mob(mob="little_slime", amount=2)
@@ -279,7 +281,7 @@ def timer_call_loial_repair_boat(mapgame: Map, **kwargs):
     mapgame.refresh_npcs()
 
 
-def call_rewarded_slime_slayer_II(player: Player, mapgame: Map) -> None:
+def call_rewarded_slime_slayer_II(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["islander_loial"].clear_messages_answers()
     mapgame.npcs["islander_loial"].messages_morning = {
         0: [
@@ -316,14 +318,17 @@ def call_rewarded_slime_slayer_II(player: Player, mapgame: Map) -> None:
 
     mapgame.refresh_npcs()
 
-    mapgame.add_timer(timer=Timer(
-        id="loial_repair_boat",
-        duration=3,
-        on_finish=timer_call_loial_repair_boat,
-        day=mapgame.current_day,
-        month=mapgame.current_month,
-        year=mapgame.current_year
-    ))
+    if not update:
+        mapgame.add_timer(timer=Timer(
+            id="loial_repair_boat",
+            duration=3,
+            on_finish=timer_call_loial_repair_boat,
+            day=mapgame.current_day,
+            month=mapgame.current_month,
+            year=mapgame.current_year
+        ))
+    else:
+        timer_call_loial_repair_boat(mapgame=mapgame)
 
 
 event_rewarded_slime_slayer_II = Event(
@@ -333,7 +338,7 @@ event_rewarded_slime_slayer_II = Event(
 
 
 # Epiiat events.
-def trigger_goblin_chief_battle(player: Player, mapgame: Map) -> bool:
+def trigger_goblin_chief_battle(player: Player, mapgame: Map, update: bool = False) -> bool:
     quest = player.get_quest(quest_id="quest_goblin_chief")
     if quest is None or quest.is_in_progress():
         return player.place.id == "goblin_chief_bedroom"
@@ -364,14 +369,17 @@ def timer_mayors_daughter_maisie_return(mapgame: Map, **kwargs):
     mapgame.refresh_npcs()
 
 
-def call_goblin_chief_battle(player: Player, mapgame: Map) -> bool | None:
-    talk(npc=mapgame.npcs["goblin_griznuk"], player=player, mapgame=mapgame)
-    win = battle(players=[player], enemies=[copy.deepcopy(mapgame.mobs["goblin_chief"])], mapgame=mapgame)
+def call_goblin_chief_battle(player: Player, mapgame: Map, update: bool = False) -> bool | None:
+    win = True
+    if not update:
+        talk(npc=mapgame.npcs["goblin_griznuk"], player=player, mapgame=mapgame)
+        win = battle(players=[player], enemies=[copy.deepcopy(mapgame.mobs["goblin_chief"])], mapgame=mapgame)
 
     if not win:
         return
 
-    talk(npc=mapgame.npcs["mayors_daughter_maisie"], player=player, mapgame=mapgame)
+    if not update:
+        talk(npc=mapgame.npcs["mayors_daughter_maisie"], player=player, mapgame=mapgame)
 
     mapgame.npcs["mayors_daughter_maisie"].clear_messages_answers()
     mapgame.npcs["mayors_daughter_maisie"].messages = {
@@ -383,16 +391,19 @@ def call_goblin_chief_battle(player: Player, mapgame: Map) -> bool | None:
         player.add_quest(quest=mapgame.quests["quest_goblin_chief"])
         player.get_quest(quest_id="quest_goblin_chief").complete_quest()
 
-    mapgame.add_timer(
-        timer=Timer(
-            id="mayors_daughter_maisie_return",
-            duration=4,
-            on_finish=timer_mayors_daughter_maisie_return,
-            day=mapgame.current_day,
-            month=mapgame.current_month,
-            year=mapgame.current_year
+    if not update:
+        mapgame.add_timer(
+            timer=Timer(
+                id="mayors_daughter_maisie_return",
+                duration=4,
+                on_finish=timer_mayors_daughter_maisie_return,
+                day=mapgame.current_day,
+                month=mapgame.current_month,
+                year=mapgame.current_year
+            )
         )
-    )
+    else:
+        timer_mayors_daughter_maisie_return(mapgame=mapgame)
 
     return True
 
@@ -405,7 +416,7 @@ event_goblin_chief_battle = Event(
 )
 
 
-def call_completed_goblin_chief(player: Player, mapgame: Map) -> None:
+def call_completed_goblin_chief(player: Player, mapgame: Map, update: bool = False) -> None:
     cave_passageway_exit = mapgame.place_from_list([(25, 24),
                                                     "cave_entrance",
                                                     "cave_pit",
@@ -424,7 +435,7 @@ event_completed_goblin_chief = Event(
 )
 
 
-def call_rewarded_goblin_chief(player: Player, mapgame: Map) -> None:
+def call_rewarded_goblin_chief(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["mayor_thorian"].messages = {
         0: [
             "It’s rare to find such selfless bravery in these dark times. Thanks to you, my daughter is "
@@ -444,7 +455,7 @@ event_rewarded_goblin_chief = Event(
 
 
 # Aquiri events.
-def call_started_quest_marlin_fish_for_brann(player: Player, mapgame: Map) -> None:
+def call_started_quest_marlin_fish_for_brann(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["fisherman_brann"].clear_messages_answers()
 
     mapgame.npcs["fisherman_brann"].messages = {
@@ -470,7 +481,7 @@ event_started_quest_marlin_fish_for_brann = Event(
 )
 
 
-def call_completed_quest_marlin_fish_for_brann(player: Player, mapgame: Map) -> None:
+def call_completed_quest_marlin_fish_for_brann(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["fisherman_brann"].clear_messages_answers()
 
     mapgame.npcs["fisherman_brann"].messages = {
@@ -494,7 +505,7 @@ event_completed_quest_marlin_fish_for_brann = Event(
 )
 
 
-def call_completed_quest_find_caravan_leader_darek(player: Player, mapgame: Map) -> None:
+def call_completed_quest_find_caravan_leader_darek(player: Player, mapgame: Map, update: bool = False) -> None:
     pass
 
 
@@ -548,7 +559,7 @@ def timer_caravan_move(mapgame: Map, **kwargs):
     mapgame.refresh_npcs()
 
 
-def call_completed_quest_destroy_rocks_on_valley(player: Player, mapgame: Map) -> None:
+def call_completed_quest_destroy_rocks_on_valley(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["caravan_leader_darek"].clear_messages_answers()
     mapgame.npcs["caravan_leader_darek"].messages = {
         0: ["You’ve done us a great service, adventurer! Thanks to you, the road is clear, and we can finally "
@@ -577,16 +588,19 @@ def call_completed_quest_destroy_rocks_on_valley(player: Player, mapgame: Map) -
 
     mapgame.refresh_npcs()
 
-    mapgame.add_timer(
-        timer=Timer(
-            id="mayors_daughter_maisie_return",
-            duration=3,
-            on_finish=timer_caravan_move,
-            day=mapgame.current_day,
-            month=mapgame.current_month,
-            year=mapgame.current_year
+    if not update:
+        mapgame.add_timer(
+            timer=Timer(
+                id="mayors_daughter_maisie_return",
+                duration=3,
+                on_finish=timer_caravan_move,
+                day=mapgame.current_day,
+                month=mapgame.current_month,
+                year=mapgame.current_year
+            )
         )
-    )
+    else:
+        timer_caravan_move(mapgame=mapgame)
 
 
 event_completed_quest_destroy_rocks_on_valley = Event(
@@ -595,7 +609,7 @@ event_completed_quest_destroy_rocks_on_valley = Event(
 )
 
 
-def call_completed_quest_gareth_deliver(player: Player, mapgame: Map) -> None:
+def call_completed_quest_gareth_deliver(player: Player, mapgame: Map, update: bool = False) -> None:
     mapgame.npcs["villager_gareth"].clear_messages_answers()
     mapgame.npcs["villager_gareth"].messages = {
         0: ["Ah, it’s you again! Always good to see a friendly face around here. How's the journey treating "
@@ -609,19 +623,21 @@ event_completed_quest_gareth_deliver = Event(
 
 
 # FireFrost first encounter.
-def trigger_firefrost_first_encounter_battle(player: Player, mapgame: Map) -> bool:
+def trigger_firefrost_first_encounter_battle(player: Player, mapgame: Map, update: bool = False) -> bool:
     quest = player.get_quest(quest_id="quest_firefrost_first_encounter")
     if quest is None or quest.is_in_progress():
         return player.place.id == "frostvale"
     return False
 
 
-def call_firefrost_first_encounter_battle(player: Player, mapgame: Map) -> bool | None:
-    talk(npc=mapgame.npcs["dragon_firefrost"], player=player, mapgame=mapgame)
-    win = battle(players=[player],
-                 enemies=[copy.deepcopy(mapgame.mobs["dragon"])],
-                 mapgame=mapgame,
-                 data_battle={"mob_life_limit": 20})
+def call_firefrost_first_encounter_battle(player: Player, mapgame: Map, update: bool = False) -> bool | None:
+    win = True
+    if not update:
+        talk(npc=mapgame.npcs["dragon_firefrost"], player=player, mapgame=mapgame)
+        win = battle(players=[player],
+                     enemies=[copy.deepcopy(mapgame.mobs["dragon"])],
+                     mapgame=mapgame,
+                     data_battle={"mob_life_limit": 20})
 
     if not win:
         return
@@ -637,7 +653,7 @@ event_firefrost_first_encounter_battle = Event(
 )
 
 
-def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map) -> None:
+def call_completed_quest_firefrost_first_encounter(player: Player, mapgame: Map, update: bool = False) -> None:
     # FireFrost changes.
     mapgame.npcs["dragon_firefrost"].clear_messages_answers()
     displays.disp_standard_tw(
@@ -757,7 +773,7 @@ event_completed_quest_firefrost_first_encounter = Event(
 
 
 # Veylan events.
-def call_quest_complete_explore_veylan(player: Player, mapgame: Map) -> None:
+def call_quest_complete_explore_veylan(player: Player, mapgame: Map, update: bool = False) -> None:
     displays.disp_standard_tw(
         name="Whispers",
         message=[

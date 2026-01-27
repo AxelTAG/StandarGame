@@ -6,7 +6,7 @@ from .. import enums
 import copy
 import random
 
-from attrs import asdict,define, field
+from attrs import asdict, define, field, fields, has
 from enum import Enum
 
 
@@ -22,13 +22,51 @@ class Entitie:
     visibility: float = field(default=1)
     interactable: bool = field(default=False)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         if self.id is None:
             self.id = self.underscores(text=self.name.lower())
 
+        # Update attributes.
+        self.__updatable__ = (
+            # Basic attributes.
+            "name",
+            "description",
+            "id",
+
+            # Status attributes.
+            "visible",
+            "visibility",
+            "interactable",
+        )
+
     @staticmethod
     def underscores(text: str):
         return text.replace(" ", "_").lower()
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass
 
 
 @define
@@ -72,6 +110,39 @@ class Fish(Entitie):
 
         # Data attributes.
         self.unique_id = f"{self.weight:.2f}"
+
+        # Update attributes.
+        self.__updatable__ = (
+            # Basic attributes.
+            "name",
+            "description",
+            "id",
+
+            # Status attributes.
+            "visible",
+            "visibility",
+            "interactable",
+
+            # Swim attributes.
+            "depth",
+            "spawn_months",
+            "catch_chance",
+
+            # Growth attributes.
+            "growth_rate",
+            "weight",
+            "max_weight",
+            "age",
+            "max_age",
+
+            # Place attributes.
+            "movable",
+            "movable_biomes",
+            "move_chance",
+
+            # Data attributes.
+            "unique_id",
+        )
 
     # Growth methods.
     def refresh(self, hours: int) -> None:
@@ -136,6 +207,28 @@ class Tree(Entitie):
 
         if self.leaf_color is None:
             self.leaf_color = enums.LeafColors.GREEN
+
+        # Update attributes.
+        self.__updatable__ = (
+            # Basic attributes.
+            "name",
+            "description",
+            "id",
+
+            # Status attributes.
+            "visible",
+            "visibility",
+            "interactable",
+
+            # Morphology and fruit bearing attributes.
+            "height",
+            "leaf_color",
+            "fruit_bearing",
+            "bearing_months",
+            "bearing_frencuency",
+            "bearing_quantity",
+            "fruit",
+        )
 
     def produce_fruit(self) -> list:
         if not self.fruit_bearing:

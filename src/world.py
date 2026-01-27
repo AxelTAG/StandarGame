@@ -1011,7 +1011,7 @@ TREES = {
         leaf_color=LeafColors.GREEN,
         fruit_bearing=True,
         bearing_months=[0, 1, 2, 3],
-        bearing_frencuency=32,
+        bearing_frencuency=8,
         bearing_quantity=2,
         fruit="coconut"
     ),

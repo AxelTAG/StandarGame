@@ -47,6 +47,7 @@ class Game:
     # Play variables.
     fight: bool = field(default=False)
     standing: bool = field(default=True)
+    skip_input_action: bool = field(default=False)
     player: Player = field(init=False)
     mapgame: Map = field(init=False)
 
@@ -82,7 +83,7 @@ class Game:
         # Enter screen.
         displays.clear()
         displays.disp_intro()
-        input()
+        self.pause(label="")
 
     def show_menu(self) -> None:
         # Music background.
@@ -130,6 +131,7 @@ class Game:
             self.menu = False
             self.play = True
             self.first_setting = True
+            self.skip_input_action = True
 
     # TODO: refactorizar los últimos displays in place que hice en esta función.
     def show_load_game(self) -> None:
@@ -362,11 +364,12 @@ class Game:
 
                 # Input action.
                 print()
-                if not self.first_setting:
+                if not self.skip_input_action:
                     action = input(" " * 2 + "# ").lower().split()
                 if self.first_setting:
                     map_game.add_hours(hours_to_add=1)
                     self.first_setting = False
+                    self.skip_input_action = False
                 if not action:
                     action = ["None"]
                     player.standing = True
@@ -706,39 +709,8 @@ class Game:
                     management.repair(player=player, mapgame=map_game)
                     screen = "Game repaired."
 
-                # if action == ["catch", "dream"]:
-                #     if not player.dream_catched:
-                #         player.lvl_up(quantity=3)
-                #         player.st_points = 0
-                #         player.strength += 3
-                #         player.resistance += 4
-                #         player.agility += 1
-                #         player.vitality += 2
-                #
-                #         player.add_item(item="slime_balls", quantity=46)
-                #         player.add_item(item="coconut", quantity=5)
-                #         player.set_place(place=map_game.map_settings[(13, 25)])
-                #         player.inventory.discard_item(item="red_potion", quantity=2)
-                #         player.inventory.discard_item(item="little_red_potion", quantity=2)
-                #
-                #         draw_map(player=player,
-                #                  map_game=map_game,
-                #                  preset=[(15, 18),
-                #                          (12, 19), (13, 19), (14, 19), (15, 19), (16, 19),
-                #                          (11, 20), (12, 20), (13, 20), (14, 20), (15, 20), (16, 20), (17, 20),
-                #                          (11, 21), (12, 21), (13, 21), (14, 21), (15, 21), (16, 21), (17, 21), (18, 21),
-                #                          (12, 22), (13, 22), (14, 22), (15, 22), (16, 22), (17, 22), (18, 22),
-                #                          (11, 23), (12, 23), (13, 23), (14, 23), (15, 23), (16, 23), (17, 23), (18, 23), (19, 23),
-                #                          (10, 24), (11, 24), (12, 24), (13, 24), (14, 24), (15, 24), (16, 24), (17, 24), (18, 24), (19, 24), (20, 24),
-                #                          (10, 25), (11, 25), (12, 25), (13, 25), (14, 25), (15, 25), (16, 25), (17, 25), (18, 25), (19, 25),
-                #                          (11, 26), (12, 26), (13, 26), (14, 26), (15, 26), (16, 26), (17, 26), (18, 26), (19, 26),
-                #                          (10, 27), (11, 27), (12, 27), (13, 27), (14, 27), (15, 27), (16, 27), (17, 27), (18, 27), (19, 27),
-                #                          (11, 28), (12, 28), (13, 28), (14, 28), (15, 28), (17, 28), (18, 28),
-                #                          (14, 29), (15, 29), (16, 29),
-                #                          (15, 30)])
-                #
-                #     player.dream_catched = True
-                #     screen = "Dream is back."
+                if action[0:2] == ["catch", "dream"]:
+                    screen = catch_dream(filepath=action[2], player=player, mapgame=map_game)
 
                 # -------- admin commans.
                 if action[0] == "poweradmin":
@@ -864,7 +836,7 @@ class Game:
         displays.disp_title()
         displays.disp_rules()
         self.rules = False
-        input(" > ")
+        self.pause()
 
     def show_settings(self):
         # Display.

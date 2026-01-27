@@ -7,7 +7,7 @@ from .status import Status
 import copy
 import random
 
-from attrs import define, field
+from attrs import define, field, fields, has
 from enum import Enum
 
 
@@ -67,6 +67,10 @@ class Mob:
     # Others.
     escape_mob_probability: float = field(default=0)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         # Level attributes.
         if self.level is None:
@@ -81,6 +85,23 @@ class Mob:
 
         if self.id_key is None:
             self.id_key = self.underscores(text=self.name.lower())
+
+        # Update attributes.
+        self.__updatable__ = (
+            # Basics attributes.
+            "hp",
+            "vital_energy",
+
+            # Level attributes.
+            "level",
+
+            # Statuses attributes.
+            "stun",
+            "paralyze",
+            "statuses",
+            "statuses_pre",
+            "statuses_saved",
+        )
 
     # Current status methods.
     def has_vital_energy(self) -> bool:
@@ -247,7 +268,7 @@ class Mob:
 
     @property
     def defense(self) -> int:
-        return int(self.base_defense + self. level / 3)
+        return int(self.base_defense + self.level / 3)
 
     @property
     def evasion(self) -> float:
@@ -277,6 +298,29 @@ class Mob:
 
         if player.presence / 100 * self.agression > random.random():
             return True
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass
 
     @staticmethod
     def underscores(text: str):

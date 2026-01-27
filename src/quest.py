@@ -3,20 +3,28 @@
 from .enums import ObjectiveType, QuestStatus
 
 # External imports.
-from attrs import define, field
+from attrs import define, field, fields, has
 
 
 @define
 class QuestObjective:
     type: ObjectiveType
     target: str
-    amount: int = 1
-    progress: int = 0
-    deliver_item: str = None
-    deliver_amount: int = None
+    amount: int = field(default=1)
+    progress: int = field(default=0)
+    deliver_item: str = field(default=None)
+    deliver_amount: int = field(default=None)
+    id: str = field(default=None)
+
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
 
     def __attrs_post_init__(self):
-        pass
+        # Update attributes.
+        self.__updatable__ = (
+            "progress",
+        )
 
     def update(self,
                target: str,
@@ -81,6 +89,29 @@ class QuestObjective:
     def complete_objective(self) -> None:
         self.progress = self.amount
 
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass
+
 
 @define
 class Quest:
@@ -100,9 +131,19 @@ class Quest:
     messages_reward: dict = field(default=None)
     answers_reward: dict = field(default=None)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         if self.status not in QuestStatus:
             raise ValueError("Status must be a value on QuestStatus enum.")
+
+        # Update attributes.
+        self.__updatable__ = (
+            "objectives",
+            "status",
+        )
 
     def start(self):
         if self.status == QuestStatus.NOT_STARTED:
@@ -152,3 +193,26 @@ class Quest:
         for objetive in self.objectives:
             objetive.complete_objective()
         self.update_progress(target="")
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass

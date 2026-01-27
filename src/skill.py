@@ -5,7 +5,7 @@ import random
 from .enums import EquipCondition, SkillElements, RequirementType
 
 # External imports.
-from attrs import field, define
+from attrs import define, field, fields, has
 
 
 @define
@@ -32,6 +32,10 @@ class Skill:
     requirements_stats: dict = field(factory=dict)
     tags: list = field(factory=list)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         scaling = {
             "strength": 0,
@@ -53,6 +57,11 @@ class Skill:
         }
         self.normalize_dict(dictionary=self.scaling, normalize_dict=scaling)
         self.normalize_dict(dictionary=self.scaling_critical, normalize_dict=scaling_critical)
+
+        # Update attributes.
+        self.__updatable__ = (
+            "cooldown",
+        )
 
     def damage(self, caster) -> int:
         scale = self.scale(caster=caster)
@@ -161,3 +170,26 @@ class Skill:
         if delete:
             return text.replace("_", " ").lower()
         return text.replace(" ", "_").lower()
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass

@@ -12,6 +12,7 @@ from ..world import ITEMS
 
 from .assign import assign
 from .battle import battle
+from .catch_dream import catch_dream
 from .check import check
 from .explore import explore
 from .fish import fish
@@ -231,7 +232,7 @@ def equip(player: Player, item: str) -> str:
         return "You cannot equip this item."
 
     item_name = item.replace('_', ' ').title()
-    item_object = get_item(item_name=item)
+    item_object = player.inventory.get_item_object(item=item)
 
     if not item_object:
         return f"You don't have {item_name}."

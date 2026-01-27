@@ -8,7 +8,7 @@ from .globals import FISH_RATE_RESPAWN, TREES_RATIO
 # External imports.
 import copy
 import random
-from attrs import define, field
+from attrs import define, field, fields, has
 
 
 # TODO: reemplazar esta función converter por factory de attrs.
@@ -108,6 +108,10 @@ class Biome:
     # Reinit attributes.
     reinit_items: dict = field(factory=dict)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         # Common attributes.
         if self.entries is None:
@@ -163,6 +167,38 @@ class Biome:
         # Reinit attributes.
         if not self.reinit_items:
             self.reinit_items = {}
+
+        # Update attributes.
+        self.__updatable__ = (
+            # Common attributes.
+            "_name",
+            "_color",
+            "_description",
+
+            # Mobs and fighting attributes.
+            "mobs_respawn_time",
+            "mobs_check_respawn",
+            "_mobs_names",
+            "_mobs_chances",
+            "_mobs_respawn_time",
+            "_mobs_quantity",
+
+            # Place attributes.
+            "npcs",
+            "items",
+            "_req",
+            "_pace",
+            "_status",
+
+            # Place climate and bioma attributes.
+            "trees_respawned",
+            "fishes_respawned",
+            "_temperature",
+            "_water",
+            "_fishes",
+            "_fishes_respawn_time",
+            "_current_month",
+        )
 
     @property
     def temperature(self) -> int:
@@ -535,6 +571,28 @@ class Biome:
             if not self.has_item(item_id=item_id, quantity=quantity):
                 difference = quantity - self.items.count(item_id)
                 self.add_item(item_id=item_id, quantity=difference)
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    def _after_migration(self, old) -> None:
+        pass
 
     # Static methods.
     @staticmethod

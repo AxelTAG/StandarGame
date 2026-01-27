@@ -4,7 +4,7 @@ from .enums import NpcTypes, QuestStatus, TimeOfDay
 from .quest import Quest
 
 # External imports
-from attrs import define, field
+from attrs import define, field, fields, has
 
 
 @define
@@ -66,6 +66,10 @@ class Npc:
     # Quests.
     quests: list[Quest] = field(factory=list)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         if self.buy_beds is None:
             self.buy_beds = {}
@@ -96,6 +100,54 @@ class Npc:
         self.hist_messages = {}
         self.reset_hist_messages()
         self.refresh_temporal(hour=6)
+
+        # Update attributes.
+        self.__updatable__ = (
+            # General attributes.
+            "messages",
+            "answers",
+            "leave_message",
+            "place",
+
+            # Trading attributes.
+            "room_expirations",
+
+            # Transporting places attributes.
+            "transport_time_of_day",
+            "transport_places",
+            "transport_confirm_message",
+            "transport_arrive_message",
+
+            # Talking attributes.
+            "hist_messages",
+
+            # Temporal and placing attributes.
+            "hour_morning",
+            "place_morning",
+            "messages_morning",
+            "answers_morning",
+
+            "hour_afternoon",
+            "place_afternoon",
+            "messages_afternoon",
+            "answers_afternoon",
+
+            "hour_evening",
+            "place_evening",
+            "messages_evening",
+            "answers_evening",
+
+            "hour_night",
+            "place_night",
+            "messages_night",
+            "answers_night",
+
+            # Listen attributes.
+            "tracks",
+
+            # Quests.
+            "quests",
+        )
 
     # Messages and answer methods.
     def clear_messages_answers(self, messages: bool = True, answers: bool = True) -> None:
@@ -241,3 +293,28 @@ class Npc:
             if quest.status == QuestStatus.COMPLETED:
                 return quest.claim_reward()
         return None
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        def update_instances(entities: list) -> None:
+            for entitie in entities:
+                entitie.update()

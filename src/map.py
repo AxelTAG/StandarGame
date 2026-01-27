@@ -17,7 +17,7 @@ from .globals import FISH_RESPAWNED_LIMIT, MAP_TILE_PATH, REGION_TILE_PATH
 from .quest import Quest
 
 # External imports.
-from attrs import define, field
+from attrs import define, field, fields, has
 
 
 @define
@@ -38,7 +38,6 @@ class Map:
     year_duration: int = field(default=8)
 
     # Climate map attributes.
-    temperature: int = field(default=15)
     length_of_seasons: int = field(default=2)
 
     # Map attributes.
@@ -68,6 +67,10 @@ class Map:
     last_hour: int = field(default=6)
     last_day: int = field(default=1)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         if self.map_labels is None:
             self.map_labels = label_pixels(MAP_TILE_PATH, base=self.biomes)
@@ -92,6 +95,23 @@ class Map:
 
         self.x_len = len(self.map_labels) - 1
         self.y_len = len(self.map_labels[0]) - 1
+
+        # Update attributes.
+        self.__updatable__ = (
+            # Time map attributes.
+            "year",
+            "month",
+            "day",
+            "hour",
+
+            # Event attributes.
+            "events",
+            "timers",
+
+            # Others attributes.
+            "last_hour",
+            "last_day",
+        )
 
     # Time methods.
     @property
@@ -445,3 +465,36 @@ class Map:
                 return None
             if quest.id == quest_id:
                 return quest
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    def _after_migration(self, old) -> None:
+        def update_instances(entities: list, old_entities: list, match: str) -> None:
+            for entitie in entities:
+                old_instance = next((i for i in old_entities if getattr(i, match) == getattr(entitie, match)), None)
+                if old_instance is None:
+                    continue
+                entitie.update_from_instance(old=old_instance)
+
+        update_instances(entities=list(self.npcs.values()), old_entities=list(old.npcs.values()), match="id")
+        update_instances(entities=list(self.quests.values()), old_entities=list(old.quests.values()), match="id")
+        update_instances(entities=list(self.map_settings.values()),
+                         old_entities=list(old.map_settings.values()),
+                         match="coordinates")

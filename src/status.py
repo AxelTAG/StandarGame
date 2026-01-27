@@ -3,7 +3,7 @@
 from .enums import StatusType
 
 # External imports.
-from attrs import define, field
+from attrs import define, field, fields, has
 from enum import Enum
 
 
@@ -26,9 +26,19 @@ class Buff:
     on_apply = field(default=None)
     on_expire = field(default=None)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         if self.id is None:
             self.id = self.name.replace(" ", "_").lower()
+
+        # Update attributes.
+        self.__updatable__ = (
+            "duration",
+            "source",
+        )
 
     def tick(self, entity):
         if self.on_apply:
@@ -57,6 +67,29 @@ class Buff:
         """Returns True if the buff is still active."""
         return self.duration > 0
 
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass
+
 
 @define
 class Status:
@@ -75,6 +108,19 @@ class Status:
     on_apply = field(default=None)
     on_tick = field(default=None)
     on_expire = field(default=None)
+
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
+    def __attrs_post_init__(self):
+        # Update attributes.
+        self.__updatable__ = (
+            "duration",
+            "stacks",
+            "max_stacks",
+            "source",
+        )
 
     def tick(self, entity):
         if self.on_tick:
@@ -210,3 +256,26 @@ class Status:
             stunner=False,
             paralyzer=True,
         )
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass

@@ -3,7 +3,7 @@
 from .enums import BodyPart, ItemTypes
 
 # External imports.
-from attrs import define, field
+from attrs import define, field, fields, has
 from enum import Enum
 
 
@@ -79,6 +79,10 @@ class Item:
     # Data attributes.
     data: dict = field(default=None)
 
+    # Update attributes.
+    __updatable__: tuple[str, ...] = field(init=False, repr=False, default=())
+    __migration_map__: dict[str, str] = field(init=False, repr=False, factory=dict)
+
     def __attrs_post_init__(self):
         # Item name attributes.
         if self.id is None:
@@ -98,6 +102,12 @@ class Item:
             if self.data.get("unique_id", False):
                 if self.item_type == ItemTypes.FISH:
                     self.id = f"{self.id}_{self.data['unique_id']}"
+
+        # Update attributes.
+        self.__updatable__ = (
+            # Data attributes.
+            "data",
+        )
 
     # Property methods.
     def is_unique(self) -> bool:
@@ -194,3 +204,26 @@ class Item:
             if getattr(self, k, None) is not None:
                 setattr(self, k, v)
         self.id = self.get_unique_id()
+
+    # Update methods.
+    def update_from_instance(self, old):
+        if has(old.__class__):
+            old_attrs = {f.name: getattr(old, f.name, None) for f in fields(old.__class__)}
+        else:
+            old_attrs = {
+                name: getattr(old, name)
+                for name in dir(old)
+                if not name.startswith("__") and hasattr(old, name)
+            }
+
+        for attr, value in old_attrs.items():
+            new_attr = self.__migration_map__.get(attr, attr)
+
+            if new_attr in self.__updatable__:
+                setattr(self, new_attr, value)
+
+        self._after_migration(old=old)
+
+    @staticmethod
+    def _after_migration(old) -> None:
+        pass
